@@ -48,11 +48,11 @@ it('Milling Copra and Ball Copra moisture thresholds must strictly align at ≤ 
   assert.strictEqual(millingCopraMoisture, 5.50, 'Milling copra catalog limit must be aligned at 5.5%');
 });
 
-it('Per-nut retail equivalent for Grade A 50-nut bag must be ₹33.00/nut', () => {
-  const bagPrice = 1650.00;
-  const nutCount = 50;
-  const perNut = bagPrice / nutCount;
-  assert.strictEqual(perNut, 33.00, 'Per nut price must match ₹33.00');
+it('Per-unit pricing compliance for Semi-Husked 25-piece bag at ₹90/kg (₹1,350/unit)', () => {
+  const unitPrice = 1350.00;
+  const weightKg = 15.0;
+  const ratePerKg = unitPrice / weightKg;
+  assert.strictEqual(ratePerKg, 90.00, 'Rate per kg must equal ₹90.00');
 });
 
 it('Free delivery threshold must apply at ₹1,500; flat ₹99 below', () => {

@@ -16,72 +16,63 @@ interface CategoryItem {
 const CATEGORIES: CategoryItem[] = [
   {
     id: 'coconuts',
-    name: 'Fresh Mature Coconuts',
-    description: 'Grade A & B dehusked for retail stores, temples & households',
+    name: 'Fresh Mature & Tender Coconuts',
+    description: '25-piece semi-husked mature bags (15kg) and sweet water tender coconuts',
     count: 2,
     iconBg: '#edf7e1',
-    image: 'https://images.unsplash.com/photo-1544378730-8b5104b18790?auto=format&fit=crop&w=300&q=80',
+    image: 'https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&w=300&q=80',
     filterKey: 'mature_coconut'
   },
   {
-    id: 'ball-copra',
-    name: 'GI-Tagged Tiptur Ball Copra',
-    description: 'Whole spherical dry copra with gold sweetness & pure kernel',
+    id: 'copra',
+    name: 'GI-Certified Tiptur Ball Copra',
+    description: '15kg, 25kg, and 30kg master boxes naturally attic-cured without sulphur',
     count: 1,
     iconBg: '#edf7e1',
-    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=300&q=80',
+    image: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?auto=format&fit=crop&w=300&q=80',
     filterKey: 'copra'
   },
   {
-    id: 'milling-copra',
-    name: 'Industrial Milling Copra',
-    description: 'High oil yield cut copra for expeller mills & solvent plants',
-    count: 1,
-    iconBg: '#edf7e1',
-    image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=300&q=80',
-    filterKey: 'copra'
-  },
-  {
-    id: 'spices',
-    name: 'Malnad & Byadgi Spices',
-    description: 'GI stemless wrinkle chillies & garbled extra-bold black pepper',
+    id: 'oils-ghee',
+    name: 'Wood-Pressed Oils & Pure Ghee',
+    description: 'Traditional Marachekku groundnut oil & farm-fresh cultured bilona cow ghee',
     count: 2,
-    iconBg: '#edf7e1',
-    image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=300&q=80',
-    filterKey: 'spices'
-  },
-  {
-    id: 'oils',
-    name: 'Cold-Pressed Raw Oils',
-    description: 'Extra virgin coconut oil wood-churned below 45°C',
-    count: 1,
     iconBg: '#edf7e1',
     image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=300&q=80',
     filterKey: 'oil_and_extracts'
   },
   {
-    id: 'coir',
-    name: 'Horticultural Coir Pith',
-    description: 'Low-EC washed 5kg compressed blocks for hydroponics & soil',
-    count: 1,
+    id: 'millets-ginger',
+    name: 'Karnataka Ragi & Fresh Ginger',
+    description: 'Whole brown finger millet in 5/10/25kg bags & 50kg farm-fresh ginger',
+    count: 2,
     iconBg: '#edf7e1',
-    image: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=300&q=80',
-    filterKey: 'coir_commodities'
+    image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=300&q=80',
+    filterKey: 'spices'
   },
   {
-    id: 'areca',
-    name: 'Tumakuru Areca Nut',
-    description: 'Whole red Rashi Supari naturally sun-cured from local gardens',
-    count: 1,
+    id: 'nursery',
+    name: 'Coconut & Arecanut Plants',
+    description: '1-Year 2ft coconut plants & 1-1.5ft arecanut saplings from certified nurseries',
+    count: 2,
     iconBg: '#edf7e1',
-    image: 'https://images.unsplash.com/photo-1544378730-8b5104b18790?auto=format&fit=crop&w=300&q=80',
+    image: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=300&q=80',
     filterKey: 'value_added'
   },
   {
+    id: 'shells',
+    name: 'Raw Coconut Shells (Bulk)',
+    description: 'High-calorific dry broken shells for industrial activated carbon & charcoal',
+    count: 1,
+    iconBg: '#edf7e1',
+    image: 'https://images.unsplash.com/photo-1582281298055-e25b84a30b0b?auto=format&fit=crop&w=300&q=80',
+    filterKey: 'coir_commodities'
+  },
+  {
     id: 'bulk',
-    name: 'Wholesale Container Freight',
-    description: 'Multi-tonne container lots for institutional & export buyers',
-    count: 9,
+    name: 'Direct Farm-Gate Bulk Lots',
+    description: 'Wholesale truckload freight and institutional supply from Mandya',
+    count: 10,
     iconBg: '#edf7e1',
     image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=300&q=80',
     filterKey: 'all'

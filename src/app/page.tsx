@@ -95,12 +95,13 @@ export default function HomePage() {
             {/* Category Filter Tabs (Katyayani Tab Pills) */}
             <div className="flex flex-wrap gap-1.5 bg-stone-200/80 p-1.5 rounded-2xl w-fit">
               {[
-                { id: 'all', label: 'All Commodities' },
-                { id: 'mature_coconut', label: 'Coconuts' },
-                { id: 'copra', label: 'Copra' },
-                { id: 'spices', label: 'Spices' },
-                { id: 'oil_and_extracts', label: 'Cold-Pressed Oils' },
-                { id: 'coir_commodities', label: 'Coir Pith' }
+                { id: 'all', label: 'All Commodities (10)' },
+                { id: 'mature_coconut', label: 'Fresh Coconuts' },
+                { id: 'copra', label: 'GI Ball Copra' },
+                { id: 'oil_and_extracts', label: 'Wood-Pressed Oils & Ghee' },
+                { id: 'spices', label: 'Ragi & Ginger' },
+                { id: 'value_added', label: 'Nursery Plants' },
+                { id: 'coir_commodities', label: 'Coconut Shells' }
               ].map((tab) => (
                 <button
                   key={tab.id}

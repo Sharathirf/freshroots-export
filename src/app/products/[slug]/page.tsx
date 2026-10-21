@@ -61,7 +61,14 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
         const listData = await listRes.json();
 
         if (prodData.success) {
-          setProduct(prodData.product);
+          const p = prodData.product;
+          setProduct(p);
+          if (p.bulk_min_quantity && p.bulk_min_quantity > 1) {
+            setRetailQty(p.bulk_min_quantity);
+          }
+          if (p.sku.includes('BLK')) {
+            setPurchasingMode('bulk');
+          }
         } else {
           setError(prodData.error || 'Product not found');
         }
@@ -129,15 +136,36 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
   // Clean unit breakdown note
   let unitSubtitle = product.unit_of_measure;
   let perUnitNote = '';
-  if (product.sku.includes('GRA') || product.sku.includes('GRB')) {
-    perUnitNote = `₹${(price / 50).toFixed(0)} / nut`;
-    unitSubtitle = `Bag of 50 Nuts (~${product.estimated_weight_kg} kg)`;
-  } else if (product.sku.includes('TIP-25K')) {
-    perUnitNote = `₹${(price / 25).toFixed(0)} / kg`;
-    unitSubtitle = `25 kg Corrugated Master Box`;
-  } else if (product.sku.includes('50K')) {
-    perUnitNote = `₹${(price / 50).toFixed(0)} / kg`;
-    unitSubtitle = `50 kg Breathable Gunny Sack`;
+  if (product.sku.includes('COC-SEMI')) {
+    perUnitNote = '₹90 / kg';
+    unitSubtitle = '25-Piece Bag (~15 kg)';
+  } else if (product.sku.includes('COP-BAL')) {
+    perUnitNote = '₹350 / kg';
+    unitSubtitle = '15 kg Master Box (also 25kg, 30kg)';
+  } else if (product.sku.includes('NUR-COC')) {
+    perUnitNote = '₹250 / plant';
+    unitSubtitle = '1 Year Old • 2 Feet • Min 50 Units';
+  } else if (product.sku.includes('OIL-GND')) {
+    perUnitNote = '₹600 / Litre';
+    unitSubtitle = '1 Litre Food-Grade Bottle';
+  } else if (product.sku.includes('MIL-RAG')) {
+    perUnitNote = '₹120 / kg';
+    unitSubtitle = '5 kg Machine-Cleaned Pack (also 10kg, 25kg)';
+  } else if (product.sku.includes('DAI-GHE')) {
+    perUnitNote = '₹900 / Litre';
+    unitSubtitle = '1 Litre Glass Jar';
+  } else if (product.sku.includes('COC-TND')) {
+    perUnitNote = '₹80 / piece';
+    unitSubtitle = 'Bulk Consignments Only';
+  } else if (product.sku.includes('SPI-GIN')) {
+    perUnitNote = '₹10,000 / 50 kg';
+    unitSubtitle = '50 kg Bag • Bulk Orders Only';
+  } else if (product.sku.includes('COI-SHL')) {
+    perUnitNote = '₹35,000 / Ton';
+    unitSubtitle = 'Metric Tonne • Industrial Grade';
+  } else if (product.sku.includes('NUR-ARE')) {
+    perUnitNote = '₹60 / plant';
+    unitSubtitle = '1 - 1.5 Feet • Min 200 Units';
   } else if (product.estimated_weight_kg) {
     perUnitNote = `₹${(price / Number(product.estimated_weight_kg)).toFixed(0)} / kg`;
   }
@@ -287,22 +315,35 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                 <div>
                   <label className="block text-xs font-bold text-stone-700 mb-2">
                     Select Quantity ({product.unit_of_measure}):
+                    {product.bulk_min_quantity && product.bulk_min_quantity > 1 && (
+                      <span className="ml-2 text-amber-700 font-normal">
+                        (Minimum order: {product.bulk_min_quantity} units)
+                      </span>
+                    )}
                   </label>
                   <div className="flex items-center gap-3">
                     <div className="flex items-center border border-stone-300 rounded-xl overflow-hidden bg-stone-50">
                       <button
                         type="button"
-                        onClick={() => setRetailQty(Math.max(1, retailQty - 1))}
+                        onClick={() => {
+                          const min = product.bulk_min_quantity || 1;
+                          const step = min > 1 ? min : 1;
+                          setRetailQty(Math.max(min, retailQty - step));
+                        }}
                         className="px-3 py-2 text-stone-700 hover:bg-stone-200 font-bold transition"
                       >
                         -
                       </button>
-                      <span className="px-4 py-2 font-mono font-bold text-sm bg-white min-w-[40px] text-center">
+                      <span className="px-4 py-2 font-mono font-bold text-sm bg-white min-w-[50px] text-center">
                         {retailQty}
                       </span>
                       <button
                         type="button"
-                        onClick={() => setRetailQty(retailQty + 1)}
+                        onClick={() => {
+                          const min = product.bulk_min_quantity || 1;
+                          const step = min > 1 ? min : 1;
+                          setRetailQty(retailQty + step);
+                        }}
                         className="px-3 py-2 text-stone-700 hover:bg-stone-200 font-bold transition"
                       >
                         +
@@ -311,7 +352,10 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
 
                     {/* Quick Presets */}
                     <div className="flex gap-1.5 text-xs">
-                      {[1, 2, 5].map((preset) => (
+                      {((product.bulk_min_quantity && product.bulk_min_quantity > 1)
+                        ? [product.bulk_min_quantity, product.bulk_min_quantity * 2, product.bulk_min_quantity * 5]
+                        : [1, 2, 5]
+                      ).map((preset) => (
                         <button
                           key={preset}
                           type="button"
@@ -322,7 +366,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                               : 'border-stone-200 hover:bg-stone-50 text-stone-600'
                           }`}
                         >
-                          {preset} {preset === 1 ? 'Pack' : 'Packs'}
+                          {preset} Units
                         </button>
                       ))}
                     </div>

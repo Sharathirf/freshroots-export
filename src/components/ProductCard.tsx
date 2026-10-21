@@ -17,37 +17,50 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
   const { isInWishlist, toggleWishlist } = useWishlist();
   const isWishlisted = isInWishlist(product.id);
   const price = Number(product.retail_price_inr);
+  const isBulkOnly = product.sku.includes('BLK');
+  const minQty = product.bulk_min_quantity || 1;
 
-  // Compute MRP and discount percentage for authentic e-commerce presentation
-  const discountPercent = product.sku.includes('TIP-25K')
-    ? 20
-    : product.sku.includes('BYD')
-    ? 24
-    : product.sku.includes('PEP')
-    ? 22
-    : product.sku.includes('VCO')
-    ? 18
-    : 15;
+  // Compute MRP and discount percentage for authentic presentation
+  const discountPercent = 15;
   const originalMrp = Math.round(price / (1 - discountPercent / 100));
 
   // Clean unit breakdown note
   let unitSubtitle = product.unit_of_measure;
   let perUnitNote = '';
-  if (product.sku.includes('GRA') || product.sku.includes('GRB')) {
-    perUnitNote = `₹${(price / 50).toFixed(0)}/nut`;
-    unitSubtitle = `Bag of 50 • ~${product.estimated_weight_kg}kg`;
-  } else if (product.sku.includes('TIP-25K')) {
-    perUnitNote = `₹${(price / 25).toFixed(0)}/kg`;
-    unitSubtitle = `25kg Box • Moisture ≤ 5.5%`;
-  } else if (product.sku.includes('50K')) {
-    perUnitNote = `₹${(price / 50).toFixed(0)}/kg`;
-    unitSubtitle = `50kg Bag • Moisture ≤ 5.5% • Oil ≥ 68%`;
-  } else if (product.estimated_weight_kg) {
-    perUnitNote = `₹${(price / Number(product.estimated_weight_kg)).toFixed(0)}/kg`;
+  if (product.sku.includes('COC-SEMI')) {
+    perUnitNote = '₹90 / kg';
+    unitSubtitle = '25-Piece Bag (~15 kg)';
+  } else if (product.sku.includes('COP-BAL')) {
+    perUnitNote = '₹350 / kg';
+    unitSubtitle = '15 kg Box (also 25kg, 30kg)';
+  } else if (product.sku.includes('NUR-COC')) {
+    perUnitNote = '₹250 / plant • Min 50';
+    unitSubtitle = '1 Year Old • 2 Feet';
+  } else if (product.sku.includes('OIL-GND')) {
+    perUnitNote = '₹600 / Litre';
+    unitSubtitle = '1L Bottle • Wood-Pressed';
+  } else if (product.sku.includes('MIL-RAG')) {
+    perUnitNote = '₹120 / kg';
+    unitSubtitle = '5 kg Pack (also 10kg, 25kg)';
+  } else if (product.sku.includes('DAI-GHE')) {
+    perUnitNote = '₹900 / Litre';
+    unitSubtitle = '1L Glass Jar • Pure Bilona';
+  } else if (product.sku.includes('COC-TND')) {
+    perUnitNote = '₹80 / piece';
+    unitSubtitle = 'Bulk Orders Only';
+  } else if (product.sku.includes('SPI-GIN')) {
+    perUnitNote = '₹10,000 / 50 kg';
+    unitSubtitle = '50 kg Bag • Bulk Only';
+  } else if (product.sku.includes('COI-SHL')) {
+    perUnitNote = '₹35,000 / Ton';
+    unitSubtitle = 'Metric Tonne • Industrial Bulk';
+  } else if (product.sku.includes('NUR-ARE')) {
+    perUnitNote = '₹60 / plant • Min 200';
+    unitSubtitle = '1 - 1.5 Feet Height';
   }
 
   // Review metrics
-  const reviewCount = product.sku.includes('GRA') ? 312 : product.sku.includes('TIP') ? 248 : product.sku.includes('BYD') ? 186 : 142;
+  const reviewCount = 142 + (product.sku.charCodeAt(0) * 2) % 180;
 
   return (
     <div className="bg-white rounded-2xl border border-stone-200/90 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
@@ -126,43 +139,73 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
             <span className="text-[11px] text-stone-400">({reviewCount})</span>
           </div>
 
-          {/* Pricing Row (Katyayani pcard__pricing standard) */}
-          <div className="mt-3 pt-3 border-t border-stone-100 flex items-baseline flex-wrap gap-2">
-            <span className="text-lg sm:text-xl font-extrabold text-stone-900 font-mono">
-              ₹{price.toLocaleString('en-IN')}
-            </span>
-            <span className="text-xs text-stone-400 line-through font-mono">
-              ₹{originalMrp.toLocaleString('en-IN')}
-            </span>
-            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
-              {discountPercent}% off
-            </span>
-            {perUnitNote && (
-              <span className="w-full text-[11px] text-stone-500 font-medium -mt-1">
-                ({perUnitNote})
+          {/* Pricing Row */}
+          {isBulkOnly ? (
+            <div className="mt-3 pt-3 border-t border-stone-100 flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-md">
+                  Bulk Orders Only
+                </span>
+                {perUnitNote && (
+                  <span className="text-xs font-bold text-stone-700">
+                    ({perUnitNote})
+                  </span>
+                )}
+              </div>
+              <span className="text-[11px] text-stone-500">
+                Direct farm-gate wholesale consignments
               </span>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="mt-3 pt-3 border-t border-stone-100 flex items-baseline flex-wrap gap-2">
+              <span className="text-lg sm:text-xl font-extrabold text-stone-900 font-mono">
+                ₹{price.toLocaleString('en-IN')}
+              </span>
+              <span className="text-xs text-stone-400 line-through font-mono">
+                ₹{originalMrp.toLocaleString('en-IN')}
+              </span>
+              <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                {discountPercent}% off
+              </span>
+              {perUnitNote && (
+                <span className="w-full text-[11px] text-stone-500 font-medium -mt-1">
+                  ({perUnitNote})
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Action Buttons (Katyayani pcard__atc + Wholesale Quote) */}
       <div className="p-4 sm:p-5 pt-0 space-y-2">
-        <button
-          onClick={() => addToCart(product, 1)}
-          className="w-full bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-[0.98] text-white font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 group/btn"
-        >
-          <ShoppingBag className="w-4 h-4" />
-          <span>Add to Cart</span>
-        </button>
+        {isBulkOnly ? (
+          <button
+            onClick={() => onSelectForRFQ(product)}
+            className="w-full bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-[0.98] text-white font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 group/btn"
+          >
+            <Building2 className="w-4 h-4 text-lime-300" />
+            <span>Request Bulk Quote</span>
+          </button>
+        ) : (
+          <>
+            <button
+              onClick={() => addToCart(product, minQty)}
+              className="w-full bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-[0.98] text-white font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 group/btn"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              <span>Add {minQty > 1 ? `${minQty} Units` : 'to Cart'}</span>
+            </button>
 
-        <button
-          onClick={() => onSelectForRFQ(product)}
-          className="w-full bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-semibold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5"
-        >
-          <Building2 className="w-3.5 h-3.5 text-amber-700" />
-          <span>Wholesale / Bulk Quote</span>
-        </button>
+            <button
+              onClick={() => onSelectForRFQ(product)}
+              className="w-full bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-semibold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5"
+            >
+              <Building2 className="w-3.5 h-3.5 text-amber-700" />
+              <span>Wholesale / Bulk Quote</span>
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

@@ -20,45 +20,73 @@ interface VolumeOption {
 function getVolumeOptions(product?: Product): VolumeOption[] {
   if (!product) {
     return [
-      { value: '500', label: '500 Nuts (10 Bags)', unitLabel: 'Nuts' },
-      { value: '1000', label: '1,000 Nuts (20 Bags)', unitLabel: 'Nuts' },
-      { value: '2500', label: '2,500 Nuts (50 Bags)', unitLabel: 'Nuts' },
-      { value: '5000', label: '5,000 Nuts (Canter Load)', unitLabel: 'Nuts' },
-      { value: '20000', label: '20,000 Nuts (10 MT Truckload)', unitLabel: 'Nuts' }
+      { value: '500', label: '500 Units', unitLabel: 'Units' },
+      { value: '1000', label: '1,000 Units', unitLabel: 'Units' },
+      { value: '5000', label: '5,000 Units', unitLabel: 'Units' }
     ];
   }
 
-  // 1. Mature Coconuts (Grade A & Grade B)
+  // 1. Coconuts (Mature / Semi-Husked / Tender)
   if (product.category === 'mature_coconut') {
     return [
-      { value: '500', label: '500 Nuts (10 Bags)', unitLabel: 'Nuts' },
-      { value: '1000', label: '1,000 Nuts (20 Bags)', unitLabel: 'Nuts' },
-      { value: '2500', label: '2,500 Nuts (50 Bags)', unitLabel: 'Nuts' },
+      { value: '500', label: '500 Nuts (20 Bags of 25)', unitLabel: 'Nuts' },
+      { value: '1000', label: '1,000 Nuts (40 Bags of 25)', unitLabel: 'Nuts' },
+      { value: '2500', label: '2,500 Nuts (100 Bags)', unitLabel: 'Nuts' },
       { value: '5000', label: '5,000 Nuts (Canter Load)', unitLabel: 'Nuts' },
       { value: '20000', label: '20,000 Nuts (10 MT Truckload)', unitLabel: 'Nuts' }
     ];
   }
 
-  // 2. GI Ball Copra (Sold in 25 kg boxes)
-  if (product.sku.includes('TIP-25K')) {
+  // 2. GI Ball Copra
+  if (product.category === 'copra') {
     return [
-      { value: '100', label: '100 kg (4 Boxes / 1 Quintal)', unitLabel: 'kg' },
-      { value: '250', label: '250 kg (10 Boxes)', unitLabel: 'kg' },
-      { value: '500', label: '500 kg (20 Boxes / 5 Quintals)', unitLabel: 'kg' },
-      { value: '1000', label: '1,000 kg (40 Boxes / 1 MT)', unitLabel: 'kg' },
-      { value: '3000', label: '3,000 kg (120 Boxes / Canter Load)', unitLabel: 'kg' },
-      { value: '5000', label: '5,000 kg (200 Boxes / 5 MT)', unitLabel: 'kg' }
+      { value: '150', label: '150 kg (10 Boxes of 15kg)', unitLabel: 'kg' },
+      { value: '300', label: '300 kg (20 Boxes of 15kg)', unitLabel: 'kg' },
+      { value: '500', label: '500 kg (5 Quintals)', unitLabel: 'kg' },
+      { value: '1000', label: '1,000 kg (1 MT)', unitLabel: 'kg' },
+      { value: '5000', label: '5,000 kg (5 MT Truckload)', unitLabel: 'kg' }
     ];
   }
 
-  // 3. Milling Copra (Sold in 50 kg gunny sacks)
-  if (product.sku.includes('50K') || product.category === 'copra') {
+  // 3. Nursery Plants (Coconut & Arecanut)
+  if (product.sku.includes('NUR')) {
     return [
-      { value: '500', label: '500 kg (10 Bags / 5 Quintals)', unitLabel: 'kg' },
-      { value: '1000', label: '1,000 kg (20 Bags / 10 Quintals)', unitLabel: 'kg' },
-      { value: '2500', label: '2,500 kg (50 Bags / 25 Quintals)', unitLabel: 'kg' },
-      { value: '5000', label: '5,000 kg (100 Bags / 5 MT)', unitLabel: 'kg' },
-      { value: '10000', label: '10,000 kg (200 Bags / 10 MT Truckload)', unitLabel: 'kg' }
+      { value: '50', label: '50 Plants', unitLabel: 'Plants' },
+      { value: '100', label: '100 Plants', unitLabel: 'Plants' },
+      { value: '200', label: '200 Plants', unitLabel: 'Plants' },
+      { value: '500', label: '500 Plants', unitLabel: 'Plants' },
+      { value: '1000', label: '1,000 Plants (Orchard Load)', unitLabel: 'Plants' }
+    ];
+  }
+
+  // 4. Oils & Ghee
+  if (product.category === 'oil_and_extracts') {
+    return [
+      { value: '25', label: '25 Litres', unitLabel: 'Litres' },
+      { value: '50', label: '50 Litres', unitLabel: 'Litres' },
+      { value: '100', label: '100 Litres (Commercial Canister)', unitLabel: 'Litres' },
+      { value: '500', label: '500 Litres (Barrel Consignment)', unitLabel: 'Litres' }
+    ];
+  }
+
+  // 5. Coconut Shells
+  if (product.sku.includes('SHL')) {
+    return [
+      { value: '1', label: '1 Metric Tonne (1,000 kg)', unitLabel: 'Tonne' },
+      { value: '5', label: '5 Metric Tonnes', unitLabel: 'Tonnes' },
+      { value: '10', label: '10 Metric Tonnes (Full Lorry)', unitLabel: 'Tonnes' },
+      { value: '25', label: '25 Metric Tonnes (Export Container)', unitLabel: 'Tonnes' }
+    ];
+  }
+
+  // 6. Ragi & Ginger
+  if (product.category === 'spices') {
+    return [
+      { value: '100', label: '100 kg (2 Gunny Bags)', unitLabel: 'kg' },
+      { value: '250', label: '250 kg (5 Gunny Bags)', unitLabel: 'kg' },
+      { value: '500', label: '500 kg (10 Gunny Bags)', unitLabel: 'kg' },
+      { value: '1000', label: '1,000 kg (1 MT)', unitLabel: 'kg' },
+      { value: '5000', label: '5,000 kg (5 MT)', unitLabel: 'kg' }
     ];
   }
 

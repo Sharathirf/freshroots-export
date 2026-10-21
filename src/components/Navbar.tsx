@@ -98,12 +98,12 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="inline-block w-2 h-2 rounded-full bg-lime-400 animate-pulse"></span>
-            <span className="font-bold text-lime-300 uppercase tracking-wider">Tiptur APMC Benchmark:</span>
-            <span className="hidden sm:inline">Grade A Dehusked: ₹22.00/nut</span>
+            <span className="font-bold text-lime-300 uppercase tracking-wider">Karnataka Mandi Benchmarks:</span>
+            <span className="hidden sm:inline">Semi-Husked Coconuts: ₹90.00/kg</span>
             <span className="hidden sm:inline">•</span>
-            <span className="hidden sm:inline">GI Ball Copra: ₹165.00/kg</span>
+            <span className="hidden sm:inline">GI Ball Copra: ₹350.00/kg</span>
             <span className="hidden sm:inline">•</span>
-            <span className="hidden md:inline">Milling Copra: ₹125.00/kg</span>
+            <span className="hidden md:inline">Tender Coconut (Bulk): ₹80.00/pc</span>
           </div>
           <div className="flex items-center gap-3 sm:gap-4 text-emerald-100 font-medium">
             <Link
@@ -344,7 +344,7 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between text-xs font-semibold text-stone-700 py-2.5 overflow-x-auto gap-6 scrollbar-none">
           <div className="flex items-center gap-6">
             <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
-              All Commodities
+              All Commodities (10)
             </Link>
             <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
               Fresh Coconuts
@@ -353,16 +353,16 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
               GI Ball Copra
             </Link>
             <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
-              Industrial Milling Copra
+              Wood-Pressed Oils & Ghee
             </Link>
             <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
-              Byadgi & Malnad Spices
+              Ragi Millet & Ginger
             </Link>
             <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
-              Cold-Pressed Oils
+              Nursery Plants (Coconut & Areca)
             </Link>
             <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
-              Horticultural Coir Pith
+              Raw Coconut Shells
             </Link>
           </div>
           <div className="flex items-center gap-4 text-[#3b6d11] font-bold shrink-0">
