@@ -3,11 +3,31 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
-import { ShoppingBag, MapPin, Phone, Sprout, Building2, Globe, Check, Search, X, ChevronRight } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { useWishlist } from '@/context/WishlistContext';
+import {
+  ShoppingBag,
+  MapPin,
+  Phone,
+  Sprout,
+  Building2,
+  Globe,
+  Check,
+  Search,
+  X,
+  ChevronRight,
+  Heart,
+  User,
+  Truck,
+  Package,
+  LogOut
+} from 'lucide-react';
 import { Product } from '@/types';
 
 export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
   const { itemCount, subtotal, setIsCartOpen, pincode, setPincode, pincodeServiceable, setPincodeServiceable } = useCart();
+  const { customer, isLoggedIn, setIsSignInModalOpen, signOut } = useAuth();
+  const { wishlistCount, setIsWatchlistOpen } = useWishlist();
   const [pinInput, setPinInput] = useState(pincode);
   const [isPinModalOpen, setIsPinModalOpen] = useState(false);
   const [pinLoading, setPinLoading] = useState(false);
@@ -116,11 +136,20 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
             <span className="hidden sm:inline">•</span>
             <span className="hidden md:inline">Milling Copra: ₹125.00/kg</span>
           </div>
-          <div className="flex items-center gap-4 text-emerald-100 font-medium">
-            <span className="flex items-center gap-1.5">
+          <div className="flex items-center gap-3 sm:gap-4 text-emerald-100 font-medium">
+            <Link
+              href="/track-order"
+              className="hover:text-white flex items-center gap-1.5 transition text-lime-200 hover:text-white font-semibold"
+            >
+              <Truck className="w-3.5 h-3.5 text-lime-300" />
+              <span>Track Order</span>
+            </Link>
+            <span className="hidden sm:inline text-emerald-300/60">•</span>
+            <span className="hidden sm:flex items-center gap-1.5">
               <Globe className="w-3.5 h-3.5 text-lime-300" />
-              Pan-India Delivery & Worldwide Container Freight
+              Pan-India & Global Freight
             </span>
+            <span className="hidden md:inline text-emerald-300/60">•</span>
             <a
               href="https://wa.me/919591142548"
               target="_blank"
@@ -237,31 +266,106 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
         </div>
 
         {/* Actions Strip */}
-        <div className="flex items-center gap-2.5 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Wholesale RFQ Button */}
           <button
             onClick={onOpenRFQ}
-            className="flex items-center gap-1.5 text-xs sm:text-sm font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-3.5 py-2.5 rounded-xl transition shadow-sm"
+            className="flex items-center gap-1.5 text-xs sm:text-sm font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-3 py-2 rounded-xl transition shadow-sm"
           >
             <Building2 className="w-4 h-4 text-amber-700" />
-            <span>Wholesale RFQ</span>
-            <span className="bg-amber-200 text-amber-900 text-[10px] px-1.5 py-0.5 rounded font-extrabold uppercase hidden sm:inline">
-              Bulk Lots
+            <span className="hidden sm:inline">Wholesale RFQ</span>
+            <span className="bg-amber-200 text-amber-900 text-[10px] px-1.5 py-0.5 rounded font-extrabold uppercase sm:hidden">
+              RFQ
+            </span>
+            <span className="bg-amber-200 text-amber-900 text-[10px] px-1.5 py-0.5 rounded font-extrabold uppercase hidden lg:inline">
+              Bulk
             </span>
           </button>
+
+          {/* Watchlist Trigger */}
+          <button
+            type="button"
+            onClick={() => setIsWatchlistOpen(true)}
+            className="relative p-2.5 text-stone-700 hover:text-red-600 hover:bg-red-50 rounded-xl transition group"
+            title="My Watchlist"
+            aria-label="View Watchlist"
+          >
+            <Heart className="w-5 h-5 group-hover:scale-110 transition" />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white shadow">
+                {wishlistCount}
+              </span>
+            )}
+          </button>
+
+          {/* Customer Sign In / Account Dropdown */}
+          {!isLoggedIn ? (
+            <button
+              type="button"
+              onClick={() => setIsSignInModalOpen(true)}
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-stone-700 hover:text-[#3b6d11] px-2.5 py-2 rounded-xl hover:bg-stone-100 transition"
+              title="Customer Sign In"
+            >
+              <User className="w-4 h-4 text-stone-600" />
+              <span className="hidden md:inline">Sign In</span>
+            </button>
+          ) : (
+            <div className="relative group">
+              <button
+                type="button"
+                className="flex items-center gap-1.5 text-xs font-bold text-[#1c3809] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-2 rounded-xl transition"
+              >
+                <div className="w-4 h-4 rounded-full bg-[#3b6d11] text-white flex items-center justify-center text-[9px] font-black">
+                  ✓
+                </div>
+                <span className="hidden md:inline">+91 {customer?.phone.slice(-4)}</span>
+              </button>
+              {/* Dropdown Menu */}
+              <div className="absolute right-0 top-full mt-1.5 w-52 bg-white rounded-2xl shadow-xl border border-stone-200 py-1.5 hidden group-hover:block z-50 animate-in fade-in">
+                <div className="px-3.5 py-2 border-b border-stone-100">
+                  <div className="text-[10px] uppercase font-bold text-stone-400">Signed In As</div>
+                  <div className="text-xs font-mono font-bold text-stone-800">+91 {customer?.phone}</div>
+                </div>
+                <Link
+                  href={`/track-order?query=${customer?.phone}`}
+                  className="flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition"
+                >
+                  <Package className="w-4 h-4 text-stone-500" />
+                  <span>My Orders</span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setIsWatchlistOpen(true)}
+                  className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition text-left"
+                >
+                  <Heart className="w-4 h-4 text-stone-500" />
+                  <span>My Watchlist ({wishlistCount})</span>
+                </button>
+                <div className="border-t border-stone-100 my-1"></div>
+                <button
+                  type="button"
+                  onClick={signOut}
+                  className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition text-left"
+                >
+                  <LogOut className="w-4 h-4 text-red-500" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Admin Link */}
           <Link
             href="/admin"
-            className="hidden lg:inline-flex text-xs font-semibold text-stone-600 hover:text-[#3b6d11] bg-stone-100 hover:bg-stone-200 border border-stone-200 px-3 py-2.5 rounded-xl transition"
+            className="hidden xl:inline-flex text-xs font-semibold text-stone-600 hover:text-[#3b6d11] bg-stone-100 hover:bg-stone-200 border border-stone-200 px-2.5 py-2 rounded-xl transition"
           >
-            Operations / Admin
+            Admin
           </Link>
 
           {/* Cart Trigger Button */}
           <button
             onClick={() => setIsCartOpen(true)}
-            className="relative flex items-center gap-2 bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-95 text-white px-3.5 sm:px-4 py-2.5 rounded-xl font-bold shadow-sm transition group"
+            className="relative flex items-center gap-2 bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-95 text-white px-3 sm:px-4 py-2.5 rounded-xl font-bold shadow-sm transition group"
           >
             <ShoppingBag className="w-5 h-5 group-hover:scale-105 transition" />
             <div className="text-left hidden sm:block">

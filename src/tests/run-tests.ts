@@ -302,6 +302,95 @@ it('Delivery eligibility covers all valid 6-digit Indian PIN codes nationwide', 
 });
 
 // ----------------------------------------------------
+// Test Suite 6: Customer Order Tracking, Watchlist & Operations
+// ----------------------------------------------------
+console.log('📱 Test Suite 6: Order Tracking, Customer Account & Watchlist');
+
+it('Order tracking search pattern correctly classifies Order Number, Tracking Reference, and Phone', () => {
+  const parseTrackingQuery = (q: string) => {
+    const cleanDigits = q.replace(/\D/g, '');
+    const isOrderOrRef = q.toUpperCase().startsWith('AGR') || 
+                         q.toUpperCase().startsWith('VRL') || 
+                         q.toUpperCase().startsWith('SR');
+    return {
+      isOrderOrRef,
+      hasPhoneDigits: cleanDigits.length >= 10,
+      phoneSlice: cleanDigits.slice(-10)
+    };
+  };
+
+  const res1 = parseTrackingQuery('AGR-20261021-2117');
+  assert.strictEqual(res1.isOrderOrRef, true);
+
+  const res2 = parseTrackingQuery('VRL-BLR-181729');
+  assert.strictEqual(res2.isOrderOrRef, true);
+
+  const res3 = parseTrackingQuery('+91 95911 42548');
+  assert.strictEqual(res3.isOrderOrRef, false);
+  assert.strictEqual(res3.hasPhoneDigits, true);
+  assert.strictEqual(res3.phoneSlice, '9591142548');
+});
+
+it('Customer Sign-In requires valid 10-digit Indian phone number', () => {
+  const validatePhoneLogin = (phone: string) => {
+    const digits = phone.replace(/\D/g, '');
+    const clean = digits.length >= 10 ? digits.slice(-10) : digits;
+    if (clean.length === 10 && /^[6-9]\d{9}$/.test(clean)) {
+      return { valid: true, clean };
+    }
+    return { valid: false, error: 'Enter a valid 10-digit Indian mobile number' };
+  };
+
+  assert.strictEqual(validatePhoneLogin('9591142548').valid, true);
+  assert.strictEqual(validatePhoneLogin('+91 95911 42548').valid, true);
+  assert.strictEqual(validatePhoneLogin('12345').valid, false);
+  assert.strictEqual(validatePhoneLogin('1234567890').valid, false); // invalid starting digit
+});
+
+it('Watchlist correctly toggles products and maintains uniqueness', () => {
+  let watchlist: Array<{ id: string; title: string }> = [];
+
+  const toggle = (item: { id: string; title: string }) => {
+    if (watchlist.some((p) => p.id === item.id)) {
+      watchlist = watchlist.filter((p) => p.id !== item.id);
+    } else {
+      watchlist = [item, ...watchlist];
+    }
+  };
+
+  const itemA = { id: 'prod-copra', title: 'GI Ball Copra' };
+  const itemB = { id: 'prod-nut', title: 'Grade A Coconuts' };
+
+  toggle(itemA);
+  assert.strictEqual(watchlist.length, 1);
+  assert.strictEqual(watchlist[0].id, 'prod-copra');
+
+  toggle(itemB);
+  assert.strictEqual(watchlist.length, 2);
+
+  // Toggling existing item removes it
+  toggle(itemA);
+  assert.strictEqual(watchlist.length, 1);
+  assert.strictEqual(watchlist[0].id, 'prod-nut');
+});
+
+it('Admin pricing update rejects negative prices or negative stock quantities', () => {
+  const validateProductUpdate = (data: { retail_price_inr?: number; available_stock?: number }) => {
+    if (data.retail_price_inr !== undefined && data.retail_price_inr <= 0) {
+      return { valid: false, error: 'Price must be greater than zero' };
+    }
+    if (data.available_stock !== undefined && data.available_stock < 0) {
+      return { valid: false, error: 'Stock cannot be negative' };
+    }
+    return { valid: true };
+  };
+
+  assert.strictEqual(validateProductUpdate({ retail_price_inr: 1650, available_stock: 50 }).valid, true);
+  assert.strictEqual(validateProductUpdate({ retail_price_inr: -100 }).valid, false);
+  assert.strictEqual(validateProductUpdate({ available_stock: -5 }).valid, false);
+});
+
+// ----------------------------------------------------
 // Summary
 // ----------------------------------------------------
 console.log('\n========================================');

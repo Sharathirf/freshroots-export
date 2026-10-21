@@ -7,6 +7,7 @@ import CartDrawer from '@/components/CartDrawer';
 import ProductImageZoom from '@/components/ProductImageZoom';
 import BulkInquiryForm from '@/components/BulkInquiryForm';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import { Product } from '@/types';
 import {
   ShieldCheck,
@@ -21,7 +22,8 @@ import {
   FileText,
   Package,
   Award,
-  AlertCircle
+  AlertCircle,
+  Heart
 } from 'lucide-react';
 
 interface ProductPageProps {
@@ -31,6 +33,7 @@ interface ProductPageProps {
 export default function ProductDetailPage({ params }: ProductPageProps) {
   const { slug } = use(params);
   const { addToCart, setIsCartOpen } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
@@ -368,6 +371,20 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                   >
                     <Zap className="w-4 h-4" />
                     <span>Buy Now</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => toggleWishlist(product)}
+                    className={`py-3 px-4 rounded-xl border transition flex items-center justify-center gap-2 font-bold text-xs ${
+                      isInWishlist(product.id)
+                        ? 'bg-red-50 text-red-600 border-red-300'
+                        : 'bg-stone-50 text-stone-700 border-stone-200 hover:bg-stone-100 hover:text-stone-900'
+                    }`}
+                    title={isInWishlist(product.id) ? 'Remove from Watchlist' : 'Add to Watchlist'}
+                  >
+                    <Heart className={`w-4 h-4 ${isInWishlist(product.id) ? 'fill-current text-red-600' : ''}`} />
+                    <span>{isInWishlist(product.id) ? 'Saved' : 'Watchlist'}</span>
                   </button>
                 </div>
               </div>

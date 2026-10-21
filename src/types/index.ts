@@ -80,6 +80,9 @@ export interface Order {
   total_amount_inr: number;
   payment_method: string;
   payment_reference?: string;
+  tracking_reference?: string;
+  carrier?: string;
+  delivery_lead_days?: number;
   items: OrderItem[];
   created_at: string;
 }

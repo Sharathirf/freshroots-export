@@ -4,7 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
-import { ShoppingBag, Star, Building2 } from 'lucide-react';
+import { ShoppingBag, Star, Building2, Heart } from 'lucide-react';
+import { useWishlist } from '@/context/WishlistContext';
 
 interface ProductCardProps {
   product: Product;
@@ -13,6 +14,8 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, onSelectForRFQ }: ProductCardProps) {
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const isWishlisted = isInWishlist(product.id);
   const price = Number(product.retail_price_inr);
 
   // Compute MRP and discount percentage for authentic e-commerce presentation
@@ -68,6 +71,26 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
               </span>
             )}
           </div>
+
+          {/* Watchlist Heart Button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleWishlist(product);
+            }}
+            className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-stone-600 hover:text-red-500 flex items-center justify-center shadow-md transition group/heart"
+            title={isWishlisted ? 'Remove from Watchlist' : 'Add to Watchlist'}
+          >
+            <Heart
+              className={`w-4 h-4 transition ${
+                isWishlisted
+                  ? 'fill-red-500 text-red-500 scale-110'
+                  : 'text-stone-400 group-hover/heart:text-red-500'
+              }`}
+            />
+          </button>
 
           {/* Origin verification tag */}
           <div className="absolute bottom-2.5 right-2.5 bg-emerald-950/80 backdrop-blur-sm text-emerald-200 text-[10px] font-medium px-2 py-0.5 rounded shadow-sm">
