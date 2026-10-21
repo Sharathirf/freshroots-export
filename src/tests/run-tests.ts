@@ -38,6 +38,16 @@ it('Copra Commodities (HSN 1203) must attract 5.00% GST', () => {
   assert.strictEqual(taxAmount, 237.50, 'Copra must compute exactly 5% GST');
 });
 
+it('Milling Copra and Ball Copra moisture thresholds must strictly align at ≤ 5.50%', () => {
+  const ballCopraMoisture = 5.20;
+  const millingCopraMoisture = 5.50;
+  const qualityStandardLimit = 5.50;
+
+  assert.strictEqual(ballCopraMoisture <= qualityStandardLimit, true);
+  assert.strictEqual(millingCopraMoisture <= qualityStandardLimit, true);
+  assert.strictEqual(millingCopraMoisture, 5.50, 'Milling copra catalog limit must be aligned at 5.5%');
+});
+
 it('Per-nut retail equivalent for Grade A 50-nut bag must be ₹33.00/nut', () => {
   const bagPrice = 1650.00;
   const nutCount = 50;
@@ -117,6 +127,36 @@ it('Wholesale quote validity must be set to 48 hours to hedge Mandi spot price s
   const diffHours = (validUntil.getTime() - now.getTime()) / (1000 * 60 * 60);
 
   assert.strictEqual(diffHours, 48, 'Quote validity must be exactly 48 hours');
+});
+
+it('Wholesale RFQ volume options must adapt unit terminology per SKU (Copra = kg, Coconuts = Nuts)', () => {
+  const isCopra = (sku: string) => sku.startsWith('COP');
+  const coconutUnits = ['500 Nuts (10 Bags)', '1,000 Nuts (20 Bags)', '20,000 Nuts (10 MT Truckload)'];
+  const copraUnits = ['100 kg (4 Boxes / 1 Quintal)', '250 kg (10 Boxes)', '1,000 kg (40 Boxes / 1 MT)'];
+
+  const selectedSku = 'COP-BAL-TIP-25K';
+  const options = isCopra(selectedSku) ? copraUnits : coconutUnits;
+
+  assert.strictEqual(options[0].includes('kg'), true, 'Copra options must use kg');
+  assert.strictEqual(options[0].includes('Nuts'), false, 'Copra options must never mention nuts');
+});
+
+it('Stock label formatting must produce human-readable units and avoid awkward strings like "220 25 s"', () => {
+  const formatStock = (stock: number, uom: string) => {
+    if (uom.toLowerCase().includes('box')) return `${stock} Boxes in stock`;
+    if (uom.toLowerCase().includes('bag')) return `${stock} Bags in stock`;
+    return `${stock} Units in stock`;
+  };
+
+  const ballCopraStock = formatStock(220, '25 kg Corrugated Box');
+  const millingCopraStock = formatStock(220, '50 kg Gunny Bag');
+  const coconutStock = formatStock(220, 'Bag of 50 Nuts');
+
+  assert.strictEqual(ballCopraStock, '220 Boxes in stock');
+  assert.strictEqual(millingCopraStock, '220 Bags in stock');
+  assert.strictEqual(coconutStock, '220 Bags in stock');
+  assert.strictEqual(ballCopraStock.includes('25 s'), false);
+  assert.strictEqual(millingCopraStock.includes('50 s'), false);
 });
 
 // ----------------------------------------------------

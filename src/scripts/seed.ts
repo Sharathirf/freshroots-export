@@ -136,7 +136,7 @@ async function runSeed() {
       origin: 'Tiptur & Arsikere Mandis, Karnataka',
       unit_of_measure: '50 kg Gunny Bag',
       estimated_weight_kg: 50.0,
-      moisture_percentage: 5.8,
+      moisture_percentage: 5.5,
       oil_percentage: 68.2,
       retail_price_inr: 7250.00, // ₹145/kg
       bulk_min_quantity: 10, // 500 kg

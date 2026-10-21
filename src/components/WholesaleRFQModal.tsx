@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Product } from '@/types';
 import { X, Building2, ShieldCheck, Clock, CheckCircle2, Phone, ArrowRight } from 'lucide-react';
 
@@ -9,6 +9,64 @@ interface WholesaleRFQModalProps {
   onClose: () => void;
   products: Product[];
   selectedProduct?: Product | null;
+}
+
+interface VolumeOption {
+  value: string;
+  label: string;
+  unitLabel: string;
+}
+
+function getVolumeOptions(product?: Product): VolumeOption[] {
+  if (!product) {
+    return [
+      { value: '500', label: '500 Nuts (10 Bags)', unitLabel: 'Nuts' },
+      { value: '1000', label: '1,000 Nuts (20 Bags)', unitLabel: 'Nuts' },
+      { value: '2500', label: '2,500 Nuts (50 Bags)', unitLabel: 'Nuts' },
+      { value: '5000', label: '5,000 Nuts (Canter Load)', unitLabel: 'Nuts' },
+      { value: '20000', label: '20,000 Nuts (10 MT Truckload)', unitLabel: 'Nuts' }
+    ];
+  }
+
+  // 1. Mature Coconuts (Grade A & Grade B)
+  if (product.category === 'mature_coconut') {
+    return [
+      { value: '500', label: '500 Nuts (10 Bags)', unitLabel: 'Nuts' },
+      { value: '1000', label: '1,000 Nuts (20 Bags)', unitLabel: 'Nuts' },
+      { value: '2500', label: '2,500 Nuts (50 Bags)', unitLabel: 'Nuts' },
+      { value: '5000', label: '5,000 Nuts (Canter Load)', unitLabel: 'Nuts' },
+      { value: '20000', label: '20,000 Nuts (10 MT Truckload)', unitLabel: 'Nuts' }
+    ];
+  }
+
+  // 2. GI Ball Copra (Sold in 25 kg boxes)
+  if (product.sku.includes('TIP-25K')) {
+    return [
+      { value: '100', label: '100 kg (4 Boxes / 1 Quintal)', unitLabel: 'kg' },
+      { value: '250', label: '250 kg (10 Boxes)', unitLabel: 'kg' },
+      { value: '500', label: '500 kg (20 Boxes / 5 Quintals)', unitLabel: 'kg' },
+      { value: '1000', label: '1,000 kg (40 Boxes / 1 MT)', unitLabel: 'kg' },
+      { value: '3000', label: '3,000 kg (120 Boxes / Canter Load)', unitLabel: 'kg' },
+      { value: '5000', label: '5,000 kg (200 Boxes / 5 MT)', unitLabel: 'kg' }
+    ];
+  }
+
+  // 3. Milling Copra (Sold in 50 kg gunny sacks)
+  if (product.sku.includes('50K') || product.category === 'copra') {
+    return [
+      { value: '500', label: '500 kg (10 Bags / 5 Quintals)', unitLabel: 'kg' },
+      { value: '1000', label: '1,000 kg (20 Bags / 10 Quintals)', unitLabel: 'kg' },
+      { value: '2500', label: '2,500 kg (50 Bags / 25 Quintals)', unitLabel: 'kg' },
+      { value: '5000', label: '5,000 kg (100 Bags / 5 MT)', unitLabel: 'kg' },
+      { value: '10000', label: '10,000 kg (200 Bags / 10 MT Truckload)', unitLabel: 'kg' }
+    ];
+  }
+
+  return [
+    { value: '500', label: '500 Units', unitLabel: 'Units' },
+    { value: '1000', label: '1,000 Units', unitLabel: 'Units' },
+    { value: '5000', label: '5,000 Units', unitLabel: 'Units' }
+  ];
 }
 
 export default function WholesaleRFQModal({
@@ -25,7 +83,6 @@ export default function WholesaleRFQModal({
   const [contactPhone, setContactPhone] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [gstin, setGstin] = useState('');
-  const [requestedQuantity, setRequestedQuantity] = useState('1000');
   const [destinationCity, setDestinationCity] = useState('Bengaluru');
   const [destinationPincode, setDestinationPincode] = useState('560001');
   const [notes, setNotes] = useState('');
@@ -33,14 +90,45 @@ export default function WholesaleRFQModal({
   const [submittedQuote, setSubmittedQuote] = useState<any | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  const currentProd = products.find((p) => p.id === productId) || products[0];
+  const volumeOptions = getVolumeOptions(currentProd);
+  const [requestedQuantity, setRequestedQuantity] = useState<string>(
+    volumeOptions.length > 1 ? volumeOptions[1].value : volumeOptions[0]?.value || '1000'
+  );
+
+  // Sync state when selectedProduct changes
+  useEffect(() => {
+    if (selectedProduct) {
+      setProductId(selectedProduct.id);
+      const opts = getVolumeOptions(selectedProduct);
+      if (opts.length > 1) {
+        setRequestedQuantity(opts[1].value);
+      } else if (opts.length > 0) {
+        setRequestedQuantity(opts[0].value);
+      }
+    }
+  }, [selectedProduct]);
+
   if (!isOpen) return null;
 
-  const currentProd = products.find((p) => p.id === productId) || products[0];
+  const currentOption = volumeOptions.find((o) => o.value === requestedQuantity) || volumeOptions[0];
   const unitBenchmark = Number(currentProd?.wholesale_benchmark_price_inr || currentProd?.retail_price_inr * 0.7 || 20);
   const qty = parseInt(requestedQuantity, 10) || 0;
   const estimatedMaterial = unitBenchmark * qty;
   const estimatedFreight = destinationPincode.startsWith('560') ? 2200 : 4500;
   const estimatedTotal = estimatedMaterial + estimatedFreight;
+
+  const handleProductChange = (newProductId: string) => {
+    setProductId(newProductId);
+    const nextProd = products.find((p) => p.id === newProductId);
+    const nextOptions = getVolumeOptions(nextProd);
+    // Reset volume to standard tier of the selected product
+    if (nextOptions.length > 1) {
+      setRequestedQuantity(nextOptions[1].value);
+    } else if (nextOptions.length > 0) {
+      setRequestedQuantity(nextOptions[0].value);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +152,7 @@ export default function WholesaleRFQModal({
           gstin: gstin,
           product_id: productId,
           requested_quantity: qty,
-          unit: currentProd?.unit_of_measure || 'Units',
+          unit: currentOption?.unitLabel || 'Units',
           destination_city: destinationCity,
           destination_pincode: destinationPincode,
           notes: notes
@@ -114,7 +202,9 @@ export default function WholesaleRFQModal({
             <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200 text-left text-xs space-y-2 max-w-lg mx-auto">
               <div className="flex justify-between border-b pb-1.5">
                 <span className="text-stone-500">Consignment:</span>
-                <span className="font-bold text-stone-900">{submittedQuote.requested_quantity} × {submittedQuote.product_title}</span>
+                <span className="font-bold text-stone-900">
+                  {submittedQuote.requested_quantity} {submittedQuote.unit} of {submittedQuote.product_title}
+                </span>
               </div>
               <div className="flex justify-between border-b pb-1.5">
                 <span className="text-stone-500">Destination Hub:</span>
@@ -171,12 +261,12 @@ export default function WholesaleRFQModal({
                 <label className="block text-xs font-bold text-stone-700 mb-1">Target Agricultural SKU *</label>
                 <select
                   value={productId}
-                  onChange={(e) => setProductId(e.target.value)}
+                  onChange={(e) => handleProductChange(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none"
                 >
                   {products.map((p) => (
                     <option key={p.id} value={p.id}>
-                      {p.title} ({p.unit_of_measure})
+                      {p.title}
                     </option>
                   ))}
                 </select>
@@ -191,11 +281,11 @@ export default function WholesaleRFQModal({
                     onChange={(e) => setRequestedQuantity(e.target.value)}
                     className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm font-semibold focus:ring-2 focus:ring-emerald-600 focus:outline-none"
                   >
-                    <option value="500">500 Units (10 Bags)</option>
-                    <option value="1000">1,000 Units (20 Bags)</option>
-                    <option value="2500">2,500 Units (50 Bags)</option>
-                    <option value="5000">5,000 Units (Canter Load)</option>
-                    <option value="20000">20,000 Units (10 MT Truckload)</option>
+                    {volumeOptions.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -303,7 +393,10 @@ export default function WholesaleRFQModal({
                 <div>
                   <span className="text-stone-500 block">Indicative Mandi Benchmark:</span>
                   <span className="font-extrabold text-stone-900 text-base">
-                    ₹{unitBenchmark.toFixed(2)} <span className="text-xs font-normal text-stone-500">/ unit</span>
+                    ₹{unitBenchmark.toFixed(2)}{' '}
+                    <span className="text-xs font-normal text-stone-500">
+                      / {currentOption?.unitLabel || 'unit'}
+                    </span>
                   </span>
                 </div>
                 <div>

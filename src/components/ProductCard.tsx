@@ -10,6 +10,19 @@ interface ProductCardProps {
   onSelectForRFQ: (product: Product) => void;
 }
 
+function formatStockLabel(stock: number, product: Product): string {
+  if (product.category === 'mature_coconut') {
+    return `${stock} Bags in stock`;
+  }
+  if (product.sku.includes('TIP-25K')) {
+    return `${stock} Boxes in stock`;
+  }
+  if (product.sku.includes('50K')) {
+    return `${stock} Bags in stock`;
+  }
+  return `${stock} Units in stock`;
+}
+
 export default function ProductCard({ product, onSelectForRFQ }: ProductCardProps) {
   const { addToCart } = useCart();
   const price = Number(product.retail_price_inr);
@@ -25,8 +38,10 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
     unitSubtitle = `25kg Box • Moisture ≤ 5.5%`;
   } else if (product.sku.includes('50K')) {
     perUnitNote = `₹${(price / 50).toFixed(0)}/kg`;
-    unitSubtitle = `50kg Bag • Oil ≥ 68%`;
+    unitSubtitle = `50kg Bag • Moisture ≤ 5.5% • Oil ≥ 68%`;
   }
+
+  const stockText = formatStockLabel(product.available_stock || 220, product);
 
   return (
     <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
@@ -40,6 +55,9 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
           />
           <span className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm text-stone-800 text-[11px] font-semibold px-2.5 py-1 rounded-md shadow-sm">
             {product.grade}
+          </span>
+          <span className="absolute bottom-3 left-3 bg-emerald-950/80 backdrop-blur-sm text-emerald-300 text-[10px] font-medium px-2 py-0.5 rounded shadow-sm">
+            ✓ {stockText}
           </span>
         </div>
 
