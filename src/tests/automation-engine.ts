@@ -760,12 +760,13 @@ export async function runAutomationSuite() {
   }, c14);
 
   let abandonedCartId: string;
+  const testAbandonPhone = '9845077777';
 
   await verifyAsync('POST /api/cart/sync captures cart and watchlist exit event', async () => {
     const syncRes = await httpPost('/api/cart/sync', {
-      phone: '9591142548',
-      name: 'Sharath Inorahalli',
-      email: 'sharathir198@gmail.com',
+      phone: testAbandonPhone,
+      name: 'Test Abandon Buyer',
+      email: 'testabandon@example.com',
       cart_items: [
         {
           product_id: semiCoc.id,
@@ -798,20 +799,20 @@ export async function runAutomationSuite() {
     assert.strictEqual(getRes.status, 200);
     assert.strictEqual(getRes.json?.success, true);
     assert.strictEqual(getRes.json?.cart?.id, abandonedCartId);
-    assert.strictEqual(getRes.json?.cart?.customer_phone, '9591142548');
+    assert.strictEqual(getRes.json?.cart?.customer_phone, testAbandonPhone);
     assert.strictEqual(Number(getRes.json?.cart?.total_amount_inr), 2700);
     assert.strictEqual(getRes.json?.cart?.status, 'abandoned');
   }, c14);
 
   await verifyAsync('POST /api/notifications/abandonment triggers WhatsApp recovery reminder', async () => {
     const notifRes = await httpPost('/api/notifications/abandonment', {
-      phone: '9591142548'
+      phone: testAbandonPhone
     });
     assert.strictEqual(notifRes.status, 200);
     assert.strictEqual(notifRes.json?.success, true);
     assert(notifRes.json?.count >= 1);
     const sent = notifRes.json.notifications[0];
-    assert.strictEqual(sent.customer_phone, '9591142548');
+    assert.strictEqual(sent.customer_phone, testAbandonPhone);
     assert(sent.message_preview.includes('SHARATH INORAHALLI'));
     assert(sent.message_preview.includes('cart?resume='));
     assert(sent.message_preview.includes('95911 42548'));

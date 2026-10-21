@@ -31,9 +31,9 @@ export default function CartDrawer() {
 
   useEffect(() => {
     if (customer) {
-      if (customer.name && !customerName) setCustomerName(customer.name);
-      if (customer.phone && !customerPhone) setCustomerPhone(customer.phone);
-      if (customer.email && !customerEmail) setCustomerEmail(customer.email);
+      if (customer.name) setCustomerName(customer.name);
+      if (customer.phone) setCustomerPhone(customer.phone);
+      if (customer.email) setCustomerEmail(customer.email);
     }
   }, [customer]);
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card' | 'cod'>('upi');
@@ -389,7 +389,7 @@ export default function CartDrawer() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-stone-500">Estimated Dispatch:</span>
-                    <span className="text-emerald-700 font-bold">Within 24 Hours from Tiptur Hub</span>
+                    <span className="text-emerald-700 font-bold">Within 24 Hours</span>
                   </div>
                 </div>
 
