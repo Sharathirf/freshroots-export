@@ -28,7 +28,8 @@ async function runSeed() {
     { pincode: '560076', district: 'Bengaluru Urban', hub: 'Bengaluru Forward Hub (Bannerghatta)', lead: 1 },
     { pincode: '560085', district: 'Bengaluru Urban', hub: 'Bengaluru Forward Hub (Banashankari)', lead: 1 },
     { pincode: '560100', district: 'Bengaluru Urban', hub: 'Bengaluru Forward Hub (Electronic City)', lead: 1 },
-    // Sourcing Belt (Tumakuru / Tiptur / Hassan)
+    // Headquarters & Sourcing Belt (Mandya / Kikkeri / Tumakuru / Tiptur / Hassan)
+    { pincode: '571423', district: 'Mandya (Kikkeri / K.R. Pete)', hub: 'Kikkeri Procurement Headquarters & Mandya Hub', lead: 1 },
     { pincode: '572201', district: 'Tumakuru', hub: 'Tiptur Sourcing & Grading Hub', lead: 1 },
     { pincode: '572202', district: 'Tumakuru', hub: 'Tiptur Sourcing & Grading Hub', lead: 1 },
     { pincode: '572101', district: 'Tumakuru', hub: 'Tumakuru Sourcing Hub', lead: 1 },

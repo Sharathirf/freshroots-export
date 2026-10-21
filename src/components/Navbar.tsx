@@ -122,13 +122,13 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
               Pan-India Delivery & Worldwide Container Freight
             </span>
             <a
-              href="https://wa.me/919876543210"
+              href="https://wa.me/919591142548"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white flex items-center gap-1 transition"
             >
               <Phone className="w-3 h-3 text-lime-300" />
-              Desk: +91 98765 43210
+              Desk: +91 95911 42548
             </a>
           </div>
         </div>

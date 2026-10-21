@@ -297,6 +297,7 @@ it('Delivery eligibility covers all valid 6-digit Indian PIN codes nationwide', 
   assert.strictEqual(isPincodeServiceable('600001'), true, 'Chennai is serviceable');
   assert.strictEqual(isPincodeServiceable('560001'), true, 'Bengaluru is serviceable');
   assert.strictEqual(isPincodeServiceable('572201'), true, 'Tiptur is serviceable');
+  assert.strictEqual(isPincodeServiceable('571423'), true, 'Kikkeri Mandya headquarters is serviceable');
   assert.strictEqual(isPincodeServiceable('99999'), false, '5-digit invalid pin must be rejected');
 });
 

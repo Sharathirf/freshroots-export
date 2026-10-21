@@ -81,15 +81,19 @@ export default function Footer() {
             <div className="space-y-1.5 text-stone-300">
               <div className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-lime-400 shrink-0 mt-0.5" />
-                <span>APMC Yard, B.H. Road, Tiptur, Tumakuru District, Karnataka 572201</span>
+                <span>Kikkeri, K.R. Pete Taluk, Mandya District, Karnataka, India - 571423</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-lime-400 shrink-0" />
-                <span>Commercial Desk: +91 98765 43210</span>
+                <a href="https://wa.me/919591142548" target="_blank" rel="noopener noreferrer" className="hover:text-lime-300 transition">
+                  Desk & WhatsApp: +91 95911 42548
+                </a>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-lime-400 shrink-0" />
-                <span>procurement@tipturdirect.com</span>
+                <a href="mailto:sharathir198@gmail.com" className="hover:text-lime-300 transition">
+                  sharathir198@gmail.com
+                </a>
               </div>
             </div>
           </div>

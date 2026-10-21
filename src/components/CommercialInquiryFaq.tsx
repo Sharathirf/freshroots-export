@@ -92,7 +92,7 @@ export default function CommercialInquiryFaq() {
         setErrorMsg(data.error || 'Failed to submit inquiry. Please try again.');
       }
     } catch {
-      setErrorMsg('Network error. Please try again or reach our desk directly at +91 98765 43210.');
+      setErrorMsg('Network error. Please try again or reach our desk directly at +91 95911 42548 or sharathir198@gmail.com.');
     } finally {
       setIsSubmitting(false);
     }
