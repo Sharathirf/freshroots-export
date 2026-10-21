@@ -112,11 +112,7 @@ export default function WholesaleRFQModal({
   if (!isOpen) return null;
 
   const currentOption = volumeOptions.find((o) => o.value === requestedQuantity) || volumeOptions[0];
-  const unitBenchmark = Number(currentProd?.wholesale_benchmark_price_inr || currentProd?.retail_price_inr * 0.7 || 20);
   const qty = parseInt(requestedQuantity, 10) || 0;
-  const estimatedMaterial = unitBenchmark * qty;
-  const estimatedFreight = destinationPincode.startsWith('560') ? 2200 : 4500;
-  const estimatedTotal = estimatedMaterial + estimatedFreight;
 
   const handleProductChange = (newProductId: string) => {
     setProductId(newProductId);
@@ -132,8 +128,16 @@ export default function WholesaleRFQModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!companyName || !contactPerson || !contactPhone || !destinationCity || !productId) {
-      setErrorMsg('Please fill in all required company and consignment details.');
+    if (!contactPerson.trim()) {
+      setErrorMsg('Please enter your full name or contact person.');
+      return;
+    }
+    if (!contactPhone.trim() && !contactEmail.trim()) {
+      setErrorMsg('Please provide at least one contact method (phone number or email).');
+      return;
+    }
+    if (!productId) {
+      setErrorMsg('Please select a product.');
       return;
     }
 
@@ -208,11 +212,7 @@ export default function WholesaleRFQModal({
               </div>
               <div className="flex justify-between border-b pb-1.5">
                 <span className="text-stone-500">Destination Hub:</span>
-                <span className="font-semibold text-stone-800">{submittedQuote.destination_city} ({submittedQuote.destination_pincode})</span>
-              </div>
-              <div className="flex justify-between border-b pb-1.5">
-                <span className="text-stone-500">Estimated Total (Mandi + Freight):</span>
-                <span className="font-mono font-bold text-emerald-800 text-sm">₹{Number(submittedQuote.total_quote_inr).toLocaleString('en-IN')}</span>
+                <span className="font-semibold text-stone-800">{submittedQuote.destination_city || 'Pan-India / Worldwide'} ({submittedQuote.destination_pincode || 'Regional'})</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-stone-500">Price Lock Guarantee:</span>
@@ -388,28 +388,7 @@ export default function WholesaleRFQModal({
                 </div>
               </div>
 
-              {/* Real-time Estimate Strip */}
-              <div className="bg-stone-100 rounded-2xl p-4 border border-stone-200 flex flex-wrap items-center justify-between gap-3 text-xs">
-                <div>
-                  <span className="text-stone-500 block">Indicative Mandi Benchmark:</span>
-                  <span className="font-extrabold text-stone-900 text-base">
-                    ₹{unitBenchmark.toFixed(2)}{' '}
-                    <span className="text-xs font-normal text-stone-500">
-                      / {currentOption?.unitLabel || 'unit'}
-                    </span>
-                  </span>
-                </div>
-                <div>
-                  <span className="text-stone-500 block">Est. Dedicated Freight:</span>
-                  <span className="font-bold text-stone-800 text-sm">~₹{estimatedFreight.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="text-right">
-                  <span className="text-stone-500 block">Est. Landed Consignment:</span>
-                  <span className="font-extrabold text-emerald-800 text-lg font-mono">
-                    ₹{estimatedTotal.toLocaleString('en-IN')}
-                  </span>
-                </div>
-              </div>
+
 
               {errorMsg && (
                 <div className="p-3 bg-red-50 text-red-800 border border-red-200 rounded-xl text-xs font-medium">
