@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
 
     if (!pincode || pincode.length !== 6 || !/^\d{6}$/.test(pincode)) {
       return NextResponse.json(
-        { success: false, error: 'Please enter a valid 6-digit Indian PIN code' },
+        { success: false, serviceable: false, error: 'Please enter a valid 6-digit Indian PIN code' },
         { status: 400 }
       );
     }
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
   } catch (error: any) {
     console.error('API Error in /api/pincode/check:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to verify PIN code', details: error.message },
+      { success: false, serviceable: false, error: 'Failed to verify PIN code', details: error.message },
       { status: 500 }
     );
   }

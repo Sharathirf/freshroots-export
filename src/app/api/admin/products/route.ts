@@ -49,6 +49,20 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    if (retail_price_inr !== undefined && Number(retail_price_inr) <= 0) {
+      return NextResponse.json(
+        { success: false, error: 'Retail price must be greater than zero' },
+        { status: 400 }
+      );
+    }
+
+    if (available_stock !== undefined && Number(available_stock) < 0) {
+      return NextResponse.json(
+        { success: false, error: 'Stock cannot be negative' },
+        { status: 400 }
+      );
+    }
+
     // 1. Update Product Pricing & Status
     const updateClauses: string[] = [];
     const params: any[] = [];

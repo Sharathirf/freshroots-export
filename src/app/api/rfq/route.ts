@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
 
     // Generate Inquiry Reference: RFQ-YYYYMMDD-XXXX
     const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-    const randSuffix = Math.floor(100 + Math.random() * 900);
+    const randSuffix = `${Date.now().toString().slice(-5)}${Math.floor(1000 + Math.random() * 9000)}`;
     const quoteNumber = `RFQ-${dateStr}-${randSuffix}`;
 
     const mergedNotes = [
@@ -140,6 +140,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Your bulk quote request has been received! Our commercial desk will review and send a customized quotation.',
+      quote_number: quoteNumber,
       quotation: {
         id: inserted[0].id,
         quote_number: quoteNumber,

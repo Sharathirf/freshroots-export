@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 
     for (const item of items) {
       const dbProd = await query(
-        `SELECT id, sku, title, retail_price_inr, unit_of_measure, estimated_weight_kg, tax_rate_percentage 
+        `SELECT id, sku, title, retail_price_inr, unit_of_measure, estimated_weight_kg, tax_rate_percentage, bulk_min_quantity 
          FROM products WHERE id = $1 AND is_active = true`,
         [item.product_id]
       );
@@ -49,10 +49,27 @@ export async function POST(request: NextRequest) {
       }
 
       const prod = dbProd[0];
+
+      // Reject retail checkout for bulk-only commodities
+      if (prod.sku.includes('BLK')) {
+        return NextResponse.json(
+          { success: false, error: `${prod.title} is available only for wholesale bulk inquiries via RFQ quotation.` },
+          { status: 400 }
+        );
+      }
+
       const qty = parseInt(item.quantity, 10);
       if (isNaN(qty) || qty <= 0) {
         return NextResponse.json(
           { success: false, error: `Invalid quantity for ${prod.title}` },
+          { status: 400 }
+        );
+      }
+
+      const minQty = Number(prod.bulk_min_quantity) || 1;
+      if (qty < minQty) {
+        return NextResponse.json(
+          { success: false, error: `Minimum order quantity for ${prod.title} is ${minQty} units.` },
           { status: 400 }
         );
       }
@@ -97,17 +114,19 @@ export async function POST(request: NextRequest) {
 
     // Generate Order Number: AGR-YYYYMM-XXXX
     const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-    const randSuffix = Math.floor(1000 + Math.random() * 9000);
+    const randSuffix = `${Date.now().toString().slice(-5)}${Math.floor(1000 + Math.random() * 9000)}`;
     const orderNumber = `AGR-${dateStr}-${randSuffix}`;
 
-    const paymentRef = `PAY-SIM-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
+    const paymentRef = `PAY-SIM-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+
+    const trackingRef = `VRL-BLR-${Date.now().toString().slice(-4)}${Math.floor(1000 + Math.random() * 9000)}`;
 
     const insertedOrder = await query(
       `INSERT INTO orders (
         order_number, order_type, status, customer_name, customer_phone, customer_email,
         shipping_address, destination_pincode, subtotal_inr, delivery_fee_inr, tax_inr,
-        total_amount_inr, payment_method, payment_reference, items
-      ) VALUES ($1, 'retail', 'paid', $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+        total_amount_inr, payment_method, payment_reference, tracking_reference, items
+      ) VALUES ($1, 'retail', 'paid', $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
       RETURNING *`,
       [
         orderNumber,
@@ -122,6 +141,7 @@ export async function POST(request: NextRequest) {
         grandTotal,
         payment_method || 'upi',
         paymentRef,
+        trackingRef,
         JSON.stringify(validatedItems)
       ]
     );
