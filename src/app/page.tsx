@@ -64,32 +64,19 @@ export default function HomePage() {
       <CartDrawer />
 
       <main className="flex-1">
-        {/* 2. Katyayani Organics Hero Section */}
-        <KatyayaniHero onOpenRFQ={() => handleOpenRFQ()} />
-
-        {/* 3. Shop by Category (Katyayani mc-section) */}
-        <ShopByCategory
-          activeCategory={filteredCategory}
-          onSelectCategory={(cat) => {
-            setFilteredCategory(cat);
-            const el = document.getElementById('catalog');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
-        />
-
-        {/* 4. Bestsellers Showcase (Katyayani section bestsellers) */}
-        <section id="catalog" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+        {/* 1. Bestsellers Showcase & Direct Catalog (Target Sales First - Top of Page) */}
+        <section id="catalog" className="pt-6 sm:pt-8 pb-14 sm:pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-4">
             <div>
               <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#3b6d11] bg-emerald-50 px-3.5 py-1 rounded-full border border-emerald-200 mb-2">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Certified Farm-Gate Lots</span>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-stone-900 tracking-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-stone-900 tracking-tight">
                 Our Bestsellers
-              </h2>
+              </h1>
               <p className="text-stone-500 text-xs sm:text-sm mt-1 max-w-xl">
-                Lab-tested, buyer-trusted agricultural commodities for food processors, oil millers, temples & households
+                Lab-tested, buyer-trusted agricultural commodities for food processors, oil millers, temples &amp; households
               </p>
             </div>
 
@@ -139,7 +126,17 @@ export default function HomePage() {
           )}
         </section>
 
-        {/* Transportation & Shiprocket Rate Calculator Banner (coconutseller.in Standard) */}
+        {/* 2. Shop by Category (Katyayani mc-section) */}
+        <ShopByCategory
+          activeCategory={filteredCategory}
+          onSelectCategory={(cat) => {
+            setFilteredCategory(cat);
+            const el = document.getElementById('catalog');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+        />
+
+        {/* 3. Transportation & Shiprocket Rate Calculator Banner (coconutseller.in Standard) */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 mb-8">
           <div className="bg-gradient-to-r from-[#1c3809] to-[#254b0d] text-white rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-md border border-[#2d5a0b]">
             <div className="space-y-2 text-center md:text-left">
@@ -164,6 +161,9 @@ export default function HomePage() {
             </Link>
           </div>
         </section>
+
+        {/* 4. Katyayani Organics Hero & Sourcing Credibility */}
+        <KatyayaniHero onOpenRFQ={() => handleOpenRFQ()} />
 
         {/* 5. Purpose-Driven Sourcing & Industry Solutions (Katyayani shopby) */}
         <ExploreRange
