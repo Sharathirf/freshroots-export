@@ -379,10 +379,13 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                     <span>Items Subtotal ({retailQty} {retailQty === 1 ? 'unit' : 'units'}):</span>
                     <span className="font-mono font-semibold text-stone-900">₹{retailSubtotal.toLocaleString('en-IN')}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Delivery (Pan-India):</span>
-                    <span className="font-mono font-semibold">
-                      {deliveryFee === 0 ? <strong className="text-emerald-700 font-bold">FREE (&ge; ₹1,500)</strong> : `₹${deliveryFee}`}
+                  <div className="flex justify-between items-center">
+                    <span className="flex items-center gap-1">
+                      <Truck className="w-3.5 h-3.5 text-emerald-700" />
+                      <span>Transportation (Extra):</span>
+                    </span>
+                    <span className="font-mono text-xs font-semibold text-stone-800">
+                      Calculated on actual weight via Shiprocket
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -395,6 +398,17 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                     <span>Order Total:</span>
                     <span className="font-mono text-emerald-900 text-base">₹{retailGrandTotal.toLocaleString('en-IN')}</span>
                   </div>
+                </div>
+
+                <div className="flex items-center justify-between text-xs pt-1">
+                  <span className="text-stone-500">Modeled after coconutseller.in logistics</span>
+                  <Link
+                    href="/transportation"
+                    className="text-[#3b6d11] hover:text-[#254b0d] font-bold inline-flex items-center gap-1 hover:underline"
+                  >
+                    <Truck className="w-3.5 h-3.5 text-[#3b6d11]" />
+                    <span>Check Shiprocket Freight Calculator &rarr;</span>
+                  </Link>
                 </div>
 
                 {/* Primary CTA Buttons */}

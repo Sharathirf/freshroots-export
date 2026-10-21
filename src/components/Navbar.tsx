@@ -114,10 +114,13 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
               <span>Track Order</span>
             </Link>
             <span className="hidden sm:inline text-emerald-300/60">•</span>
-            <span className="hidden sm:flex items-center gap-1.5">
+            <Link
+              href="/transportation"
+              className="hover:text-white flex items-center gap-1.5 transition text-lime-200 hover:text-white font-semibold"
+            >
               <Globe className="w-3.5 h-3.5 text-lime-300" />
-              Pan-India & Global Freight
-            </span>
+              <span>Transportation & Rates</span>
+            </Link>
             <span className="hidden md:inline text-emerald-300/60">•</span>
             <a
               href="https://wa.me/919591142548"
@@ -311,6 +314,15 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
               </div>
             </div>
           )}
+
+          {/* Transportation & Freight Rates Link */}
+          <Link
+            href="/transportation"
+            className="hidden lg:inline-flex items-center gap-1.5 text-xs font-semibold text-stone-700 hover:text-[#3b6d11] bg-stone-100 hover:bg-stone-200 border border-stone-200 px-3 py-2 rounded-xl transition"
+          >
+            <Truck className="w-3.5 h-3.5 text-[#3b6d11]" />
+            <span>Transportation</span>
+          </Link>
 
           {/* Admin Link */}
           <Link

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { calculateLocalShiprocketRates } from '@/lib/shiprocket';
 import { OrderItem } from '@/types';
 
 export async function POST(request: NextRequest) {
@@ -107,9 +108,25 @@ export async function POST(request: NextRequest) {
     }
 
     // Delivery fee calculation
-    // Free delivery above ₹1,500; otherwise flat ₹99
-    const freeDeliveryThreshold = 1500;
-    const deliveryFee = subtotal >= freeDeliveryThreshold ? 0.00 : 99.00;
+    // Delivery fee calculation:
+    // Transportation Charged Extra: Modeled after coconutseller.in & calculated via Shiprocket rate engine
+    let deliveryFee = 0.00;
+    if (body.delivery_fee !== undefined && !isNaN(Number(body.delivery_fee))) {
+      deliveryFee = Math.max(0, Number(body.delivery_fee));
+    } else {
+      const totalWeightKg = validatedItems.reduce((acc, it) => acc + (it.estimated_weight_kg || 1), 0);
+      try {
+        const shippingCalc = calculateLocalShiprocketRates({
+          pickup_postcode: '571423',
+          delivery_postcode: destination_pincode,
+          weight: Math.max(1.0, totalWeightKg),
+          declared_value: subtotal
+        });
+        deliveryFee = shippingCalc.lowest_rate;
+      } catch {
+        deliveryFee = 150.00;
+      }
+    }
     const grandTotal = subtotal + deliveryFee + totalTax;
 
     // Generate Order Number: AGR-YYYYMM-XXXX

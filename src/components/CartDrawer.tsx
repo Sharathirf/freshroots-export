@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { X, Trash2, Plus, Minus, ShieldCheck, Clock, CheckCircle2, Truck, CreditCard, Smartphone, ArrowRight, Printer } from 'lucide-react';
 import { Order } from '@/types';
@@ -14,7 +15,6 @@ export default function CartDrawer() {
     isCartOpen,
     setIsCartOpen,
     subtotal,
-    freeShippingThreshold,
     deliveryFee,
     total,
     pincode
@@ -149,27 +149,27 @@ export default function CartDrawer() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {/* Free shipping progress bar */}
-                    <div className="bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-xs">
-                      {subtotal >= freeShippingThreshold ? (
-                        <div className="flex items-center gap-2 text-emerald-800 font-semibold">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                          <span>Congratulations! You have unlocked Free Delivery.</span>
+                    {/* Transportation Policy & Weight Notice (Modeled after coconutseller.in/transportation) */}
+                    <div className="bg-lime-50/80 border border-lime-200/90 p-3 rounded-xl text-xs space-y-1.5">
+                      <div className="flex items-center justify-between text-stone-800 font-bold">
+                        <div className="flex items-center gap-1.5 text-[#3b6d11]">
+                          <Truck className="w-4 h-4 text-[#3b6d11]" />
+                          <span>Transportation Charged Extra</span>
                         </div>
-                      ) : (
-                        <div>
-                          <div className="flex justify-between text-emerald-900 font-medium mb-1.5">
-                            <span>Add <strong>₹{(freeShippingThreshold - subtotal).toLocaleString('en-IN')}</strong> for Free Delivery</span>
-                            <span>{Math.round((subtotal / freeShippingThreshold) * 100)}%</span>
-                          </div>
-                          <div className="w-full bg-emerald-200/80 rounded-full h-1.5">
-                            <div
-                              className="bg-emerald-600 h-1.5 rounded-full transition-all duration-300"
-                              style={{ width: `${Math.min(100, (subtotal / freeShippingThreshold) * 100)}%` }}
-                            />
-                          </div>
-                        </div>
-                      )}
+                        <span className="font-mono text-[#1c3809] bg-white border border-lime-300 px-2 py-0.5 rounded text-[10px] uppercase font-bold">
+                          Shiprocket Engine
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-stone-600 leading-relaxed">
+                        Agricultural freight is charged on actual weight &amp; destination corridor. 
+                        <Link
+                          href="/transportation"
+                          onClick={() => setIsCartOpen(false)}
+                          className="text-[#3b6d11] font-bold underline ml-1 hover:text-[#254b0d]"
+                        >
+                          View Transportation Rates &amp; Policy &rarr;
+                        </Link>
+                      </p>
                     </div>
 
                     {/* Cart Items List */}
@@ -405,10 +405,13 @@ export default function CartDrawer() {
                   <span>Subtotal</span>
                   <span className="font-mono font-medium">₹{subtotal.toLocaleString('en-IN')}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Delivery Charges</span>
-                  <span className="font-mono font-medium">
-                    {deliveryFee === 0 ? <span className="text-emerald-700 font-bold">FREE</span> : `₹${deliveryFee}`}
+                <div className="flex justify-between items-center">
+                  <span className="flex items-center gap-1">
+                    <Truck className="w-3.5 h-3.5 text-[#3b6d11]" />
+                    <span>Transportation Freight (Extra)</span>
+                  </span>
+                  <span className="font-mono font-medium text-stone-800">
+                    {deliveryFee > 0 ? `₹${deliveryFee}` : 'Calculated at actuals'}
                   </span>
                 </div>
                 <div className="flex justify-between text-stone-900 text-sm font-extrabold pt-2 border-t">

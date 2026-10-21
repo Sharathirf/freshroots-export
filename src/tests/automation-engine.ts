@@ -261,42 +261,81 @@ export async function runAutomationSuite() {
   console.log(`  ✅ Cycle 4 Complete: ${c4.pass} passed, ${c4.fail} failed\n`);
 
   // --------------------------------------------------------------------------
-  // CYCLE 5: Tiered Shipping & Freight Calculation Rules
+  // CYCLE 5: Shiprocket Shipping Rate Calculator & Transportation Extra Policy
+  // Modeled after coconutseller.in/transportation and apidocs.shiprocket.in
   // --------------------------------------------------------------------------
-  console.log('▶ Running Cycle 5: Tiered Shipping & Freight Calculation Rules...');
+  console.log('▶ Running Cycle 5: Shiprocket Shipping Rate Calculator & Freight Policy...');
   const c5Start = Date.now();
   const c5 = createTracker();
 
   const ragiProd = products.find((p: any) => p.sku === 'MIL-RAG-ORG-05K');
-  const copraProd = products.find((p: any) => p.sku === 'COP-BAL-BOX-15K');
+  const semiCocProd = products.find((p: any) => p.sku === 'COC-SEMI-25P-15K');
 
-  await verifyAsync('Order subtotal < ₹1,500 attracts flat ₹99 delivery fee', async () => {
+  await verifyAsync('Shiprocket rate calculator calculates 15kg coconut parcel to Bengaluru (Zone B)', async () => {
+    const res = await httpGet('/api/shipping/calculate?pincode=560001&weight=15');
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(res.json?.success, true);
+    assert.strictEqual(res.json?.zone_code, 'B');
+    assert(res.json?.available_courier_companies?.length >= 4);
+    assert(res.json?.lowest_rate > 0);
+  }, c5);
+
+  await verifyAsync('Shiprocket rate calculator applies higher zonal freight to New Delhi (Zone D)', async () => {
+    const blrRes = await httpGet('/api/shipping/calculate?pincode=560001&weight=15');
+    const delRes = await httpGet('/api/shipping/calculate?pincode=110001&weight=15');
+    assert.strictEqual(delRes.status, 200);
+    assert.strictEqual(delRes.json?.zone_code, 'D');
+    assert(delRes.json?.lowest_rate > blrRes.json?.lowest_rate);
+  }, c5);
+
+  await verifyAsync('Shiprocket rate calculator POST endpoint calculates rates with custom dimensions', async () => {
+    const res = await httpPost('/api/shipping/calculate', {
+      delivery_postcode: '600001',
+      weight: 25,
+      cod: 1,
+      length: 40,
+      breadth: 35,
+      height: 30
+    });
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(res.json?.success, true);
+    assert(res.json?.available_courier_companies?.length >= 4);
+  }, c5);
+
+  await verifyAsync('Shiprocket rate calculator rejects invalid 5-digit PIN with 400', async () => {
+    const res = await httpGet('/api/shipping/calculate?pincode=12345&weight=15');
+    assert.strictEqual(res.status, 400);
+    assert.strictEqual(res.json?.success, false);
+  }, c5);
+
+  await verifyAsync('Transportation charged extra: Order charges dynamic Shiprocket freight at actuals', async () => {
     const res = await httpPost('/api/orders', {
       customer_name: 'Smt. Anitha',
       customer_phone: '9845011111',
       shipping_address: 'Jayanagar, Bengaluru',
       destination_pincode: '560011',
-      items: [{ product_id: ragiProd?.id, quantity: 1 }]
+      items: [{ product_id: semiCocProd?.id, quantity: 1 }]
     });
     assert.strictEqual(res.status, 200);
-    assert.strictEqual(Number(res.json?.order?.delivery_fee_inr), 99.00);
+    assert(Number(res.json?.order?.delivery_fee_inr) > 0, 'Transportation must be charged extra for 15kg coconuts');
   }, c5);
 
-  await verifyAsync('Order subtotal >= ₹1,500 receives free delivery (₹0.00)', async () => {
+  await verifyAsync('Order accepts explicit selected courier delivery fee', async () => {
     const res = await httpPost('/api/orders', {
       customer_name: 'Sri. Venkatesh',
       customer_phone: '9845022222',
       shipping_address: 'K.R. Pete, Mandya',
       destination_pincode: '571423',
-      items: [{ product_id: copraProd?.id, quantity: 1 }]
+      delivery_fee: 145.00,
+      items: [{ product_id: ragiProd?.id, quantity: 1 }]
     });
     assert.strictEqual(res.status, 200);
-    assert.strictEqual(Number(res.json?.order?.delivery_fee_inr), 0.00);
+    assert.strictEqual(Number(res.json?.order?.delivery_fee_inr), 145.00);
   }, c5);
 
   cycleResults.push({
     cycle: 5,
-    name: 'Shipping & Free Delivery Threshold Engine',
+    name: 'Shiprocket Rate Calculator & Freight Policy',
     totalAssertions: c5.pass + c5.fail,
     passedAssertions: c5.pass,
     failedAssertions: c5.fail,
@@ -721,6 +760,8 @@ export async function runAutomationSuite() {
   console.log('▶ Running Cycle 15: Concurrency, End-to-End Stress & Full Lifecycle Verification...');
   const c15Start = Date.now();
   const c15 = createTracker();
+
+  const copraProd = products.find((p: any) => p.sku === 'COP-BAL-BOX-15K');
 
   await verifyAsync('Concurrent multi-order placement and instant tracking', async () => {
     const concurrentOrders = await Promise.all([

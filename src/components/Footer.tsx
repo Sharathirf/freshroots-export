@@ -120,8 +120,9 @@ export default function Footer() {
               B2B & Sourcing
             </h4>
             <ul className="space-y-2 text-stone-400">
+              <li><Link href="/transportation" className="text-lime-300 font-semibold hover:text-white transition">Transportation & Rates (Shiprocket)</Link></li>
               <li><a href="#catalog" className="hover:text-white transition">Request Wholesale Quotation</a></li>
-              <li><a href="#catalog" className="hover:text-white transition">Full Truckload (FTL) Freight</a></li>
+              <li><Link href="/transportation" className="hover:text-white transition">Full Truckload (FTL) Freight</Link></li>
               <li><a href="#catalog" className="hover:text-white transition">20ft / 40ft Export Containers</a></li>
               <li><a href="#catalog" className="hover:text-white transition">Phytosanitary Certification</a></li>
               <li><Link href="/admin" className="hover:text-white transition">Operations Dashboard</Link></li>

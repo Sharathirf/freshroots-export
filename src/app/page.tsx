@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import CartDrawer from '@/components/CartDrawer';
 import ProductCard from '@/components/ProductCard';
@@ -17,7 +18,7 @@ import Footer from '@/components/Footer';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import GradingGuide from '@/components/GradingGuide';
 import { Product } from '@/types';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Truck, ArrowRight } from 'lucide-react';
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -136,6 +137,32 @@ export default function HomePage() {
               ))}
             </div>
           )}
+        </section>
+
+        {/* Transportation & Shiprocket Rate Calculator Banner (coconutseller.in Standard) */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 mb-8">
+          <div className="bg-gradient-to-r from-[#1c3809] to-[#254b0d] text-white rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-md border border-[#2d5a0b]">
+            <div className="space-y-2 text-center md:text-left">
+              <div className="inline-flex items-center gap-2 bg-lime-400/20 text-lime-300 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                <Truck className="w-4 h-4 text-lime-300" />
+                <span>Pan-India Agricultural Logistics (coconutseller.in Standard)</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black tracking-tight text-white">
+                Transportation Charged Extra — Genuine Freight at Actuals
+              </h3>
+              <p className="text-stone-300 text-xs sm:text-sm max-w-xl">
+                Check instant courier rates via our Shiprocket-powered engine or book dedicated 10T, 25T, and 30T multi-axle lorries direct from Mandya APMC.
+              </p>
+            </div>
+
+            <Link
+              href="/transportation"
+              className="bg-lime-400 hover:bg-lime-300 active:scale-95 text-[#1c3809] font-black text-xs sm:text-sm px-6 py-3.5 rounded-2xl transition shadow-lg flex items-center gap-2 shrink-0 group"
+            >
+              <span>Calculate Freight Rates</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+            </Link>
+          </div>
         </section>
 
         {/* 5. Purpose-Driven Sourcing & Industry Solutions (Katyayani shopby) */}
