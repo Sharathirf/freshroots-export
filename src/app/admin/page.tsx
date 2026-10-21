@@ -9,17 +9,157 @@ import {
   RefreshCw,
   ArrowLeft,
   Sprout,
-  DollarSign
+  DollarSign,
+  Tag,
+  ExternalLink,
+  CheckCircle2
 } from 'lucide-react';
 import { WholesaleQuotation, Order, InventoryBatch } from '@/types';
 
+function ProductAdminRow({
+  product,
+  onSave
+}: {
+  product: any;
+  onSave: (id: string, retailPrice: number, stock: number, wholesalePrice: number, isActive: boolean) => Promise<void>;
+}) {
+  const [retailPrice, setRetailPrice] = useState(product.retail_price_inr);
+  const [stock, setStock] = useState(product.available_stock);
+  const [wholesalePrice, setWholesalePrice] = useState(product.wholesale_benchmark_price_inr || '');
+  const [isActive, setIsActive] = useState(product.is_active);
+  const [isSaving, setIsSaving] = useState(false);
+  const [savedSuccess, setSavedSuccess] = useState(false);
+
+  const isDirty =
+    Number(retailPrice) !== Number(product.retail_price_inr) ||
+    Number(stock) !== Number(product.available_stock) ||
+    Number(wholesalePrice || 0) !== Number(product.wholesale_benchmark_price_inr || 0) ||
+    isActive !== product.is_active;
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    setSavedSuccess(false);
+    try {
+      await onSave(product.id, Number(retailPrice), Number(stock), Number(wholesalePrice || 0), isActive);
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 2500);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <tr className={`border-b hover:bg-stone-50/80 transition ${!isActive ? 'opacity-60 bg-stone-50/50' : ''}`}>
+      <td className="p-4">
+        <div className="flex items-center gap-3">
+          <img
+            src={product.image_url}
+            alt={product.title}
+            className="w-12 h-12 rounded-xl object-cover border border-stone-200 bg-stone-100 shrink-0"
+          />
+          <div>
+            <div className="font-bold text-stone-900 text-sm leading-tight">{product.title}</div>
+            <div className="text-[11px] text-stone-500 font-mono mt-0.5">
+              {product.sku} • {product.category.replace(/_/g, ' ')}
+            </div>
+            <span className="inline-block mt-1 bg-stone-100 text-stone-700 text-[10px] font-semibold px-2 py-0.5 rounded border border-stone-200">
+              {product.grade}
+            </span>
+          </div>
+        </div>
+      </td>
+      <td className="p-4">
+        <div className="text-[11px] text-stone-500 mb-1">{product.unit_of_measure}</div>
+        <div className="relative w-32">
+          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400 font-bold text-xs">₹</span>
+          <input
+            type="number"
+            step="0.01"
+            value={retailPrice}
+            onChange={(e) => setRetailPrice(e.target.value)}
+            className="w-full pl-6 pr-2 py-1.5 rounded-lg border border-stone-300 font-mono font-bold text-sm text-stone-900 focus:ring-2 focus:ring-emerald-600 focus:outline-none bg-white shadow-inner"
+          />
+        </div>
+      </td>
+      <td className="p-4">
+        <div className="relative w-28">
+          <input
+            type="number"
+            value={stock}
+            onChange={(e) => setStock(e.target.value)}
+            className="w-full px-2.5 py-1.5 rounded-lg border border-stone-300 font-mono font-bold text-sm text-stone-900 focus:ring-2 focus:ring-emerald-600 focus:outline-none bg-white shadow-inner"
+          />
+        </div>
+        <div className="text-[10px] text-stone-400 mt-1">Available Units / Bags</div>
+      </td>
+      <td className="p-4">
+        <div className="relative w-32">
+          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-amber-600 font-bold text-xs">₹</span>
+          <input
+            type="number"
+            step="0.01"
+            value={wholesalePrice}
+            onChange={(e) => setWholesalePrice(e.target.value)}
+            className="w-full pl-6 pr-2 py-1.5 rounded-lg border border-amber-300 font-mono font-bold text-sm text-amber-900 focus:ring-2 focus:ring-amber-500 focus:outline-none bg-amber-50/50 shadow-inner"
+          />
+        </div>
+        <div className="text-[10px] text-amber-700 mt-1 font-medium">Wholesale Benchmark (Private)</div>
+      </td>
+      <td className="p-4">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={isActive}
+            onChange={(e) => setIsActive(e.target.checked)}
+            className="w-4 h-4 text-emerald-600 rounded border-stone-300 focus:ring-emerald-500"
+          />
+          <span className={`text-[11px] font-bold ${isActive ? 'text-emerald-700' : 'text-stone-400'}`}>
+            {isActive ? 'Active (Live)' : 'Hidden'}
+          </span>
+        </label>
+      </td>
+      <td className="p-4 text-right space-x-2">
+        <button
+          onClick={handleSave}
+          disabled={isSaving}
+          className={`font-semibold text-xs px-3.5 py-2 rounded-xl transition inline-flex items-center gap-1.5 shadow-sm ${
+            savedSuccess
+              ? 'bg-emerald-600 text-white'
+              : isDirty
+              ? 'bg-emerald-700 hover:bg-emerald-800 text-white animate-pulse'
+              : 'bg-stone-100 hover:bg-stone-200 text-stone-700'
+          }`}
+        >
+          {isSaving ? (
+            <span>Saving...</span>
+          ) : savedSuccess ? (
+            <span>Saved ✓</span>
+          ) : (
+            <span>Save Price & Stock</span>
+          )}
+        </button>
+        <Link
+          href={`/products/${product.slug}`}
+          target="_blank"
+          className="p-2 border border-stone-200 hover:bg-stone-100 text-stone-600 rounded-xl inline-block text-[11px]"
+          title="Open live customer product page"
+        >
+          <ExternalLink className="w-3.5 h-3.5 inline" />
+        </Link>
+      </td>
+    </tr>
+  );
+}
+
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState<'rfqs' | 'orders' | 'inventory' | 'pnl'>('rfqs');
+  const [activeTab, setActiveTab] = useState<'products' | 'rfqs' | 'orders' | 'inventory' | 'pnl'>('products');
   const [metrics, setMetrics] = useState<any>(null);
+  const [adminProducts, setAdminProducts] = useState<any[]>([]);
   const [rfqs, setRfqs] = useState<WholesaleQuotation[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [inventory, setInventory] = useState<InventoryBatch[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [productSuccessMsg, setProductSuccessMsg] = useState<string | null>(null);
 
   // Intake Form State
   const [intakeMandi, setIntakeMandi] = useState('Tiptur APMC Yard');
@@ -35,23 +175,26 @@ export default function AdminPage() {
   const fetchData = useCallback(async () => {
     setRefreshing(true);
     try {
-      const [mRes, rRes, oRes, iRes] = await Promise.all([
+      const [mRes, rRes, oRes, iRes, pRes] = await Promise.all([
         fetch('/api/admin/metrics'),
         fetch('/api/rfq'),
         fetch('/api/admin/orders'),
-        fetch('/api/admin/inventory')
+        fetch('/api/admin/inventory'),
+        fetch('/api/admin/products')
       ]);
 
-      const [mData, rData, oData, iData] = await Promise.all([
+      const [mData, rData, oData, iData, pData] = await Promise.all([
         mRes.json(),
         rRes.json(),
         oRes.json(),
-        iRes.json()
+        iRes.json(),
+        pRes.json()
       ]);
 
       if (mData.success) setMetrics(mData.metrics);
       if (rData.success) setRfqs(rData.quotations);
       if (oData.success) setOrders(oData.orders);
+      if (pData.success) setAdminProducts(pData.products);
       if (iData.success) {
         setInventory(iData.batches);
         if (iData.batches.length > 0 && !damagedBatchId) {
@@ -171,6 +314,38 @@ export default function AdminPage() {
     }
   };
 
+  const handleSaveProductPricing = async (
+    id: string,
+    retailPrice: number,
+    stock: number,
+    wholesalePrice: number,
+    isActive: boolean
+  ) => {
+    try {
+      const res = await fetch('/api/admin/products', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id,
+          retail_price_inr: retailPrice,
+          wholesale_benchmark_price_inr: wholesalePrice,
+          available_stock: stock,
+          is_active: isActive
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setProductSuccessMsg('Commodity pricing and stock updated successfully!');
+        fetchData();
+        setTimeout(() => setProductSuccessMsg(null), 3000);
+      } else {
+        alert(data.error || 'Failed to update product');
+      }
+    } catch {
+      alert('Error updating product pricing or stock');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-stone-100 text-stone-900 font-sans">
       {/* Admin Top Navigation */}
@@ -269,9 +444,18 @@ export default function AdminPage() {
           </div>
         )}
 
+        {/* Success toast notification */}
+        {productSuccessMsg && (
+          <div className="bg-emerald-50 border border-emerald-300 text-emerald-900 px-4 py-3 rounded-2xl flex items-center gap-2 text-xs font-bold shadow-md animate-in fade-in">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{productSuccessMsg}</span>
+          </div>
+        )}
+
         {/* TABS NAVIGATION */}
         <div className="flex border-b border-stone-300 gap-2 sm:gap-4 overflow-x-auto">
           {[
+            { id: 'products', label: 'Commodities, Pricing & Stock', count: adminProducts.length },
             { id: 'rfqs', label: 'Wholesale RFQs & Quotations', count: rfqs.length },
             { id: 'orders', label: 'Retail Orders & Fulfillment', count: orders.length },
             { id: 'inventory', label: 'Inventory Batches & Intake', count: inventory.length },
@@ -295,6 +479,54 @@ export default function AdminPage() {
             </button>
           ))}
         </div>
+
+        {/* TAB 0: COMMODITIES, PRICING & STOCK MANAGER */}
+        {activeTab === 'products' && (
+          <div className="bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm">
+            <div className="p-5 border-b border-stone-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md mb-1">
+                  <Tag className="w-3.5 h-3.5" />
+                  <span>Direct Catalog & Inventory Manager</span>
+                </div>
+                <h3 className="font-extrabold text-stone-900 text-lg">Product Pricing & Stock Quantities</h3>
+                <p className="text-xs text-stone-500 mt-0.5">
+                  Update live retail selling prices, available quantities, wholesale benchmark rates, and catalog visibility instantly without restarting the server.
+                </p>
+              </div>
+              <button
+                onClick={fetchData}
+                className="self-start sm:self-auto text-xs font-bold text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-lg border border-stone-200 transition"
+              >
+                ↻ Refresh Live Rates
+              </button>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-stone-50 text-stone-600 uppercase font-semibold border-b">
+                  <tr>
+                    <th className="p-4">Commodity / SKU</th>
+                    <th className="p-4">Retail Price (₹)</th>
+                    <th className="p-4">Available Stock</th>
+                    <th className="p-4">Wholesale Benchmark (₹)</th>
+                    <th className="p-4">Catalog Status</th>
+                    <th className="p-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {adminProducts.map((prod) => (
+                    <ProductAdminRow
+                      key={prod.id}
+                      product={prod}
+                      onSave={handleSaveProductPricing}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {/* TAB 1: WHOLESALE RFQs */}
         {activeTab === 'rfqs' && (

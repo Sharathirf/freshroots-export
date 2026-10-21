@@ -95,7 +95,7 @@ export default function KatyayaniHero({ onOpenRFQ }: KatyayaniHeroProps) {
             </div>
             <div>
               <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">50,000+ MT</div>
-              <div className="text-xs text-stone-300 font-medium">Shipped Direct from Tiptur Mandi</div>
+              <div className="text-xs text-stone-300 font-medium">Shipped Direct from farmer</div>
             </div>
           </div>
 
