@@ -30,12 +30,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [pincode, setPincode] = useState('560001'); // Default to Bengaluru Urban
   const [pincodeServiceable, setPincodeServiceable] = useState<boolean | null>(true);
 
-  // Load cart from localStorage
+  // Load cart from localStorage or URL resume parameter
   useEffect(() => {
     try {
       const saved = localStorage.getItem('tiptur_direct_cart');
       if (saved) {
         setItems(JSON.parse(saved));
+      }
+
+      // Check for cart resumption token from WhatsApp / SMS recovery link
+      if (typeof window !== 'undefined') {
+        const searchParams = new URLSearchParams(window.location.search);
+        const resumeId = searchParams.get('resume');
+        if (resumeId) {
+          fetch(`/api/cart/sync?id=${encodeURIComponent(resumeId)}`)
+            .then((r) => r.json())
+            .then((data) => {
+              if (data.success && data.cart && Array.isArray(data.cart.cart_items) && data.cart.cart_items.length > 0) {
+                setItems(data.cart.cart_items);
+                setIsCartOpen(true);
+              }
+            })
+            .catch((e) => console.warn('Failed to restore abandoned cart:', e));
+        }
       }
     } catch (e) {
       console.error('Error loading cart:', e);
@@ -49,6 +66,74 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     } catch (e) {
       console.error('Error saving cart:', e);
     }
+  }, [items]);
+
+  // Synchronize cart with backend and capture exit abandonment
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const syncWithBackend = (isExit = false) => {
+      try {
+        const sessionStr = localStorage.getItem('tiptur_customer_session');
+        const wishlistStr = localStorage.getItem('tiptur_wishlist');
+        const session = sessionStr ? JSON.parse(sessionStr) : null;
+        const wishlist = wishlistStr ? JSON.parse(wishlistStr) : [];
+
+        // Only sync if customer is identified (has phone)
+        if (!session?.phone) return;
+
+        const payload = JSON.stringify({
+          phone: session.phone,
+          name: session.name || null,
+          email: session.email || null,
+          cart_items: items,
+          watchlist_items: wishlist,
+          subtotal: items.reduce((sum, item) => sum + item.total_price_inr, 0),
+          is_exit: isExit
+        });
+
+        if (isExit && typeof navigator !== 'undefined' && navigator.sendBeacon) {
+          const blob = new Blob([payload], { type: 'application/json' });
+          navigator.sendBeacon('/api/cart/sync', blob);
+        } else {
+          fetch('/api/cart/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload,
+            keepalive: isExit
+          }).catch((err) => console.warn('Cart sync warning:', err));
+        }
+      } catch (err) {
+        console.warn('Failed to dispatch cart sync:', err);
+      }
+    };
+
+    // Debounced sync on cart updates
+    const debounceTimer = setTimeout(() => {
+      syncWithBackend(false);
+    }, 1500);
+
+    // Exit handlers for tab close, navigation, or visibility change
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        syncWithBackend(true);
+      }
+    };
+
+    const handleBeforeUnload = () => {
+      syncWithBackend(true);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('pagehide', handleBeforeUnload);
+
+    return () => {
+      clearTimeout(debounceTimer);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('pagehide', handleBeforeUnload);
+    };
   }, [items]);
 
   const addToCart = (product: Product, quantity = 1) => {

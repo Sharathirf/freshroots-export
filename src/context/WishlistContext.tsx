@@ -65,6 +65,40 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  // Sync watchlist to backend for identified customers
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    try {
+      const sessionStr = localStorage.getItem('tiptur_customer_session');
+      const cartStr = localStorage.getItem('tiptur_direct_cart');
+      const session = sessionStr ? JSON.parse(sessionStr) : null;
+      const cart = cartStr ? JSON.parse(cartStr) : [];
+
+      if (!session?.phone) return;
+
+      const timer = setTimeout(() => {
+        fetch('/api/cart/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone: session.phone,
+            name: session.name || null,
+            email: session.email || null,
+            cart_items: cart,
+            watchlist_items: wishlist,
+            subtotal: cart.reduce((sum: number, item: any) => sum + (item.total_price_inr || 0), 0),
+            is_exit: false
+          })
+        }).catch((err) => console.warn('Wishlist sync warning:', err));
+      }, 1500);
+
+      return () => clearTimeout(timer);
+    } catch (e) {
+      console.warn('Wishlist sync error:', e);
+    }
+  }, [wishlist]);
+
   return (
     <WishlistContext.Provider
       value={{

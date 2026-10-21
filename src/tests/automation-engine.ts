@@ -759,6 +759,64 @@ export async function runAutomationSuite() {
     assert.strictEqual(res.json?.customer?.name, 'Sharath Inorahalli');
   }, c14);
 
+  let abandonedCartId: string;
+
+  await verifyAsync('POST /api/cart/sync captures cart and watchlist exit event', async () => {
+    const syncRes = await httpPost('/api/cart/sync', {
+      phone: '9591142548',
+      name: 'Sharath Inorahalli',
+      email: 'sharathir198@gmail.com',
+      cart_items: [
+        {
+          product_id: semiCoc.id,
+          sku: semiCoc.sku,
+          title: semiCoc.title,
+          quantity: 2,
+          unit_price_inr: 1350,
+          total_price_inr: 2700
+        }
+      ],
+      watchlist_items: [
+        {
+          id: oilProd.id,
+          sku: oilProd.sku,
+          title: oilProd.title
+        }
+      ],
+      subtotal: 2700,
+      is_exit: true
+    });
+    assert.strictEqual(syncRes.status, 200);
+    assert.strictEqual(syncRes.json?.success, true);
+    assert.strictEqual(syncRes.json?.status, 'abandoned');
+    assert(Boolean(syncRes.json?.cart_id));
+    abandonedCartId = syncRes.json.cart_id;
+  }, c14);
+
+  await verifyAsync('GET /api/cart/sync?cart_id restores full abandoned cart and watchlist', async () => {
+    const getRes = await httpGet(`/api/cart/sync?cart_id=${abandonedCartId}`);
+    assert.strictEqual(getRes.status, 200);
+    assert.strictEqual(getRes.json?.success, true);
+    assert.strictEqual(getRes.json?.cart?.id, abandonedCartId);
+    assert.strictEqual(getRes.json?.cart?.customer_phone, '9591142548');
+    assert.strictEqual(Number(getRes.json?.cart?.total_amount_inr), 2700);
+    assert.strictEqual(getRes.json?.cart?.status, 'abandoned');
+  }, c14);
+
+  await verifyAsync('POST /api/notifications/abandonment triggers WhatsApp recovery reminder', async () => {
+    const notifRes = await httpPost('/api/notifications/abandonment', {
+      phone: '9591142548'
+    });
+    assert.strictEqual(notifRes.status, 200);
+    assert.strictEqual(notifRes.json?.success, true);
+    assert(notifRes.json?.count >= 1);
+    const sent = notifRes.json.notifications[0];
+    assert.strictEqual(sent.customer_phone, '9591142548');
+    assert(sent.message_preview.includes('SHARATH INORAHALLI'));
+    assert(sent.message_preview.includes('cart?resume='));
+    assert(sent.message_preview.includes('95911 42548'));
+  }, c14);
+
   cycleResults.push({
     cycle: 14,
     name: 'Customer Authentication & Session Logic',

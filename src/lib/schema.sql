@@ -146,9 +146,28 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- 9. Abandoned Carts & Watchlist Activity (Retargeting & Notifications)
+CREATE TABLE IF NOT EXISTS abandoned_carts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    customer_phone VARCHAR(20) NOT NULL,
+    customer_name VARCHAR(120),
+    customer_email VARCHAR(255),
+    cart_items JSONB DEFAULT '[]',
+    watchlist_items JSONB DEFAULT '[]',
+    total_amount_inr NUMERIC(10, 2) DEFAULT 0.00,
+    status VARCHAR(30) DEFAULT 'active' CHECK (status IN ('active', 'abandoned', 'notified', 'recovered')),
+    notification_sent_at TIMESTAMP WITH TIME ZONE,
+    notification_channel VARCHAR(30),
+    notification_message TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Create Indexes for fast querying
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_orders_created ON orders(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_quotes_status ON wholesale_quotations(status);
 CREATE INDEX IF NOT EXISTS idx_inventory_product ON inventory_batches(product_id);
+CREATE INDEX IF NOT EXISTS idx_abandoned_phone ON abandoned_carts(customer_phone);
+CREATE INDEX IF NOT EXISTS idx_abandoned_status ON abandoned_carts(status);
