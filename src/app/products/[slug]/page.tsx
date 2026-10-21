@@ -204,6 +204,15 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
               src={product.image_url}
               alt={product.title}
               gradeBadge={product.grade}
+              additionalImages={
+                product.sku === 'COP-BAL-BOX-15K'
+                  ? ['/products/tiptur-ball-copra.jpg', '/products/ball-copra-basket.jpg']
+                  : product.sku === 'COI-SHL-BLK-01T'
+                  ? ['/products/coconut-shells-pile.jpg', '/products/coconut-shells-halves.jpg']
+                  : product.sku === 'NUR-COC-PLT-01Y'
+                  ? ['/products/coconut-plants-saplings.jpg']
+                  : []
+              }
             />
 
             {/* Quick Trust Highlights below image */}

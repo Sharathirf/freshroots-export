@@ -6,10 +6,14 @@ interface ProductImageZoomProps {
   src: string;
   alt: string;
   gradeBadge?: string;
+  additionalImages?: string[];
 }
 
-export default function ProductImageZoom({ src, alt, gradeBadge }: ProductImageZoomProps) {
+export default function ProductImageZoom({ src, alt, gradeBadge, additionalImages = [] }: ProductImageZoomProps) {
+  const [activeImage, setActiveImage] = useState<string>(src);
   const [zoomStyle, setZoomStyle] = useState<React.CSSProperties>({ display: 'none' });
+
+  const allImages = Array.from(new Set([src, ...additionalImages].filter(Boolean)));
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
@@ -37,7 +41,7 @@ export default function ProductImageZoom({ src, alt, gradeBadge }: ProductImageZ
       >
         {/* Base Image */}
         <img
-          src={src}
+          src={activeImage}
           alt={alt}
           className="w-full h-full object-cover transition-transform duration-200"
           style={zoomStyle.display === 'block' ? zoomStyle : undefined}
@@ -55,6 +59,24 @@ export default function ProductImageZoom({ src, alt, gradeBadge }: ProductImageZ
           Hover to zoom
         </div>
       </div>
+
+      {/* Thumbnails row if multiple images exist */}
+      {allImages.length > 1 && (
+        <div className="flex gap-2.5 pt-1 overflow-x-auto">
+          {allImages.map((imgUrl, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => setActiveImage(imgUrl)}
+              className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 transition shrink-0 ${
+                activeImage === imgUrl ? 'border-[#3b6d11] ring-2 ring-lime-400/40 shadow-sm' : 'border-stone-200 hover:border-stone-400 opacity-75 hover:opacity-100'
+              }`}
+            >
+              <img src={imgUrl} alt={`${alt} view ${idx + 1}`} className="w-full h-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

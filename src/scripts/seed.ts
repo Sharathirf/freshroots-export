@@ -113,7 +113,7 @@ async function runSeed() {
         drying_process: '100% Attic Cured, Zero Sulphur / Smoke',
         packaging: 'Food-grade 5-ply corrugated carton with moisture barrier liner'
       },
-      image_url: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?auto=format&fit=crop&w=800&q=80'
+      image_url: '/products/tiptur-ball-copra.jpg'
     },
 
     // 3. Coconut Plants 1 Year Old 2 Feet
@@ -142,7 +142,7 @@ async function runSeed() {
         variety: 'Tiptur Tall / Selected High-Yield Cultivar',
         root_system: 'Established polybag root ball, ready for planting'
       },
-      image_url: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80'
+      image_url: '/products/coconut-plants-saplings.jpg'
     },
 
     // 4. Wood-Pressed Groundnut Oil
@@ -307,7 +307,7 @@ async function runSeed() {
         calorific_value: '> 4,500 kcal/kg',
         moisture_max: '≤ 12.0% certified'
       },
-      image_url: 'https://images.unsplash.com/photo-1582281298055-e25b84a30b0b?auto=format&fit=crop&w=800&q=80'
+      image_url: '/products/coconut-shells-pile.jpg'
     },
 
     // 10. Arecanut Plants (1 - 1.5 Feet)
