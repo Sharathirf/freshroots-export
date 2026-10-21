@@ -327,8 +327,13 @@ export default function AdminPage() {
                       <td className="p-4 font-mono font-bold text-stone-900">{q.quote_number}</td>
                       <td className="p-4">
                         <div className="font-bold text-stone-900">{q.company_name}</div>
-                        <div className="text-[11px] text-stone-500">{q.contact_person} • {q.contact_phone}</div>
+                        <div className="text-[11px] text-stone-500">
+                          {q.contact_person}
+                          {q.contact_phone ? ` • ${q.contact_phone}` : ''}
+                          {q.contact_email ? ` • ${q.contact_email}` : ''}
+                        </div>
                         {q.gstin && <div className="text-[10px] font-mono text-emerald-800">GSTIN: {q.gstin}</div>}
+                        {q.notes && <div className="text-[10px] text-stone-500 italic max-w-xs truncate mt-0.5">{q.notes}</div>}
                       </td>
                       <td className="p-4">
                         <div className="font-semibold text-stone-800">{q.product_title}</div>
@@ -378,14 +383,23 @@ export default function AdminPage() {
                             Mark Accepted
                           </button>
                         )}
-                        <a
-                          href={`https://wa.me/${q.contact_phone.replace(/\D/g, '')}?text=Hello%20${encodeURIComponent(q.contact_person)},%20regarding%20your%20quotation%20${q.quote_number}%20for%20${encodeURIComponent(q.company_name)}.`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="border border-stone-300 hover:bg-stone-100 text-stone-700 text-[11px] font-medium px-2.5 py-1.5 rounded-lg inline-block"
-                        >
-                          WhatsApp
-                        </a>
+                        {q.contact_phone ? (
+                          <a
+                            href={`https://wa.me/${q.contact_phone.replace(/\D/g, '')}?text=Hello%20${encodeURIComponent(q.contact_person || 'Buyer')},%20regarding%20your%20quotation%20${q.quote_number}%20for%20${encodeURIComponent(q.company_name || q.product_title || 'agricultural commodities')}.`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="border border-stone-300 hover:bg-stone-100 text-stone-700 text-[11px] font-medium px-2.5 py-1.5 rounded-lg inline-block"
+                          >
+                            WhatsApp
+                          </a>
+                        ) : q.contact_email ? (
+                          <a
+                            href={`mailto:${q.contact_email}?subject=Quotation%20${q.quote_number}%20-%20Tiptur%20Direct&body=Hello%20${encodeURIComponent(q.contact_person || 'Buyer')},%0D%0A%0D%0ARegarding%20your%20inquiry%20for%20quote%20${q.quote_number}.`}
+                            className="border border-stone-300 hover:bg-stone-100 text-stone-700 text-[11px] font-medium px-2.5 py-1.5 rounded-lg inline-block"
+                          >
+                            Email
+                          </a>
+                        ) : null}
                       </td>
                     </tr>
                   ))}

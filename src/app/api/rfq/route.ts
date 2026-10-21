@@ -5,22 +5,47 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      company_name,
+      customer_name,
       contact_person,
       contact_phone,
       contact_email,
+      company_name,
       gstin,
       product_id,
+      product_title,
       requested_quantity,
       unit,
       destination_city,
       destination_pincode,
+      delivery_address,
+      preferred_delivery_date,
+      additional_requirements,
       notes
     } = body;
 
-    if (!company_name || !contact_person || !contact_phone || !product_id || !requested_quantity || !destination_city) {
+    const name = (contact_person || customer_name)?.trim();
+    const phone = contact_phone?.trim() || null;
+    const email = contact_email?.trim() || null;
+
+    // 1. Validate mandatory fields
+    if (!name) {
       return NextResponse.json(
-        { success: false, error: 'Please provide all required business and consignment fields' },
+        { success: false, error: 'Customer name is required' },
+        { status: 400 }
+      );
+    }
+
+    // At least one contact method is required
+    if (!phone && !email) {
+      return NextResponse.json(
+        { success: false, error: 'Please provide at least one contact method: a phone number or an email address' },
+        { status: 400 }
+      );
+    }
+
+    if (!product_id && !product_title) {
+      return NextResponse.json(
+        { success: false, error: 'Target product is required' },
         { status: 400 }
       );
     }
@@ -33,72 +58,74 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Lookup product
-    const dbProd = await query(
-      `SELECT id, title, wholesale_benchmark_price_inr, retail_price_inr, tax_rate_percentage 
-       FROM products WHERE id = $1`,
-      [product_id]
-    );
-
-    if (dbProd.length === 0) {
+    const unitOfMeasure = unit?.trim();
+    if (!unitOfMeasure) {
       return NextResponse.json(
-        { success: false, error: 'Selected product not found' },
-        { status: 404 }
+        { success: false, error: 'Unit of measurement is required' },
+        { status: 400 }
       );
     }
 
-    const prod = dbProd[0];
-    const benchmarkUnitPrice = Number(prod.wholesale_benchmark_price_inr || prod.retail_price_inr * 0.7);
-
-    // Dynamic freight estimate heuristic based on distance from Tiptur hub:
-    // If Bengaluru (560xxx) ~ ₹1,800 to ₹3,500; Rest of Karnataka ~ ₹3,500 to ₹6,500; Interstate ~ ₹8,000 to ₹14,000
-    let estimatedFreight = 2500.00;
-    if (destination_pincode?.startsWith('560')) {
-      estimatedFreight = 2200.00;
-    } else if (destination_pincode?.startsWith('57') || destination_pincode?.startsWith('58')) {
-      estimatedFreight = 4000.00;
-    } else {
-      estimatedFreight = 8500.00;
+    // 2. Lookup product in database
+    let prod: any = null;
+    if (product_id) {
+      const dbProd = await query(
+        `SELECT id, title, wholesale_benchmark_price_inr FROM products WHERE id = $1`,
+        [product_id]
+      );
+      if (dbProd.length > 0) prod = dbProd[0];
     }
 
-    // Scale freight if large truckload (>1000 bags or >50 quintals)
-    if (qty > 100) {
-      estimatedFreight = estimatedFreight * 1.8;
+    if (!prod && product_title) {
+      const dbProd = await query(
+        `SELECT id, title, wholesale_benchmark_price_inr FROM products WHERE title ILIKE $1 LIMIT 1`,
+        [`%${product_title}%`]
+      );
+      if (dbProd.length > 0) prod = dbProd[0];
     }
 
-    const subtotal = benchmarkUnitPrice * qty;
-    const totalEstimate = subtotal + estimatedFreight;
+    const finalTitle = prod ? prod.title : product_title || 'Agricultural Commodity';
+    const benchmarkUnitPrice = prod ? Number(prod.wholesale_benchmark_price_inr || 0) : 0;
 
-    // Generate Quote Number: RFQ-YYYYMM-XXXX
+    // Generate Inquiry Reference: RFQ-YYYYMMDD-XXXX
     const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
     const randSuffix = Math.floor(100 + Math.random() * 900);
     const quoteNumber = `RFQ-${dateStr}-${randSuffix}`;
 
-    const insertedQuote = await query(
+    const mergedNotes = [
+      additional_requirements || notes || '',
+      preferred_delivery_date ? `Preferred Delivery Date: ${preferred_delivery_date}` : '',
+      delivery_address ? `Delivery Address: ${delivery_address}` : ''
+    ].filter(Boolean).join(' | ');
+
+    const inserted = await query(
       `INSERT INTO wholesale_quotations (
         quote_number, company_name, contact_person, contact_phone, contact_email,
         gstin, product_id, product_title, requested_quantity, unit, destination_city,
-        destination_pincode, proposed_unit_price_inr, freight_charges_inr, total_quote_inr,
+        destination_pincode, delivery_address, preferred_delivery_date,
+        proposed_unit_price_inr, freight_charges_inr, total_quote_inr,
         status, valid_until, notes
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, 'submitted', NOW() + INTERVAL '48 hours', $16)
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, 'submitted', NOW() + INTERVAL '48 hours', $18)
       RETURNING *`,
       [
         quoteNumber,
-        company_name,
-        contact_person,
-        contact_phone,
-        contact_email || null,
-        gstin || null,
-        prod.id,
-        prod.title,
+        company_name?.trim() || 'Individual / Commercial Buyer',
+        name,
+        phone,
+        email,
+        gstin?.trim() || null,
+        prod ? prod.id : null,
+        finalTitle,
         qty,
-        unit || 'Bags / Lots',
-        destination_city,
-        destination_pincode || '560001',
-        benchmarkUnitPrice,
-        estimatedFreight,
-        totalEstimate,
-        notes || null
+        unitOfMeasure,
+        destination_city?.trim() || null,
+        destination_pincode?.trim() || null,
+        delivery_address?.trim() || null,
+        preferred_delivery_date || null,
+        benchmarkUnitPrice, // Stored privately on server
+        0.00, // Calculated during admin review
+        benchmarkUnitPrice * qty, // Stored privately on server
+        mergedNotes || null
       ]
     );
 
@@ -106,18 +133,28 @@ export async function POST(request: NextRequest) {
     await query(
       `INSERT INTO audit_logs (action, entity_type, entity_id, details)
        VALUES ('WHOLESALE_RFQ_SUBMITTED', 'wholesale_quotations', $1, $2)`,
-      [insertedQuote[0].id, JSON.stringify({ quote_number: quoteNumber, company: company_name, amount: totalEstimate })]
+      [inserted[0].id, JSON.stringify({ quote_number: quoteNumber, name, phone, email, qty, unit: unitOfMeasure })]
     );
 
+    // Public response: Never leak wholesale internal pricing or benchmarks!
     return NextResponse.json({
       success: true,
-      message: 'Wholesale RFQ submitted! Our commercial desk will review within 90 minutes.',
-      quotation: insertedQuote[0]
+      message: 'Your bulk quote request has been received! Our commercial desk will review and send a customized quotation.',
+      quotation: {
+        id: inserted[0].id,
+        quote_number: quoteNumber,
+        contact_person: name,
+        product_title: finalTitle,
+        requested_quantity: qty,
+        unit: unitOfMeasure,
+        status: 'submitted',
+        created_at: inserted[0].created_at
+      }
     });
   } catch (error: any) {
     console.error('API Error in /api/rfq (POST):', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to submit RFQ', details: error.message },
+      { success: false, error: 'Failed to submit quote inquiry', details: error.message },
       { status: 500 }
     );
   }

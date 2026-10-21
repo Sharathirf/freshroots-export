@@ -1,6 +1,12 @@
 // TypeScript type definitions for Tiptur Direct Agri-Commerce Platform
 
-export type ProductCategory = 'mature_coconut' | 'copra' | 'value_added';
+export type ProductCategory =
+  | 'mature_coconut'
+  | 'copra'
+  | 'spices'
+  | 'oil_and_extracts'
+  | 'coir_commodities'
+  | 'value_added';
 
 export interface Product {
   id: string;

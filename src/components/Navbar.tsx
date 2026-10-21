@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
-import { ShoppingBag, MapPin, Phone, ShieldCheck, Sprout, Building2 } from 'lucide-react';
+import { ShoppingBag, MapPin, Phone, Sprout, Building2, Globe, Check } from 'lucide-react';
 
 export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
   const { itemCount, subtotal, setIsCartOpen, pincode, setPincode, pincodeServiceable, setPincodeServiceable } = useCart();
@@ -11,6 +11,17 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
   const [isPinModalOpen, setIsPinModalOpen] = useState(false);
   const [pinLoading, setPinLoading] = useState(false);
   const [pinMessage, setPinMessage] = useState<string | null>(null);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsPinModalOpen(false);
+    };
+    if (isPinModalOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isPinModalOpen]);
 
   const handleCheckPincode = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +33,7 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
       const data = await res.json();
       if (data.success) {
         setPincode(pinInput);
-        setPincodeServiceable(data.serviceable);
+        setPincodeServiceable(true);
         setPinMessage(data.message);
       } else {
         setPinMessage(data.error || 'Invalid PIN code');
@@ -50,8 +61,8 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
           </div>
           <div className="flex items-center gap-4 text-emerald-200">
             <span className="flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              0% GST on Fresh Coconuts (HSN 080112)
+              <Globe className="w-3.5 h-3.5 text-emerald-400" />
+              Pan-India Delivery & Worldwide Bulk Freight
             </span>
             <a
               href="https://wa.me/919876543210"
@@ -79,7 +90,7 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
               <span className="font-light text-2xl tracking-tight text-emerald-700">DIRECT</span>
             </div>
             <p className="text-[11px] font-medium text-stone-500 tracking-wide uppercase">
-              Farm-Gate Coconuts & GI Copra
+              Farm-Gate Coconuts, Copra & Agri Commodities
             </p>
           </div>
         </Link>
@@ -91,8 +102,8 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
             className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200/80 text-stone-700 text-xs font-medium border border-stone-200/80 transition"
           >
             <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Deliver to: <strong>{pincode}</strong></span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span>Delivery: <strong>{pincode} ({pincodeServiceable ? 'Pan-India Active' : 'Checking'})</strong></span>
+            <span className={`w-1.5 h-1.5 rounded-full ${pincodeServiceable ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
             <span className="text-stone-400">Change</span>
           </button>
         </div>
@@ -103,7 +114,7 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
             href="/#catalog"
             className="hidden md:inline-flex text-sm font-semibold text-stone-700 hover:text-emerald-700 px-3 py-2 transition"
           >
-            Retail Catalog
+            Products
           </Link>
 
           <button
@@ -113,7 +124,7 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
             <Building2 className="w-4 h-4 text-amber-700" />
             <span>Wholesale RFQ</span>
             <span className="bg-amber-200/80 text-amber-900 text-[10px] px-1.5 py-0.5 rounded font-bold uppercase hidden sm:inline">
-              Bulk 500+
+              Pan-India & Export
             </span>
           </button>
 
@@ -143,25 +154,35 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
         </div>
       </div>
 
-      {/* Pin Code Modal */}
+      {/* Pin Code Modal with Easy Backdrop Close */}
       {isPinModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-stone-100 animate-in fade-in zoom-in-95">
+        <div
+          className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setIsPinModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-stone-200 animate-in fade-in zoom-in-95"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-emerald-700" />
-                <h3 className="font-bold text-stone-900 text-lg">Check Delivery Pin Code</h3>
+                <h3 className="font-extrabold text-stone-900 text-lg">Check Delivery Coverage</h3>
               </div>
               <button
+                type="button"
                 onClick={() => setIsPinModalOpen(false)}
-                className="text-stone-400 hover:text-stone-600 font-bold p-1"
+                className="w-8 h-8 rounded-full hover:bg-stone-100 flex items-center justify-center text-stone-400 hover:text-stone-700 font-bold transition"
+                title="Close modal (Esc)"
               >
                 ✕
               </button>
             </div>
-            <p className="text-stone-600 text-sm mb-4">
-              Enter your 6-digit Indian postal code to check retail hub delivery SLA and regional freight eligibility.
+
+            <p className="text-stone-600 text-xs sm:text-sm mb-4 leading-relaxed">
+              We now deliver retail packs to <strong>all Indian postal PIN codes</strong>, and fulfill bulk wholesale truckloads <strong>Pan-India and Worldwide (Container Exports)</strong>.
             </p>
+
             <form onSubmit={handleCheckPincode} className="space-y-4">
               <div className="flex gap-2">
                 <input
@@ -169,30 +190,46 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
                   maxLength={6}
                   value={pinInput}
                   onChange={(e) => setPinInput(e.target.value.replace(/\D/g, ''))}
-                  placeholder="e.g. 560001 (Bengaluru)"
+                  placeholder="Enter 6-digit Indian PIN"
                   className="flex-1 px-4 py-2.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-emerald-600 font-mono text-base font-semibold"
                 />
                 <button
                   type="submit"
                   disabled={pinLoading || pinInput.length !== 6}
-                  className="bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white font-semibold px-5 py-2.5 rounded-xl transition flex items-center gap-1"
+                  className="bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-xl transition flex items-center gap-1"
                 >
-                  {pinLoading ? 'Checking...' : 'Verify'}
+                  {pinLoading ? 'Checking...' : 'Check'}
                 </button>
               </div>
+
               {pinMessage && (
-                <div
-                  className={`p-3 rounded-xl text-xs font-medium ${
-                    pincodeServiceable
-                      ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                      : 'bg-amber-50 text-amber-800 border border-amber-200'
-                  }`}
-                >
-                  {pinMessage}
+                <div className="p-3.5 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  <div className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>{pinMessage}</span>
+                  </div>
                 </div>
               )}
-              <div className="pt-2 text-xs text-stone-500">
-                ⭐ <strong>Active Service Areas</strong>: Bengaluru Urban, Tumakuru, Tiptur, Hassan, Mysuru, and major Karnataka industrial corridors.
+
+              <div className="pt-2 border-t border-stone-100 space-y-2 text-xs text-stone-500">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span><strong>Retail Coverage</strong>: All 19,000+ PIN codes across India via Express 3PL.</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span><strong>Worldwide Bulk Cargo</strong>: 20ft / 40ft container shipments from Mangalore/Chennai port for export buyers.</span>
+                </div>
+              </div>
+
+              <div className="pt-3 flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsPinModalOpen(false)}
+                  className="w-full py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold text-xs rounded-xl transition"
+                >
+                  Done / Close
+                </button>
               </div>
             </form>
           </div>

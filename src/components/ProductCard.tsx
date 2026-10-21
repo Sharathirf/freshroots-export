@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { ShoppingBag } from 'lucide-react';
@@ -19,6 +20,15 @@ function formatStockLabel(stock: number, product: Product): string {
   }
   if (product.sku.includes('50K')) {
     return `${stock} Bags in stock`;
+  }
+  if (product.category === 'spices') {
+    return `${stock} Packs in stock`;
+  }
+  if (product.category === 'oil_and_extracts') {
+    return `${stock} Tins in stock`;
+  }
+  if (product.category === 'coir_commodities') {
+    return `${stock} Pallets in stock`;
   }
   return `${stock} Units in stock`;
 }
@@ -39,19 +49,21 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
   } else if (product.sku.includes('50K')) {
     perUnitNote = `₹${(price / 50).toFixed(0)}/kg`;
     unitSubtitle = `50kg Bag • Moisture ≤ 5.5% • Oil ≥ 68%`;
+  } else if (product.estimated_weight_kg) {
+    perUnitNote = `₹${(price / Number(product.estimated_weight_kg)).toFixed(0)}/kg`;
   }
 
   const stockText = formatStockLabel(product.available_stock || 220, product);
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
-      {/* Product Image */}
+    <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between group">
+      {/* Product Image & Link to PDP */}
       <div>
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-stone-100">
+        <Link href={`/products/${product.slug}`} className="block relative aspect-[4/3] w-full overflow-hidden bg-stone-100">
           <img
             src={product.image_url}
             alt={product.title}
-            className="w-full h-full object-cover hover:scale-105 transition duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
           />
           <span className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm text-stone-800 text-[11px] font-semibold px-2.5 py-1 rounded-md shadow-sm">
             {product.grade}
@@ -59,16 +71,18 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
           <span className="absolute bottom-3 left-3 bg-emerald-950/80 backdrop-blur-sm text-emerald-300 text-[10px] font-medium px-2 py-0.5 rounded shadow-sm">
             ✓ {stockText}
           </span>
-        </div>
+        </Link>
 
         {/* Content */}
         <div className="p-4 sm:p-5">
           <div className="text-[11px] font-medium text-emerald-700 tracking-wide">
             {unitSubtitle}
           </div>
-          <h3 className="font-bold text-stone-900 text-base mt-1 line-clamp-1">
-            {product.title}
-          </h3>
+          <Link href={`/products/${product.slug}`}>
+            <h3 className="font-bold text-stone-900 text-base mt-1 line-clamp-1 group-hover:text-emerald-800 transition">
+              {product.title}
+            </h3>
+          </Link>
           <p className="text-xs text-stone-500 mt-1 line-clamp-2 leading-relaxed">
             {product.description}
           </p>
@@ -100,7 +114,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
           onClick={() => onSelectForRFQ(product)}
           className="w-full text-center text-xs font-medium text-stone-500 hover:text-amber-800 py-1 transition"
         >
-          Buying bulk (500+)? <span className="underline font-semibold text-amber-700">Request Quote</span>
+          Buying bulk? <span className="underline font-semibold text-amber-700">Request Quote</span>
         </button>
       </div>
     </div>

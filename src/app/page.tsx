@@ -178,11 +178,14 @@ export default function HomePage() {
             </div>
 
             {/* Category Filter Tabs */}
-            <div className="flex gap-1 bg-stone-200/70 p-1 rounded-xl w-fit">
+            <div className="flex flex-wrap gap-1 bg-stone-200/70 p-1 rounded-xl w-fit">
               {[
                 { id: 'all', label: 'All' },
                 { id: 'mature_coconut', label: 'Coconuts' },
-                { id: 'copra', label: 'Copra' }
+                { id: 'copra', label: 'Copra' },
+                { id: 'spices', label: 'Spices' },
+                { id: 'oil_and_extracts', label: 'Oils' },
+                { id: 'coir_commodities', label: 'Coir Pith' }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -345,11 +348,14 @@ export default function HomePage() {
           <div>
             <h4 className="font-bold text-white text-xs uppercase tracking-wider mb-3">Product Catalog</h4>
             <ul className="space-y-2">
-              <li>Grade A Mature Dehusked Coconuts</li>
-              <li>Grade B Commercial Coconuts</li>
+              <li>Grade A & B Mature Coconuts</li>
               <li>GI-Certified Tiptur Ball Copra</li>
               <li>Industrial Milling Copra</li>
-              <li>Desiccated Coconut Powder (Upcoming)</li>
+              <li>GI Byadgi Stemless Chillies</li>
+              <li>Malnad TGSEB Bold Black Pepper</li>
+              <li>Tumakuru Red Areca Nut (Supari)</li>
+              <li>Wood-Pressed Virgin Coconut Oil</li>
+              <li>Washed Low-EC Coir Pith Blocks</li>
             </ul>
           </div>
 

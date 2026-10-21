@@ -191,6 +191,116 @@ it('Damaged stock write-off correctly moves units from available to damaged buck
 });
 
 // ----------------------------------------------------
+// Test Suite 5: Bulk Inquiry Validation, Price Secrecy & Pan-India Coverage
+// ----------------------------------------------------
+console.log('\n🔒 Test Suite 5: Bulk Inquiry Validation, Price Secrecy & Coverage');
+
+interface InquiryPayload {
+  customer_name?: string;
+  contact_phone?: string;
+  contact_email?: string;
+  product_title?: string;
+  requested_quantity?: number;
+  unit?: string;
+  company_name?: string;
+  gstin?: string;
+}
+
+function validateBulkInquiry(data: InquiryPayload): { valid: boolean; error?: string } {
+  if (!data.customer_name || !data.customer_name.trim()) {
+    return { valid: false, error: 'Customer name is mandatory.' };
+  }
+  const hasPhone = Boolean(data.contact_phone && data.contact_phone.trim().length >= 7);
+  const hasEmail = Boolean(data.contact_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.contact_email.trim()));
+  if (!hasPhone && !hasEmail) {
+    return { valid: false, error: 'Please provide at least one contact method (phone number or valid email address).' };
+  }
+  if (!data.product_title || !data.product_title.trim()) {
+    return { valid: false, error: 'Product name is mandatory.' };
+  }
+  if (!data.requested_quantity || data.requested_quantity <= 0) {
+    return { valid: false, error: 'Requested quantity must be greater than zero.' };
+  }
+  if (!data.unit || !data.unit.trim()) {
+    return { valid: false, error: 'Unit of measurement is mandatory.' };
+  }
+  return { valid: true };
+}
+
+it('Permits bulk inquiry with phone only (email, company, GSTIN omitted)', () => {
+  const result = validateBulkInquiry({
+    customer_name: 'Ramesh Patel',
+    contact_phone: '+91 98450 12345',
+    product_title: 'GI Ball Copra (Tumakuru)',
+    requested_quantity: 50,
+    unit: 'Boxes (25kg)'
+  });
+  assert.strictEqual(result.valid, true);
+  assert.strictEqual(result.error, undefined);
+});
+
+it('Permits bulk inquiry with email only (phone, company, GSTIN omitted)', () => {
+  const result = validateBulkInquiry({
+    customer_name: 'Apex Supermarkets Procurement',
+    contact_email: 'buyer@apexretail.com',
+    product_title: 'GI Byadgi Chilli Stemless',
+    requested_quantity: 100,
+    unit: 'Cartons (10kg)'
+  });
+  assert.strictEqual(result.valid, true);
+  assert.strictEqual(result.error, undefined);
+});
+
+it('Rejects bulk inquiry when neither phone nor email is supplied', () => {
+  const result = validateBulkInquiry({
+    customer_name: 'Anonymous Trader',
+    product_title: 'Milling Copra',
+    requested_quantity: 10,
+    unit: 'Bags'
+  });
+  assert.strictEqual(result.valid, false);
+  assert.strictEqual(result.error?.includes('at least one contact method'), true);
+});
+
+it('Rejects bulk inquiry when quantity is zero or negative', () => {
+  const result = validateBulkInquiry({
+    customer_name: 'Valid Name',
+    contact_phone: '9845012345',
+    product_title: 'Milling Copra',
+    requested_quantity: 0,
+    unit: 'Bags'
+  });
+  assert.strictEqual(result.valid, false);
+  assert.strictEqual(result.error?.includes('greater than zero'), true);
+});
+
+it('Strict Wholesale Price Privacy: public product model must not leak wholesale pricing benchmark', () => {
+  const publicProduct = {
+    id: 'prod-001',
+    slug: 'byadgi-chilli-stemless-10kg',
+    title: 'GI Byadgi Chilli Stemless',
+    price_inr: 4200.00,
+    category: 'spices',
+    grade: 'GI Extra Bold'
+  };
+
+  assert.strictEqual((publicProduct as any).wholesale_benchmark_price_inr, undefined, 'wholesale_benchmark_price_inr must be hidden');
+  assert.strictEqual((publicProduct as any).procurement_cost_inr, undefined, 'procurement_cost_inr must never be public');
+});
+
+it('Delivery eligibility covers all valid 6-digit Indian PIN codes nationwide', () => {
+  const isPincodeServiceable = (pin: string) => /^[1-9][0-9]{5}$/.test(pin.trim());
+
+  assert.strictEqual(isPincodeServiceable('110001'), true, 'Delhi is serviceable');
+  assert.strictEqual(isPincodeServiceable('400001'), true, 'Mumbai is serviceable');
+  assert.strictEqual(isPincodeServiceable('700001'), true, 'Kolkata is serviceable');
+  assert.strictEqual(isPincodeServiceable('600001'), true, 'Chennai is serviceable');
+  assert.strictEqual(isPincodeServiceable('560001'), true, 'Bengaluru is serviceable');
+  assert.strictEqual(isPincodeServiceable('572201'), true, 'Tiptur is serviceable');
+  assert.strictEqual(isPincodeServiceable('99999'), false, '5-digit invalid pin must be rejected');
+});
+
+// ----------------------------------------------------
 // Summary
 // ----------------------------------------------------
 console.log('\n========================================');

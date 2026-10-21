@@ -152,6 +152,133 @@ async function runSeed() {
         ideal_buyers: 'Oil expeller mills, Ayurvedic formulations'
       },
       image_url: 'https://images.unsplash.com/photo-1582281298055-e25b84a30b0b?auto=format&fit=crop&w=800&q=80'
+    },
+    {
+      sku: 'SPI-BYD-CHL-10K',
+      title: 'GI-Tagged Byadgi Chilli (Stemless Wrinkled Premium)',
+      slug: 'byadgi-chilli-stemless-10kg',
+      category: 'spices',
+      grade: 'Premium Stemless Wrinkled Grade A',
+      origin: 'Haveri & Byadgi APMC Yard, Karnataka',
+      unit_of_measure: '10 kg Corrugated Carton',
+      estimated_weight_kg: 10.0,
+      moisture_percentage: 9.5,
+      oil_percentage: 16.0,
+      retail_price_inr: 4200.00, // ₹420/kg
+      bulk_min_quantity: 10, // 100 kg
+      wholesale_benchmark_price_inr: 340.00, // ₹340/kg bulk
+      hsn_code: '0904',
+      tax_rate_percentage: 5.00,
+      description: 'World-famous GI-certified Byadgi Chillies known for intense deep red oleoresin color (ASTA 150-180) and gentle mild pungency. 100% stemless, carefully sun-dried on clean farm beds. Essential for premium masala blenders, food processors, and gourmet culinary use.',
+      specifications: {
+        color_asta: '150 to 180 ASTA Units',
+        heat_shu: '15,000 to 25,000 SHU (Mild)',
+        stem_condition: '100% Destemmed / Clean',
+        moisture_max: '10.0% certified',
+        packaging: '5-ply corrugated carton with inner food liner'
+      },
+      image_url: 'https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&w=800&q=80'
+    },
+    {
+      sku: 'SPI-MLN-PEP-05K',
+      title: 'Malnad Garbled Extra Bold Black Pepper (Tellicherry TGSEB)',
+      slug: 'malnad-bold-black-pepper-5kg',
+      category: 'spices',
+      grade: 'Tellicherry Garbled Special Extra Bold (4.75mm+)',
+      origin: 'Western Ghats / Malnad Corridor, Karnataka',
+      unit_of_measure: '5 kg Food-Grade Pouch',
+      estimated_weight_kg: 5.0,
+      moisture_percentage: 10.5,
+      oil_percentage: 3.5,
+      retail_price_inr: 3600.00, // ₹720/kg
+      bulk_min_quantity: 10, // 50 kg
+      wholesale_benchmark_price_inr: 580.00, // ₹580/kg bulk
+      hsn_code: '0904',
+      tax_rate_percentage: 5.00,
+      description: 'High-altitude Malnad black pepper harvested at peak ripeness from shaded biodiversity farms in Karnataka. Garbled over 4.75mm screens for uniform jumbo density. Intense aroma, high piperine content (>5.5%), and deep pungency.',
+      specifications: {
+        berry_size: '4.75 mm+ (Extra Bold)',
+        piperine_content: '> 5.5%',
+        bulk_density: '570 g/L minimum',
+        packaging: 'Multi-layer hermetic aroma-barrier pouch'
+      },
+      image_url: 'https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=800&q=80'
+    },
+    {
+      sku: 'ARE-TUM-SUP-25K',
+      title: 'Tumakuru Red Whole Areca Nut (Rashi Supari)',
+      slug: 'tumakuru-red-areca-nut-25kg',
+      category: 'spices',
+      grade: 'Top Grade Rashi Whole Boiled',
+      origin: 'Tumakuru & Gubbi Belt, Karnataka',
+      unit_of_measure: '25 kg Gunny Sack',
+      estimated_weight_kg: 25.0,
+      moisture_percentage: 8.0,
+      oil_percentage: null,
+      retail_price_inr: 12500.00, // ₹500/kg
+      bulk_min_quantity: 4, // 100 kg
+      wholesale_benchmark_price_inr: 410.00, // ₹410/kg bulk
+      hsn_code: '080280',
+      tax_rate_percentage: 5.00,
+      description: 'Traditional boiled and sun-cured whole red areca nuts (Rashi) procured directly from farmers in the Tumakuru-Gubbi agro-climatic corridor. Uniform grading, deep crimson color, free from fungal spots or insect damage.',
+      specifications: {
+        grading_type: 'Rashi Supari Whole',
+        curing_process: 'Traditional Copper Vessel Boiled & Sun-Cured',
+        moisture_max: '8.5%',
+        packaging: 'Food-grade breathable jute sack'
+      },
+      image_url: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80'
+    },
+    {
+      sku: 'VCO-KRD-COL-05L',
+      title: 'Raw Wood-Pressed Virgin Coconut Oil (Marachekku)',
+      slug: 'wood-pressed-virgin-coconut-oil-5l',
+      category: 'oil_and_extracts',
+      grade: '100% Cold-Pressed Unrefined Raw',
+      origin: 'Tiptur Coconut Processing Cluster, Karnataka',
+      unit_of_measure: '5 Litre Food-Grade Tin',
+      estimated_weight_kg: 4.6,
+      moisture_percentage: 0.2,
+      oil_percentage: 99.8,
+      retail_price_inr: 1850.00, // ₹370/L
+      bulk_min_quantity: 10, // 50 Litres
+      wholesale_benchmark_price_inr: 290.00, // ₹290/L bulk
+      hsn_code: '1513',
+      tax_rate_percentage: 5.00,
+      description: 'Extracted using traditional Vaagai wood cold expellers from fresh Tiptur copra at temperatures below 45°C. Preserves natural lauric acid (>50%), antioxidant vitamins, and fresh coconut aroma. Zero mineral oil, zero chemical bleaching.',
+      specifications: {
+        extraction_method: 'Traditional Wooden Ghani (Marachekku)',
+        lauric_acid_content: '49% - 53%',
+        free_fatty_acids_ffa: '< 0.2%',
+        packaging: 'Sealed food-grade tin container'
+      },
+      image_url: 'https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&w=800&q=80'
+    },
+    {
+      sku: 'COI-PTH-BLK-05K',
+      title: 'Washed Low-EC Horticultural Coir Pith (5 kg Blocks)',
+      slug: 'washed-low-ec-coir-pith-5kg-blocks',
+      category: 'coir_commodities',
+      grade: 'Horticultural Export Grade (Washed)',
+      origin: 'Tiptur & Hassan Coir Corridors, Karnataka',
+      unit_of_measure: 'Pack of 5 Blocks (25 kg)',
+      estimated_weight_kg: 25.0,
+      moisture_percentage: 14.0,
+      oil_percentage: null,
+      retail_price_inr: 1250.00, // ₹50/kg
+      bulk_min_quantity: 40, // 1 Tonne / Pallet
+      wholesale_benchmark_price_inr: 32.00, // ₹32/kg bulk pallet
+      hsn_code: '530500',
+      tax_rate_percentage: 0.00, // 0% GST on coir pith
+      description: 'Natural organic growing medium manufactured from aged coconut husks. Thoroughly washed in freshwater to achieve low electrical conductivity (EC < 0.5 mS/cm) and balanced pH (5.8-6.8). Expands to 75 litres per 5kg block upon hydration. Widely exported for greenhouses and hydroponics.',
+      specifications: {
+        electrical_conductivity_ec: '< 0.5 mS/cm (Washed)',
+        ph_range: '5.8 - 6.8',
+        expansion_volume: '70 to 75 Litres per 5kg block',
+        compression_ratio: '5:1',
+        packaging: 'Individually heat-wrapped 5kg blocks'
+      },
+      image_url: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80'
     }
   ];
 

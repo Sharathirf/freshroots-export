@@ -28,28 +28,32 @@ export async function GET(request: NextRequest) {
         state: pin.state,
         hub_location: pin.hub_location,
         delivery_lead_days: pin.delivery_lead_days,
-        retail_available: pin.is_retail_active,
-        wholesale_available: pin.is_wholesale_active,
-        message: `Standard delivery in ${pin.delivery_lead_days} day(s) from ${pin.hub_location}.`
+        retail_available: true,
+        wholesale_available: true,
+        worldwide_bulk_available: true,
+        message: `Direct delivery active in ${pin.delivery_lead_days} business day(s) from ${pin.hub_location}.`
       });
     }
 
-    // Heuristic for Karnataka pincodes (starts with 56, 57, 58, 59)
+    // Heuristic for Karnataka vs Pan-India
     const isKarnataka = /^(56|57|58|59)/.test(pincode);
+    const isSouthIndia = /^(5|6)/.test(pincode);
+
+    const leadDays = isKarnataka ? 2 : isSouthIndia ? 3 : 4;
+    const regionName = isKarnataka ? 'Karnataka Hub' : isSouthIndia ? 'South India Corridor' : 'National Express Freight';
 
     return NextResponse.json({
       success: true,
-      serviceable: isKarnataka,
+      serviceable: true,
       pincode,
-      district: isKarnataka ? 'Karnataka Regional' : 'Outside Karnataka',
-      state: isKarnataka ? 'Karnataka' : 'Rest of India',
-      hub_location: isKarnataka ? 'Karnataka Regional Logistics' : 'Interstate Freight Hub',
-      delivery_lead_days: isKarnataka ? 3 : 5,
-      retail_available: isKarnataka,
-      wholesale_available: true, // Wholesale is always serviceable via truckload freight
-      message: isKarnataka
-        ? 'Regional delivery available within 2-3 business days via PTL freight.'
-        : 'Retail not yet active in your area. Wholesale truckload orders (>500kg) supported via freight inquiry.'
+      district: isKarnataka ? 'Karnataka Region' : 'All-India Network',
+      state: isKarnataka ? 'Karnataka' : 'Pan-India',
+      hub_location: `${regionName} (Tiptur Origin)`,
+      delivery_lead_days: leadDays,
+      retail_available: true,
+      wholesale_available: true,
+      worldwide_bulk_available: true,
+      message: `Serviceable across India! Standard dispatch in ${leadDays} business day(s). Worldwide container freight available for bulk orders.`
     });
   } catch (error: any) {
     console.error('API Error in /api/pincode/check:', error);

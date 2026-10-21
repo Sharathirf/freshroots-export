@@ -6,9 +6,29 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
 
+    // Explicitly select public-facing fields. Never leak confidential wholesale_benchmark_price_inr.
     let sql = `
       SELECT 
-        p.*,
+        p.id,
+        p.sku,
+        p.title,
+        p.slug,
+        p.category,
+        p.grade,
+        p.origin,
+        p.unit_of_measure,
+        p.estimated_weight_kg,
+        p.moisture_percentage,
+        p.oil_percentage,
+        p.retail_price_inr,
+        p.bulk_min_quantity,
+        p.hsn_code,
+        p.tax_rate_percentage,
+        p.description,
+        p.specifications,
+        p.image_url,
+        p.is_active,
+        p.created_at,
         COALESCE(SUM(ib.available_quantity), 0)::int AS available_stock
       FROM products p
       LEFT JOIN inventory_batches ib ON p.id = ib.product_id
