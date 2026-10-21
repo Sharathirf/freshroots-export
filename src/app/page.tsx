@@ -5,9 +5,19 @@ import Navbar from '@/components/Navbar';
 import CartDrawer from '@/components/CartDrawer';
 import ProductCard from '@/components/ProductCard';
 import WholesaleRFQModal from '@/components/WholesaleRFQModal';
+import KatyayaniHero from '@/components/KatyayaniHero';
+import ShopByCategory from '@/components/ShopByCategory';
+import ExploreRange from '@/components/ExploreRange';
+import FarmerTestimonials from '@/components/FarmerTestimonials';
+import RealResultsTransparency from '@/components/RealResultsTransparency';
+import UspTrustBand from '@/components/UspTrustBand';
+import CommercialInquiryFaq from '@/components/CommercialInquiryFaq';
+import HomeCtaBanner from '@/components/HomeCtaBanner';
+import Footer from '@/components/Footer';
+import MobileBottomNav from '@/components/MobileBottomNav';
 import GradingGuide from '@/components/GradingGuide';
 import { Product } from '@/types';
-import { Sprout, Building2, ShoppingBag, Truck, ShieldCheck, Award, ArrowRight, CheckCircle2, Phone, Star } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -47,153 +57,58 @@ export default function HomePage() {
     : products.filter((p) => p.category === filteredCategory);
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans selection:bg-[#3b6d11]/20 selection:text-[#1c3809]">
+      {/* 1. Global Header with Live Search, Pincode Pill & Ticker */}
       <Navbar onOpenRFQ={() => handleOpenRFQ()} />
       <CartDrawer />
 
       <main className="flex-1">
-        {/* HERO SECTION */}
-        <section className="relative overflow-hidden bg-gradient-to-b from-emerald-950 via-emerald-900 to-stone-900 text-white pt-12 pb-20 sm:pt-20 sm:pb-28">
-          {/* Subtle background glow */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.15),transparent_50%)]" />
+        {/* 2. Katyayani Organics Hero Section */}
+        <KatyayaniHero onOpenRFQ={() => handleOpenRFQ()} />
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-              {/* Left Column: Vision & Pitch */}
-              <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-                <div className="inline-flex items-center gap-2 bg-emerald-800/80 border border-emerald-600/50 text-emerald-200 text-xs font-bold px-3.5 py-1.5 rounded-full shadow-sm">
-                  <Sprout className="w-4 h-4 text-emerald-400" />
-                  <span>Direct Farm-Gate Procurement • Tiptur & Tumakuru Belt</span>
-                </div>
+        {/* 3. Shop by Category (Katyayani mc-section) */}
+        <ShopByCategory
+          activeCategory={filteredCategory}
+          onSelectCategory={(cat) => {
+            setFilteredCategory(cat);
+            const el = document.getElementById('catalog');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+        />
 
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1]">
-                  Karnataka&apos;s Finest Coconuts & Copra,{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-amber-200 to-emerald-100">
-                    Direct from Origin.
-                  </span>
-                </h1>
-
-                <p className="text-base sm:text-lg text-stone-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-light">
-                  No commission agents. No hidden weight deductions. Buy laboratory-graded mature coconuts and GI-tagged Tiptur ball copra with guaranteed weight classifications and swift dispatch.
-                </p>
-
-                {/* Dual Action CTA Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start">
-                  <a
-                    href="#catalog"
-                    className="bg-emerald-500 hover:bg-emerald-400 text-stone-950 font-extrabold text-sm sm:text-base px-7 py-4 rounded-2xl shadow-lg shadow-emerald-500/25 transition flex items-center justify-center gap-2 group"
-                  >
-                    <ShoppingBag className="w-5 h-5" />
-                    <span>Shop Retail Bags (Home & Puja)</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
-                  </a>
-
-                  <button
-                    onClick={() => handleOpenRFQ()}
-                    className="bg-white/10 hover:bg-white/15 text-white border border-white/20 font-bold text-sm sm:text-base px-7 py-4 rounded-2xl backdrop-blur-sm transition flex items-center justify-center gap-2"
-                  >
-                    <Building2 className="w-5 h-5 text-amber-300" />
-                    <span>Request Wholesale Quote (500+)</span>
-                  </button>
-                </div>
-
-                {/* Trust Signals */}
-                <div className="pt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-emerald-800/60 text-xs text-stone-300">
-                  <div className="flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Zero Cracked Guarantee</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Award className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>GI-Tagged Ball Copra</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Truck className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>24h Hub Dispatch</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>0% GST on Fresh Produce</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Featured Lot Card */}
-              <div className="lg:col-span-5">
-                <div className="bg-stone-900/90 border border-stone-700/80 rounded-3xl p-6 sm:p-7 shadow-2xl backdrop-blur-md relative">
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-[11px] font-mono tracking-wider uppercase text-emerald-400 bg-emerald-950/80 px-2.5 py-1 rounded-full border border-emerald-800">
-                      Live Harvest Lot #TIP-2026-A
-                    </span>
-                    <span className="text-xs text-stone-400">Tiptur APMC Yard</span>
-                  </div>
-
-                  <div className="relative h-52 w-full rounded-2xl overflow-hidden mb-5">
-                    <img
-                      src="https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&w=800&q=80"
-                      alt="Grade A Coconuts"
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute bottom-2 right-2 bg-stone-950/80 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg">
-                      11-12 Month Maturity
-                    </div>
-                  </div>
-
-                  <h3 className="text-lg font-bold text-white">Grade A Dehusked Jumbo Coconuts</h3>
-                  <p className="text-xs text-stone-400 mt-1">
-                    550g - 650g heavy nuts • High meat density (&gt;12mm) • Pure sweet acoustic water
-                  </p>
-
-                  <div className="mt-4 pt-4 border-t border-stone-800 flex justify-between items-center">
-                    <div>
-                      <span className="text-[11px] text-stone-400 block">Retail 50-Nut Mesh Bag</span>
-                      <span className="text-2xl font-black text-emerald-400 font-mono">₹1,650</span>
-                      <span className="text-xs text-stone-400 ml-1.5">(₹33/nut)</span>
-                    </div>
-
-                    <a
-                      href="#catalog"
-                      className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-1.5"
-                    >
-                      <span>Order Lot</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CATALOG SECTION */}
-        <section id="catalog" className="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+        {/* 4. Bestsellers Showcase (Katyayani section bestsellers) */}
+        <section id="catalog" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
-                Our Products
+              <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#3b6d11] bg-emerald-50 px-3.5 py-1 rounded-full border border-emerald-200 mb-2">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Certified Farm-Gate Lots</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-stone-900 tracking-tight">
+                Our Bestsellers
               </h2>
-              <p className="text-stone-500 text-xs sm:text-sm mt-1">
-                Farm-direct mature coconuts and GI Tiptur copra. Graded and packed at origin.
+              <p className="text-stone-500 text-xs sm:text-sm mt-1 max-w-xl">
+                Lab-tested, buyer-trusted agricultural commodities for food processors, oil millers, temples & households
               </p>
             </div>
 
-            {/* Category Filter Tabs */}
-            <div className="flex flex-wrap gap-1 bg-stone-200/70 p-1 rounded-xl w-fit">
+            {/* Category Filter Tabs (Katyayani Tab Pills) */}
+            <div className="flex flex-wrap gap-1.5 bg-stone-200/80 p-1.5 rounded-2xl w-fit">
               {[
-                { id: 'all', label: 'All' },
+                { id: 'all', label: 'All Commodities' },
                 { id: 'mature_coconut', label: 'Coconuts' },
                 { id: 'copra', label: 'Copra' },
                 { id: 'spices', label: 'Spices' },
-                { id: 'oil_and_extracts', label: 'Oils' },
+                { id: 'oil_and_extracts', label: 'Cold-Pressed Oils' },
                 { id: 'coir_commodities', label: 'Coir Pith' }
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setFilteredCategory(tab.id)}
-                  className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition ${
+                  className={`text-xs font-bold px-3.5 py-2 rounded-xl transition-all ${
                     filteredCategory === tab.id
-                      ? 'bg-white text-stone-900 shadow-sm'
-                      : 'text-stone-600 hover:text-stone-900'
+                      ? 'bg-[#3b6d11] text-white shadow-sm'
+                      : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
                   }`}
                 >
                   {tab.label}
@@ -202,15 +117,15 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Product Grid */}
+          {/* Product Grid (Katyayani pcard-grid) */}
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 py-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-6">
               {[1, 2, 3, 4].map((n) => (
-                <div key={n} className="bg-white rounded-2xl h-80 animate-pulse border border-stone-200" />
+                <div key={n} className="bg-white rounded-3xl h-96 animate-pulse border border-stone-200" />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7">
               {displayedProducts.map((product) => (
                 <ProductCard
                   key={product.id}
@@ -222,176 +137,41 @@ export default function HomePage() {
           )}
         </section>
 
-        {/* B2B COMMERCIAL ENTERPRISE SECTION */}
-        <section className="bg-stone-900 text-white py-16 sm:py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-gradient-to-r from-stone-800 to-stone-900 rounded-3xl p-8 sm:p-12 border border-stone-700 shadow-xl relative overflow-hidden">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div className="lg:col-span-8 space-y-4">
-                  <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-950/80 px-3 py-1 rounded-full border border-amber-800">
-                    <Building2 className="w-3.5 h-3.5" />
-                    For Oil Expeller Mills, HoReCa & Supermarkets
-                  </div>
-                  <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                    Procuring Truckloads or Tempo Lots (500 to 20,000+ Units)?
-                  </h3>
-                  <p className="text-stone-300 text-sm leading-relaxed max-w-2xl">
-                    Get direct Mandi-linked pricing with guaranteed 48-hour price locks. We supply cold-pressed oil manufacturers, large South Indian catering firms, and supermarket chains across Karnataka and South India with full GST ITC compliance and official weighbridge certification.
-                  </p>
-                  <div className="flex flex-wrap gap-4 text-xs text-stone-300 pt-2">
-                    <span>✓ Dedicated Canter / 10-Wheeler Logistics</span>
-                    <span>✓ 100% Digital Weighbridge Slips</span>
-                    <span>✓ Custom Moisture & FFA Testing</span>
-                  </div>
-                </div>
+        {/* 5. Purpose-Driven Sourcing & Industry Solutions (Katyayani shopby) */}
+        <ExploreRange
+          onSelectCategory={(cat) => {
+            setFilteredCategory(cat);
+            const el = document.getElementById('catalog');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+        />
 
-                <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 justify-center">
-                  <button
-                    onClick={() => handleOpenRFQ()}
-                    className="w-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-extrabold text-sm px-6 py-3.5 rounded-xl shadow-lg transition text-center"
-                  >
-                    Submit Wholesale RFQ Form
-                  </button>
-                  <a
-                    href="https://wa.me/919876543210"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full border border-stone-600 hover:bg-stone-800 text-stone-200 font-semibold text-sm px-6 py-3.5 rounded-xl transition text-center flex items-center justify-center gap-2"
-                  >
-                    <Phone className="w-4 h-4 text-emerald-400" />
-                    <span>Talk to Commercial Desk</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* 6. USP Trust Band (Katyayani app-band) */}
+        <UspTrustBand />
 
-        {/* AGRICULTURAL STANDARDS & EDUCATIONAL GUIDE */}
+        {/* 7. Verified Customer Proof & Farmer Testimonials (Katyayani trustproof) */}
+        <FarmerTestimonials />
+
+        {/* 8. Farm-Gate Transparency & Lab Testing (Katyayani tv-section) */}
+        <RealResultsTransparency />
+
+        {/* 9. APMC Grading Standards & Guide */}
         <GradingGuide />
 
-        {/* BUYER TESTIMONIALS */}
-        <section className="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-3xl font-extrabold text-stone-900 tracking-tight">
-              Trusted by Households & Commercial Buyers Alike
-            </h2>
-            <p className="text-stone-600 text-xs sm:text-sm mt-1">
-              Real feedback from urban retail customers and high-volume commercial oil mill operators.
-            </p>
-          </div>
+        {/* 10. Commercial Sourcing Form & Accordion FAQ (Katyayani home-form-faq) */}
+        <CommercialInquiryFaq />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-3">
-              <div className="flex text-amber-500 gap-1">
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} className="w-4 h-4 fill-amber-400" />
-                ))}
-              </div>
-              <p className="text-xs text-stone-600 leading-relaxed italic">
-                &ldquo;Ordered a 50-nut Grade A mesh bag for our family festival in Bengaluru. Every single coconut was heavy, with zero dry or spoiled nuts. Far better than the random street vendor prices.&rdquo;
-              </p>
-              <div className="pt-2 border-t border-stone-100">
-                <strong className="text-xs text-stone-900 block">Smt. Rajeshwari K.</strong>
-                <span className="text-[11px] text-stone-400">Jayanagar, Bengaluru (Retail Consumer)</span>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-3">
-              <div className="flex text-amber-500 gap-1">
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} className="w-4 h-4 fill-amber-400" />
-                ))}
-              </div>
-              <p className="text-xs text-stone-600 leading-relaxed italic">
-                &ldquo;We run a cold-pressed virgin coconut oil expeller unit. Tiptur Direct gave us certified moisture testing (&lt;5.5%) and exact weighbridge slips. Our oil recovery increased by 3.8% compared to unbranded mandis.&rdquo;
-              </p>
-              <div className="pt-2 border-t border-stone-100">
-                <strong className="text-xs text-stone-900 block">Senthil Kumar</strong>
-                <span className="text-[11px] text-stone-400">Kaveri Agro Oil Expellers, Salem (B2B Bulk)</span>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-3">
-              <div className="flex text-amber-500 gap-1">
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} className="w-4 h-4 fill-amber-400" />
-                ))}
-              </div>
-              <p className="text-xs text-stone-600 leading-relaxed italic">
-                &ldquo;For catering large corporate weddings, consistency is everything. Grade B medium coconuts were exactly calibrated with thick kernel meat. Saved our kitchen 2 hours in daily grating.&rdquo;
-              </p>
-              <div className="pt-2 border-t border-stone-100">
-                <strong className="text-xs text-stone-900 block">Venkatesh Prasad</strong>
-                <span className="text-[11px] text-stone-400">Annapoorna Caterers, Bengaluru (HoReCa Buyer)</span>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* 11. Final Conversion CTA Banner (Katyayani home-cta) */}
+        <HomeCtaBanner onOpenRFQ={() => handleOpenRFQ()} />
       </main>
 
-      {/* FOOTER */}
-      <footer className="bg-stone-950 text-stone-400 text-xs py-12 border-t border-stone-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-emerald-800 flex items-center justify-center text-white font-bold">
-                <Sprout className="w-5 h-5 text-emerald-300" />
-              </div>
-              <span className="font-extrabold text-base text-white">TIPTUR DIRECT</span>
-            </div>
-            <p className="text-stone-400 text-xs leading-relaxed">
-              India&apos;s leading farm-direct coconut and copra commerce platform. Connecting growers in the Tiptur-Tumakuru corridor directly with consumers and commercial processors.
-            </p>
-          </div>
+      {/* 12. Rich Agricultural Footer with Payment Badges & Newsletter */}
+      <Footer />
 
-          <div>
-            <h4 className="font-bold text-white text-xs uppercase tracking-wider mb-3">Product Catalog</h4>
-            <ul className="space-y-2">
-              <li>Grade A & B Mature Coconuts</li>
-              <li>GI-Certified Tiptur Ball Copra</li>
-              <li>Industrial Milling Copra</li>
-              <li>GI Byadgi Stemless Chillies</li>
-              <li>Malnad TGSEB Bold Black Pepper</li>
-              <li>Tumakuru Red Areca Nut (Supari)</li>
-              <li>Wood-Pressed Virgin Coconut Oil</li>
-              <li>Washed Low-EC Coir Pith Blocks</li>
-            </ul>
-          </div>
+      {/* 13. Mobile Bottom Navigation Bar (Katyayani bottom-nav) */}
+      <MobileBottomNav onOpenRFQ={() => handleOpenRFQ()} />
 
-          <div>
-            <h4 className="font-bold text-white text-xs uppercase tracking-wider mb-3">Compliance & Legal</h4>
-            <ul className="space-y-2">
-              <li>Fresh Produce: 0% GST (Nil-rated, HSN 080112)</li>
-              <li>Copra Commodities: 5% GST (HSN 1203)</li>
-              <li>FSSAI License: 11226999000142</li>
-              <li>APMC License: KA-TIPTUR-AGR-401</li>
-              <li>Return & Cracked Replacement Policy</li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-bold text-white text-xs uppercase tracking-wider mb-3">Hub Locations & Desk</h4>
-            <p className="text-stone-400 leading-relaxed mb-2">
-              <strong>Sourcing & Grading Hub:</strong><br />
-              APMC Yard Road, Tiptur, Tumakuru District, Karnataka - 572201
-            </p>
-            <p className="text-stone-400 leading-relaxed">
-              <strong>Bengaluru Forward Hub:</strong><br />
-              Yeshwanthpur Industrial Suburb, Bengaluru - 560022
-            </p>
-            <div className="mt-3">
-              <span className="text-white font-semibold">Desk Helpline:</span> +91 98765 43210
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-stone-900 text-center text-stone-500">
-          © {new Date().getFullYear()} Tiptur Direct Agri-Commerce Private Limited. All rights reserved.
-        </div>
-      </footer>
-
-      {/* WHOLESALE RFQ MODAL */}
+      {/* 14. Wholesale RFQ Modal */}
       <WholesaleRFQModal
         isOpen={isRFQOpen}
         onClose={() => setIsRFQOpen(false)}
