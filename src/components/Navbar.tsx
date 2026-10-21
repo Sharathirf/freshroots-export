@@ -7,12 +7,10 @@ import { useAuth } from '@/context/AuthContext';
 import { useWishlist } from '@/context/WishlistContext';
 import {
   ShoppingBag,
-  MapPin,
   Phone,
   Sprout,
   Building2,
   Globe,
-  Check,
   Search,
   X,
   ChevronRight,
@@ -25,13 +23,9 @@ import {
 import { Product } from '@/types';
 
 export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
-  const { itemCount, subtotal, setIsCartOpen, pincode, setPincode, pincodeServiceable, setPincodeServiceable } = useCart();
+  const { itemCount, subtotal, setIsCartOpen } = useCart();
   const { customer, isLoggedIn, setIsSignInModalOpen, signOut } = useAuth();
   const { wishlistCount, setIsWatchlistOpen } = useWishlist();
-  const [pinInput, setPinInput] = useState(pincode);
-  const [isPinModalOpen, setIsPinModalOpen] = useState(false);
-  const [pinLoading, setPinLoading] = useState(false);
-  const [pinMessage, setPinMessage] = useState<string | null>(null);
 
   // Live Search state
   const [searchQuery, setSearchQuery] = useState('');
@@ -40,19 +34,18 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // Close modal on Escape key
+  // Close search on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setIsPinModalOpen(false);
         setIsSearchOpen(false);
       }
     };
-    if (isPinModalOpen || isSearchOpen) {
+    if (isSearchOpen) {
       window.addEventListener('keydown', handleKeyDown);
     }
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isPinModalOpen, isSearchOpen]);
+  }, [isSearchOpen]);
 
   // Click outside to close search dropdown
   useEffect(() => {
@@ -97,30 +90,6 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
     );
     setSearchResults(matches);
   }, [searchQuery, allProducts]);
-
-  const handleCheckPincode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!pinInput || pinInput.length !== 6) return;
-
-    setPinLoading(true);
-    setPinMessage(null);
-    try {
-      const res = await fetch(`/api/pincode/check?pincode=${pinInput}`);
-      const data = await res.json();
-      if (data.success && data.serviceable) {
-        setPincode(pinInput);
-        setPincodeServiceable(true);
-        setPinMessage(data.message || `Serviceable! Dispatch in ${data.delivery_lead_days} day(s).`);
-      } else {
-        setPincodeServiceable(false);
-        setPinMessage(data.error || 'PIN code currently outside standard direct delivery network.');
-      }
-    } catch {
-      setPinMessage('Error checking PIN code serviceability. Please try again.');
-    } finally {
-      setPinLoading(false);
-    }
-  };
 
   return (
     <header className="sticky top-0 z-40 bg-white shadow-sm border-b border-stone-200">
@@ -178,10 +147,10 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
           </div>
         </Link>
 
-        {/* Live Search Bar with Instant Autocomplete (Katyayani search experience) */}
-        <div ref={searchRef} className="flex-1 max-w-lg relative hidden md:block">
-          <div className="relative">
-            <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+        {/* Large Expanded Live Search Bar with Instant Autocomplete */}
+        <div ref={searchRef} className="flex-1 max-w-xl lg:max-w-2xl xl:max-w-3xl relative mx-3 sm:mx-6 min-w-[220px]">
+          <div className="relative w-full">
+            <Search className="w-5 h-5 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
@@ -191,13 +160,13 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
               }}
               onFocus={() => setIsSearchOpen(true)}
               placeholder="Search coconuts, copra, spices, cold-pressed oils..."
-              className="w-full pl-10 pr-9 py-2.5 rounded-full border border-stone-300/90 text-xs sm:text-sm bg-stone-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#3b6d11] transition shadow-inner"
+              className="w-full pl-12 pr-10 py-3 rounded-full border border-stone-300/90 text-sm bg-stone-50/90 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#3b6d11] focus:border-transparent transition shadow-inner placeholder:text-stone-400 font-medium"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 p-1 rounded-full hover:bg-stone-200/60 transition"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -206,10 +175,10 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
 
           {/* Autocomplete Dropdown */}
           {isSearchOpen && searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-stone-200 shadow-xl overflow-hidden z-50 animate-in fade-in max-h-96 overflow-y-auto">
-              <div className="p-2.5 bg-stone-50 text-[11px] font-bold uppercase tracking-wider text-stone-500 border-b border-stone-100 flex justify-between items-center">
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-stone-200 shadow-2xl overflow-hidden z-50 animate-in fade-in max-h-[440px] overflow-y-auto min-w-[340px] sm:min-w-[480px]">
+              <div className="p-3 bg-stone-50 text-[11px] font-bold uppercase tracking-wider text-stone-600 border-b border-stone-100 flex justify-between items-center">
                 <span>Matching Produce ({searchResults.length})</span>
-                <span className="text-[10px] text-[#3b6d11]">Direct APMC Stock</span>
+                <span className="text-[10px] text-[#3b6d11] font-extrabold">Direct APMC Stock</span>
               </div>
               <div className="divide-y divide-stone-100">
                 {searchResults.map((p) => (
@@ -220,29 +189,31 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
                       setIsSearchOpen(false);
                       setSearchQuery('');
                     }}
-                    className="p-3 hover:bg-stone-50 flex items-center justify-between gap-3 group transition"
+                    className="p-3.5 hover:bg-stone-50/90 flex items-center justify-between gap-4 group transition"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3.5 min-w-0">
                       <img
                         src={p.image_url}
                         alt={p.title}
-                        className="w-10 h-10 rounded-lg object-cover bg-stone-100 border border-stone-200"
+                        className="w-12 h-12 rounded-xl object-cover bg-stone-100 border border-stone-200 shrink-0"
                       />
-                      <div>
-                        <div className="text-xs font-bold text-stone-900 group-hover:text-[#3b6d11] line-clamp-1">
+                      <div className="min-w-0">
+                        <div className="text-sm font-bold text-stone-900 group-hover:text-[#3b6d11] truncate transition">
                           {p.title}
                         </div>
-                        <div className="text-[10px] text-stone-400">
-                          {p.unit_of_measure} • {p.grade}
+                        <div className="text-[11px] text-stone-500 flex items-center gap-2 mt-0.5">
+                          <span className="font-medium text-stone-600">{p.unit_of_measure}</span>
+                          <span>•</span>
+                          <span className="text-emerald-700 font-semibold">{p.grade}</span>
                         </div>
                       </div>
                     </div>
                     <div className="text-right shrink-0">
-                      <div className="text-xs font-mono font-bold text-stone-900">
+                      <div className="text-sm font-mono font-bold text-stone-900">
                         ₹{Number(p.retail_price_inr).toLocaleString('en-IN')}
                       </div>
-                      <span className="text-[10px] text-[#3b6d11] font-semibold flex items-center justify-end gap-0.5">
-                        View <ChevronRight className="w-3 h-3" />
+                      <span className="text-[11px] text-[#3b6d11] font-bold flex items-center justify-end gap-0.5 mt-0.5">
+                        View <ChevronRight className="w-3.5 h-3.5" />
                       </span>
                     </div>
                   </Link>
@@ -250,19 +221,6 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
               </div>
             </div>
           )}
-        </div>
-
-        {/* Pin Code Location Pill */}
-        <div className="hidden xl:flex items-center">
-          <button
-            onClick={() => setIsPinModalOpen(true)}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-medium border border-stone-200 transition"
-          >
-            <MapPin className="w-3.5 h-3.5 text-[#3b6d11]" />
-            <span>Delivery: <strong>{pincode} ({pincodeServiceable ? 'Pan-India Active' : 'Checking'})</strong></span>
-            <span className={`w-1.5 h-1.5 rounded-full ${pincodeServiceable ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
-            <span className="text-stone-400">Change</span>
-          </button>
         </div>
 
         {/* Actions Strip */}
@@ -414,88 +372,6 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
           </div>
         </div>
       </div>
-
-      {/* Pin Code Modal with Easy Backdrop Close */}
-      {isPinModalOpen && (
-        <div
-          className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setIsPinModalOpen(false)}
-        >
-          <div
-            className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-stone-200 animate-in fade-in zoom-in-95"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-[#3b6d11]" />
-                <h3 className="font-extrabold text-stone-900 text-lg">Check Delivery Coverage</h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsPinModalOpen(false)}
-                className="w-8 h-8 rounded-full hover:bg-stone-100 flex items-center justify-center text-stone-400 hover:text-stone-700 font-bold transition"
-                title="Close modal (Esc)"
-              >
-                ✕
-              </button>
-            </div>
-
-            <p className="text-stone-600 text-xs sm:text-sm mb-4 leading-relaxed">
-              We deliver retail packs to <strong>all Indian postal PIN codes</strong>, and fulfill bulk wholesale truckloads <strong>Pan-India and Worldwide (Container Exports)</strong>.
-            </p>
-
-            <form onSubmit={handleCheckPincode} className="space-y-4">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  maxLength={6}
-                  value={pinInput}
-                  onChange={(e) => setPinInput(e.target.value.replace(/\D/g, ''))}
-                  placeholder="Enter 6-digit Indian PIN"
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-[#3b6d11] font-mono text-base font-semibold"
-                />
-                <button
-                  type="submit"
-                  disabled={pinLoading || pinInput.length !== 6}
-                  className="bg-[#3b6d11] hover:bg-[#2d5a0b] disabled:opacity-50 text-white font-semibold text-xs sm:text-sm px-5 py-2.5 rounded-xl transition flex items-center gap-1"
-                >
-                  {pinLoading ? 'Checking...' : 'Check'}
-                </button>
-              </div>
-
-              {pinMessage && (
-                <div className="p-3.5 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
-                  <div className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>{pinMessage}</span>
-                  </div>
-                </div>
-              )}
-
-              <div className="pt-2 border-t border-stone-100 space-y-2 text-xs text-stone-500">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                  <span><strong>Retail Coverage</strong>: All 19,000+ PIN codes across India via Express 3PL.</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-amber-600 shrink-0" />
-                  <span><strong>Worldwide Bulk Cargo</strong>: 20ft / 40ft container shipments from Mangalore/Chennai port for export buyers.</span>
-                </div>
-              </div>
-
-              <div className="pt-3 flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsPinModalOpen(false)}
-                  className="w-full py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold text-xs rounded-xl transition"
-                >
-                  Done / Close
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </header>
   );
 }
