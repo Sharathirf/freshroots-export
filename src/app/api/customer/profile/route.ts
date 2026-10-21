@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     const cleanPhone = phone.slice(-10);
     const rows = await query(
-      `SELECT id, full_name, phone, email, role, created_at, updated_at 
+      `SELECT id, full_name, phone, email, address, city, state, pincode, role, created_at, updated_at 
        FROM users 
        WHERE phone = $1 OR phone = $2 LIMIT 1`,
       [cleanPhone, `+91${cleanPhone}`]
@@ -47,6 +47,10 @@ export async function GET(request: NextRequest) {
         name: customer.full_name,
         phone: customer.phone,
         email: customer.email,
+        address: customer.address || null,
+        city: customer.city || null,
+        state: customer.state || null,
+        pincode: customer.pincode || null,
         total_orders: orderStats[0]?.total_orders || 0,
         total_spent: orderStats[0]?.total_spent || 0,
         created_at: customer.created_at
@@ -64,7 +68,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { phone, full_name, email } = body;
+    const { phone, full_name, email, address, city, state, pincode } = body;
 
     const rawPhone = String(phone || '').replace(/\D/g, '');
     if (rawPhone.length < 10) {
@@ -85,22 +89,30 @@ export async function POST(request: NextRequest) {
     }
 
     const cleanEmail = email?.trim() || null;
+    const cleanAddress = address !== undefined ? (address?.trim() || null) : null;
+    const cleanCity = city !== undefined ? (city?.trim() || null) : null;
+    const cleanState = state !== undefined ? (state?.trim() || null) : null;
+    const cleanPincode = pincode !== undefined ? (pincode?.trim() || null) : null;
 
     // Upsert into users table
     const result = await query(
-      `INSERT INTO users (full_name, phone, email, role, updated_at)
-       VALUES ($1, $2, $3, 'retail_customer', NOW())
+      `INSERT INTO users (full_name, phone, email, address, city, state, pincode, role, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, 'retail_customer', NOW())
        ON CONFLICT (phone) DO UPDATE 
        SET full_name = EXCLUDED.full_name,
            email = COALESCE(EXCLUDED.email, users.email),
+           address = COALESCE(EXCLUDED.address, users.address),
+           city = COALESCE(EXCLUDED.city, users.city),
+           state = COALESCE(EXCLUDED.state, users.state),
+           pincode = COALESCE(EXCLUDED.pincode, users.pincode),
            updated_at = NOW()
-       RETURNING id, full_name, phone, email, role, created_at, updated_at`,
-      [name, cleanPhone, cleanEmail]
+       RETURNING id, full_name, phone, email, address, city, state, pincode, role, created_at, updated_at`,
+      [name, cleanPhone, cleanEmail, cleanAddress, cleanCity, cleanState, cleanPincode]
     );
 
     const savedUser = result[0];
 
-    // Log customer sign-in activity in audit_logs
+    // Log customer profile activity in audit_logs
     await query(
       `INSERT INTO audit_logs (action, entity_type, entity_id, details)
        VALUES ('CUSTOMER_PROFILE_UPSERT', 'users', $1, $2)`,
@@ -110,6 +122,10 @@ export async function POST(request: NextRequest) {
           phone: cleanPhone,
           name,
           email: cleanEmail,
+          address: cleanAddress,
+          city: cleanCity,
+          state: cleanState,
+          pincode: cleanPincode,
           timestamp: new Date().toISOString()
         })
       ]
@@ -123,6 +139,10 @@ export async function POST(request: NextRequest) {
         name: savedUser.full_name,
         phone: savedUser.phone,
         email: savedUser.email,
+        address: savedUser.address,
+        city: savedUser.city,
+        state: savedUser.state,
+        pincode: savedUser.pincode,
         created_at: savedUser.created_at
       }
     });

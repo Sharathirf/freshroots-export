@@ -741,22 +741,34 @@ export async function runAutomationSuite() {
   verify('Reject invalid starting digit', () => assert.strictEqual(validatePhone('1234567890').valid, false), c14);
   verify('Reject alphabetic input', () => assert.strictEqual(validatePhone('abcdefghij').valid, false), c14);
 
-  await verifyAsync('POST /api/customer/profile saves customer name and email securely', async () => {
+  await verifyAsync('POST /api/customer/profile saves customer name, email, and address securely', async () => {
     const res = await httpPost('/api/customer/profile', {
       phone: '9591142548',
       full_name: 'Sharath Inorahalli',
-      email: 'sharathir198@gmail.com'
+      email: 'sharathir198@gmail.com',
+      address: 'Main Bazaar Road, Kikkeri',
+      city: 'K.R. Pete, Mandya',
+      state: 'Karnataka',
+      pincode: '571423'
     });
     assert.strictEqual(res.status, 200);
     assert.strictEqual(res.json?.customer?.name, 'Sharath Inorahalli');
     assert.strictEqual(res.json?.customer?.email, 'sharathir198@gmail.com');
+    assert.strictEqual(res.json?.customer?.address, 'Main Bazaar Road, Kikkeri');
+    assert.strictEqual(res.json?.customer?.city, 'K.R. Pete, Mandya');
+    assert.strictEqual(res.json?.customer?.state, 'Karnataka');
+    assert.strictEqual(res.json?.customer?.pincode, '571423');
   }, c14);
 
-  await verifyAsync('GET /api/customer/profile retrieves customer profile by phone', async () => {
+  await verifyAsync('GET /api/customer/profile retrieves customer profile with address details', async () => {
     const res = await httpGet('/api/customer/profile?phone=9591142548');
     assert.strictEqual(res.status, 200);
     assert.strictEqual(res.json?.exists, true);
     assert.strictEqual(res.json?.customer?.name, 'Sharath Inorahalli');
+    assert.strictEqual(res.json?.customer?.address, 'Main Bazaar Road, Kikkeri');
+    assert.strictEqual(res.json?.customer?.city, 'K.R. Pete, Mandya');
+    assert.strictEqual(res.json?.customer?.state, 'Karnataka');
+    assert.strictEqual(res.json?.customer?.pincode, '571423');
   }, c14);
 
   let abandonedCartId: string;

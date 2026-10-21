@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import CartDrawer from '@/components/CartDrawer';
 import ProductCard from '@/components/ProductCard';
 import WholesaleRFQModal from '@/components/WholesaleRFQModal';
+import EnquiryModal from '@/components/EnquiryModal';
 import KatyayaniHero from '@/components/KatyayaniHero';
 import ShopByCategory from '@/components/ShopByCategory';
 import ExploreRange from '@/components/ExploreRange';
@@ -26,6 +27,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [isRFQOpen, setIsRFQOpen] = useState(false);
   const [selectedProductForRFQ, setSelectedProductForRFQ] = useState<Product | null>(null);
+  const [isEnquiryOpen, setIsEnquiryOpen] = useState(false);
 
   useEffect(() => {
     async function loadProducts() {
@@ -60,7 +62,10 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans selection:bg-[#3b6d11]/20 selection:text-[#1c3809]">
       {/* 1. Global Header with Live Search, Pincode Pill & Ticker */}
-      <Navbar onOpenRFQ={() => handleOpenRFQ()} />
+      <Navbar
+        onOpenRFQ={() => handleOpenRFQ()}
+        onOpenEnquiry={() => setIsEnquiryOpen(true)}
+      />
       <CartDrawer />
 
       <main className="flex-1">
@@ -205,6 +210,12 @@ export default function HomePage() {
         onClose={() => setIsRFQOpen(false)}
         products={products}
         selectedProduct={selectedProductForRFQ}
+      />
+
+      {/* 15. Enquire Farm Modal (Verified Once via OTP, Editable Anytime) */}
+      <EnquiryModal
+        isOpen={isEnquiryOpen}
+        onClose={() => setIsEnquiryOpen(false)}
       />
     </div>
   );

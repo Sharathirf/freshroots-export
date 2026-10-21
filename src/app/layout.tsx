@@ -7,6 +7,8 @@ import { AuthProvider } from '@/context/AuthContext';
 import WatchlistDrawer from '@/components/WatchlistDrawer';
 import SignInModal from '@/components/SignInModal';
 import ExitIntentModal from '@/components/ExitIntentModal';
+import AccountModal from '@/components/AccountModal';
+import EditProfileModal from '@/components/EditProfileModal';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -52,6 +54,8 @@ export default function RootLayout({
               <WatchlistDrawer />
               <SignInModal />
               <ExitIntentModal />
+              <AccountModal />
+              <EditProfileModal />
             </CartProvider>
           </WishlistProvider>
         </AuthProvider>

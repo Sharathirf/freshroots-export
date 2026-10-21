@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import CartDrawer from '@/components/CartDrawer';
 import ProductImageZoom from '@/components/ProductImageZoom';
 import BulkInquiryForm from '@/components/BulkInquiryForm';
+import EnquiryModal from '@/components/EnquiryModal';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { Product } from '@/types';
@@ -45,6 +46,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
 
   // Retail quantity state
   const [retailQty, setRetailQty] = useState(1);
+  const [isEnquiryOpen, setIsEnquiryOpen] = useState(false);
 
   // Active detail tab below the fold
   const [activeTab, setActiveTab] = useState<'overview' | 'specifications' | 'quality' | 'delivery' | 'faq'>('overview');
@@ -179,7 +181,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 font-sans flex flex-col">
-      <Navbar />
+      <Navbar onOpenEnquiry={() => setIsEnquiryOpen(true)} />
       <CartDrawer />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full space-y-12">
@@ -678,6 +680,12 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
           </div>
         )}
       </main>
+
+      <EnquiryModal
+        isOpen={isEnquiryOpen}
+        onClose={() => setIsEnquiryOpen(false)}
+        defaultProduceTitle={product?.title}
+      />
     </div>
   );
 }

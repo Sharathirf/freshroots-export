@@ -18,13 +18,28 @@ import {
   User,
   Truck,
   Package,
-  LogOut
+  LogOut,
+  Pencil,
+  FileQuestion
 } from 'lucide-react';
 import { Product } from '@/types';
 
-export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
+export default function Navbar({
+  onOpenRFQ,
+  onOpenEnquiry
+}: {
+  onOpenRFQ?: () => void;
+  onOpenEnquiry?: () => void;
+}) {
   const { itemCount, subtotal, setIsCartOpen } = useCart();
-  const { customer, isLoggedIn, setIsSignInModalOpen, signOut } = useAuth();
+  const {
+    customer,
+    isLoggedIn,
+    setIsSignInModalOpen,
+    setIsAccountModalOpen,
+    setIsEditProfileModalOpen,
+    signOut
+  } = useAuth();
   const { wishlistCount, setIsWatchlistOpen } = useWishlist();
 
   // Live Search state
@@ -228,6 +243,19 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
 
         {/* Actions Strip */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Enquire Farm Button */}
+          {onOpenEnquiry && (
+            <button
+              type="button"
+              onClick={onOpenEnquiry}
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-bold bg-emerald-50 hover:bg-emerald-100 text-[#1e824c] border border-emerald-300 px-3 py-2 rounded-xl transition shadow-sm"
+            >
+              <FileQuestion className="w-4 h-4 text-[#1e824c]" />
+              <span className="hidden sm:inline">Enquire Farm</span>
+              <span className="sm:hidden">Enquire</span>
+            </button>
+          )}
+
           {/* Wholesale RFQ Button */}
           <button
             onClick={onOpenRFQ}
@@ -274,7 +302,9 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
             <div className="relative group">
               <button
                 type="button"
+                onClick={() => setIsAccountModalOpen(true)}
                 className="flex items-center gap-1.5 text-xs font-bold text-[#1c3809] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-2 rounded-xl transition shadow-sm"
+                title="View Your Account"
               >
                 <div className="w-4 h-4 rounded-full bg-[#3b6d11] text-white flex items-center justify-center text-[9px] font-black">
                   ✓
@@ -299,6 +329,22 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
                     </div>
                   )}
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setIsAccountModalOpen(true)}
+                  className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition text-left"
+                >
+                  <User className="w-4 h-4 text-stone-500" />
+                  <span>Your Account</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEditProfileModalOpen(true)}
+                  className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition text-left"
+                >
+                  <Pencil className="w-4 h-4 text-stone-500" />
+                  <span>Edit Profile</span>
+                </button>
                 <Link
                   href={`/track-order?query=${customer?.phone}`}
                   className="flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition"
