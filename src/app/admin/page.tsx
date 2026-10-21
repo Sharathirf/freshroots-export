@@ -364,7 +364,7 @@ export default function AdminPage() {
                 <Sprout className="w-5 h-5 text-emerald-200" />
               </div>
               <div>
-                <span className="font-extrabold text-sm sm:text-base tracking-tight">Tiptur Direct Ops</span>
+                <span className="font-extrabold text-sm sm:text-base tracking-tight">Sharath Inorahalli Ops</span>
                 <span className="text-[10px] text-emerald-400 font-mono ml-2 uppercase bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-800">
                   Operations & Commercial Desk
                 </span>

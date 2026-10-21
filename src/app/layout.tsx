@@ -14,9 +14,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Tiptur Direct | Farm-Gate Coconuts & GI-Certified Copra from Karnataka',
-  description: 'Direct-from-origin agricultural commerce platform selling hand-graded mature coconuts, GI Tiptur ball copra, and milling copra to households and bulk commercial buyers.',
+  title: 'Sharath Inorahalli | Farm-Gate Agricultural Commodities from Karnataka',
+  description: 'Direct-from-origin agricultural commerce platform selling hand-graded mature coconuts, GI Tiptur ball copra, spices, and pure cold-pressed oils to households and bulk commercial buyers.',
   keywords: [
+    'Sharath Inorahalli',
     'buy coconuts online Bangalore',
     'Tiptur ball copra wholesale',
     'coconut suppliers Karnataka',
@@ -25,8 +26,8 @@ export const metadata: Metadata = {
     'agricultural commodities India'
   ],
   openGraph: {
-    title: 'Tiptur Direct | Karnataka Agricultural Commerce',
-    description: 'Zero commission agents. Standardized weight grading. Direct farm-gate procurement from Tiptur & Tumakuru APMC corridors.',
+    title: 'Sharath Inorahalli | Karnataka Agricultural Commerce',
+    description: 'Zero commission agents. Standardized weight grading. Direct farm-gate procurement from Karnataka agricultural corridors.',
     type: 'website'
   }
 };

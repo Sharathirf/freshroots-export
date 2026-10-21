@@ -69,8 +69,8 @@ export default function Footer() {
                 <Sprout className="w-5 h-5 text-lime-300" />
               </div>
               <div>
-                <span className="font-black text-xl text-white tracking-tight">TIPTUR</span>
-                <span className="font-extrabold text-xl text-lime-400 tracking-tight"> DIRECT</span>
+                <span className="font-black text-xl text-white tracking-tight">SHARATH</span>
+                <span className="font-extrabold text-xl text-lime-400 tracking-tight"> INORAHALLI</span>
               </div>
             </Link>
 
@@ -148,7 +148,7 @@ export default function Footer() {
         {/* Bottom Bar: Payment Methods, Legal & APMC Compliance */}
         <div className="pt-8 border-t border-stone-800 flex flex-col md:flex-row items-center justify-between gap-4 text-stone-500 text-[11px]">
           <div>
-            © {new Date().getFullYear()} Tiptur Direct Agri-Commerce Platform. All rights reserved. Registered under Karnataka APMC Act.
+            © {new Date().getFullYear()} Sharath Inorahalli Agri-Commerce Platform. All rights reserved. Registered under Karnataka APMC Act.
           </div>
 
           {/* Payment Badges (Katyayani Payment Badges) */}

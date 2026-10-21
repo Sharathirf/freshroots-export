@@ -142,13 +142,10 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
             <Sprout className="w-6 h-6 text-lime-300" />
           </div>
           <div>
-            <div className="flex items-center gap-1">
-              <span className="font-extrabold text-2xl tracking-tight text-stone-900">TIPTUR</span>
-              <span className="font-black text-2xl tracking-tight text-[#3b6d11]">DIRECT</span>
+            <div className="flex items-center gap-1.5">
+              <span className="font-extrabold text-xl sm:text-2xl tracking-tight text-stone-900">SHARATH</span>
+              <span className="font-black text-xl sm:text-2xl tracking-tight text-[#3b6d11]">INORAHALLI</span>
             </div>
-            <p className="text-[10px] font-bold text-stone-500 tracking-wider uppercase">
-              APMC Farm-Gate Commodities
-            </p>
           </div>
         </Link>
 
