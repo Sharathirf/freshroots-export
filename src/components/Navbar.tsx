@@ -274,18 +274,30 @@ export default function Navbar({ onOpenRFQ }: { onOpenRFQ?: () => void }) {
             <div className="relative group">
               <button
                 type="button"
-                className="flex items-center gap-1.5 text-xs font-bold text-[#1c3809] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-2 rounded-xl transition"
+                className="flex items-center gap-1.5 text-xs font-bold text-[#1c3809] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-2 rounded-xl transition shadow-sm"
               >
                 <div className="w-4 h-4 rounded-full bg-[#3b6d11] text-white flex items-center justify-center text-[9px] font-black">
                   ✓
                 </div>
-                <span className="hidden md:inline">+91 {customer?.phone.slice(-4)}</span>
+                <span className="hidden md:inline font-bold">
+                  {customer?.name ? customer.name.split(' ')[0] : `+91 ${customer?.phone}`}
+                </span>
               </button>
               {/* Dropdown Menu */}
-              <div className="absolute right-0 top-full mt-1.5 w-52 bg-white rounded-2xl shadow-xl border border-stone-200 py-1.5 hidden group-hover:block z-50 animate-in fade-in">
-                <div className="px-3.5 py-2 border-b border-stone-100">
-                  <div className="text-[10px] uppercase font-bold text-stone-400">Signed In As</div>
-                  <div className="text-xs font-mono font-bold text-stone-800">+91 {customer?.phone}</div>
+              <div className="absolute right-0 top-full mt-1.5 w-60 bg-white rounded-2xl shadow-xl border border-stone-200 py-1.5 hidden group-hover:block z-50 animate-in fade-in">
+                <div className="px-3.5 py-2.5 border-b border-stone-100 bg-stone-50/70 rounded-t-xl">
+                  <div className="text-[10px] uppercase font-bold text-[#3b6d11]">Verified Customer</div>
+                  <div className="text-xs font-bold text-stone-900 mt-0.5 truncate">
+                    {customer?.name || 'Customer'}
+                  </div>
+                  <div className="text-[11px] font-mono text-stone-600 font-semibold">
+                    +91 {customer?.phone}
+                  </div>
+                  {customer?.email && (
+                    <div className="text-[11px] text-stone-400 truncate mt-0.5">
+                      {customer.email}
+                    </div>
+                  )}
                 </div>
                 <Link
                   href={`/track-order?query=${customer?.phone}`}

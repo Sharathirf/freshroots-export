@@ -741,6 +741,24 @@ export async function runAutomationSuite() {
   verify('Reject invalid starting digit', () => assert.strictEqual(validatePhone('1234567890').valid, false), c14);
   verify('Reject alphabetic input', () => assert.strictEqual(validatePhone('abcdefghij').valid, false), c14);
 
+  await verifyAsync('POST /api/customer/profile saves customer name and email securely', async () => {
+    const res = await httpPost('/api/customer/profile', {
+      phone: '9591142548',
+      full_name: 'Sharath Inorahalli',
+      email: 'sharathir198@gmail.com'
+    });
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(res.json?.customer?.name, 'Sharath Inorahalli');
+    assert.strictEqual(res.json?.customer?.email, 'sharathir198@gmail.com');
+  }, c14);
+
+  await verifyAsync('GET /api/customer/profile retrieves customer profile by phone', async () => {
+    const res = await httpGet('/api/customer/profile?phone=9591142548');
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(res.json?.exists, true);
+    assert.strictEqual(res.json?.customer?.name, 'Sharath Inorahalli');
+  }, c14);
+
   cycleResults.push({
     cycle: 14,
     name: 'Customer Authentication & Session Logic',

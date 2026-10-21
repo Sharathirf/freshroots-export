@@ -3,10 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
 import { X, Trash2, Plus, Minus, ShieldCheck, Clock, CheckCircle2, Truck, CreditCard, Smartphone, ArrowRight, Printer } from 'lucide-react';
 import { Order } from '@/types';
 
 export default function CartDrawer() {
+  const { customer } = useAuth();
   const {
     items,
     removeFromCart,
@@ -21,10 +23,19 @@ export default function CartDrawer() {
   } = useCart();
 
   const [step, setStep] = useState<'cart' | 'checkout' | 'success'>('cart');
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
+  const [customerName, setCustomerName] = useState(customer?.name || '');
+  const [customerPhone, setCustomerPhone] = useState(customer?.phone || '');
+  const [customerEmail, setCustomerEmail] = useState(customer?.email || '');
   const [shippingAddress, setShippingAddress] = useState('');
   const [destPincode, setDestPincode] = useState(pincode);
+
+  useEffect(() => {
+    if (customer) {
+      if (customer.name && !customerName) setCustomerName(customer.name);
+      if (customer.phone && !customerPhone) setCustomerPhone(customer.phone);
+      if (customer.email && !customerEmail) setCustomerEmail(customer.email);
+    }
+  }, [customer]);
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card' | 'cod'>('upi');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderError, setOrderError] = useState<string | null>(null);
@@ -70,6 +81,7 @@ export default function CartDrawer() {
         body: JSON.stringify({
           customer_name: customerName,
           customer_phone: customerPhone,
+          customer_email: customerEmail || null,
           shipping_address: shippingAddress,
           destination_pincode: destPincode,
           payment_method: paymentMethod,
@@ -259,6 +271,20 @@ export default function CartDrawer() {
                       className="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none font-mono"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-stone-700 mb-1 flex justify-between">
+                    <span>Email Address</span>
+                    <span className="text-[11px] text-stone-400 font-normal">For GST invoice &amp; tracking</span>
+                  </label>
+                  <input
+                    type="email"
+                    value={customerEmail}
+                    onChange={(e) => setCustomerEmail(e.target.value)}
+                    placeholder="e.g. yourname@gmail.com"
+                    className="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+                  />
                 </div>
 
                 <div>

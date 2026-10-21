@@ -6,7 +6,9 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function SignInModal() {
   const { isSignInModalOpen, setIsSignInModalOpen, signIn } = useAuth();
+  const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [emailAddress, setEmailAddress] = useState('');
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [otpCode, setOtpCode] = useState('1234');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -16,6 +18,10 @@ export default function SignInModal() {
 
   const handleSendOtp = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!fullName.trim()) {
+      setErrorMsg('Please enter your full name');
+      return;
+    }
     const cleanPhone = phoneNumber.replace(/\D/g, '');
     if (cleanPhone.length < 10) {
       setErrorMsg('Please enter a valid 10-digit Indian mobile number');
@@ -30,15 +36,34 @@ export default function SignInModal() {
     }, 600);
   };
 
-  const handleVerifyOtp = (e: React.FormEvent) => {
+  const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!otpCode || otpCode.trim().length !== 4) {
       setErrorMsg('Please enter the 4-digit verification code');
       return;
     }
-    signIn(phoneNumber.replace(/\D/g, ''));
+    const clean = phoneNumber.replace(/\D/g, '');
+    signIn(clean, fullName, emailAddress);
+
+    // Persist to backend PostgreSQL users table
+    try {
+      await fetch('/api/customer/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: clean,
+          full_name: fullName,
+          email: emailAddress || null
+        })
+      });
+    } catch (err) {
+      console.warn('Profile sync warning:', err);
+    }
+
     setStep('phone');
     setPhoneNumber('');
+    setFullName('');
+    setEmailAddress('');
   };
 
   const handleClose = () => {
@@ -80,27 +105,55 @@ export default function SignInModal() {
         </div>
 
         {step === 'phone' ? (
-          <form onSubmit={handleSendOtp} className="space-y-4">
+          <form onSubmit={handleSendOtp} className="space-y-3.5">
             <div>
-              <label className="block text-xs font-bold text-stone-700 mb-1.5">
-                Mobile Phone Number
+              <label className="block text-xs font-bold text-stone-700 mb-1">
+                Your Full Name *
+              </label>
+              <input
+                type="text"
+                required
+                autoFocus
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="e.g. Sharath Inorahalli"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm font-medium text-stone-900 focus:ring-2 focus:ring-[#3b6d11] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-stone-700 mb-1">
+                Mobile Phone Number (WhatsApp) *
               </label>
               <div className="flex rounded-xl border border-stone-300 focus-within:ring-2 focus-within:ring-[#3b6d11] focus-within:border-transparent overflow-hidden">
-                <div className="bg-stone-50 px-3.5 py-3 border-r border-stone-200 flex items-center gap-1.5 text-xs font-bold text-stone-700">
+                <div className="bg-stone-50 px-3.5 py-2.5 border-r border-stone-200 flex items-center gap-1.5 text-xs font-bold text-stone-700">
                   <span className="text-base">🇮🇳</span>
                   <span>+91</span>
                 </div>
                 <input
                   type="tel"
                   maxLength={10}
-                  autoFocus
                   required
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
-                  placeholder="9876543210"
-                  className="w-full px-3.5 py-3 text-sm font-semibold font-mono text-stone-900 focus:outline-none"
+                  placeholder="9591142548"
+                  className="w-full px-3.5 py-2.5 text-sm font-semibold font-mono text-stone-900 focus:outline-none"
                 />
               </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-stone-700 mb-1 flex justify-between">
+                <span>Email Address</span>
+                <span className="text-[11px] text-stone-400 font-normal">For tax invoices &amp; tracking</span>
+              </label>
+              <input
+                type="email"
+                value={emailAddress}
+                onChange={(e) => setEmailAddress(e.target.value)}
+                placeholder="e.g. sharathir198@gmail.com"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm font-medium text-stone-900 focus:ring-2 focus:ring-[#3b6d11] focus:outline-none"
+              />
             </div>
 
             {errorMsg && (
@@ -111,7 +164,7 @@ export default function SignInModal() {
 
             <button
               type="submit"
-              disabled={isSending || phoneNumber.length < 10}
+              disabled={isSending || phoneNumber.length < 10 || !fullName.trim()}
               className="w-full bg-[#3b6d11] hover:bg-[#2d5a0b] disabled:opacity-50 text-white font-bold text-sm py-3 px-6 rounded-xl shadow-md transition flex items-center justify-center gap-2"
             >
               <span>{isSending ? 'Sending Code...' : 'SEND SMS OTP'}</span>

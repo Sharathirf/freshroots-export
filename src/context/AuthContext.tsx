@@ -5,6 +5,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 export interface CustomerUser {
   phone: string;
   name?: string;
+  email?: string;
   signedInAt: string;
 }
 
@@ -13,7 +14,8 @@ interface AuthContextType {
   isLoggedIn: boolean;
   isSignInModalOpen: boolean;
   setIsSignInModalOpen: (open: boolean) => void;
-  signIn: (phone: string, name?: string) => void;
+  signIn: (phone: string, name?: string, email?: string) => void;
+  updateProfile: (name: string, email?: string) => void;
   signOut: () => void;
 }
 
@@ -34,10 +36,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const signIn = (phone: string, name?: string) => {
+  const signIn = (phone: string, name?: string, email?: string) => {
     const user: CustomerUser = {
       phone,
-      name: name || `Customer ${phone.slice(-4)}`,
+      name: name?.trim() || `Customer ${phone.slice(-4)}`,
+      email: email?.trim() || undefined,
       signedInAt: new Date().toISOString()
     };
     setCustomer(user);
@@ -47,6 +50,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Failed to save customer session:', e);
     }
     setIsSignInModalOpen(false);
+  };
+
+  const updateProfile = (name: string, email?: string) => {
+    if (!customer) return;
+    const updated: CustomerUser = {
+      ...customer,
+      name: name.trim() || customer.name,
+      email: email?.trim() || customer.email
+    };
+    setCustomer(updated);
+    try {
+      localStorage.setItem('tiptur_customer_session', JSON.stringify(updated));
+    } catch (e) {
+      console.error('Failed to update customer session:', e);
+    }
   };
 
   const signOut = () => {
@@ -66,6 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isSignInModalOpen,
         setIsSignInModalOpen,
         signIn,
+        updateProfile,
         signOut
       }}
     >

@@ -170,6 +170,23 @@ export async function POST(request: NextRequest) {
       [insertedOrder[0].id, JSON.stringify({ order_number: orderNumber, total: grandTotal })]
     );
 
+    // Synchronize customer profile into users table
+    if (customer_phone) {
+      try {
+        await query(
+          `INSERT INTO users (full_name, phone, email, role)
+           VALUES ($1, $2, $3, 'retail_customer')
+           ON CONFLICT (phone) DO UPDATE 
+           SET full_name = EXCLUDED.full_name,
+               email = COALESCE(EXCLUDED.email, users.email),
+               updated_at = NOW()`,
+          [customer_name || 'Customer', customer_phone, customer_email || null]
+        );
+      } catch (userSyncErr) {
+        console.warn('Customer profile sync warning:', userSyncErr);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Order placed successfully!',
