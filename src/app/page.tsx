@@ -165,36 +165,32 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* CATALOG SECTION (Milestone 3) */}
-        <section id="catalog" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+        {/* CATALOG SECTION */}
+        <section id="catalog" className="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
             <div>
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 mb-2">
-                <Sprout className="w-3.5 h-3.5 text-emerald-600" />
-                Certified Agricultural Catalog
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-stone-900 tracking-tight">
-                Current Agricultural Lots Available for Dispatch
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
+                Our Products
               </h2>
-              <p className="text-stone-600 text-sm mt-1 max-w-xl">
-                Every lot inspected at our Tiptur Hub. Retail units packed in breathable HDPE mesh bags; bulk lots shipped in standard gunny sacks or corrugated master cartons.
+              <p className="text-stone-500 text-xs sm:text-sm mt-1">
+                Farm-direct mature coconuts and GI Tiptur copra. Graded and packed at origin.
               </p>
             </div>
 
             {/* Category Filter Tabs */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex gap-1 bg-stone-200/70 p-1 rounded-xl w-fit">
               {[
-                { id: 'all', label: 'All Lots' },
-                { id: 'mature_coconut', label: 'Mature Coconuts' },
-                { id: 'copra', label: 'Ball & Milling Copra' }
+                { id: 'all', label: 'All' },
+                { id: 'mature_coconut', label: 'Coconuts' },
+                { id: 'copra', label: 'Copra' }
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setFilteredCategory(tab.id)}
-                  className={`text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl transition ${
+                  className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition ${
                     filteredCategory === tab.id
-                      ? 'bg-emerald-800 text-white shadow-sm'
-                      : 'bg-white border border-stone-200 text-stone-600 hover:bg-stone-100'
+                      ? 'bg-white text-stone-900 shadow-sm'
+                      : 'text-stone-600 hover:text-stone-900'
                   }`}
                 >
                   {tab.label}
@@ -205,13 +201,13 @@ export default function HomePage() {
 
           {/* Product Grid */}
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 py-6">
               {[1, 2, 3, 4].map((n) => (
-                <div key={n} className="bg-white rounded-3xl h-96 animate-pulse border border-stone-200 p-4" />
+                <div key={n} className="bg-white rounded-2xl h-80 animate-pulse border border-stone-200" />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {displayedProducts.map((product) => (
                 <ProductCard
                   key={product.id}
