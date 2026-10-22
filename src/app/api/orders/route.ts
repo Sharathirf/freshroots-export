@@ -107,11 +107,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Delivery fee calculation
     // Delivery fee calculation:
-    // Transportation Charged Extra: Modeled after coconutseller.in & calculated via Shiprocket rate engine
+    // Threshold-based Free Shipping: Free delivery for cart value > ₹2,999, otherwise calculated at actuals.
+    const FREE_SHIPPING_THRESHOLD = 2999;
     let deliveryFee = 0.00;
-    if (body.delivery_fee !== undefined && !isNaN(Number(body.delivery_fee))) {
+    const isFreeShipping = subtotal > FREE_SHIPPING_THRESHOLD;
+
+    if (isFreeShipping) {
+      deliveryFee = 0.00;
+    } else if (body.delivery_fee !== undefined && !isNaN(Number(body.delivery_fee))) {
       deliveryFee = Math.max(0, Number(body.delivery_fee));
     } else {
       const totalWeightKg = validatedItems.reduce((acc, it) => acc + (it.estimated_weight_kg || 1), 0);

@@ -131,8 +131,9 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
 
   const price = Number(product.retail_price_inr);
   const retailSubtotal = price * retailQty;
-  const freeShippingThreshold = 1500;
-  const deliveryFee = retailSubtotal >= freeShippingThreshold ? 0 : 99;
+  const freeShippingThreshold = 2999;
+  const isFreeShipping = retailSubtotal > freeShippingThreshold;
+  const deliveryFee = isFreeShipping ? 0 : 0;
   const taxRate = Number(product.tax_rate_percentage || 0);
   const estimatedTax = (retailSubtotal * taxRate) / 100;
   const retailGrandTotal = retailSubtotal + deliveryFee + estimatedTax;
@@ -395,10 +396,16 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                   <div className="flex justify-between items-center">
                     <span className="flex items-center gap-1">
                       <Truck className="w-3.5 h-3.5 text-emerald-700" />
-                      <span>Transportation (Extra):</span>
+                      <span>Transportation Delivery:</span>
                     </span>
                     <span className="font-mono text-xs font-semibold text-stone-800">
-                      Calculated on actual weight via Shiprocket
+                      {isFreeShipping ? (
+                        <span className="text-emerald-700 font-bold bg-emerald-100/70 border border-emerald-300 px-2 py-0.5 rounded">
+                          FREE (Cart &gt; ₹2,999)
+                        </span>
+                      ) : (
+                        <span>Calculated at actuals via Shiprocket</span>
+                      )}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -619,7 +626,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                 <div className="p-4 rounded-2xl border border-stone-200 bg-stone-50 space-y-1">
                   <strong className="text-stone-900 text-sm block">Can I order retail quantities outside Karnataka?</strong>
                   <p className="text-stone-600 leading-relaxed">
-                    Yes! We ship retail packs to all 19,000+ Indian postal PIN codes via express courier partners. Free shipping applies automatically for orders &ge; ₹1,500.
+                    Yes! We ship retail packs to all 19,000+ Indian postal PIN codes via express courier partners. Free shipping applies automatically for orders &gt; ₹2,999, otherwise calculated at actuals via Shiprocket.
                   </p>
                 </div>
                 <div className="p-4 rounded-2xl border border-stone-200 bg-stone-50 space-y-1">

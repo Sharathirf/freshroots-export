@@ -50,10 +50,15 @@ export interface ShippingCalculationResult {
   recommended_courier_company_id: number;
   recommended_courier_name: string;
   lowest_rate: number;
+  free_shipping_threshold: number;
+  is_free_shipping: boolean;
+  effective_rate: number;
+  free_shipping_message: string;
   source: 'shiprocket_live_api' | 'shiprocket_rate_engine';
   error?: string;
 }
 
+export const FREE_SHIPPING_THRESHOLD = 2999;
 export const ORIGIN_PICKUP_POSTCODE = '571423'; // Kikkeri, Mandya, Karnataka
 export const ORIGIN_HUB_NAME = 'SHARATH INORAHALLI Mandya APMC Logistics Hub';
 
@@ -252,6 +257,10 @@ export function calculateLocalShiprocketRates(
   // Sort by price ascending
   couriers.sort((a, b) => a.rate - b.rate);
 
+  const isFreeShipping = declaredValue > FREE_SHIPPING_THRESHOLD;
+  const lowestRate = couriers[0].rate;
+  const effectiveRate = isFreeShipping ? 0 : lowestRate;
+
   return {
     success: true,
     pickup_postcode: pickup,
@@ -261,11 +270,17 @@ export function calculateLocalShiprocketRates(
     zone_code,
     destination_city: `${region} (PIN: ${delivery})`,
     destination_state: state,
-    policy: 'Transportation Charged Extra (Modeled after coconutseller.in/transportation standard)',
+    policy: 'Transportation Charged Extra (Modeled after coconutseller.in/transportation standard; Free delivery applies for cart value > ₹2,999)',
     available_courier_companies: couriers,
     recommended_courier_company_id: couriers[0].courier_company_id,
     recommended_courier_name: couriers[0].courier_name,
-    lowest_rate: couriers[0].rate,
+    lowest_rate: lowestRate,
+    free_shipping_threshold: FREE_SHIPPING_THRESHOLD,
+    is_free_shipping: isFreeShipping,
+    effective_rate: effectiveRate,
+    free_shipping_message: isFreeShipping
+      ? 'Qualified for FREE Farm-Gate Delivery (Cart value > ₹2,999)'
+      : `Add ₹${Math.max(0, 3000 - declaredValue)} more for FREE Delivery (Threshold: > ₹2,999)`,
     source: 'shiprocket_rate_engine'
   };
 }
@@ -330,6 +345,9 @@ export async function calculateShippingRate(
           }));
 
           const { zone, zone_code, state, region } = determineShippingZone(delivery);
+          const declaredVal = Number(params.declared_value || 0);
+          const isFree = declaredVal > FREE_SHIPPING_THRESHOLD;
+          const lowest = mapped[0]?.rate || 100;
 
           return {
             success: true,
@@ -340,11 +358,17 @@ export async function calculateShippingRate(
             zone_code,
             destination_city: `${region} (PIN: ${delivery})`,
             destination_state: state,
-            policy: 'Transportation Charged Extra (Modeled after coconutseller.in/transportation standard)',
+            policy: 'Transportation Charged Extra (Modeled after coconutseller.in/transportation standard; Free delivery applies for cart value > ₹2,999)',
             available_courier_companies: mapped,
             recommended_courier_company_id: json.data?.recommended_courier_company_id || mapped[0].courier_company_id,
             recommended_courier_name: mapped[0]?.courier_name || 'Shiprocket Courier',
-            lowest_rate: mapped[0]?.rate || 100,
+            lowest_rate: lowest,
+            free_shipping_threshold: FREE_SHIPPING_THRESHOLD,
+            is_free_shipping: isFree,
+            effective_rate: isFree ? 0 : lowest,
+            free_shipping_message: isFree
+              ? 'Qualified for FREE Farm-Gate Delivery (Cart value > ₹2,999)'
+              : `Add ₹${Math.max(0, 3000 - declaredVal)} more for FREE Delivery (Threshold: > ₹2,999)`,
             source: 'shiprocket_live_api'
           };
         }

@@ -61,16 +61,30 @@ export default function TransportationPage() {
             </p>
           </div>
 
-          {/* Core Industry Policy Alert (Modeled after coconutseller.in/transportation) */}
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 sm:p-5 max-w-4xl text-xs sm:text-sm text-stone-200 flex items-start gap-3.5 shadow-lg">
-            <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <strong className="text-white block font-bold">
-                Agricultural Freight Transparency Policy (Transportation Charged Extra):
-              </strong>
-              <p className="text-stone-300 leading-relaxed text-xs">
-                In strict adherence to agricultural mandi standards (such as <em>coconutseller.in/transportation</em>), <strong>transportation is charged extra at 100% actuals</strong>. Heavy agricultural produce (15 kg coconut sacks, copra master cartons, living nursery saplings) is never marked up with hidden shipping margins; buyers pay only genuine transporter freight rates determined by cargo weight and destination corridor.
-              </p>
+          {/* Core Industry Policy Alert & Threshold Free Shipping Banner */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl">
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 sm:p-5 text-xs sm:text-sm text-stone-200 flex items-start gap-3.5 shadow-lg">
+              <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <strong className="text-white block font-bold">
+                  Agricultural Freight Transparency Policy (Transportation Charged Extra):
+                </strong>
+                <p className="text-stone-300 leading-relaxed text-xs">
+                  In strict adherence to agricultural mandi standards (such as <em>coconutseller.in/transportation</em>), <strong>transportation is charged extra at 100% actuals</strong>. Heavy agricultural produce is never marked up with hidden shipping margins; buyers pay only genuine transporter freight rates.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-emerald-950/60 backdrop-blur-md border border-emerald-400/30 rounded-2xl p-4 sm:p-5 text-xs sm:text-sm text-emerald-100 flex items-start gap-3.5 shadow-lg">
+              <ShieldCheck className="w-5 h-5 text-lime-400 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <strong className="text-lime-300 block font-bold">
+                  Threshold-Based Free Shipping Policy:
+                </strong>
+                <p className="text-emerald-200/90 leading-relaxed text-xs">
+                  Enjoy <strong>100% FREE Farm-Gate Delivery</strong> for any cart value <strong>&gt; ₹2,999</strong> across all 19,000+ Indian postal PIN codes! Consignments ≤ ₹2,999 are calculated at genuine transporter actuals via our automated Shiprocket freight engine.
+                </p>
+              </div>
             </div>
           </div>
         </div>

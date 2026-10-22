@@ -341,6 +341,49 @@ export async function runAutomationSuite() {
     assert.strictEqual(Number(res.json?.order?.delivery_fee_inr), 145.00);
   }, c5);
 
+  await verifyAsync('Threshold-based Free Shipping: Cart value > ₹2,999 receives 100% free delivery', async () => {
+    // 3 bags of semi-husked mature coconuts = 3 * 1350 = ₹4,050 (> ₹2,999)
+    const res = await httpPost('/api/orders', {
+      customer_name: 'Sri. Mahesh Gowda',
+      customer_phone: '9845033333',
+      shipping_address: 'Vijayanagar, Mysuru',
+      destination_pincode: '570017',
+      items: [{ product_id: semiCocProd?.id, quantity: 3 }]
+    });
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(res.json?.success, true);
+    assert.strictEqual(Number(res.json?.order?.subtotal_inr), 4050);
+    assert.strictEqual(Number(res.json?.order?.delivery_fee_inr), 0, 'Cart value > ₹2,999 must have zero delivery fee');
+  }, c5);
+
+  await verifyAsync('Threshold-based Free Shipping: Cart value <= ₹2,999 charges delivery at actuals', async () => {
+    // 1 bag of semi-husked mature coconuts = ₹1,350 (<= ₹2,999)
+    const res = await httpPost('/api/orders', {
+      customer_name: 'Sri. Prasanna',
+      customer_phone: '9845044444',
+      shipping_address: 'Hebbal, Bengaluru',
+      destination_pincode: '560024',
+      items: [{ product_id: semiCocProd?.id, quantity: 1 }]
+    });
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(res.json?.success, true);
+    assert.strictEqual(Number(res.json?.order?.subtotal_inr), 1350);
+    assert(Number(res.json?.order?.delivery_fee_inr) > 0, 'Cart value <= ₹2,999 must be calculated at actuals');
+  }, c5);
+
+  await verifyAsync('Shiprocket rate engine reflects free shipping qualification for declared value > ₹2,999', async () => {
+    const freeRes = await httpGet('/api/shipping/calculate?pincode=560001&weight=15&declared_value=3500');
+    assert.strictEqual(freeRes.status, 200);
+    assert.strictEqual(freeRes.json?.is_free_shipping, true);
+    assert.strictEqual(freeRes.json?.free_shipping_threshold, 2999);
+    assert.strictEqual(freeRes.json?.effective_rate, 0);
+
+    const paidRes = await httpGet('/api/shipping/calculate?pincode=560001&weight=15&declared_value=2500');
+    assert.strictEqual(paidRes.status, 200);
+    assert.strictEqual(paidRes.json?.is_free_shipping, false);
+    assert(paidRes.json?.effective_rate > 0);
+  }, c5);
+
   cycleResults.push({
     cycle: 5,
     name: 'Shiprocket Rate Calculator & Freight Policy',

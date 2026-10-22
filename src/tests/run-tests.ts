@@ -55,16 +55,19 @@ it('Per-unit pricing compliance for Semi-Husked 25-piece bag at ₹90/kg (₹1,3
   assert.strictEqual(ratePerKg, 90.00, 'Rate per kg must equal ₹90.00');
 });
 
-it('Free delivery threshold must apply at ₹1,500; flat ₹99 below', () => {
-  const threshold = 1500;
-  const cartSubtotalHigh = 1650;
-  const cartSubtotalLow = 1350;
+it('Threshold-based Free Shipping: Free delivery for cart value > ₹2,999, otherwise calculated at actuals', () => {
+  const threshold = 2999;
+  const cartSubtotalHigh = 3100; // > 2999
+  const cartSubtotalBoundary = 2999; // <= 2999
+  const cartSubtotalLow = 1350; // <= 2999
 
-  const deliveryHigh = cartSubtotalHigh >= threshold ? 0 : 99;
-  const deliveryLow = cartSubtotalLow >= threshold ? 0 : 99;
+  const isFreeHigh = cartSubtotalHigh > threshold;
+  const isFreeBoundary = cartSubtotalBoundary > threshold;
+  const isFreeLow = cartSubtotalLow > threshold;
 
-  assert.strictEqual(deliveryHigh, 0, 'Cart above ₹1,500 must receive free shipping');
-  assert.strictEqual(deliveryLow, 99, 'Cart below ₹1,500 must incur ₹99 delivery fee');
+  assert.strictEqual(isFreeHigh, true, 'Cart value > ₹2,999 must qualify for free delivery');
+  assert.strictEqual(isFreeBoundary, false, 'Cart value of exactly ₹2,999 must not qualify for free delivery');
+  assert.strictEqual(isFreeLow, false, 'Cart value of ₹1,350 must not qualify for free delivery (actuals apply)');
 });
 
 // ----------------------------------------------------
