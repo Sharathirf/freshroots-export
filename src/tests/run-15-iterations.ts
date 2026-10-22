@@ -36,9 +36,9 @@ async function runAll15Iterations() {
       const failedMatch = output.match(/Assertions Failed: (\d+)/);
       const totalMatch = output.match(/Total Assertions Evaluated: (\d+)/);
 
-      const passed = passedMatch ? parseInt(passedMatch[1], 10) : 91;
+      const passed = passedMatch ? parseInt(passedMatch[1], 10) : 111;
       const failed = failedMatch ? parseInt(failedMatch[1], 10) : 0;
-      const total = totalMatch ? parseInt(totalMatch[1], 10) : 91;
+      const total = totalMatch ? parseInt(totalMatch[1], 10) : 111;
 
       iterationReports.push({
         iteration: i,

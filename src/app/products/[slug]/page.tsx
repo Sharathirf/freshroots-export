@@ -11,6 +11,7 @@ import ProductReviewsSection from '@/components/ProductReviewsSection';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { Product } from '@/types';
+import { getProductVariants, getDefaultVariant, ProductVariant } from '@/lib/variants';
 import {
   ShieldCheck,
   Truck,
@@ -43,6 +44,9 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Packaging variant selection state
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+
   // Purchasing mode toggle: 'retail' | 'bulk'
   const [purchasingMode, setPurchasingMode] = useState<'retail' | 'bulk'>('retail');
 
@@ -67,6 +71,10 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
         if (prodData.success) {
           const p = prodData.product;
           setProduct(p);
+          const defVariant = getDefaultVariant(p.sku);
+          if (defVariant) {
+            setSelectedVariant(defVariant);
+          }
           if (p.bulk_min_quantity && p.bulk_min_quantity > 1) {
             setRetailQty(p.bulk_min_quantity);
           }
@@ -129,7 +137,9 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
     );
   }
 
-  const price = Number(product.retail_price_inr);
+  const variants = product ? getProductVariants(product.sku) : null;
+  const basePrice = Number(product.retail_price_inr);
+  const price = selectedVariant ? selectedVariant.price : basePrice;
   const retailSubtotal = price * retailQty;
   const freeShippingThreshold = 2999;
   const isFreeShipping = retailSubtotal > freeShippingThreshold;
@@ -139,14 +149,14 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
   const retailGrandTotal = retailSubtotal + deliveryFee + estimatedTax;
 
   // Clean unit breakdown note
-  let unitSubtitle = product.unit_of_measure;
+  let unitSubtitle = selectedVariant ? selectedVariant.packSize : product.unit_of_measure;
   let perUnitNote = '';
   if (product.sku.includes('COC-SEMI')) {
     perUnitNote = '₹90 / kg';
     unitSubtitle = '25-Piece Bag (~15 kg)';
   } else if (product.sku.includes('COP-BAL')) {
     perUnitNote = '₹350 / kg';
-    unitSubtitle = '15 kg Master Box (also 25kg, 30kg)';
+    unitSubtitle = selectedVariant ? `${selectedVariant.packSize} (also 15kg, 25kg, 30kg)` : '15 kg Master Box (also 25kg, 30kg)';
   } else if (product.sku.includes('NUR-COC')) {
     perUnitNote = '₹250 / plant';
     unitSubtitle = '1 Year Old • 2 Feet • Min 50 Units';
@@ -155,10 +165,15 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
     unitSubtitle = '1 Litre Food-Grade Bottle';
   } else if (product.sku.includes('MIL-RAG')) {
     perUnitNote = '₹120 / kg';
-    unitSubtitle = '5 kg Machine-Cleaned Pack (also 10kg, 25kg)';
+    unitSubtitle = selectedVariant ? `${selectedVariant.packSize} (also 5kg, 10kg, 25kg)` : '5 kg Machine-Cleaned Pack (also 10kg, 25kg)';
   } else if (product.sku.includes('DAI-GHE')) {
-    perUnitNote = '₹900 / Litre';
-    unitSubtitle = '1 Litre Glass Jar';
+    if (selectedVariant?.packSize.includes('500')) {
+      perUnitNote = '500 ml @ ₹480 (₹960/L)';
+      unitSubtitle = '500 ml Glass Jar';
+    } else {
+      perUnitNote = '₹900 / Litre • 500ml @ ₹480';
+      unitSubtitle = '1 Litre Glass Jar';
+    }
   } else if (product.sku.includes('COC-TND')) {
     perUnitNote = '₹80 / piece';
     unitSubtitle = 'Bulk Consignments Only';
@@ -176,7 +191,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
   }
 
   const handleBuyNow = () => {
-    addToCart(product, retailQty);
+    addToCart(product, retailQty, selectedVariant || undefined);
     setIsCartOpen(true);
   };
 
@@ -303,7 +318,9 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                 {/* Price Display */}
                 <div className="flex items-baseline justify-between border-b pb-4">
                   <div>
-                    <span className="text-xs text-stone-500 block">Retail Price per {product.unit_of_measure.split(' ')[0]}:</span>
+                    <span className="text-xs text-stone-500 block">
+                      Retail Price per {selectedVariant ? selectedVariant.packSize : product.unit_of_measure.split(' ')[0]}:
+                    </span>
                     <div className="flex items-baseline gap-2 mt-0.5">
                       <span className="text-3xl font-black text-stone-900 font-mono">
                         ₹{price.toLocaleString('en-IN')}
@@ -325,10 +342,54 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                   </div>
                 </div>
 
+                {/* Pack Size / Variant Selector (e.g. 500 ml @ ₹480 vs 1 Litre @ ₹900) */}
+                {variants && variants.length > 0 && (
+                  <div className="bg-stone-50 p-3.5 rounded-2xl border border-stone-200">
+                    <label className="block text-xs font-bold text-stone-800 mb-2 flex items-center justify-between">
+                      <span className="flex items-center gap-1.5">
+                        <Package className="w-3.5 h-3.5 text-emerald-700" />
+                        <span>Select Packaging Size:</span>
+                      </span>
+                      <span className="text-[11px] font-extrabold text-emerald-800 bg-white border border-emerald-300 px-2 py-0.5 rounded-md">
+                        {selectedVariant ? selectedVariant.packSize : 'Standard'}
+                      </span>
+                    </label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {variants.map((v) => {
+                        const isSelected = selectedVariant?.packSize === v.packSize;
+                        return (
+                          <button
+                            key={v.packSize}
+                            type="button"
+                            onClick={() => setSelectedVariant(v)}
+                            className={`p-2.5 rounded-xl border text-left transition flex flex-col justify-between ${
+                              isSelected
+                                ? 'border-emerald-700 bg-emerald-50/90 ring-2 ring-emerald-700 shadow-xs'
+                                : 'border-stone-200 bg-white hover:border-stone-300 hover:bg-stone-50'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className={`text-xs font-bold ${isSelected ? 'text-emerald-950 font-extrabold' : 'text-stone-800'}`}>
+                                {v.packSize}
+                              </span>
+                              {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />}
+                            </div>
+                            <div className="mt-1 flex items-baseline gap-1">
+                              <span className={`font-mono text-xs font-black ${isSelected ? 'text-emerald-900' : 'text-stone-900'}`}>
+                                ₹{v.price.toLocaleString('en-IN')}
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* Quantity Selection */}
                 <div>
                   <label className="block text-xs font-bold text-stone-700 mb-2">
-                    Select Quantity ({product.unit_of_measure}):
+                    Select Quantity ({selectedVariant ? selectedVariant.packSize : product.unit_of_measure}):
                     {product.bulk_min_quantity && product.bulk_min_quantity > 1 && (
                       <span className="ml-2 text-amber-700 font-normal">
                         (Minimum order: {product.bulk_min_quantity} units)
@@ -435,7 +496,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
                   <button
                     type="button"
-                    onClick={() => addToCart(product, retailQty)}
+                    onClick={() => addToCart(product, retailQty, selectedVariant || undefined)}
                     className="flex-1 bg-white hover:bg-stone-50 text-stone-900 border-2 border-stone-900 font-bold text-sm py-3 px-5 rounded-xl transition flex items-center justify-center gap-2"
                   >
                     <ShoppingBag className="w-4 h-4" />

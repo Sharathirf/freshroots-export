@@ -4,9 +4,16 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, OrderItem } from '@/types';
 import { calculateLocalShiprocketRates, FREE_SHIPPING_THRESHOLD } from '@/lib/shiprocket';
 
+export interface PackVariantOption {
+  title?: string;
+  packSize: string;
+  price: number;
+  weightKg?: number;
+}
+
 interface CartContextType {
   items: OrderItem[];
-  addToCart: (product: Product, quantity?: number) => void;
+  addToCart: (product: Product, quantity?: number, variant?: PackVariantOption) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -138,17 +145,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
   }, [items]);
 
-  const addToCart = (product: Product, quantity = 1) => {
+  const addToCart = (product: Product, quantity = 1, variant?: PackVariantOption) => {
+    const itemTitle = variant ? `${product.title} (${variant.packSize})` : product.title;
+    const itemUnit = variant ? variant.packSize : product.unit_of_measure;
+    const unitPrice = variant ? variant.price : Number(product.retail_price_inr);
+    const unitWeight = variant?.weightKg !== undefined ? variant.weightKg : Number(product.estimated_weight_kg || 1);
+    const itemKey = variant ? `${product.id}__${variant.packSize.replace(/\s+/g, '_')}` : product.id;
+
     setItems((prev) => {
-      const existing = prev.find((item) => item.product_id === product.id);
+      const matchItem = (it: any) => (it.item_key ? it.item_key === itemKey : (it.product_id === product.id && it.unit_price_inr === unitPrice));
+      const existing = prev.find(matchItem);
       if (existing) {
         return prev.map((item) =>
-          item.product_id === product.id
+          matchItem(item)
             ? {
                 ...item,
                 quantity: item.quantity + quantity,
                 total_price_inr: (item.quantity + quantity) * item.unit_price_inr,
-                estimated_weight_kg: Number(product.estimated_weight_kg || 0) * (item.quantity + quantity)
+                estimated_weight_kg: unitWeight * (item.quantity + quantity)
               }
             : item
         );
@@ -158,37 +172,50 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         {
           product_id: product.id,
           sku: product.sku,
-          title: product.title,
-          unit_of_measure: product.unit_of_measure,
+          title: itemTitle,
+          unit_of_measure: itemUnit,
           quantity,
-          unit_price_inr: Number(product.retail_price_inr),
-          total_price_inr: quantity * Number(product.retail_price_inr),
-          estimated_weight_kg: Number(product.estimated_weight_kg || 0) * quantity
+          unit_price_inr: unitPrice,
+          total_price_inr: quantity * unitPrice,
+          estimated_weight_kg: unitWeight * quantity,
+          item_key: itemKey
         }
       ];
     });
     setIsCartOpen(true);
   };
 
-  const removeFromCart = (productId: string) => {
-    setItems((prev) => prev.filter((item) => item.product_id !== productId));
+  const removeFromCart = (idOrKey: string) => {
+    setItems((prev) =>
+      prev.filter((item) => {
+        const itemIdentifier = item.item_key || item.product_id;
+        if (itemIdentifier === idOrKey) return false;
+        if (!item.item_key && item.product_id === idOrKey) return false;
+        return true;
+      })
+    );
   };
 
-  const updateQuantity = (productId: string, quantity: number) => {
+  const updateQuantity = (idOrKey: string, quantity: number) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(idOrKey);
       return;
     }
     setItems((prev) =>
-      prev.map((item) =>
-        item.product_id === productId
-          ? {
-              ...item,
-              quantity,
-              total_price_inr: quantity * item.unit_price_inr
-            }
-          : item
-      )
+      prev.map((item) => {
+        const itemIdentifier = item.item_key || item.product_id;
+        const isMatch = itemIdentifier === idOrKey || (!item.item_key && item.product_id === idOrKey);
+        if (isMatch) {
+          const unitWeight = item.estimated_weight_kg && item.quantity > 0 ? item.estimated_weight_kg / item.quantity : 1;
+          return {
+            ...item,
+            quantity,
+            total_price_inr: quantity * item.unit_price_inr,
+            estimated_weight_kg: unitWeight * quantity
+          };
+        }
+        return item;
+      })
     );
   };
 

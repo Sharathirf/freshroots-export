@@ -221,7 +221,8 @@ async function runSeed() {
       description: 'Traditional Desi cow ghee prepared by slow-simmering cultured whole milk curd churned with wooden bilonas. Authentic golden granular (danedaar) texture, rich nutty aroma, zero additives, and free from artificial flavorings or palm oil. ₹900/litre. Minimum order: 1 quantity.',
       specifications: {
         volume: '1 Litre Glass Jar',
-        rate: '₹900 / Litre',
+        rate: '₹900 / Litre (also 500 ml @ ₹480)',
+        available_sizes: '500 ml (₹480), 1 Litre (₹900)',
         texture: 'Golden Granular Danedaar Ghee',
         churning_process: 'Cultured Curd Wooden Bilona Method',
         shelf_life: '9 Months in cool ambient storage'

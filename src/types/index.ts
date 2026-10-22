@@ -62,6 +62,7 @@ export interface OrderItem {
   unit_price_inr: number;
   total_price_inr: number;
   estimated_weight_kg: number;
+  item_key?: string;
 }
 
 export interface Order {

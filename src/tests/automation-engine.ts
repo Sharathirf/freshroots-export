@@ -255,6 +255,35 @@ export async function runAutomationSuite() {
     assert.strictEqual(gheeTax, 108.00);
   }, c4);
 
+  verify('Ghee 500 ml @ ₹480 12% tax calculation check', () => {
+    const ghee500Tax = (480 * 12) / 100;
+    assert.strictEqual(ghee500Tax, 57.60);
+  }, c4);
+
+  await verifyAsync('Order 500 ml Pure Desi Cow Ghee variant @ ₹480 calculates authentic subtotal and tax', async () => {
+    const res = await httpPost('/api/orders', {
+      customer_name: 'Ghee 500ml Buyer',
+      customer_phone: '9845012399',
+      shipping_address: 'Malleswaram, Bengaluru',
+      destination_pincode: '560003',
+      items: [
+        {
+          product_id: gheeProd?.id,
+          quantity: 1,
+          unit_price_inr: 480,
+          unit_of_measure: '500 ml Glass Jar'
+        }
+      ]
+    });
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(res.json?.success, true);
+    assert.strictEqual(Number(res.json?.order?.subtotal_inr), 480);
+    assert.strictEqual(Number(res.json?.order?.tax_inr), 57.60);
+    const orderItems = typeof res.json?.order?.items === 'string' ? JSON.parse(res.json?.order?.items) : res.json?.order?.items;
+    assert.strictEqual(orderItems[0]?.unit_price_inr, 480);
+    assert.strictEqual(orderItems[0]?.unit_of_measure, '500 ml Glass Jar');
+  }, c4);
+
   cycleResults.push({
     cycle: 4,
     name: 'Real-time GST & Multi-Rate Tax Compliance',

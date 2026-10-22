@@ -114,7 +114,15 @@ export default function CartDrawer() {
           shipping_address: shippingAddress,
           destination_pincode: destPincode,
           payment_method: paymentMethod,
-          items: items.map((i) => ({ product_id: i.product_id, quantity: i.quantity }))
+          items: items.map((i) => ({
+            product_id: i.product_id,
+            quantity: i.quantity,
+            unit_price_inr: i.unit_price_inr,
+            unit_of_measure: i.unit_of_measure,
+            title: i.title,
+            estimated_weight_kg: i.estimated_weight_kg,
+            item_key: i.item_key
+          }))
         })
       });
 
@@ -248,42 +256,45 @@ export default function CartDrawer() {
 
                     {/* Cart Items List */}
                     <div className="divide-y divide-stone-100">
-                      {items.map((item) => (
-                        <div key={item.product_id} className="py-3 flex gap-3 items-center">
-                          <div className="flex-1">
-                            <h4 className="font-bold text-stone-900 text-sm leading-tight">{item.title}</h4>
-                            <div className="text-xs text-stone-500 mt-0.5">
-                              {item.unit_of_measure} • ₹{item.unit_price_inr.toLocaleString('en-IN')}
+                      {items.map((item) => {
+                        const itemKey = item.item_key || item.product_id;
+                        return (
+                          <div key={itemKey} className="py-3 flex gap-3 items-center">
+                            <div className="flex-1">
+                              <h4 className="font-bold text-stone-900 text-sm leading-tight">{item.title}</h4>
+                              <div className="text-xs text-stone-500 mt-0.5">
+                                {item.unit_of_measure} • ₹{item.unit_price_inr.toLocaleString('en-IN')}
+                              </div>
+                              <div className="text-xs font-bold text-emerald-800 mt-1">
+                                ₹{item.total_price_inr.toLocaleString('en-IN')}
+                              </div>
                             </div>
-                            <div className="text-xs font-bold text-emerald-800 mt-1">
-                              ₹{item.total_price_inr.toLocaleString('en-IN')}
+
+                            <div className="flex items-center gap-2 bg-stone-100 px-2 py-1 rounded-lg">
+                              <button
+                                onClick={() => updateQuantity(itemKey, item.quantity - 1)}
+                                className="p-1 hover:bg-stone-200 rounded text-stone-700 transition"
+                              >
+                                <Minus className="w-3.5 h-3.5" />
+                              </button>
+                              <span className="font-mono text-xs font-bold w-4 text-center">{item.quantity}</span>
+                              <button
+                                onClick={() => updateQuantity(itemKey, item.quantity + 1)}
+                                className="p-1 hover:bg-stone-200 rounded text-stone-700 transition"
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                              </button>
                             </div>
-                          </div>
 
-                          <div className="flex items-center gap-2 bg-stone-100 px-2 py-1 rounded-lg">
                             <button
-                              onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
-                              className="p-1 hover:bg-stone-200 rounded text-stone-700 transition"
+                              onClick={() => removeFromCart(itemKey)}
+                              className="text-stone-400 hover:text-red-600 p-1.5 transition"
                             >
-                              <Minus className="w-3.5 h-3.5" />
-                            </button>
-                            <span className="font-mono text-xs font-bold w-4 text-center">{item.quantity}</span>
-                            <button
-                              onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
-                              className="p-1 hover:bg-stone-200 rounded text-stone-700 transition"
-                            >
-                              <Plus className="w-3.5 h-3.5" />
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
-
-                          <button
-                            onClick={() => removeFromCart(item.product_id)}
-                            className="text-stone-400 hover:text-red-600 p-1.5 transition"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { calculateLocalShiprocketRates } from '@/lib/shiprocket';
+import { findMatchingVariant } from '@/lib/variants';
 import { OrderItem } from '@/types';
 
 export async function POST(request: NextRequest) {
@@ -75,7 +76,26 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const itemTotal = Number(prod.retail_price_inr) * qty;
+      let itemUnitPrice = Number(prod.retail_price_inr);
+      let itemUnitOfMeasure = prod.unit_of_measure;
+      let itemTitle = prod.title;
+      let itemUnitWeight = Number(prod.estimated_weight_kg || 0);
+
+      // Check if an authorized variant was selected (e.g. 500 ml @ ₹480 for Ghee)
+      const matchedVariant = findMatchingVariant(
+        prod.sku,
+        item.unit_price_inr !== undefined ? Number(item.unit_price_inr) : undefined,
+        item.unit_of_measure
+      );
+
+      if (matchedVariant) {
+        itemUnitPrice = matchedVariant.price;
+        itemUnitOfMeasure = matchedVariant.unitOfMeasure;
+        itemTitle = matchedVariant.title;
+        itemUnitWeight = matchedVariant.weightKg;
+      }
+
+      const itemTotal = itemUnitPrice * qty;
       const taxRate = Number(prod.tax_rate_percentage) || 0;
       const itemTax = (itemTotal * taxRate) / 100;
 
@@ -85,12 +105,13 @@ export async function POST(request: NextRequest) {
       validatedItems.push({
         product_id: prod.id,
         sku: prod.sku,
-        title: prod.title,
-        unit_of_measure: prod.unit_of_measure,
+        title: itemTitle,
+        unit_of_measure: itemUnitOfMeasure,
         quantity: qty,
-        unit_price_inr: Number(prod.retail_price_inr),
+        unit_price_inr: itemUnitPrice,
         total_price_inr: itemTotal,
-        estimated_weight_kg: Number(prod.estimated_weight_kg || 0) * qty
+        estimated_weight_kg: itemUnitWeight * qty,
+        item_key: item.item_key || `${prod.id}__${itemUnitOfMeasure.replace(/\s+/g, '_')}`
       });
 
       // Atomically decrement available inventory in newest batch

@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { ShoppingBag, Star, Building2, Heart } from 'lucide-react';
 import { useWishlist } from '@/context/WishlistContext';
+import { getProductVariants, getDefaultVariant, ProductVariant } from '@/lib/variants';
 
 interface ProductCardProps {
   product: Product;
@@ -16,23 +17,29 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
   const { addToCart } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const isWishlisted = isInWishlist(product.id);
-  const price = Number(product.retail_price_inr);
+  const variants = getProductVariants(product.sku);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
+    getDefaultVariant(product.sku)
+  );
+
+  const basePrice = Number(product.retail_price_inr);
+  const activePrice = selectedVariant ? selectedVariant.price : basePrice;
   const isBulkOnly = product.sku.includes('BLK');
   const minQty = product.bulk_min_quantity || 1;
 
   // Compute MRP and discount percentage for authentic presentation
   const discountPercent = 15;
-  const originalMrp = Math.round(price / (1 - discountPercent / 100));
+  const originalMrp = Math.round(activePrice / (1 - discountPercent / 100));
 
   // Clean unit breakdown note
-  let unitSubtitle = product.unit_of_measure;
+  let unitSubtitle = selectedVariant ? selectedVariant.packSize : product.unit_of_measure;
   let perUnitNote = '';
   if (product.sku.includes('COC-SEMI')) {
     perUnitNote = '₹90 / kg';
     unitSubtitle = '25-Piece Bag (~15 kg)';
   } else if (product.sku.includes('COP-BAL')) {
     perUnitNote = '₹350 / kg';
-    unitSubtitle = '15 kg Box (also 25kg, 30kg)';
+    unitSubtitle = selectedVariant ? selectedVariant.packSize : '15 kg Box (also 25kg, 30kg)';
   } else if (product.sku.includes('NUR-COC')) {
     perUnitNote = '₹250 / plant • Min 50';
     unitSubtitle = '1 Year Old • 2 Feet';
@@ -41,10 +48,15 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
     unitSubtitle = '1L Bottle • Wood-Pressed';
   } else if (product.sku.includes('MIL-RAG')) {
     perUnitNote = '₹120 / kg';
-    unitSubtitle = '5 kg Pack (also 10kg, 25kg)';
+    unitSubtitle = selectedVariant ? selectedVariant.packSize : '5 kg Pack (also 10kg, 25kg)';
   } else if (product.sku.includes('DAI-GHE')) {
-    perUnitNote = '₹900 / Litre';
-    unitSubtitle = '1L Glass Jar • Pure Bilona';
+    if (selectedVariant?.packSize.includes('500')) {
+      perUnitNote = '500 ml @ ₹480';
+      unitSubtitle = '500 ml Glass Jar';
+    } else {
+      perUnitNote = '₹900/L • 500ml @ ₹480';
+      unitSubtitle = '1L Glass Jar • Pure Bilona';
+    }
   } else if (product.sku.includes('COC-TND')) {
     perUnitNote = '₹80 / piece';
     unitSubtitle = 'Bulk Orders Only';
@@ -139,6 +151,38 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
             <span className="text-[11px] text-stone-400">({reviewCount})</span>
           </div>
 
+          {/* Packaging / Variant Selection pills if available */}
+          {variants && variants.length > 0 && !isBulkOnly && (
+            <div className="mt-2.5 pt-2.5 border-t border-stone-100">
+              <span className="text-[10px] uppercase font-bold text-stone-400 block mb-1">
+                Select Packaging Size:
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {variants.map((v) => {
+                  const isSelected = selectedVariant?.packSize === v.packSize;
+                  return (
+                    <button
+                      key={v.packSize}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setSelectedVariant(v);
+                      }}
+                      className={`text-[11px] font-bold px-2 py-1 rounded-lg border transition ${
+                        isSelected
+                          ? 'bg-emerald-50 text-emerald-950 border-emerald-600 ring-1 ring-emerald-600 shadow-xs'
+                          : 'bg-stone-50 text-stone-600 border-stone-200 hover:bg-stone-100 hover:border-stone-300'
+                      }`}
+                    >
+                      {v.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Pricing Row */}
           {isBulkOnly ? (
             <div className="mt-3 pt-3 border-t border-stone-100 flex flex-col gap-1">
@@ -159,7 +203,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
           ) : (
             <div className="mt-3 pt-3 border-t border-stone-100 flex items-baseline flex-wrap gap-2">
               <span className="text-lg sm:text-xl font-extrabold text-stone-900 font-mono">
-                ₹{price.toLocaleString('en-IN')}
+                ₹{activePrice.toLocaleString('en-IN')}
               </span>
               <span className="text-xs text-stone-400 line-through font-mono">
                 ₹{originalMrp.toLocaleString('en-IN')}
@@ -190,11 +234,11 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
         ) : (
           <>
             <button
-              onClick={() => addToCart(product, minQty)}
+              onClick={() => addToCart(product, minQty, selectedVariant || undefined)}
               className="w-full bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-[0.98] text-white font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 group/btn"
             >
               <ShoppingBag className="w-4 h-4" />
-              <span>Add {minQty > 1 ? `${minQty} Units` : 'to Cart'}</span>
+              <span>Add {selectedVariant ? selectedVariant.packSize : `${minQty > 1 ? `${minQty} Units` : 'to Cart'}`}</span>
             </button>
 
             <button
