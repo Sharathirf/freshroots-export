@@ -26,13 +26,13 @@ export default function ShippingPolicyPage() {
         </div>
 
         <div className="bg-white p-6 sm:p-10 rounded-3xl border border-stone-200 shadow-sm space-y-8 text-sm text-stone-700 leading-relaxed">
-          {/* Threshold-Based Free Shipping Banner */}
+          {/* 100% Free Shipping Banner */}
           <div className="bg-emerald-50 border border-emerald-300 p-5 rounded-2xl flex items-start gap-3">
             <CheckCircle2 className="w-6 h-6 text-emerald-700 shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-extrabold text-emerald-950 text-base">Threshold-Based Free Delivery</h3>
+              <h3 className="font-extrabold text-emerald-950 text-base">100% Free Doorstep Delivery on ALL Orders</h3>
               <p className="text-xs text-emerald-800 mt-1 leading-relaxed">
-                Enjoy <strong>100% FREE delivery across India for any retail cart value greater than ₹2,999</strong>. Orders equal to or below ₹2,999 are billed at genuine transporter actuals calculated transparently via Shiprocket based on parcel weight and destination PIN code.
+                Enjoy <strong>100% FREE door delivery across India for ALL orders</strong>. There is <strong>no minimum quantity</strong> and no minimum cart value threshold required. All logistics costs are absorbed directly into our competitive, farm-gate selling prices.
               </p>
             </div>
           </div>

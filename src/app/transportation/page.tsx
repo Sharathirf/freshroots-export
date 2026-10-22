@@ -79,10 +79,10 @@ export default function TransportationPage() {
               <ShieldCheck className="w-5 h-5 text-lime-400 shrink-0 mt-0.5" />
               <div className="space-y-1">
                 <strong className="text-lime-300 block font-bold">
-                  Threshold-Based Free Shipping Policy:
+                  100% Free Doorstep Delivery on ALL Orders:
                 </strong>
                 <p className="text-emerald-200/90 leading-relaxed text-xs">
-                  Enjoy <strong>100% FREE Farm-Gate Delivery</strong> for any cart value <strong>&gt; ₹2,999</strong> across all 19,000+ Indian postal PIN codes! Consignments ≤ ₹2,999 are calculated at genuine transporter actuals via our automated Shiprocket freight engine.
+                  Enjoy <strong>100% FREE Farm-Gate Delivery</strong> across all 19,000+ Indian postal PIN codes! There is <strong>no minimum quantity</strong> requirement. All shipping and logistics expenses are absorbed directly into our competitive, farm-direct selling prices.
                 </p>
               </div>
             </div>

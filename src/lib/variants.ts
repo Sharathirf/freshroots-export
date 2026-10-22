@@ -11,12 +11,12 @@ export interface ProductVariant {
 }
 
 export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
-  // Pure Desi Cow Ghee (Traditional Bilona): 500 ml @ ₹480 and 1 Litre @ ₹900
+  // Pure Desi Cow Ghee (Traditional Bilona): 500 ml @ ₹520 and 1 Litre @ ₹960 (100% Free Doorstep Delivery)
   'DAI-GHE-BIL-01L': [
     {
       packSize: '500 ml Glass Jar',
-      label: '500 ml @ ₹480',
-      price: 480,
+      label: '500 ml @ ₹520',
+      price: 520,
       weightKg: 0.5,
       unitOfMeasure: '500 ml Glass Jar',
       title: 'Farm-Fresh Pure Desi Cow Ghee (500 ml Glass Jar)',
@@ -24,8 +24,8 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
     },
     {
       packSize: '1 Litre Glass Jar',
-      label: '1 Litre @ ₹900',
-      price: 900,
+      label: '1 Litre @ ₹960',
+      price: 960,
       weightKg: 1.0,
       unitOfMeasure: '1 Litre Glass Jar',
       title: 'Farm-Fresh Pure Desi Cow Ghee (1 Litre Glass Jar)',
@@ -33,12 +33,12 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
     }
   ],
 
-  // GI-Certified Tiptur Ball Copra: 15 kg @ ₹5,250, 25 kg @ ₹8,750, 30 kg @ ₹10,500
+  // GI-Certified Tiptur Ball Copra: 15 kg @ ₹5,400, 25 kg @ ₹9,000, 30 kg @ ₹10,800 (Free Delivery)
   'COP-BAL-BOX-15K': [
     {
       packSize: '15 kg Master Box',
-      label: '15 kg Box @ ₹5,250',
-      price: 5250,
+      label: '15 kg Box @ ₹5,400',
+      price: 5400,
       weightKg: 15.0,
       unitOfMeasure: '15 kg Master Box',
       title: 'GI-Certified Tiptur Ball Copra (15 kg Box)',
@@ -46,8 +46,8 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
     },
     {
       packSize: '25 kg Master Box',
-      label: '25 kg Box @ ₹8,750',
-      price: 8750,
+      label: '25 kg Box @ ₹9,000',
+      price: 9000,
       weightKg: 25.0,
       unitOfMeasure: '25 kg Master Box',
       title: 'GI-Certified Tiptur Ball Copra (25 kg Box)',
@@ -55,8 +55,8 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
     },
     {
       packSize: '30 kg Master Box',
-      label: '30 kg Box @ ₹10,500',
-      price: 10500,
+      label: '30 kg Box @ ₹10,800',
+      price: 10800,
       weightKg: 30.0,
       unitOfMeasure: '30 kg Master Box',
       title: 'GI-Certified Tiptur Ball Copra (30 kg Box)',
@@ -64,12 +64,12 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
     }
   ],
 
-  // Pure Karnataka Ragi Millet: 5 kg @ ₹600, 10 kg @ ₹1,200, 25 kg @ ₹3,000
+  // Pure Karnataka Ragi Millet: 5 kg @ ₹650, 10 kg @ ₹1,280, 25 kg @ ₹3,150 (Free Delivery)
   'MIL-RAG-ORG-05K': [
     {
       packSize: '5 kg Pack',
-      label: '5 kg Pack @ ₹600',
-      price: 600,
+      label: '5 kg Pack @ ₹650',
+      price: 650,
       weightKg: 5.0,
       unitOfMeasure: '5 kg Pack',
       title: 'Pure Karnataka Ragi Millet (5 kg Pack)',
@@ -77,8 +77,8 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
     },
     {
       packSize: '10 kg Pack',
-      label: '10 kg Pack @ ₹1,200',
-      price: 1200,
+      label: '10 kg Pack @ ₹1,280',
+      price: 1280,
       weightKg: 10.0,
       unitOfMeasure: '10 kg Pack',
       title: 'Pure Karnataka Ragi Millet (10 kg Pack)',
@@ -86,8 +86,8 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
     },
     {
       packSize: '25 kg Bag',
-      label: '25 kg Bag @ ₹3,000',
-      price: 3000,
+      label: '25 kg Bag @ ₹3,150',
+      price: 3150,
       weightKg: 25.0,
       unitOfMeasure: '25 kg Bag',
       title: 'Pure Karnataka Ragi Millet (25 kg Bag)',

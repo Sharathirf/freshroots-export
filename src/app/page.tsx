@@ -93,7 +93,7 @@ export default function HomePage() {
                   Come. Select. Order.<br className="hidden sm:inline" /> Fast Farm Delivery.
                 </h1>
                 <p className="text-xs sm:text-sm text-stone-600 font-medium leading-relaxed">
-                  No middlemen markup. Order pure Desi Cow Ghee, GI Tiptur Ball Copra, Karnataka Ragi, and fresh mature coconuts direct to your doorstep. Free delivery above ₹2,999.
+                  No middlemen markup. Order pure Desi Cow Ghee, GI Tiptur Ball Copra, Karnataka Ragi, and fresh mature coconuts direct to your doorstep. 100% Free Doorstep Delivery on ALL orders.
                 </p>
               </div>
 
@@ -244,8 +244,8 @@ export default function HomePage() {
                   <Truck className="w-5 h-5 text-[#3b6d11]" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-stone-900">Free Shipping &gt; ₹2,999</div>
-                  <div className="text-[11px] text-stone-500">Pan-India surface courier</div>
+                  <div className="text-xs font-bold text-stone-900">100% Free Doorstep Delivery</div>
+                  <div className="text-[11px] text-stone-500">All orders • No minimum quantity</div>
                 </div>
               </div>
 

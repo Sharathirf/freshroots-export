@@ -48,26 +48,27 @@ it('Milling Copra and Ball Copra moisture thresholds must strictly align at ≤ 
   assert.strictEqual(millingCopraMoisture, 5.50, 'Milling copra catalog limit must be aligned at 5.5%');
 });
 
-it('Per-unit pricing compliance for Semi-Husked 25-piece bag at ₹90/kg (₹1,350/unit)', () => {
-  const unitPrice = 1350.00;
+it('Per-unit pricing compliance for Semi-Husked 25-piece bag at ₹1,450/unit with 100% Free Delivery', () => {
+  const unitPrice = 1450.00;
   const weightKg = 15.0;
-  const ratePerKg = unitPrice / weightKg;
-  assert.strictEqual(ratePerKg, 90.00, 'Rate per kg must equal ₹90.00');
+  const ratePerKg = parseFloat((unitPrice / weightKg).toFixed(2));
+  assert.strictEqual(ratePerKg, 96.67, 'Effective rate per kg reflects modest increase to absorb door freight');
+  assert.strictEqual(unitPrice, 1450.00, 'Unit price must equal ₹1,450.00');
 });
 
-it('Threshold-based Free Shipping: Free delivery for cart value > ₹2,999, otherwise calculated at actuals', () => {
-  const threshold = 2999;
-  const cartSubtotalHigh = 3100; // > 2999
-  const cartSubtotalBoundary = 2999; // <= 2999
-  const cartSubtotalLow = 1350; // <= 2999
+it('100% Free Doorstep Delivery: All orders qualify for free delivery (₹0 delivery fee, no threshold)', () => {
+  const threshold = 0;
+  const cartSubtotalHigh = 3100;
+  const cartSubtotalMid = 1450;
+  const cartSubtotalLow = 520;
 
-  const isFreeHigh = cartSubtotalHigh > threshold;
-  const isFreeBoundary = cartSubtotalBoundary > threshold;
-  const isFreeLow = cartSubtotalLow > threshold;
+  const isFreeHigh = cartSubtotalHigh >= threshold;
+  const isFreeMid = cartSubtotalMid >= threshold;
+  const isFreeLow = cartSubtotalLow >= threshold;
 
-  assert.strictEqual(isFreeHigh, true, 'Cart value > ₹2,999 must qualify for free delivery');
-  assert.strictEqual(isFreeBoundary, false, 'Cart value of exactly ₹2,999 must not qualify for free delivery');
-  assert.strictEqual(isFreeLow, false, 'Cart value of ₹1,350 must not qualify for free delivery (actuals apply)');
+  assert.strictEqual(isFreeHigh, true, 'High cart value must qualify for 100% free delivery');
+  assert.strictEqual(isFreeMid, true, 'Single commodity order must qualify for 100% free delivery');
+  assert.strictEqual(isFreeLow, true, 'Smallest variant order (e.g. 500ml Ghee) must qualify for 100% free delivery');
 });
 
 // ----------------------------------------------------

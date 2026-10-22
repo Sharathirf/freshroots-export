@@ -141,9 +141,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
   const basePrice = Number(product.retail_price_inr);
   const price = selectedVariant ? selectedVariant.price : basePrice;
   const retailSubtotal = price * retailQty;
-  const freeShippingThreshold = 2999;
-  const isFreeShipping = retailSubtotal > freeShippingThreshold;
-  const deliveryFee = isFreeShipping ? 0 : 0;
+  const deliveryFee = 0;
   const taxRate = Number(product.tax_rate_percentage || 0);
   const estimatedTax = (retailSubtotal * taxRate) / 100;
   const retailGrandTotal = retailSubtotal + deliveryFee + estimatedTax;
@@ -152,40 +150,40 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
   let unitSubtitle = selectedVariant ? selectedVariant.packSize : product.unit_of_measure;
   let perUnitNote = '';
   if (product.sku.includes('COC-SEMI')) {
-    perUnitNote = '₹90 / kg';
+    perUnitNote = '₹1,450 / 25-Piece Bag • Free Delivery';
     unitSubtitle = '25-Piece Bag (~15 kg)';
   } else if (product.sku.includes('COP-BAL')) {
-    perUnitNote = '₹350 / kg';
+    perUnitNote = '₹360 / kg • Free Delivery';
     unitSubtitle = selectedVariant ? `${selectedVariant.packSize} (also 15kg, 25kg, 30kg)` : '15 kg Master Box (also 25kg, 30kg)';
   } else if (product.sku.includes('NUR-COC')) {
-    perUnitNote = '₹250 / plant';
-    unitSubtitle = '1 Year Old • 2 Feet • Min 50 Units';
+    perUnitNote = '₹280 / plant • No Minimum';
+    unitSubtitle = '1 Year Old • 2 Feet';
   } else if (product.sku.includes('OIL-GND')) {
-    perUnitNote = '₹600 / Litre';
+    perUnitNote = '₹650 / Litre • Free Delivery';
     unitSubtitle = '1 Litre Food-Grade Bottle';
   } else if (product.sku.includes('MIL-RAG')) {
-    perUnitNote = '₹120 / kg';
+    perUnitNote = '₹130 / kg • Free Delivery';
     unitSubtitle = selectedVariant ? `${selectedVariant.packSize} (also 5kg, 10kg, 25kg)` : '5 kg Machine-Cleaned Pack (also 10kg, 25kg)';
   } else if (product.sku.includes('DAI-GHE')) {
     if (selectedVariant?.packSize.includes('500')) {
-      perUnitNote = '500 ml @ ₹480 (₹960/L)';
+      perUnitNote = '500 ml @ ₹520 • Free Delivery';
       unitSubtitle = '500 ml Glass Jar';
     } else {
-      perUnitNote = '₹900 / Litre • 500ml @ ₹480';
+      perUnitNote = '₹960 / Litre • 500ml @ ₹520';
       unitSubtitle = '1 Litre Glass Jar';
     }
   } else if (product.sku.includes('COC-TND')) {
-    perUnitNote = '₹80 / piece';
-    unitSubtitle = 'Bulk Consignments Only';
+    perUnitNote = '₹95 / piece • No Minimum';
+    unitSubtitle = 'Fresh Farm Tender Nut';
   } else if (product.sku.includes('SPI-GIN')) {
-    perUnitNote = '₹10,000 / 50 kg';
-    unitSubtitle = '50 kg Bag • Bulk Orders Only';
+    perUnitNote = '₹10,500 / 50 kg Bag';
+    unitSubtitle = '50 kg Bag • Free Delivery';
   } else if (product.sku.includes('COI-SHL')) {
-    perUnitNote = '₹35,000 / Ton';
+    perUnitNote = '₹36,000 / Ton';
     unitSubtitle = 'Metric Tonne • Industrial Grade';
   } else if (product.sku.includes('NUR-ARE')) {
-    perUnitNote = '₹60 / plant';
-    unitSubtitle = '1 - 1.5 Feet • Min 200 Units';
+    perUnitNote = '₹75 / plant • No Minimum';
+    unitSubtitle = '1 - 1.5 Feet Height';
   } else if (product.estimated_weight_kg) {
     perUnitNote = `₹${(price / Number(product.estimated_weight_kg)).toFixed(0)} / kg`;
   }
@@ -460,13 +458,9 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                       <span>Transportation Delivery:</span>
                     </span>
                     <span className="font-mono text-xs font-semibold text-stone-800">
-                      {isFreeShipping ? (
-                        <span className="text-emerald-700 font-bold bg-emerald-100/70 border border-emerald-300 px-2 py-0.5 rounded">
-                          FREE (Cart &gt; ₹2,999)
-                        </span>
-                      ) : (
-                        <span>Calculated at actuals via Shiprocket</span>
-                      )}
+                      <span className="text-emerald-700 font-bold bg-emerald-100/70 border border-emerald-300 px-2 py-0.5 rounded">
+                        100% FREE (All Orders)
+                      </span>
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -687,7 +681,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                 <div className="p-4 rounded-2xl border border-stone-200 bg-stone-50 space-y-1">
                   <strong className="text-stone-900 text-sm block">Can I order retail quantities outside Karnataka?</strong>
                   <p className="text-stone-600 leading-relaxed">
-                    Yes! We ship retail packs to all 19,000+ Indian postal PIN codes via express courier partners. Free shipping applies automatically for orders &gt; ₹2,999, otherwise calculated at actuals via Shiprocket.
+                    Yes! We ship retail packs to all 19,000+ Indian postal PIN codes via express courier partners with 100% FREE door delivery on ALL orders. There is no minimum quantity requirement.
                   </p>
                 </div>
                 <div className="p-4 rounded-2xl border border-stone-200 bg-stone-50 space-y-1">

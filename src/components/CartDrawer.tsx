@@ -30,7 +30,6 @@ export default function CartDrawer() {
     isCartOpen,
     setIsCartOpen,
     subtotal,
-    deliveryFee,
     total,
     pincode
   } = useCart();
@@ -211,48 +210,21 @@ export default function CartDrawer() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {/* Threshold-Based Free Shipping Progress Banner */}
-                    {subtotal > 2999 ? (
-                      <div className="bg-emerald-50 border border-emerald-300 p-3 rounded-2xl text-xs space-y-1 text-emerald-900 shadow-xs">
-                        <div className="flex items-center justify-between font-bold">
-                          <div className="flex items-center gap-1.5 text-emerald-800">
-                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                            <span>FREE Farm-Gate Delivery Unlocked!</span>
-                          </div>
-                          <span className="font-mono text-emerald-900 bg-white border border-emerald-300 px-2 py-0.5 rounded text-[10px] uppercase font-bold">
-                            Cart &gt; ₹2,999
-                          </span>
+                    {/* 100% Free Doorstep Delivery Banner */}
+                    <div className="bg-emerald-50 border border-emerald-300 p-3.5 rounded-2xl text-xs space-y-1 text-emerald-950 shadow-xs">
+                      <div className="flex items-center justify-between font-bold">
+                        <div className="flex items-center gap-1.5 text-emerald-800">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                          <span>100% FREE Doorstep Delivery Unlocked!</span>
                         </div>
-                        <p className="text-[11px] text-emerald-700 leading-relaxed">
-                          Your order qualifies for 100% free delivery across all serviceable postal PIN codes.
-                        </p>
+                        <span className="font-mono text-emerald-900 bg-white border border-emerald-300 px-2 py-0.5 rounded text-[10px] uppercase font-bold">
+                          FREE
+                        </span>
                       </div>
-                    ) : (
-                      <div className="bg-gradient-to-r from-amber-50 to-lime-50 border border-amber-200 p-3 rounded-2xl text-xs space-y-2 text-stone-800 shadow-xs">
-                        <div className="flex items-center justify-between font-bold">
-                          <div className="flex items-center gap-1.5 text-amber-800">
-                            <Truck className="w-4 h-4 text-amber-700" />
-                            <span>Free Delivery for Cart &gt; ₹2,999</span>
-                          </div>
-                          <span className="font-mono text-amber-900 bg-white/80 border border-amber-300 px-2 py-0.5 rounded text-[10px] uppercase font-bold">
-                            Threshold Offer
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center text-[11px] text-stone-600">
-                          <span>Add <strong>₹{(3000 - subtotal).toLocaleString('en-IN')}</strong> more for <strong>FREE Delivery</strong></span>
-                          <span className="font-bold font-mono text-emerald-800">₹{subtotal.toLocaleString('en-IN')} / ₹3,000</span>
-                        </div>
-                        <div className="w-full bg-amber-200/50 rounded-full h-2 overflow-hidden">
-                          <div
-                            className="bg-emerald-600 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${Math.min(100, Math.round((subtotal / 3000) * 100))}%` }}
-                          />
-                        </div>
-                        <p className="text-[10px] text-stone-500 leading-tight">
-                          Orders ≤ ₹2,999 are calculated at genuine transporter actuals via Shiprocket.
-                        </p>
-                      </div>
-                    )}
+                      <p className="text-[11px] text-emerald-700 leading-relaxed">
+                        Free doorstep delivery on all orders across India. No minimum order quantity required.
+                      </p>
+                    </div>
 
                     {/* Cart Items List */}
                     <div className="divide-y divide-stone-100">
@@ -608,16 +580,12 @@ export default function CartDrawer() {
                 <div className="flex justify-between items-center">
                   <span className="flex items-center gap-1">
                     <Truck className="w-3.5 h-3.5 text-[#3b6d11]" />
-                    <span>Transportation Delivery</span>
+                    <span>Doorstep Delivery</span>
                   </span>
                   <span className="font-mono font-medium text-stone-800">
-                    {subtotal > 2999 ? (
-                      <span className="text-emerald-700 font-bold bg-emerald-100/70 border border-emerald-300 px-2 py-0.5 rounded text-[11px]">
-                        FREE (&gt; ₹2,999)
-                      </span>
-                    ) : (
-                      <span>₹{deliveryFee} (Actuals via Shiprocket)</span>
-                    )}
+                    <span className="text-emerald-700 font-bold bg-emerald-100/70 border border-emerald-300 px-2 py-0.5 rounded text-[11px]">
+                      FREE (All Orders)
+                    </span>
                   </span>
                 </div>
                 <div className="flex justify-between text-stone-900 text-sm font-extrabold pt-2 border-t">

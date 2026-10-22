@@ -25,7 +25,6 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
   const basePrice = Number(product.retail_price_inr);
   const activePrice = selectedVariant ? selectedVariant.price : basePrice;
   const isBulkOnly = product.sku.includes('BLK');
-  const minQty = product.bulk_min_quantity || 1;
 
   // Compute MRP and discount percentage for authentic presentation
   const discountPercent = 15;
@@ -35,39 +34,39 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
   let unitSubtitle = selectedVariant ? selectedVariant.packSize : product.unit_of_measure;
   let perUnitNote = '';
   if (product.sku.includes('COC-SEMI')) {
-    perUnitNote = '₹90 / kg';
+    perUnitNote = '₹1,450 / 25-Piece Bag • Free Delivery';
     unitSubtitle = '25-Piece Bag (~15 kg)';
   } else if (product.sku.includes('COP-BAL')) {
-    perUnitNote = '₹350 / kg';
+    perUnitNote = '₹360 / kg • 15kg, 25kg, 30kg';
     unitSubtitle = selectedVariant ? selectedVariant.packSize : '15 kg Box (also 25kg, 30kg)';
   } else if (product.sku.includes('NUR-COC')) {
-    perUnitNote = '₹250 / plant • Min 50';
+    perUnitNote = '₹280 / plant • No Minimum';
     unitSubtitle = '1 Year Old • 2 Feet';
   } else if (product.sku.includes('OIL-GND')) {
-    perUnitNote = '₹600 / Litre';
+    perUnitNote = '₹650 / Litre • Free Delivery';
     unitSubtitle = '1L Bottle • Wood-Pressed';
   } else if (product.sku.includes('MIL-RAG')) {
-    perUnitNote = '₹120 / kg';
+    perUnitNote = '₹130 / kg • 5kg, 10kg, 25kg';
     unitSubtitle = selectedVariant ? selectedVariant.packSize : '5 kg Pack (also 10kg, 25kg)';
   } else if (product.sku.includes('DAI-GHE')) {
     if (selectedVariant?.packSize.includes('500')) {
-      perUnitNote = '500 ml @ ₹480';
+      perUnitNote = '500 ml @ ₹520 • Free Delivery';
       unitSubtitle = '500 ml Glass Jar';
     } else {
-      perUnitNote = '₹900/L • 500ml @ ₹480';
+      perUnitNote = '1L @ ₹960 • 500ml @ ₹520';
       unitSubtitle = '1L Glass Jar • Pure Bilona';
     }
   } else if (product.sku.includes('COC-TND')) {
-    perUnitNote = '₹80 / piece';
-    unitSubtitle = 'Bulk Orders Only';
+    perUnitNote = '₹95 / piece • No Minimum';
+    unitSubtitle = 'Fresh Farm Tender Nut';
   } else if (product.sku.includes('SPI-GIN')) {
-    perUnitNote = '₹10,000 / 50 kg';
-    unitSubtitle = '50 kg Bag • Bulk Only';
+    perUnitNote = '₹10,500 / 50 kg Bag';
+    unitSubtitle = '50 kg Bag • Free Delivery';
   } else if (product.sku.includes('COI-SHL')) {
-    perUnitNote = '₹35,000 / Ton';
-    unitSubtitle = 'Metric Tonne • Industrial Bulk';
+    perUnitNote = '₹36,000 / Tonne';
+    unitSubtitle = 'Metric Tonne • Industrial';
   } else if (product.sku.includes('NUR-ARE')) {
-    perUnitNote = '₹60 / plant • Min 200';
+    perUnitNote = '₹75 / plant • No Minimum';
     unitSubtitle = '1 - 1.5 Feet Height';
   }
 
@@ -234,35 +233,23 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
         </div>
       </div>
 
-      {/* Action Buttons (Katyayani pcard__atc + Wholesale Quote) */}
+      {/* Action Buttons (1-Tap Add to Cart with Free Delivery + Wholesale Quote) */}
       <div className="p-4 sm:p-5 pt-0 space-y-2">
-        {isBulkOnly ? (
-          <button
-            onClick={() => onSelectForRFQ(product)}
-            className="w-full bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-[0.98] text-white font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 group/btn"
-          >
-            <Building2 className="w-4 h-4 text-lime-300" />
-            <span>Request Bulk Quote</span>
-          </button>
-        ) : (
-          <>
-            <button
-              onClick={() => addToCart(product, minQty, selectedVariant || undefined)}
-              className="w-full bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-[0.98] text-white font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 group/btn"
-            >
-              <ShoppingBag className="w-4 h-4" />
-              <span>Add {selectedVariant ? selectedVariant.packSize : `${minQty > 1 ? `${minQty} Units` : 'to Cart'}`}</span>
-            </button>
+        <button
+          onClick={() => addToCart(product, 1, selectedVariant || undefined)}
+          className="w-full bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-[0.98] text-white font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 group/btn"
+        >
+          <ShoppingBag className="w-4 h-4" />
+          <span>Add {selectedVariant ? selectedVariant.packSize : 'to Cart (Free Delivery)'}</span>
+        </button>
 
-            <button
-              onClick={() => onSelectForRFQ(product)}
-              className="w-full bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-semibold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5"
-            >
-              <Building2 className="w-3.5 h-3.5 text-amber-700" />
-              <span>Wholesale / Bulk Quote</span>
-            </button>
-          </>
-        )}
+        <button
+          onClick={() => onSelectForRFQ(product)}
+          className="w-full bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-semibold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5"
+        >
+          <Building2 className="w-3.5 h-3.5 text-amber-700" />
+          <span>Wholesale / Bulk Quote</span>
+        </button>
       </div>
     </div>
   );

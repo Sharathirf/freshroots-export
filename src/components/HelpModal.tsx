@@ -24,7 +24,7 @@ export default function HelpModal() {
     },
     {
       q: 'How does Free Shipping work?',
-      a: 'All orders with cart value above ₹2,999 enjoy 100% FREE door delivery. For orders below ₹2,999, shipping is calculated at genuine courier actuals via Shiprocket.'
+      a: '100% FREE door delivery is included on ALL orders across India! There is no minimum order value or minimum quantity requirement.'
     },
     {
       q: 'What if items arrive damaged or broken in transit?',

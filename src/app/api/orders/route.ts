@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import { calculateLocalShiprocketRates } from '@/lib/shiprocket';
 import { findMatchingVariant } from '@/lib/variants';
 import { OrderItem } from '@/types';
 
@@ -128,30 +127,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Delivery fee calculation:
-    // Threshold-based Free Shipping: Free delivery for cart value > ₹2,999, otherwise calculated at actuals.
-    const FREE_SHIPPING_THRESHOLD = 2999;
-    let deliveryFee = 0.00;
-    const isFreeShipping = subtotal > FREE_SHIPPING_THRESHOLD;
-
-    if (isFreeShipping) {
-      deliveryFee = 0.00;
-    } else if (body.delivery_fee !== undefined && !isNaN(Number(body.delivery_fee))) {
-      deliveryFee = Math.max(0, Number(body.delivery_fee));
-    } else {
-      const totalWeightKg = validatedItems.reduce((acc, it) => acc + (it.estimated_weight_kg || 1), 0);
-      try {
-        const shippingCalc = calculateLocalShiprocketRates({
-          pickup_postcode: '571423',
-          delivery_postcode: destination_pincode,
-          weight: Math.max(1.0, totalWeightKg),
-          declared_value: subtotal
-        });
-        deliveryFee = shippingCalc.lowest_rate;
-      } catch {
-        deliveryFee = 150.00;
-      }
-    }
+    // 100% Free Doorstep Delivery across India on ALL orders (No minimum quantity)
+    const deliveryFee = 0.00;
     const grandTotal = subtotal + deliveryFee + totalTax;
 
     // Generate Order Number: AGR-YYYYMM-XXXX

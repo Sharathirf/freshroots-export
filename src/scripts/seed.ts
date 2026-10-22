@@ -69,19 +69,20 @@ async function runSeed() {
       estimated_weight_kg: 15.0,
       moisture_percentage: 12.0,
       oil_percentage: 65.0,
-      retail_price_inr: 1350.00, // ₹90/kg, ₹1,350 per 25-piece bag
+      retail_price_inr: 1450.00, // ₹1,450 per 25-piece bag with 100% Free Doorstep Delivery
       bulk_min_quantity: 1,
       wholesale_benchmark_price_inr: 70.00, // ₹70/kg bulk
       hsn_code: '080112',
       tax_rate_percentage: 0.00, // Nil-rated fresh produce
-      description: 'Handpicked fresh semi-husked mature coconuts directly from Mandya and Tiptur farms. Each 25-piece bag weighs approximately 15 kg (± 500g) priced at ₹90/kg (₹1,350 per unit). Features thick sweet kernel meat (>12mm), fresh coconut water, and clean semi-dehusking for easy cracking. Minimum order: 1 unit.',
+      description: 'Handpicked fresh semi-husked mature coconuts directly from Mandya and Tiptur farms. Each 25-piece bag weighs approximately 15 kg (± 500g) priced at ₹1,450 per unit with 100% FREE Doorstep Delivery across India. Features thick sweet kernel meat (>12mm), fresh coconut water, and clean semi-dehusking for easy cracking. Minimum order: 1 unit.',
       specifications: {
         pieces_per_unit: '25 Coconuts',
         net_weight: '15 kg (± 500g)',
-        effective_rate: '₹90 / kg (₹1,350 / unit)',
-        minimum_order: '1 Unit (25 Pieces)',
+        effective_rate: '₹1,450 / 25-Piece Bag (Free Delivery)',
+        minimum_order: '1 Unit (No Minimum Quantity)',
         maturity: '11 - 12 Months',
         packaging: 'High-density breathable HDPE mesh bag',
+        delivery: '100% FREE Doorstep Delivery on ALL Orders',
         intended_use: 'Household cooking, daily temple puja rituals, darshinis, retail'
       },
       image_url: 'https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&w=800&q=80'
@@ -99,17 +100,18 @@ async function runSeed() {
       estimated_weight_kg: 15.0,
       moisture_percentage: 5.2,
       oil_percentage: 69.5,
-      retail_price_inr: 5250.00, // 15 kg Box at ₹350/kg
+      retail_price_inr: 5400.00, // 15 kg Box at ₹360/kg (Free Delivery)
       bulk_min_quantity: 1,
       wholesale_benchmark_price_inr: 290.00, // ₹290/kg bulk
       hsn_code: '1203',
       tax_rate_percentage: 5.00,
-      description: 'World-renowned Geographical Indication (GI) tagged Tiptur Ball Copra. Naturally dried inside the shell over 9-11 months in traditional wooden attics without sulphur treatment. Available in 15 kg, 25 kg, and 30 kg boxes at ₹350/kg (Base 15 kg box: ₹5,250). Minimum order: 1 quantity.',
+      description: 'World-renowned Geographical Indication (GI) tagged Tiptur Ball Copra. Naturally dried inside the shell over 9-11 months in traditional wooden attics without sulphur treatment. Available in 15 kg (₹5,400), 25 kg (₹9,000), and 30 kg (₹10,800) boxes at ₹360/kg with 100% FREE Doorstep Delivery. Minimum order: 1 quantity.',
       specifications: {
-        available_box_sizes: '15 kg, 25 kg, 30 kg Master Cartons',
-        rate_per_kg: '₹350 / kg',
-        base_15kg_box_price: '₹5,250',
+        available_box_sizes: '15 kg (₹5,400), 25 kg (₹9,000), 30 kg (₹10,800)',
+        rate_per_kg: '₹360 / kg (Free Delivery)',
+        base_15kg_box_price: '₹5,400',
         moisture_max: '≤ 5.5% certified',
+        delivery: '100% FREE Doorstep Delivery on ALL Orders',
         drying_process: '100% Attic Cured, Zero Sulphur / Smoke',
         packaging: 'Food-grade 5-ply corrugated carton with moisture barrier liner'
       },
@@ -128,17 +130,18 @@ async function runSeed() {
       estimated_weight_kg: 3.5,
       moisture_percentage: null,
       oil_percentage: null,
-      retail_price_inr: 250.00, // ₹250 / piece
-      bulk_min_quantity: 50, // Minimum 50 units per order
+      retail_price_inr: 280.00, // ₹280 / piece (Free Delivery)
+      bulk_min_quantity: 1, // No minimum quantity requirement
       wholesale_benchmark_price_inr: 210.00,
       hsn_code: '060290',
       tax_rate_percentage: 0.00,
-      description: 'Hardy 1-year-old high-yield coconut saplings measuring approximately 2 feet in height. Raised with organic compost and vermiculture in UV-stabilized nursery bags. High disease tolerance, vigorous root development, and rapid field establishment. ₹250/piece. Minimum order: 50 units per order.',
+      description: 'Hardy 1-year-old high-yield coconut saplings measuring approximately 2 feet in height. Raised with organic compost and vermiculture in UV-stabilized nursery bags. High disease tolerance, vigorous root development, and rapid field establishment. ₹280/piece with 100% FREE Delivery. No minimum quantity.',
       specifications: {
         age: '1 Year Old',
         height: 'Approx. 2 Feet',
-        rate_per_piece: '₹250 / Piece',
-        minimum_order_quantity: '50 Units per order',
+        rate_per_piece: '₹280 / Piece (Free Delivery)',
+        minimum_order_quantity: '1 Unit (No Minimum Quantity)',
+        delivery: '100% FREE Doorstep Delivery on ALL Orders',
         variety: 'Tiptur Tall / Selected High-Yield Cultivar',
         root_system: 'Established polybag root ball, ready for planting'
       },
@@ -157,15 +160,16 @@ async function runSeed() {
       estimated_weight_kg: 0.92,
       moisture_percentage: 0.1,
       oil_percentage: 99.9,
-      retail_price_inr: 600.00, // ₹600 / litre
+      retail_price_inr: 650.00, // ₹650 / litre (Free Delivery)
       bulk_min_quantity: 1,
       wholesale_benchmark_price_inr: 480.00,
       hsn_code: '1508',
       tax_rate_percentage: 5.00,
-      description: 'Traditional wood-pressed (Marachekku) pure groundnut oil extracted at room temperature without chemical solvents, bleaching, or heating. Preserves genuine nutty aroma, natural vitamin E, and high mono-unsaturated fats (MUFA). ₹600/litre. Minimum order: 1 quantity.',
+      description: 'Traditional wood-pressed (Marachekku) pure groundnut oil extracted at room temperature without chemical solvents, bleaching, or heating. Preserves genuine nutty aroma, natural vitamin E, and high mono-unsaturated fats (MUFA). ₹650/litre with 100% FREE Doorstep Delivery. Minimum order: 1 quantity.',
       specifications: {
         volume: '1 Litre Food-Grade Bottle',
-        rate: '₹600 / Litre',
+        rate: '₹650 / Litre (Free Delivery)',
+        delivery: '100% FREE Doorstep Delivery on ALL Orders',
         extraction: 'Traditional Vaagai Wood Cold Ghani (Marachekku)',
         purity: '100% Pure Unrefined Single-Origin Groundnut Oil',
         free_fatty_acids: '< 0.5%'
@@ -185,16 +189,17 @@ async function runSeed() {
       estimated_weight_kg: 5.0,
       moisture_percentage: 10.0,
       oil_percentage: null,
-      retail_price_inr: 600.00, // 5 kg at ₹120/kg = ₹600
+      retail_price_inr: 650.00, // 5 kg at ₹130/kg = ₹650 (Free Delivery)
       bulk_min_quantity: 1,
       wholesale_benchmark_price_inr: 95.00,
       hsn_code: '100829',
       tax_rate_percentage: 0.00,
-      description: 'Nutritious whole brown finger millet (Ragi) sourced directly from dryland farms in Mandya and Hassan. Machine-cleaned and destoned, rich in bioavailable calcium (344mg/100g) and natural dietary fiber. ₹120/kg. Available in 5 kg (₹600), 10 kg (₹1,200), and 25 kg (₹3,000) bags. Minimum order: 1 quantity.',
+      description: 'Nutritious whole brown finger millet (Ragi) sourced directly from dryland farms in Mandya and Hassan. Machine-cleaned and destoned, rich in bioavailable calcium (344mg/100g) and natural dietary fiber. Available in 5 kg (₹650), 10 kg (₹1,280), and 25 kg (₹3,150) bags with 100% FREE Doorstep Delivery. Minimum order: 1 quantity.',
       specifications: {
-        available_pack_sizes: '5 kg, 10 kg, 25 kg Bags',
-        rate_per_kg: '₹120 / kg',
-        base_5kg_pack_price: '₹600',
+        available_pack_sizes: '5 kg (₹650), 10 kg (₹1,280), 25 kg (₹3,150)',
+        rate_per_kg: '₹130 / kg (Free Delivery)',
+        base_5kg_pack_price: '₹650',
+        delivery: '100% FREE Doorstep Delivery on ALL Orders',
         grain_type: '100% Whole Native Karnataka Finger Millet',
         cleaning: 'Destoned & Air-Cleaned'
       },
@@ -213,16 +218,17 @@ async function runSeed() {
       estimated_weight_kg: 0.91,
       moisture_percentage: 0.2,
       oil_percentage: 99.8,
-      retail_price_inr: 900.00, // ₹900 / litre
+      retail_price_inr: 960.00, // ₹960 / litre (Free Delivery)
       bulk_min_quantity: 1,
       wholesale_benchmark_price_inr: 760.00,
       hsn_code: '0405',
       tax_rate_percentage: 12.00,
-      description: 'Traditional Desi cow ghee prepared by slow-simmering cultured whole milk curd churned with wooden bilonas. Authentic golden granular (danedaar) texture, rich nutty aroma, zero additives, and free from artificial flavorings or palm oil. ₹900/litre. Minimum order: 1 quantity.',
+      description: 'Traditional Desi cow ghee prepared by slow-simmering cultured whole milk curd churned with wooden bilonas. Authentic golden granular (danedaar) texture, rich nutty aroma, zero additives, and free from artificial flavorings or palm oil. Available in 500 ml (₹520) and 1 Litre (₹960) with 100% FREE Doorstep Delivery. Minimum order: 1 quantity.',
       specifications: {
         volume: '1 Litre Glass Jar',
-        rate: '₹900 / Litre (also 500 ml @ ₹480)',
-        available_sizes: '500 ml (₹480), 1 Litre (₹900)',
+        rate: '₹960 / Litre (also 500 ml @ ₹520)',
+        available_sizes: '500 ml (₹520), 1 Litre (₹960)',
+        delivery: '100% FREE Doorstep Delivery on ALL Orders',
         texture: 'Golden Granular Danedaar Ghee',
         churning_process: 'Cultured Curd Wooden Bilona Method',
         shelf_life: '9 Months in cool ambient storage'
@@ -230,37 +236,38 @@ async function runSeed() {
       image_url: 'https://images.unsplash.com/photo-1631451095765-2c91616fc9e6?auto=format&fit=crop&w=800&q=80'
     },
 
-    // 7. Tender Coconut (Bulk Orders Only)
+    // 7. Tender Coconut
     {
       sku: 'COC-TND-BLK-LOT',
-      title: 'Fresh Farm Tender Coconuts (Bulk Consignments Only)',
+      title: 'Fresh Farm Tender Coconuts (Sweet Elaneeru)',
       slug: 'fresh-farm-tender-coconuts-bulk',
       category: 'mature_coconut',
       grade: 'Grade A Sweet Water Elaneeru (400ml+ Water)',
       origin: 'Mandya & Maddur Coconut Corridors, Karnataka',
-      unit_of_measure: 'Piece (Bulk Truckload)',
+      unit_of_measure: 'Piece / Nut',
       estimated_weight_kg: 2.2,
       moisture_percentage: 88.0,
       oil_percentage: null,
-      retail_price_inr: 80.00, // Benchmark rate for quotes: ₹80 / piece
-      bulk_min_quantity: 100, // Bulk only
+      retail_price_inr: 95.00, // ₹95 / piece (Free Delivery)
+      bulk_min_quantity: 1, // No minimum quantity requirement
       wholesale_benchmark_price_inr: 80.00,
       hsn_code: '080119',
       tax_rate_percentage: 0.00,
-      description: 'Natural mineral-packed sweet tender coconuts (Elaneeru) harvested daily from canal-irrigated plantations in Mandya and Maddur. Yields 350-500ml sweet water with tender malai. Exclusively available for bulk consignments and institutional truckloads at benchmark ₹80/piece.',
+      description: 'Natural mineral-packed sweet tender coconuts (Elaneeru) harvested daily from canal-irrigated plantations in Mandya and Maddur. Yields 350-500ml sweet water with tender malai. ₹95/piece with 100% FREE Doorstep Delivery. No minimum order quantity.',
       specifications: {
-        procurement_mode: 'Bulk Wholesale Orders Only',
-        benchmark_rate: '₹80 / Piece',
+        rate: '₹95 / Piece (Free Delivery)',
+        minimum_order_quantity: '1 Nut (No Minimum Quantity)',
+        delivery: '100% FREE Doorstep Delivery on ALL Orders',
         water_content: '350 ml to 500 ml sweet coconut water per nut',
-        dispatch_format: 'Direct farm-gate loading in mini truckloads or full lorries'
+        dispatch_format: 'Fresh farm harvest with expedited courier dispatch'
       },
       image_url: 'https://images.unsplash.com/photo-1525385133512-2f3bdd039054?auto=format&fit=crop&w=800&q=80'
     },
 
-    // 8. Fresh Ginger 50 kg (Bulk Orders Only)
+    // 8. Fresh Ginger 50 kg Bag
     {
       sku: 'SPI-GIN-BLK-50K',
-      title: 'Fresh Farm Ginger (50 kg Gunny Bag - Bulk Orders Only)',
+      title: 'Fresh Farm Ginger (50 kg Gunny Bag)',
       slug: 'fresh-farm-ginger-50kg-bulk',
       category: 'spices',
       grade: 'Grade A Bold Pungent Rhizomes',
@@ -269,25 +276,26 @@ async function runSeed() {
       estimated_weight_kg: 50.0,
       moisture_percentage: 80.0,
       oil_percentage: null,
-      retail_price_inr: 10000.00, // ₹10,000 / 50 kg unit
-      bulk_min_quantity: 1, // 1 unit of 50 kg
-      wholesale_benchmark_price_inr: 10000.00, // ₹10,000 / unit (₹200/kg)
+      retail_price_inr: 10500.00, // ₹10,500 / 50 kg unit (Free Delivery)
+      bulk_min_quantity: 1,
+      wholesale_benchmark_price_inr: 10000.00,
       hsn_code: '091011',
       tax_rate_percentage: 0.00,
-      description: 'Farm-fresh bold pungent ginger rhizomes direct from harvest. Clean, thick fibrous fingers with high juice and gingerol essential oil content. Sourced in standardized 50 kg gunny bags at ₹10,000/unit (₹200/kg). Exclusively for wholesale traders, food processing, and bulk commercial buyers.',
+      description: 'Farm-fresh bold pungent ginger rhizomes direct from harvest. Clean, thick fibrous fingers with high juice and gingerol essential oil content. Sourced in standardized 50 kg gunny bags at ₹10,500/unit (₹210/kg) with 100% FREE Doorstep Delivery. Minimum order: 1 bag.',
       specifications: {
-        procurement_mode: 'Bulk Wholesale Orders Only',
         unit_packaging: '50 kg Jute Gunny Sack',
-        unit_rate: '₹10,000 / 50 kg Unit (₹200 / kg)',
+        unit_rate: '₹10,500 / 50 kg Unit (₹210 / kg, Free Delivery)',
+        minimum_order_quantity: '1 Bag (No Minimum Quantity)',
+        delivery: '100% FREE Doorstep Delivery on ALL Orders',
         rhizome_type: 'Bold, juicy, low fiber, intense pungency'
       },
       image_url: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80'
     },
 
-    // 9. Coconut Shell (Bulk Orders Only)
+    // 9. Coconut Shell
     {
       sku: 'COI-SHL-BLK-01T',
-      title: 'Raw Coconut Shells (Industrial Grade - Bulk Orders Only)',
+      title: 'Raw Coconut Shells (Industrial Grade - Metric Tonne)',
       slug: 'raw-coconut-shells-industrial-bulk-ton',
       category: 'coir_commodities',
       grade: 'Clean Dry Broken Shells (Moisture < 12%)',
@@ -296,15 +304,16 @@ async function runSeed() {
       estimated_weight_kg: 1000.0,
       moisture_percentage: 11.0,
       oil_percentage: null,
-      retail_price_inr: 35000.00, // ₹35,000 / ton
+      retail_price_inr: 36000.00, // ₹36,000 / ton (Free Delivery)
       bulk_min_quantity: 1,
-      wholesale_benchmark_price_inr: 35000.00, // ₹35,000 / ton
+      wholesale_benchmark_price_inr: 35000.00,
       hsn_code: '140490',
       tax_rate_percentage: 5.00,
-      description: 'Clean, dense mature coconut shells from Tiptur copra and dehusking clusters. High calorific value (>4,500 kcal/kg) and low ash content (<1.5%). Available in bulk metric tonnes at ₹35,000/ton. Ideal for activated carbon production, premium hookah briquettes, and industrial furnace fuel.',
+      description: 'Clean, dense mature coconut shells from Tiptur copra and dehusking clusters. High calorific value (>4,500 kcal/kg) and low ash content (<1.5%). Available in metric tonnes at ₹36,000/ton with 100% FREE Road Transport. Minimum order: 1 tonne.',
       specifications: {
-        procurement_mode: 'Bulk Industrial Consignments Only',
-        rate_per_ton: '₹35,000 / Metric Tonne (MT)',
+        rate_per_ton: '₹36,000 / Metric Tonne (MT, Free Delivery)',
+        minimum_order_quantity: '1 Tonne (No Minimum Quantity)',
+        delivery: '100% FREE Dedicated Road Linehaul on ALL Orders',
         calorific_value: '> 4,500 kcal/kg',
         moisture_max: '≤ 12.0% certified'
       },
@@ -323,16 +332,17 @@ async function runSeed() {
       estimated_weight_kg: 1.2,
       moisture_percentage: null,
       oil_percentage: null,
-      retail_price_inr: 60.00, // ₹60 / plant
-      bulk_min_quantity: 200, // Minimum 200 units per order
+      retail_price_inr: 75.00, // ₹75 / plant (Free Delivery)
+      bulk_min_quantity: 1, // No minimum quantity requirement
       wholesale_benchmark_price_inr: 50.00,
       hsn_code: '060290',
       tax_rate_percentage: 0.00,
-      description: 'Certified 1 to 1.5 feet high-yield arecanut seedlings raised from heavy-bearing mother palms. Robust stem caliper, disease resistance, and well-developed root structure. Ideal for orchard establishment and intercropping. Rate: ₹60 per plant. Minimum order: 200 units.',
+      description: 'Certified 1 to 1.5 feet high-yield arecanut seedlings raised from heavy-bearing mother palms. Robust stem caliper, disease resistance, and well-developed root structure. Rate: ₹75 per plant with 100% FREE Delivery. No minimum order quantity.',
       specifications: {
         height: '1 to 1.5 Feet',
-        rate_per_plant: '₹60 / Plant',
-        minimum_order_quantity: '200 Units per order',
+        rate_per_plant: '₹75 / Plant (Free Delivery)',
+        minimum_order_quantity: '1 Unit (No Minimum Quantity)',
+        delivery: '100% FREE Doorstep Delivery on ALL Orders',
         variety: 'High-Yield South Indian Select Areca',
         root_container: 'Polybag container with nutrient potting mix'
       },

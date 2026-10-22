@@ -117,8 +117,8 @@ export default function ContactPage() {
               </div>
               <div className="p-3 bg-white rounded-xl border border-stone-200 flex flex-col items-center gap-1">
                 <Truck className="w-5 h-5 text-emerald-700" />
-                <span className="font-bold text-stone-900">Shiprocket Pan-India</span>
-                <span className="text-[10px] text-stone-500">Free &gt; ₹2,999</span>
+                <span className="font-bold text-stone-900">Pan-India Delivery</span>
+                <span className="text-[10px] text-stone-500">100% Free Shipping</span>
               </div>
             </div>
           </div>

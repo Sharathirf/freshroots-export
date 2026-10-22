@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, OrderItem } from '@/types';
-import { calculateLocalShiprocketRates, FREE_SHIPPING_THRESHOLD } from '@/lib/shiprocket';
 
 export interface PackVariantOption {
   title?: string;
@@ -262,28 +261,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => sum + item.total_price_inr, 0);
-  const freeShippingThreshold = FREE_SHIPPING_THRESHOLD; // ₹2,999
-  const isFreeShipping = subtotal > freeShippingThreshold;
-
-  // Threshold-based Free Shipping: Free delivery for cart value > ₹2,999, otherwise calculated at actuals.
-  let deliveryFee = 0;
-  if (items.length > 0) {
-    if (isFreeShipping) {
-      deliveryFee = 0;
-    } else {
-      const totalWeightKg = items.reduce((sum, it) => sum + (it.estimated_weight_kg || 1), 0);
-      try {
-        const rates = calculateLocalShiprocketRates({
-          delivery_postcode: pincode || '560001',
-          weight: Math.max(1.0, totalWeightKg),
-          declared_value: subtotal
-        });
-        deliveryFee = rates.lowest_rate;
-      } catch {
-        deliveryFee = 145;
-      }
-    }
-  }
+  const freeShippingThreshold = 0; // 100% Free Shipping on all orders
+  const isFreeShipping = true;
+  const deliveryFee = 0; // ₹0 Free Doorstep Delivery on ALL orders
   const total = subtotal + deliveryFee;
 
   return (
