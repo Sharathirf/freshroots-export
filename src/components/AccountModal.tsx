@@ -1,7 +1,21 @@
 'use client';
 
 import React from 'react';
-import { X, User, Pencil, Mail, MapPin, ShoppingBag, RefreshCw, LogOut, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import {
+  X,
+  User,
+  Pencil,
+  Mail,
+  MapPin,
+  ShoppingBag,
+  RefreshCw,
+  LogOut,
+  ArrowRight,
+  RotateCcw,
+  Truck,
+  HelpCircle
+} from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export default function AccountModal() {
@@ -12,6 +26,8 @@ export default function AccountModal() {
     setIsAccountModalOpen,
     setIsEditProfileModalOpen,
     setIsManageAddressesOpen,
+    setIsOrderHistoryOpen,
+    setIsHelpOpen,
     setIsSignInModalOpen,
     signOut
   } = useAuth();
@@ -126,6 +142,42 @@ export default function AccountModal() {
                 </button>
               </div>
             </div>
+          </div>
+
+          {/* Quick Utility Actions: Orders & Reorder, Track, Help */}
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            <button
+              type="button"
+              onClick={() => {
+                setIsAccountModalOpen(false);
+                setIsOrderHistoryOpen(true);
+              }}
+              className="p-2.5 rounded-2xl bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 text-center flex flex-col items-center gap-1 transition"
+            >
+              <RotateCcw className="w-4 h-4 text-[#1e824c]" />
+              <span className="text-[11px] font-bold text-stone-900 leading-tight">Orders &amp; Reorder</span>
+            </button>
+
+            <Link
+              href={`/track-order?query=${encodeURIComponent(customer?.phone || '')}`}
+              onClick={() => setIsAccountModalOpen(false)}
+              className="p-2.5 rounded-2xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-center flex flex-col items-center gap-1 transition"
+            >
+              <Truck className="w-4 h-4 text-[#3b6d11]" />
+              <span className="text-[11px] font-bold text-stone-900 leading-tight">Track Order</span>
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => {
+                setIsAccountModalOpen(false);
+                setIsHelpOpen(true);
+              }}
+              className="p-2.5 rounded-2xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-center flex flex-col items-center gap-1 transition"
+            >
+              <HelpCircle className="w-4 h-4 text-stone-700" />
+              <span className="text-[11px] font-bold text-stone-900 leading-tight">Help Desk</span>
+            </button>
           </div>
 
           {/* Action Buttons - Matches Screenshot 2 */}

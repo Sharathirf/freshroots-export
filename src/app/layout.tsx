@@ -10,6 +10,8 @@ import ExitIntentModal from '@/components/ExitIntentModal';
 import AccountModal from '@/components/AccountModal';
 import EditProfileModal from '@/components/EditProfileModal';
 import ManageAddressesModal from '@/components/ManageAddressesModal';
+import OrderHistoryModal from '@/components/OrderHistoryModal';
+import HelpModal from '@/components/HelpModal';
 import MobileBottomNav from '@/components/MobileBottomNav';
 
 const geistSans = Geist({
@@ -73,6 +75,8 @@ export default function RootLayout({
               <AccountModal />
               <EditProfileModal />
               <ManageAddressesModal />
+              <OrderHistoryModal />
+              <HelpModal />
               <MobileBottomNav />
             </CartProvider>
           </WishlistProvider>

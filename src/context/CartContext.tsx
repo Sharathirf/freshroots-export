@@ -14,6 +14,7 @@ export interface PackVariantOption {
 interface CartContextType {
   items: OrderItem[];
   addToCart: (product: Product, quantity?: number, variant?: PackVariantOption) => void;
+  reorderItems: (newItems: OrderItem[]) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -185,6 +186,42 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsCartOpen(true);
   };
 
+  const reorderItems = (newItems: OrderItem[]) => {
+    if (!newItems || newItems.length === 0) return;
+    setItems((prev) => {
+      const merged = [...prev];
+      for (const item of newItems) {
+        const itemKey = item.item_key || item.product_id;
+        const idx = merged.findIndex((m) => (m.item_key || m.product_id) === itemKey);
+        const qty = Number(item.quantity || 1);
+        const price = Number(item.unit_price_inr || 0);
+        const weight = Number(item.estimated_weight_kg || 1);
+        if (idx >= 0) {
+          merged[idx] = {
+            ...merged[idx],
+            quantity: merged[idx].quantity + qty,
+            total_price_inr: (merged[idx].quantity + qty) * price,
+            estimated_weight_kg: weight * (merged[idx].quantity + qty)
+          };
+        } else {
+          merged.push({
+            product_id: item.product_id,
+            sku: item.sku || 'REORDER',
+            title: item.title,
+            unit_of_measure: item.unit_of_measure || 'Unit',
+            quantity: qty,
+            unit_price_inr: price,
+            total_price_inr: qty * price,
+            estimated_weight_kg: weight,
+            item_key: itemKey
+          });
+        }
+      }
+      return merged;
+    });
+    setIsCartOpen(true);
+  };
+
   const removeFromCart = (idOrKey: string) => {
     setItems((prev) =>
       prev.filter((item) => {
@@ -254,6 +291,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       value={{
         items,
         addToCart,
+        reorderItems,
         removeFromCart,
         updateQuantity,
         clearCart,

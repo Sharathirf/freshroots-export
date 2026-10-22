@@ -7,18 +7,19 @@ import CartDrawer from '@/components/CartDrawer';
 import ProductCard from '@/components/ProductCard';
 import WholesaleRFQModal from '@/components/WholesaleRFQModal';
 import EnquiryModal from '@/components/EnquiryModal';
-import KatyayaniHero from '@/components/KatyayaniHero';
-import ShopByCategory from '@/components/ShopByCategory';
-import ExploreRange from '@/components/ExploreRange';
-import FarmerTestimonials from '@/components/FarmerTestimonials';
-import RealResultsTransparency from '@/components/RealResultsTransparency';
-import UspTrustBand from '@/components/UspTrustBand';
-import CommercialInquiryFaq from '@/components/CommercialInquiryFaq';
-import HomeCtaBanner from '@/components/HomeCtaBanner';
 import Footer from '@/components/Footer';
-import GradingGuide from '@/components/GradingGuide';
+import { useAuth } from '@/context/AuthContext';
 import { Product } from '@/types';
-import { Sparkles, Truck, ArrowRight } from 'lucide-react';
+import {
+  Sparkles,
+  Truck,
+  RotateCcw,
+  User,
+  HelpCircle,
+  ShieldCheck,
+  CheckCircle2,
+  MessageCircle
+} from 'lucide-react';
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -27,6 +28,15 @@ export default function HomePage() {
   const [isRFQOpen, setIsRFQOpen] = useState(false);
   const [selectedProductForRFQ, setSelectedProductForRFQ] = useState<Product | null>(null);
   const [isEnquiryOpen, setIsEnquiryOpen] = useState(false);
+
+  const {
+    customer,
+    isLoggedIn,
+    setIsAccountModalOpen,
+    setIsSignInModalOpen,
+    setIsOrderHistoryOpen,
+    setIsHelpOpen
+  } = useAuth();
 
   useEffect(() => {
     async function loadProducts() {
@@ -54,13 +64,14 @@ export default function HomePage() {
     setIsRFQOpen(true);
   };
 
-  const displayedProducts = filteredCategory === 'all'
-    ? products
-    : products.filter((p) => p.category === filteredCategory);
+  const displayedProducts =
+    filteredCategory === 'all'
+      ? products
+      : products.filter((p) => p.category === filteredCategory);
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans selection:bg-[#3b6d11]/20 selection:text-[#1c3809]">
-      {/* 1. Global Header with Live Search, Pincode Pill & Ticker */}
+      {/* 1. Header Navigation */}
       <Navbar
         onOpenRFQ={() => handleOpenRFQ()}
         onOpenEnquiry={() => setIsEnquiryOpen(true)}
@@ -68,37 +79,118 @@ export default function HomePage() {
       <CartDrawer />
 
       <main className="flex-1">
-        {/* 1. Bestsellers Showcase & Direct Catalog (Target Sales First - Top of Page) */}
-        <section id="catalog" className="pt-6 sm:pt-8 pb-14 sm:pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 gap-4">
-            <div>
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#3b6d11] bg-emerald-50 px-3.5 py-1 rounded-full border border-emerald-200 mb-2">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Certified Farm-Gate Lots</span>
+        {/* 2. Fast Utility Hero Banner with 4 Direct Action Hubs */}
+        <section className="bg-gradient-to-b from-stone-100/90 to-stone-50 border-b border-stone-200/80 pt-6 pb-8 sm:pt-10 sm:pb-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              {/* Left Title & Tag */}
+              <div className="space-y-2 max-w-2xl">
+                <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-[#3b6d11] bg-emerald-100/70 border border-emerald-300 px-3 py-0.5 rounded-full">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Direct APMC Mandi Sourcing • Hand-Graded Lots</span>
+                </div>
+                <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-stone-900 tracking-tight leading-tight">
+                  Come. Select. Order.<br className="hidden sm:inline" /> Fast Farm Delivery.
+                </h1>
+                <p className="text-xs sm:text-sm text-stone-600 font-medium leading-relaxed">
+                  No middlemen markup. Order pure Desi Cow Ghee, GI Tiptur Ball Copra, Karnataka Ragi, and fresh mature coconuts direct to your doorstep. Free delivery above ₹2,999.
+                </p>
               </div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-stone-900 tracking-tight">
-                Our Bestsellers
-              </h1>
-              <p className="text-stone-500 text-xs sm:text-sm mt-1 max-w-xl">
-                Lab-tested, buyer-trusted agricultural commodities for food processors, oil millers, temples &amp; households
+
+              {/* Right: 4 Direct Quick-Action Utility Pills */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-2.5 shrink-0">
+                {/* 1. Track Order & Exit */}
+                <Link
+                  href="/track-order"
+                  className="bg-white hover:bg-emerald-50/80 border border-stone-200 hover:border-emerald-300 p-3 rounded-2xl flex flex-col items-center text-center transition shadow-sm group"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-lime-100 text-[#1c3809] flex items-center justify-center mb-1.5 group-hover:scale-105 transition">
+                    <Truck className="w-4 h-4 text-[#3b6d11]" />
+                  </div>
+                  <span className="text-xs font-bold text-stone-900">Track Order</span>
+                  <span className="text-[10px] text-stone-500">Live courier map</span>
+                </Link>
+
+                {/* 2. Order History & Reorder */}
+                <button
+                  type="button"
+                  onClick={() => setIsOrderHistoryOpen(true)}
+                  className="bg-white hover:bg-emerald-50/80 border border-stone-200 hover:border-emerald-300 p-3 rounded-2xl flex flex-col items-center text-center transition shadow-sm group"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center mb-1.5 group-hover:scale-105 transition">
+                    <RotateCcw className="w-4 h-4 text-[#1e824c]" />
+                  </div>
+                  <span className="text-xs font-bold text-stone-900">Past Orders</span>
+                  <span className="text-[10px] text-stone-500">1-Tap Reorder</span>
+                </button>
+
+                {/* 3. Customer Profile */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isLoggedIn) {
+                      setIsAccountModalOpen(true);
+                    } else {
+                      setIsSignInModalOpen(true);
+                    }
+                  }}
+                  className="bg-white hover:bg-emerald-50/80 border border-stone-200 hover:border-emerald-300 p-3 rounded-2xl flex flex-col items-center text-center transition shadow-sm group"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-stone-100 text-stone-700 flex items-center justify-center mb-1.5 group-hover:scale-105 transition">
+                    <User className="w-4 h-4 text-stone-700" />
+                  </div>
+                  <span className="text-xs font-bold text-stone-900">
+                    {isLoggedIn && customer?.name ? customer.name.split(' ')[0] : 'Your Profile'}
+                  </span>
+                  <span className="text-[10px] text-stone-500">
+                    {isLoggedIn ? 'Saved address' : 'Sign in fast'}
+                  </span>
+                </button>
+
+                {/* 4. Help Desk */}
+                <button
+                  type="button"
+                  onClick={() => setIsHelpOpen(true)}
+                  className="bg-white hover:bg-emerald-50/80 border border-stone-200 hover:border-emerald-300 p-3 rounded-2xl flex flex-col items-center text-center transition shadow-sm group"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center mb-1.5 group-hover:scale-105 transition">
+                    <HelpCircle className="w-4 h-4 text-amber-700" />
+                  </div>
+                  <span className="text-xs font-bold text-stone-900">Agri Help</span>
+                  <span className="text-[10px] text-stone-500">WhatsApp &amp; Call</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 3. Clean Catalog Section ("Select produce & order") */}
+        <section id="catalog" className="pt-6 sm:pt-8 pb-14 sm:pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 sm:mb-8 gap-4">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
+                Select Your Produce
+              </h2>
+              <p className="text-stone-500 text-xs sm:text-sm mt-0.5">
+                Authentic, lab-graded lots with direct farm dispatch in 24 hours.
               </p>
             </div>
 
-            {/* Category Filter Tabs (Katyayani Tab Pills) */}
+            {/* Category Filter Tabs */}
             <div className="flex flex-wrap gap-1.5 bg-stone-200/80 p-1.5 rounded-2xl w-fit">
               {[
-                { id: 'all', label: 'All Commodities (10)' },
+                { id: 'all', label: 'All Produce (10)' },
                 { id: 'mature_coconut', label: 'Fresh Coconuts' },
                 { id: 'copra', label: 'GI Ball Copra' },
-                { id: 'oil_and_extracts', label: 'Wood-Pressed Oils & Ghee' },
-                { id: 'spices', label: 'Ragi & Ginger' },
+                { id: 'oil_and_extracts', label: 'Ghee & Cold-Pressed Oils' },
+                { id: 'spices', label: 'Ragi & Spices' },
                 { id: 'value_added', label: 'Nursery Plants' },
                 { id: 'coir_commodities', label: 'Coconut Shells' }
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setFilteredCategory(tab.id)}
-                  className={`text-xs font-bold px-3.5 py-2 rounded-xl transition-all ${
+                  className={`text-xs font-bold px-3.5 py-1.5 rounded-xl transition-all ${
                     filteredCategory === tab.id
                       ? 'bg-[#3b6d11] text-white shadow-sm'
                       : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
@@ -110,15 +202,18 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Product Grid (Katyayani pcard-grid) */}
+          {/* Product Grid */}
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-6">
               {[1, 2, 3, 4].map((n) => (
-                <div key={n} className="bg-white rounded-3xl h-96 animate-pulse border border-stone-200" />
+                <div
+                  key={n}
+                  className="bg-white rounded-3xl h-96 animate-pulse border border-stone-200"
+                />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
               {displayedProducts.map((product) => (
                 <ProductCard
                   key={product.id}
@@ -130,77 +225,58 @@ export default function HomePage() {
           )}
         </section>
 
-        {/* 2. Shop by Category (Katyayani mc-section) */}
-        <ShopByCategory
-          activeCategory={filteredCategory}
-          onSelectCategory={(cat) => {
-            setFilteredCategory(cat);
-            const el = document.getElementById('catalog');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
-        />
-
-        {/* 3. Transportation & Shiprocket Rate Calculator Banner (coconutseller.in Standard) */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 mb-8">
-          <div className="bg-gradient-to-r from-[#1c3809] to-[#254b0d] text-white rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-md border border-[#2d5a0b]">
-            <div className="space-y-2 text-center md:text-left">
-              <div className="inline-flex items-center gap-2 bg-lime-400/20 text-lime-300 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                <Truck className="w-4 h-4 text-lime-300" />
-                <span>Pan-India Agricultural Logistics (coconutseller.in Standard)</span>
+        {/* 4. Minimal, Reassuring Trust Strip */}
+        <section className="bg-stone-100/80 border-y border-stone-200 py-6 sm:py-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-5 h-5 text-[#1e824c]" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-stone-900">Direct APMC Origin</div>
+                  <div className="text-[11px] text-stone-500">Zero broker commissions</div>
+                </div>
               </div>
-              <h3 className="text-xl sm:text-2xl font-black tracking-tight text-white">
-                Transportation Charged Extra — Genuine Freight at Actuals
-              </h3>
-              <p className="text-stone-300 text-xs sm:text-sm max-w-xl">
-                Check instant courier rates via our Shiprocket-powered engine or book dedicated 10T, 25T, and 30T multi-axle lorries direct from Mandya APMC.
-              </p>
-            </div>
 
-            <Link
-              href="/transportation"
-              className="bg-lime-400 hover:bg-lime-300 active:scale-95 text-[#1c3809] font-black text-xs sm:text-sm px-6 py-3.5 rounded-2xl transition shadow-lg flex items-center gap-2 shrink-0 group"
-            >
-              <span>Calculate Freight Rates</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
-            </Link>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-lime-100 text-[#1c3809] flex items-center justify-center shrink-0">
+                  <Truck className="w-5 h-5 text-[#3b6d11]" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-stone-900">Free Shipping &gt; ₹2,999</div>
+                  <div className="text-[11px] text-stone-500">Pan-India surface courier</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-5 h-5 text-amber-700" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-stone-900">100% Spoilage Guarantee</div>
+                  <div className="text-[11px] text-stone-500">Free transit replacement</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                  <MessageCircle className="w-5 h-5 text-[#1e824c]" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-stone-900">Direct WhatsApp Desk</div>
+                  <div className="text-[11px] text-stone-500">+91 95911 42548 (7am–9pm)</div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
-
-        {/* 4. Katyayani Organics Hero & Sourcing Credibility */}
-        <KatyayaniHero onOpenRFQ={() => handleOpenRFQ()} />
-
-        {/* 5. Purpose-Driven Sourcing & Industry Solutions (Katyayani shopby) */}
-        <ExploreRange
-          onSelectCategory={(cat) => {
-            setFilteredCategory(cat);
-            const el = document.getElementById('catalog');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
-        />
-
-        {/* 6. USP Trust Band (Katyayani app-band) */}
-        <UspTrustBand />
-
-        {/* 7. Verified Customer Proof & Farmer Testimonials (Katyayani trustproof) */}
-        <FarmerTestimonials />
-
-        {/* 8. Farm-Gate Transparency & Lab Testing (Katyayani tv-section) */}
-        <RealResultsTransparency />
-
-        {/* 9. APMC Grading Standards & Guide */}
-        <GradingGuide />
-
-        {/* 10. Commercial Sourcing Form & Accordion FAQ (Katyayani home-form-faq) */}
-        <CommercialInquiryFaq />
-
-        {/* 11. Final Conversion CTA Banner (Katyayani home-cta) */}
-        <HomeCtaBanner onOpenRFQ={() => handleOpenRFQ()} />
       </main>
 
-      {/* 12. Rich Agricultural Footer with Payment Badges & Newsletter */}
+      {/* 5. Minimalist Legal & Contact Footer */}
       <Footer />
 
-      {/* 14. Wholesale RFQ Modal */}
+      {/* 6. On-demand Wholesale RFQ Modal */}
       <WholesaleRFQModal
         isOpen={isRFQOpen}
         onClose={() => setIsRFQOpen(false)}
@@ -208,7 +284,7 @@ export default function HomePage() {
         selectedProduct={selectedProductForRFQ}
       />
 
-      {/* 15. Enquire Farm Modal (Verified Once via OTP, Editable Anytime) */}
+      {/* 7. On-demand Enquiry Modal */}
       <EnquiryModal
         isOpen={isEnquiryOpen}
         onClose={() => setIsEnquiryOpen(false)}

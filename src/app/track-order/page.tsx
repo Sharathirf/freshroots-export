@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
+import { useCart } from '@/context/CartContext';
 import {
   Package,
   Truck,
@@ -12,19 +14,25 @@ import {
   AlertCircle,
   Phone,
   Sprout,
-  ShieldCheck
+  ShieldCheck,
+  RotateCcw,
+  ArrowLeft,
+  ArrowRight,
+  MessageCircle
 } from 'lucide-react';
 import { Order } from '@/types';
 
 function TrackOrderContent() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('query') || searchParams.get('phone') || '';
+  const { reorderItems } = useCart();
 
   const [queryInput, setQueryInput] = useState(initialQuery);
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [reordered, setReordered] = useState(false);
 
   const fetchTracking = async (q: string) => {
     if (!q || !q.trim()) return;
@@ -65,6 +73,13 @@ function TrackOrderContent() {
     fetchTracking(queryInput);
   };
 
+  const handleReorder = (order: Order) => {
+    if (!order.items || order.items.length === 0) return;
+    reorderItems(order.items);
+    setReordered(true);
+    setTimeout(() => setReordered(false), 2000);
+  };
+
   // Helper to determine step status
   const getStepProgress = (status: string) => {
     const sequence = ['paid', 'allocated', 'packed', 'dispatched', 'delivered'];
@@ -77,8 +92,22 @@ function TrackOrderContent() {
       <Navbar />
       <CartDrawer />
 
-      <main className="flex-1 py-12 sm:py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <main className="flex-1 py-8 sm:py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          {/* Top Quick Exit / Return to Shop Button */}
+          <div className="flex items-center justify-between">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-xs font-bold text-stone-600 hover:text-[#3b6d11] bg-white hover:bg-stone-100 border border-stone-200 px-3.5 py-2 rounded-xl transition shadow-sm"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>← Exit to Shop</span>
+            </Link>
+            <span className="text-[11px] text-stone-400 font-medium hidden sm:inline">
+              Track live APMC courier movement
+            </span>
+          </div>
+
           {/* Header Banner (Matches Katyayani Screenshot 1) */}
           <div className="text-center space-y-3">
             <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#3b6d11] bg-[#edf7e1] px-4 py-1.5 rounded-full border border-emerald-200">
@@ -290,6 +319,40 @@ function TrackOrderContent() {
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Order Quick Actions: Reorder, Help, Exit */}
+              <div className="bg-stone-50 border-t border-stone-200/90 p-4 sm:p-6 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <a
+                    href={`https://wa.me/919591142548?text=${encodeURIComponent(
+                      `Hi Sharath, I have a query about my order ${selectedOrder.order_number}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-stone-100 border border-stone-300 text-stone-700 text-xs font-semibold transition"
+                  >
+                    <MessageCircle className="w-4 h-4 text-emerald-600" />
+                    <span>Help on WhatsApp</span>
+                  </a>
+
+                  <Link
+                    href="/"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-stone-100 border border-stone-300 text-stone-700 text-xs font-semibold transition"
+                  >
+                    <span>Exit to Shop</span>
+                  </Link>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleReorder(selectedOrder)}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-95 text-white text-xs sm:text-sm font-bold shadow-md transition"
+                >
+                  <RotateCcw className="w-4 h-4 text-lime-300" />
+                  <span>{reordered ? 'Added to Cart!' : 'Reorder These Items'}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
               </div>
             </div>
           )}

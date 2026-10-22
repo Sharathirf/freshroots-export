@@ -26,6 +26,10 @@ interface AuthContextType {
   setIsEditProfileModalOpen: (open: boolean) => void;
   isManageAddressesOpen: boolean;
   setIsManageAddressesOpen: (open: boolean) => void;
+  isOrderHistoryOpen: boolean;
+  setIsOrderHistoryOpen: (open: boolean) => void;
+  isHelpOpen: boolean;
+  setIsHelpOpen: (open: boolean) => void;
   signIn: (
     phone: string,
     name?: string,
@@ -69,6 +73,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isManageAddressesOpen, setIsManageAddressesOpen] = useState(false);
+  const [isOrderHistoryOpen, setIsOrderHistoryOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   const loadAddresses = useCallback(async () => {
     if (!customer?.phone) return;
@@ -303,6 +309,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsEditProfileModalOpen,
         isManageAddressesOpen,
         setIsManageAddressesOpen,
+        isOrderHistoryOpen,
+        setIsOrderHistoryOpen,
+        isHelpOpen,
+        setIsHelpOpen,
         signIn,
         updateProfile,
         loadAddresses,

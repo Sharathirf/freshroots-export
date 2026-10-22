@@ -10,17 +10,17 @@ import {
   Phone,
   Sprout,
   Building2,
-  Globe,
   Search,
   X,
   ChevronRight,
   Heart,
   User,
   Truck,
-  Package,
   LogOut,
   Pencil,
-  FileQuestion
+  FileQuestion,
+  RotateCcw,
+  HelpCircle
 } from 'lucide-react';
 import { Product } from '@/types';
 
@@ -38,6 +38,8 @@ export default function Navbar({
     setIsSignInModalOpen,
     setIsAccountModalOpen,
     setIsEditProfileModalOpen,
+    setIsOrderHistoryOpen,
+    setIsHelpOpen,
     signOut
   } = useAuth();
   const { wishlistCount, setIsWatchlistOpen } = useWishlist();
@@ -128,20 +130,30 @@ export default function Navbar({
               <Truck className="w-3.5 h-3.5 text-lime-300" />
               <span>Track Order</span>
             </Link>
-            <span className="hidden sm:inline text-emerald-300/60">•</span>
-            <Link
-              href="/transportation"
+            <span className="text-emerald-300/60">•</span>
+            <button
+              type="button"
+              onClick={() => setIsOrderHistoryOpen(true)}
               className="hover:text-white flex items-center gap-1.5 transition text-lime-200 hover:text-white font-semibold"
             >
-              <Globe className="w-3.5 h-3.5 text-lime-300" />
-              <span>Transportation & Rates</span>
-            </Link>
+              <RotateCcw className="w-3.5 h-3.5 text-lime-300" />
+              <span>Orders &amp; Reorder</span>
+            </button>
+            <span className="text-emerald-300/60">•</span>
+            <button
+              type="button"
+              onClick={() => setIsHelpOpen(true)}
+              className="hover:text-white flex items-center gap-1.5 transition text-lime-200 hover:text-white font-semibold"
+            >
+              <HelpCircle className="w-3.5 h-3.5 text-lime-300" />
+              <span>Help</span>
+            </button>
             <span className="hidden md:inline text-emerald-300/60">•</span>
             <a
               href="https://wa.me/919591142548"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-white flex items-center gap-1 transition"
+              className="hover:text-white flex items-center gap-1 transition hidden sm:flex"
             >
               <Phone className="w-3 h-3 text-lime-300" />
               Desk: +91 95911 42548
@@ -345,13 +357,29 @@ export default function Navbar({
                   <Pencil className="w-4 h-4 text-stone-500" />
                   <span>Edit Profile</span>
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setIsOrderHistoryOpen(true)}
+                  className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition text-left"
+                >
+                  <RotateCcw className="w-4 h-4 text-stone-500" />
+                  <span>Orders &amp; Reorder</span>
+                </button>
                 <Link
                   href={`/track-order?query=${customer?.phone}`}
                   className="flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition"
                 >
-                  <Package className="w-4 h-4 text-stone-500" />
-                  <span>My Orders</span>
+                  <Truck className="w-4 h-4 text-stone-500" />
+                  <span>Track Shipments</span>
                 </Link>
+                <button
+                  type="button"
+                  onClick={() => setIsHelpOpen(true)}
+                  className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition text-left"
+                >
+                  <HelpCircle className="w-4 h-4 text-stone-500" />
+                  <span>Help &amp; Support</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => setIsWatchlistOpen(true)}
