@@ -133,13 +133,13 @@ export default function ProductReviewsSection({ product }: ProductReviewsSection
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold uppercase tracking-wider mb-2">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Buyer Feedback &amp; Ratings</span>
+            <span>Verified Product Reviews</span>
           </div>
-          <h3 className="text-2xl font-black text-stone-900 tracking-tight">
-            Customer Reviews ({totalCount})
+          <h3 className="text-xl sm:text-2xl font-black text-stone-900 tracking-tight">
+            Customer Reviews for {product.title} ({totalCount})
           </h3>
           <p className="text-xs text-stone-500 mt-1">
-            Real feedback from food processors, millers, temples, and direct household buyers
+            Ratings and feedback submitted by verified buyers exclusively for this commodity
           </p>
         </div>
 
@@ -149,7 +149,7 @@ export default function ProductReviewsSection({ product }: ProductReviewsSection
           className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#1e824c] hover:bg-[#16663b] text-white font-bold text-xs shadow-sm transition shrink-0"
         >
           <Plus className="w-4 h-4 stroke-[3]" />
-          <span>Write a Review</span>
+          <span>Rate &amp; Review This Product</span>
         </button>
       </div>
 

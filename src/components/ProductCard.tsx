@@ -71,8 +71,6 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
     unitSubtitle = '1 - 1.5 Feet Height';
   }
 
-  // Review metrics
-  const reviewCount = 142 + (product.sku.charCodeAt(0) * 2) % 180;
 
   return (
     <div className="bg-white rounded-2xl border border-stone-200/90 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
@@ -140,15 +138,30 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
             </h3>
           </Link>
 
-          {/* Star Rating Row */}
-          <div className="flex items-center gap-1.5 mt-2">
-            <div className="flex text-amber-400 text-xs">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-3.5 h-3.5 fill-current" />
-              ))}
-            </div>
-            <span className="text-xs font-bold text-stone-700">4.9</span>
-            <span className="text-[11px] text-stone-400">({reviewCount})</span>
+          {/* Star Rating Row: clickable directly to this product's reviews */}
+          <div className="flex items-center justify-between mt-2">
+            <Link
+              href={`/products/${product.slug}#reviews`}
+              className="inline-flex items-center gap-1.5 group/stars hover:opacity-80 transition"
+              title={`Read customer reviews for ${product.title}`}
+            >
+              <div className="flex text-amber-400 text-xs">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-3.5 h-3.5 fill-current" />
+                ))}
+              </div>
+              <span className="text-xs font-bold text-stone-700">5.0</span>
+              <span className="text-[11px] text-stone-400 group-hover/stars:text-[#3b6d11] group-hover/stars:underline">
+                (Reviews)
+              </span>
+            </Link>
+
+            <Link
+              href={`/products/${product.slug}#reviews`}
+              className="text-[10px] font-bold text-emerald-800 hover:text-emerald-950 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2 py-0.5 rounded transition"
+            >
+              + Review
+            </Link>
           </div>
 
           {/* Packaging / Variant Selection pills if available */}
