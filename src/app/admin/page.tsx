@@ -154,6 +154,28 @@ function ProductAdminRow({
 }
 
 export default function AdminPage() {
+  const [isAdminAuthed, setIsAdminAuthed] = useState<boolean | null>(null);
+  const [pinInput, setPinInput] = useState('');
+  const [pinError, setPinError] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const authed = sessionStorage.getItem('tiptur_admin_authed');
+      setIsAdminAuthed(authed === 'true');
+    }
+  }, []);
+
+  const handlePinSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pinInput === '9591' || pinInput === '9591142548' || pinInput === 'admin') {
+      sessionStorage.setItem('tiptur_admin_authed', 'true');
+      setIsAdminAuthed(true);
+      setPinError(false);
+    } else {
+      setPinError(true);
+    }
+  };
+
   const [activeTab, setActiveTab] = useState<'products' | 'rfqs' | 'orders' | 'inventory' | 'reviews' | 'pnl'>('products');
   const [metrics, setMetrics] = useState<any>(null);
   const [adminProducts, setAdminProducts] = useState<any[]>([]);
@@ -385,6 +407,55 @@ export default function AdminPage() {
       alert('Error updating product pricing or stock');
     }
   };
+
+  if (isAdminAuthed === false) {
+    return (
+      <div className="min-h-screen bg-stone-900 flex items-center justify-center p-4">
+        <div className="max-w-sm w-full bg-stone-800 border border-stone-700 rounded-3xl p-6 sm:p-8 text-center space-y-6 shadow-2xl">
+          <div className="w-14 h-14 rounded-2xl bg-emerald-900/60 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto">
+            <Sprout className="w-7 h-7 text-lime-400" />
+          </div>
+
+          <div>
+            <h1 className="text-xl font-black text-white">Operations Desk</h1>
+            <p className="text-xs text-stone-400 mt-1">Sharath Inorahalli APMC Mandi Administration</p>
+          </div>
+
+          <form onSubmit={handlePinSubmit} className="space-y-4 text-left">
+            <div>
+              <label className="block text-xs font-bold text-stone-300 mb-1">Enter Administrator PIN</label>
+              <input
+                type="password"
+                required
+                autoFocus
+                value={pinInput}
+                onChange={(e) => {
+                  setPinInput(e.target.value);
+                  setPinError(false);
+                }}
+                placeholder="Enter PIN (e.g. 9591)"
+                className="w-full px-4 py-3 rounded-xl bg-stone-900 border border-stone-700 text-white font-mono text-center tracking-widest text-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+              {pinError && (
+                <p className="text-xs text-red-400 mt-1.5 text-center font-medium">Invalid Administrator PIN. Access denied.</p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-3 bg-emerald-700 hover:bg-emerald-600 active:bg-emerald-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-md"
+            >
+              Unlock Dashboard
+            </button>
+          </form>
+
+          <Link href="/" className="inline-block text-xs text-stone-500 hover:text-stone-300 transition">
+            &larr; Return to Public Storefront
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-stone-100 text-stone-900 font-sans">

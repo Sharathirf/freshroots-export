@@ -133,23 +133,32 @@ export default function Footer() {
           {/* Column 3: Trust & Policies */}
           <div className="space-y-3">
             <h4 className="font-bold text-white text-xs uppercase tracking-wider">
-              Trust & Guarantees
+              Legal &amp; Policies
             </h4>
             <ul className="space-y-2 text-stone-400">
-              <li><span className="text-stone-300">✓ Moisture Testing (≤ 5.5%)</span></li>
-              <li><span className="text-stone-300">✓ 100% Spoilage Guarantee</span></li>
-              <li><span className="text-stone-300">✓ Direct APMC Weighbridges</span></li>
-              <li><span className="text-stone-300">✓ Nil-Rated GST Coconuts</span></li>
-              <li><span className="text-stone-300">✓ Pan-India Coverage</span></li>
-              <li><span className="text-stone-300">✓ Secure UPI & NetBanking</span></li>
+              <li><Link href="/refund-policy" className="hover:text-lime-300 transition text-stone-300">100% Spoilage Policy</Link></li>
+              <li><Link href="/shipping-policy" className="hover:text-lime-300 transition text-stone-300">Shipping &amp; Delivery Terms</Link></li>
+              <li><Link href="/privacy" className="hover:text-lime-300 transition text-stone-300">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="hover:text-lime-300 transition text-stone-300">Terms &amp; Conditions</Link></li>
+              <li><Link href="/contact" className="hover:text-lime-300 transition text-stone-300">Contact &amp; Operations</Link></li>
+              <li><span className="text-stone-400">✓ Direct APMC Weighbridges</span></li>
             </ul>
           </div>
         </div>
 
         {/* Bottom Bar: Payment Methods, Legal & APMC Compliance */}
         <div className="pt-8 border-t border-stone-800 flex flex-col md:flex-row items-center justify-between gap-4 text-stone-500 text-[11px]">
-          <div>
-            © {new Date().getFullYear()} Sharath Inorahalli Agri-Commerce Platform. All rights reserved. Registered under Karnataka APMC Act.
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span>© {new Date().getFullYear()} Sharath Inorahalli. All rights reserved.</span>
+            <Link href="/privacy" className="hover:underline text-stone-400">Privacy</Link>
+            <span>&bull;</span>
+            <Link href="/terms" className="hover:underline text-stone-400">Terms</Link>
+            <span>&bull;</span>
+            <Link href="/refund-policy" className="hover:underline text-stone-400">Refunds</Link>
+            <span>&bull;</span>
+            <Link href="/shipping-policy" className="hover:underline text-stone-400">Shipping</Link>
+            <span>&bull;</span>
+            <Link href="/contact" className="hover:underline text-stone-400">Contact</Link>
           </div>
 
           {/* Payment Badges (Katyayani Payment Badges) */}
