@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { CartProvider } from '@/context/CartContext';
@@ -10,6 +10,7 @@ import ExitIntentModal from '@/components/ExitIntentModal';
 import AccountModal from '@/components/AccountModal';
 import EditProfileModal from '@/components/EditProfileModal';
 import ManageAddressesModal from '@/components/ManageAddressesModal';
+import MobileBottomNav from '@/components/MobileBottomNav';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -21,9 +22,23 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+export const viewport: Viewport = {
+  themeColor: '#3b6d11',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true
+};
+
 export const metadata: Metadata = {
   title: 'Sharath Inorahalli | Farm-Gate Agricultural Commodities from Karnataka',
   description: 'Direct-from-origin agricultural commerce platform selling hand-graded mature coconuts, GI Tiptur ball copra, spices, and pure cold-pressed oils to households and bulk commercial buyers.',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Sharath Agri'
+  },
   keywords: [
     'Sharath Inorahalli',
     'buy coconuts online Bangalore',
@@ -58,6 +73,7 @@ export default function RootLayout({
               <AccountModal />
               <EditProfileModal />
               <ManageAddressesModal />
+              <MobileBottomNav />
             </CartProvider>
           </WishlistProvider>
         </AuthProvider>

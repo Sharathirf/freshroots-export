@@ -1,23 +1,27 @@
 import { MetadataRoute } from 'next';
-import { query } from '@/lib/db';
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+const PRODUCT_SLUGS = [
+  'fresh-semi-husked-mature-coconuts-25-piece',
+  'pure-karnataka-ragi-millet-5kg',
+  'fresh-farm-tender-coconuts-bulk',
+  'high-yield-coconut-plants-1-year-2-feet',
+  'pure-wood-pressed-groundnut-oil-1l',
+  'farm-fresh-pure-desi-cow-ghee-1l',
+  'tiptur-ball-copra-boxes-15kg',
+  'high-yield-arecanut-plants-1-foot',
+  'raw-coconut-shells-industrial-bulk-ton',
+  'fresh-farm-ginger-50kg-bulk'
+];
+
+export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://sharathinorahalli.com';
 
-  let productUrls: MetadataRoute.Sitemap = [];
-  try {
-    const products = await query<{ slug: string; updated_at?: string }>(
-      'SELECT slug, updated_at FROM products WHERE is_active = true'
-    );
-    productUrls = products.map((p) => ({
-      url: `${baseUrl}/products/${p.slug}`,
-      lastModified: p.updated_at ? new Date(p.updated_at) : new Date(),
-      changeFrequency: 'daily' as const,
-      priority: 0.8
-    }));
-  } catch {
-    // Fallback if database query fails during build
-  }
+  const productUrls: MetadataRoute.Sitemap = PRODUCT_SLUGS.map((slug) => ({
+    url: `${baseUrl}/products/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily' as const,
+    priority: 0.8
+  }));
 
   const staticUrls: MetadataRoute.Sitemap = [
     {

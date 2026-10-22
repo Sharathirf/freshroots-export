@@ -16,7 +16,6 @@ import UspTrustBand from '@/components/UspTrustBand';
 import CommercialInquiryFaq from '@/components/CommercialInquiryFaq';
 import HomeCtaBanner from '@/components/HomeCtaBanner';
 import Footer from '@/components/Footer';
-import MobileBottomNav from '@/components/MobileBottomNav';
 import GradingGuide from '@/components/GradingGuide';
 import { Product } from '@/types';
 import { Sparkles, Truck, ArrowRight } from 'lucide-react';
@@ -200,9 +199,6 @@ export default function HomePage() {
 
       {/* 12. Rich Agricultural Footer with Payment Badges & Newsletter */}
       <Footer />
-
-      {/* 13. Mobile Bottom Navigation Bar (Katyayani bottom-nav) */}
-      <MobileBottomNav onOpenRFQ={() => handleOpenRFQ()} />
 
       {/* 14. Wholesale RFQ Modal */}
       <WholesaleRFQModal
