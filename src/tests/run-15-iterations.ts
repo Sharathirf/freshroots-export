@@ -77,7 +77,12 @@ async function runAll15Iterations() {
 
   if (!allPassed) {
     process.exit(1);
+  } else {
+    process.exit(0);
   }
 }
 
-runAll15Iterations().catch(console.error);
+runAll15Iterations().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

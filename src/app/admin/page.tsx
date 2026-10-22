@@ -12,7 +12,9 @@ import {
   DollarSign,
   Tag,
   ExternalLink,
-  CheckCircle2
+  CheckCircle2,
+  Star,
+  Trash2
 } from 'lucide-react';
 import { WholesaleQuotation, Order, InventoryBatch } from '@/types';
 
@@ -152,12 +154,15 @@ function ProductAdminRow({
 }
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState<'products' | 'rfqs' | 'orders' | 'inventory' | 'pnl'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'rfqs' | 'orders' | 'inventory' | 'reviews' | 'pnl'>('products');
   const [metrics, setMetrics] = useState<any>(null);
   const [adminProducts, setAdminProducts] = useState<any[]>([]);
   const [rfqs, setRfqs] = useState<WholesaleQuotation[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [inventory, setInventory] = useState<InventoryBatch[]>([]);
+  const [allReviews, setAllReviews] = useState<any[]>([]);
+  const [reviewFilter, setReviewFilter] = useState<'all' | '5' | '4' | '3' | '2' | '1'>('all');
+  const [isDeletingReview, setIsDeletingReview] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [productSuccessMsg, setProductSuccessMsg] = useState<string | null>(null);
 
@@ -172,29 +177,64 @@ export default function AdminPage() {
   const [damagedCount, setDamagedCount] = useState('5');
   const [damagedMsg, setDamagedMsg] = useState<string | null>(null);
 
+  const fetchReviews = async () => {
+    try {
+      const res = await fetch('/api/reviews');
+      const data = await res.json();
+      if (data.success && Array.isArray(data.reviews)) {
+        setAllReviews(data.reviews);
+      }
+    } catch (e) {
+      console.warn('Failed to fetch admin reviews:', e);
+    }
+  };
+
+  const handleDeleteReviewAdmin = async (id: string) => {
+    if (!confirm('Are you sure you want to permanently delete this customer review?')) return;
+    setIsDeletingReview(id);
+    try {
+      const res = await fetch(`/api/reviews?id=${encodeURIComponent(id)}`, {
+        method: 'DELETE'
+      });
+      const data = await res.json();
+      if (data.success) {
+        await fetchReviews();
+      } else {
+        alert(data.error || 'Failed to delete review');
+      }
+    } catch (err) {
+      console.error('Delete review error:', err);
+    } finally {
+      setIsDeletingReview(null);
+    }
+  };
+
   const fetchData = useCallback(async () => {
     setRefreshing(true);
     try {
-      const [mRes, rRes, oRes, iRes, pRes] = await Promise.all([
+      const [mRes, rRes, oRes, iRes, pRes, revRes] = await Promise.all([
         fetch('/api/admin/metrics'),
         fetch('/api/rfq'),
         fetch('/api/admin/orders'),
         fetch('/api/admin/inventory'),
-        fetch('/api/admin/products')
+        fetch('/api/admin/products'),
+        fetch('/api/reviews')
       ]);
 
-      const [mData, rData, oData, iData, pData] = await Promise.all([
+      const [mData, rData, oData, iData, pData, revData] = await Promise.all([
         mRes.json(),
         rRes.json(),
         oRes.json(),
         iRes.json(),
-        pRes.json()
+        pRes.json(),
+        revRes.json()
       ]);
 
       if (mData.success) setMetrics(mData.metrics);
       if (rData.success) setRfqs(rData.quotations);
       if (oData.success) setOrders(oData.orders);
       if (pData.success) setAdminProducts(pData.products);
+      if (revData.success && Array.isArray(revData.reviews)) setAllReviews(revData.reviews);
       if (iData.success) {
         setInventory(iData.batches);
         if (iData.batches.length > 0 && !damagedBatchId) {
@@ -459,6 +499,7 @@ export default function AdminPage() {
             { id: 'rfqs', label: 'Wholesale RFQs & Quotations', count: rfqs.length },
             { id: 'orders', label: 'Retail Orders & Fulfillment', count: orders.length },
             { id: 'inventory', label: 'Inventory Batches & Intake', count: inventory.length },
+            { id: 'reviews', label: 'Buyer Ratings & Reviews', count: allReviews.length },
             { id: 'pnl', label: 'Commercial Unit Economics & P&L', count: null }
           ].map((tab) => (
             <button
@@ -969,6 +1010,133 @@ export default function AdminPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 5: BUYER RATINGS & REVIEW MODERATION */}
+        {activeTab === 'reviews' && (
+          <div className="bg-white rounded-3xl border border-stone-200 shadow-sm overflow-hidden p-6 sm:p-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-stone-200 gap-4">
+              <div>
+                <h3 className="text-xl font-extrabold text-stone-900 flex items-center gap-2">
+                  <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
+                  <span>Buyer Ratings &amp; Reviews Moderation</span>
+                </h3>
+                <p className="text-xs text-stone-500 mt-1">
+                  Manage authentic verified farm commodity reviews, monitor buyer feedback, or delete inappropriate ratings.
+                </p>
+              </div>
+
+              {/* Star Rating Filters */}
+              <div className="flex items-center gap-1.5 text-xs">
+                {['all', '5', '4', '3', '2', '1'].map((st) => (
+                  <button
+                    key={st}
+                    onClick={() => setReviewFilter(st as any)}
+                    className={`px-3 py-1.5 rounded-xl font-bold border transition ${
+                      reviewFilter === st
+                        ? 'bg-stone-900 text-white border-stone-900'
+                        : 'bg-stone-50 text-stone-600 border-stone-200 hover:bg-stone-100'
+                    }`}
+                  >
+                    {st === 'all' ? 'All Ratings' : `${st}★`}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Reviews Table */}
+            <div className="overflow-x-auto">
+              {allReviews.length === 0 ? (
+                <div className="text-center py-12 text-stone-400 text-xs">
+                  No customer reviews found in database.
+                </div>
+              ) : (
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-stone-50 border-b text-stone-600 uppercase font-bold text-[10px] tracking-wider">
+                    <tr>
+                      <th className="p-4">Commodity / Produce</th>
+                      <th className="p-4">Customer Name &amp; Contact</th>
+                      <th className="p-4">Rating</th>
+                      <th className="p-4">Review Title &amp; Feedback</th>
+                      <th className="p-4">Date</th>
+                      <th className="p-4 text-right">Delete Option</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-100">
+                    {allReviews
+                      .filter((rev) => reviewFilter === 'all' || String(rev.rating) === reviewFilter)
+                      .map((rev) => (
+                        <tr key={rev.id} className="hover:bg-stone-50/70 transition">
+                          <td className="p-4 font-bold text-stone-900 max-w-[200px]">
+                            <div>{rev.product_title || 'Farm Commodity'}</div>
+                            <span className="text-[10px] text-stone-400 font-mono font-normal">
+                              {rev.product_slug}
+                            </span>
+                          </td>
+                          <td className="p-4">
+                            <div className="font-bold text-stone-800">{rev.customer_name}</div>
+                            {rev.customer_phone && (
+                              <div className="text-[11px] font-mono text-stone-500">
+                                +91 {rev.customer_phone}
+                              </div>
+                            )}
+                            <span className="inline-block mt-1 bg-emerald-50 text-emerald-800 border border-emerald-200 text-[9px] px-1.5 py-0.5 rounded font-extrabold uppercase">
+                              Verified Buyer
+                            </span>
+                          </td>
+                          <td className="p-4 whitespace-nowrap">
+                            <div className="flex items-center gap-1 font-bold text-stone-900">
+                              <span className="font-mono text-sm">{rev.rating}.0</span>
+                              <div className="flex">
+                                {[1, 2, 3, 4, 5].map((s) => (
+                                  <Star
+                                    key={s}
+                                    className={`w-3.5 h-3.5 ${
+                                      s <= rev.rating
+                                        ? 'text-amber-400 fill-amber-400'
+                                        : 'text-stone-200'
+                                    }`}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-4 max-w-xs">
+                            {rev.title && (
+                              <div className="font-bold text-stone-900 mb-0.5 line-clamp-1">
+                                {rev.title}
+                              </div>
+                            )}
+                            <p className="text-stone-600 line-clamp-2 leading-relaxed">
+                              {rev.comment}
+                            </p>
+                          </td>
+                          <td className="p-4 whitespace-nowrap text-stone-500">
+                            {new Date(rev.created_at).toLocaleDateString('en-IN', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric'
+                            })}
+                          </td>
+                          <td className="p-4 text-right whitespace-nowrap">
+                            <button
+                              type="button"
+                              disabled={isDeletingReview === rev.id}
+                              onClick={() => handleDeleteReviewAdmin(rev.id)}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs transition disabled:opacity-50"
+                              title="Permanently Delete Review"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                              <span>{isDeletingReview === rev.id ? 'Deleting...' : 'Delete Rating'}</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         )}

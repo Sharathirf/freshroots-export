@@ -74,6 +74,14 @@ async function httpPatch(path: string, body: any) {
   return { status: res.status, ok: res.ok, json };
 }
 
+async function httpDelete(path: string) {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: 'DELETE'
+  });
+  const json = await res.json().catch(() => null);
+  return { status: res.status, ok: res.ok, json };
+}
+
 console.log('======================================================================');
 console.log('🚀 SHARATH INORAHALLI 15-CYCLE END-TO-END AUTOMATION & QA ENGINE');
 console.log('======================================================================\n');
@@ -664,6 +672,90 @@ export async function runAutomationSuite() {
       available_stock: -20
     });
     assert.strictEqual(negStock.status, 400);
+  }, c12);
+
+  let createdReviewId: string;
+
+  await verifyAsync('GET /api/reviews returns review catalog with rating aggregates', async () => {
+    const reviewsRes = await httpGet('/api/reviews');
+    assert.strictEqual(reviewsRes.status, 200);
+    assert.strictEqual(reviewsRes.json?.success, true);
+    assert(reviewsRes.json?.count >= 1);
+    assert(typeof reviewsRes.json?.average_rating === 'number');
+    assert(reviewsRes.json?.rating_breakdown);
+  }, c12);
+
+  await verifyAsync('POST /api/reviews rejects invalid ratings and short comments', async () => {
+    // Rating > 5
+    const badRating = await httpPost('/api/reviews', {
+      product_id: semiCoc.id,
+      customer_name: 'Invalid Rating Tester',
+      rating: 6,
+      comment: 'Valid length comment but invalid stars'
+    });
+    assert.strictEqual(badRating.status, 400);
+
+    // Comment < 5 chars
+    const shortComment = await httpPost('/api/reviews', {
+      product_id: semiCoc.id,
+      customer_name: 'Short Tester',
+      rating: 5,
+      comment: 'Hi'
+    });
+    assert.strictEqual(shortComment.status, 400);
+
+    // Missing reviewer name
+    const missingName = await httpPost('/api/reviews', {
+      product_id: semiCoc.id,
+      rating: 5,
+      comment: 'Great mature coconuts from Mandya farm'
+    });
+    assert.strictEqual(missingName.status, 400);
+  }, c12);
+
+  await verifyAsync('POST /api/reviews successfully submits verified customer review', async () => {
+    const postRes = await httpPost('/api/reviews', {
+      product_id: semiCoc.id,
+      customer_name: 'QA Test Inspector',
+      customer_phone: '9845011223',
+      customer_email: 'qatester@example.com',
+      rating: 5,
+      title: 'Top Grade Produce Verification',
+      comment: 'Exceptional coconut lot, fresh water weight verified and zero spoilage observed.'
+    });
+    assert.strictEqual(postRes.status, 200);
+    assert.strictEqual(postRes.json?.success, true);
+    assert(Boolean(postRes.json?.review?.id));
+    assert.strictEqual(postRes.json?.review?.rating, 5);
+    assert.strictEqual(postRes.json?.review?.product_title, semiCoc.title);
+    createdReviewId = postRes.json.review.id;
+  }, c12);
+
+  await verifyAsync('GET /api/reviews?product_id includes new review and updates rating metrics', async () => {
+    const prodReviews = await httpGet(`/api/reviews?product_id=${semiCoc.id}`);
+    assert.strictEqual(prodReviews.status, 200);
+    assert.strictEqual(prodReviews.json?.success, true);
+    assert(prodReviews.json?.average_rating >= 4.0);
+    assert(prodReviews.json?.rating_breakdown[5] >= 1);
+    const found = prodReviews.json?.reviews?.find((r: any) => r.id === createdReviewId);
+    assert(Boolean(found));
+    assert.strictEqual(found.customer_name, 'QA Test Inspector');
+  }, c12);
+
+  await verifyAsync('DELETE /api/reviews removes review for moderation and records audit log', async () => {
+    const delRes = await httpDelete(`/api/reviews?id=${createdReviewId}`);
+    assert.strictEqual(delRes.status, 200);
+    assert.strictEqual(delRes.json?.success, true);
+    assert.strictEqual(delRes.json?.deleted_id, createdReviewId);
+
+    // Verify removed from product reviews
+    const afterDel = await httpGet(`/api/reviews?product_id=${semiCoc.id}`);
+    const stillPresent = afterDel.json?.reviews?.some((r: any) => r.id === createdReviewId);
+    assert.strictEqual(stillPresent, false);
+
+    // Deleting again returns 404
+    const repeatDel = await httpDelete(`/api/reviews?id=${createdReviewId}`);
+    assert.strictEqual(repeatDel.status, 404);
   }, c12);
 
   cycleResults.push({

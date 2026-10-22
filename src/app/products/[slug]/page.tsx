@@ -7,6 +7,7 @@ import CartDrawer from '@/components/CartDrawer';
 import ProductImageZoom from '@/components/ProductImageZoom';
 import BulkInquiryForm from '@/components/BulkInquiryForm';
 import EnquiryModal from '@/components/EnquiryModal';
+import ProductReviewsSection from '@/components/ProductReviewsSection';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { Product } from '@/types';
@@ -24,7 +25,8 @@ import {
   Package,
   Award,
   AlertCircle,
-  Heart
+  Heart,
+  Star
 } from 'lucide-react';
 
 interface ProductPageProps {
@@ -49,7 +51,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
   const [isEnquiryOpen, setIsEnquiryOpen] = useState(false);
 
   // Active detail tab below the fold
-  const [activeTab, setActiveTab] = useState<'overview' | 'specifications' | 'quality' | 'delivery' | 'faq'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'specifications' | 'quality' | 'delivery' | 'reviews' | 'faq'>('overview');
 
   useEffect(() => {
     async function loadData() {
@@ -477,6 +479,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
               { id: 'specifications', label: 'Specifications', icon: Award },
               { id: 'quality', label: 'Quality & Grading', icon: ShieldCheck },
               { id: 'delivery', label: 'Packaging & Delivery', icon: Package },
+              { id: 'reviews', label: 'Buyer Reviews & Ratings', icon: Star },
               { id: 'faq', label: 'FAQs', icon: HelpCircle }
             ].map((tab) => {
               const Icon = tab.icon;
@@ -628,7 +631,21 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
               </div>
             </div>
           )}
+
+          {/* Tab 5: Reviews & Ratings */}
+          {activeTab === 'reviews' && (
+            <div className="p-6 sm:p-8">
+              <ProductReviewsSection product={product} />
+            </div>
+          )}
         </div>
+
+        {/* STANDALONE REVIEWS SECTION (If not viewing reviews tab) */}
+        {activeTab !== 'reviews' && (
+          <div id="reviews" className="pt-2">
+            <ProductReviewsSection product={product} />
+          </div>
+        )}
 
         {/* RELATED / OTHER COMMODITIES SECTION */}
         {otherProducts.length > 0 && (

@@ -192,3 +192,21 @@ CREATE INDEX IF NOT EXISTS idx_quotes_status ON wholesale_quotations(status);
 CREATE INDEX IF NOT EXISTS idx_inventory_product ON inventory_batches(product_id);
 CREATE INDEX IF NOT EXISTS idx_abandoned_phone ON abandoned_carts(customer_phone);
 CREATE INDEX IF NOT EXISTS idx_abandoned_status ON abandoned_carts(status);
+
+-- 10. Product Ratings & Customer Reviews
+CREATE TABLE IF NOT EXISTS product_reviews (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    product_id UUID REFERENCES products(id) ON DELETE CASCADE,
+    customer_name VARCHAR(120) NOT NULL,
+    customer_phone VARCHAR(20),
+    customer_email VARCHAR(255),
+    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    title VARCHAR(200),
+    comment TEXT NOT NULL,
+    is_verified_buyer BOOLEAN DEFAULT TRUE,
+    is_approved BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_product_reviews_product_id ON product_reviews (product_id);
+CREATE INDEX IF NOT EXISTS idx_product_reviews_created_at ON product_reviews (created_at DESC);

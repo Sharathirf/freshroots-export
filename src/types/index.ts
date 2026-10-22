@@ -146,3 +146,20 @@ export interface CustomerAddress {
   created_at?: string;
   updated_at?: string;
 }
+
+export interface ProductReview {
+  id: string;
+  product_id: string;
+  product_title?: string;
+  product_slug?: string;
+  customer_name: string;
+  customer_phone?: string;
+  customer_email?: string;
+  rating: number;
+  title?: string;
+  comment: string;
+  is_verified_buyer: boolean;
+  is_approved: boolean;
+  created_at: string;
+  updated_at?: string;
+}
