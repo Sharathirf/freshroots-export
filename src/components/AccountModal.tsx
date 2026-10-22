@@ -7,9 +7,11 @@ import { useAuth } from '@/context/AuthContext';
 export default function AccountModal() {
   const {
     customer,
+    addresses,
     isAccountModalOpen,
     setIsAccountModalOpen,
     setIsEditProfileModalOpen,
+    setIsManageAddressesOpen,
     setIsSignInModalOpen,
     signOut
   } = useAuth();
@@ -104,11 +106,24 @@ export default function AccountModal() {
                   {customer?.email || 'Not provided'}
                 </span>
               </div>
-              <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-stone-400 shrink-0 mt-0.5" />
-                <span className={formattedAddress ? 'text-stone-800' : 'text-stone-400 italic'}>
-                  {formattedAddress || 'No address saved'}
-                </span>
+              <div className="flex items-start justify-between gap-2.5">
+                <div className="flex items-start gap-2.5 min-w-0">
+                  <MapPin className="w-4 h-4 text-stone-400 shrink-0 mt-0.5" />
+                  <span className={formattedAddress ? 'text-stone-800' : 'text-stone-400 italic'}>
+                    {formattedAddress || 'No address saved'}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsManageAddressesOpen(true)}
+                  className="text-[11px] text-[#1e824c] hover:underline font-bold shrink-0"
+                >
+                  {addresses.length > 1
+                    ? `Manage (${addresses.length})`
+                    : addresses.length === 1
+                    ? 'Manage (1)'
+                    : '+ Add Address'}
+                </button>
               </div>
             </div>
           </div>

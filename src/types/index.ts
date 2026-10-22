@@ -131,3 +131,18 @@ export interface InventoryBatch {
   damaged_quantity: number;
   cost_per_unit_inr: number;
 }
+
+export interface CustomerAddress {
+  id: string;
+  customer_phone: string;
+  recipient_name?: string;
+  phone?: string;
+  tag: string;
+  street_address: string;
+  city: string;
+  state: string;
+  pincode: string;
+  is_default: boolean;
+  created_at?: string;
+  updated_at?: string;
+}

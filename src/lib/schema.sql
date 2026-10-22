@@ -30,6 +30,23 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- 2b. Customer Saved Addresses Table (Multiple Addresses per User)
+CREATE TABLE IF NOT EXISTS customer_addresses (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    customer_phone VARCHAR(20) NOT NULL,
+    recipient_name VARCHAR(120),
+    phone VARCHAR(20),
+    tag VARCHAR(30) DEFAULT 'Home',
+    street_address TEXT NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    state VARCHAR(100) NOT NULL DEFAULT 'Karnataka',
+    pincode VARCHAR(20) NOT NULL,
+    is_default BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_customer_addresses_phone ON customer_addresses (customer_phone);
+
 -- 3. Business Profiles (For B2B Buyers)
 CREATE TABLE IF NOT EXISTS business_profiles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

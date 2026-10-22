@@ -1,4 +1,5 @@
 import { execSync } from 'child_process';
+import { query } from '../lib/db';
 
 interface IterationReport {
   iteration: number;
@@ -20,6 +21,9 @@ async function runAll15Iterations() {
   for (let i = 1; i <= 15; i++) {
     console.log(`▶ Starting Iteration ${i} / 15...`);
     const iterStart = Date.now();
+
+    // Ensure inventory batches are topped up for stress testing
+    await query('UPDATE inventory_batches SET available_quantity = 500, reserved_quantity = 0 WHERE available_quantity < 50');
 
     try {
       const output = execSync('npx tsx src/tests/automation-engine.ts', {

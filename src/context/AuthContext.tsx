@@ -1,6 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { CustomerAddress } from '@/types';
 
 export interface CustomerUser {
   phone: string;
@@ -16,12 +17,15 @@ export interface CustomerUser {
 interface AuthContextType {
   customer: CustomerUser | null;
   isLoggedIn: boolean;
+  addresses: CustomerAddress[];
   isSignInModalOpen: boolean;
   setIsSignInModalOpen: (open: boolean) => void;
   isAccountModalOpen: boolean;
   setIsAccountModalOpen: (open: boolean) => void;
   isEditProfileModalOpen: boolean;
   setIsEditProfileModalOpen: (open: boolean) => void;
+  isManageAddressesOpen: boolean;
+  setIsManageAddressesOpen: (open: boolean) => void;
   signIn: (
     phone: string,
     name?: string,
@@ -39,6 +43,20 @@ interface AuthContextType {
     state?: string;
     pincode?: string;
   }) => Promise<void>;
+  loadAddresses: () => Promise<void>;
+  saveAddress: (addr: {
+    id?: string;
+    recipient_name?: string;
+    phone?: string;
+    tag?: string;
+    street_address: string;
+    city: string;
+    state?: string;
+    pincode: string;
+    is_default?: boolean;
+  }) => Promise<CustomerAddress | null>;
+  deleteAddress: (id: string) => Promise<boolean>;
+  setDefaultAddress: (id: string) => Promise<void>;
   signOut: () => void;
 }
 
@@ -46,9 +64,24 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [customer, setCustomer] = useState<CustomerUser | null>(null);
+  const [addresses, setAddresses] = useState<CustomerAddress[]>([]);
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
+  const [isManageAddressesOpen, setIsManageAddressesOpen] = useState(false);
+
+  const loadAddresses = useCallback(async () => {
+    if (!customer?.phone) return;
+    try {
+      const res = await fetch(`/api/customer/addresses?phone=${encodeURIComponent(customer.phone)}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.addresses)) {
+        setAddresses(data.addresses);
+      }
+    } catch (e) {
+      console.warn('Failed to load customer addresses:', e);
+    }
+  }, [customer?.phone]);
 
   useEffect(() => {
     try {
@@ -56,7 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (saved) {
         const parsed = JSON.parse(saved);
         setCustomer(parsed);
-        // Refresh profile from server
+        // Refresh profile and addresses from server
         if (parsed.phone) {
           fetch(`/api/customer/profile?phone=${encodeURIComponent(parsed.phone)}`)
             .then((r) => r.json())
@@ -76,12 +109,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               }
             })
             .catch((e) => console.warn('Could not refresh profile from server:', e));
+
+          fetch(`/api/customer/addresses?phone=${encodeURIComponent(parsed.phone)}`)
+            .then((r) => r.json())
+            .then((data) => {
+              if (data.success && Array.isArray(data.addresses)) {
+                setAddresses(data.addresses);
+              }
+            })
+            .catch((e) => console.warn('Could not load addresses from server:', e));
         }
       }
     } catch (e) {
       console.error('Failed to load customer session:', e);
     }
   }, []);
+
+  // When customer changes, load addresses
+  useEffect(() => {
+    if (customer?.phone) {
+      loadAddresses();
+    } else {
+      setAddresses([]);
+    }
+  }, [customer?.phone, loadAddresses]);
 
   const signIn = (
     phone: string,
@@ -156,8 +207,78 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const saveAddress = async (addr: {
+    id?: string;
+    recipient_name?: string;
+    phone?: string;
+    tag?: string;
+    street_address: string;
+    city: string;
+    state?: string;
+    pincode: string;
+    is_default?: boolean;
+  }): Promise<CustomerAddress | null> => {
+    if (!customer?.phone) return null;
+    try {
+      const res = await fetch('/api/customer/addresses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...addr,
+          customer_phone: customer.phone
+        })
+      });
+      const data = await res.json();
+      if (data.success && data.address) {
+        await loadAddresses();
+        // If saved address is default, update local customer address too
+        if (data.address.is_default) {
+          updateProfile({
+            address: data.address.street_address,
+            city: data.address.city,
+            state: data.address.state,
+            pincode: data.address.pincode
+          });
+        }
+        return data.address;
+      }
+      return null;
+    } catch (e) {
+      console.error('Error saving address:', e);
+      return null;
+    }
+  };
+
+  const deleteAddress = async (id: string): Promise<boolean> => {
+    if (!customer?.phone) return false;
+    try {
+      const res = await fetch(`/api/customer/addresses?id=${encodeURIComponent(id)}&phone=${encodeURIComponent(customer.phone)}`, {
+        method: 'DELETE'
+      });
+      const data = await res.json();
+      if (data.success) {
+        await loadAddresses();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.error('Error deleting address:', e);
+      return false;
+    }
+  };
+
+  const setDefaultAddress = async (id: string): Promise<void> => {
+    const target = addresses.find((a) => a.id === id);
+    if (!target) return;
+    await saveAddress({
+      ...target,
+      is_default: true
+    });
+  };
+
   const signOut = () => {
     setCustomer(null);
+    setAddresses([]);
     try {
       localStorage.removeItem('tiptur_customer_session');
     } catch (e) {
@@ -165,6 +286,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setIsAccountModalOpen(false);
     setIsEditProfileModalOpen(false);
+    setIsManageAddressesOpen(false);
   };
 
   return (
@@ -172,14 +294,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         customer,
         isLoggedIn: Boolean(customer),
+        addresses,
         isSignInModalOpen,
         setIsSignInModalOpen,
         isAccountModalOpen,
         setIsAccountModalOpen,
         isEditProfileModalOpen,
         setIsEditProfileModalOpen,
+        isManageAddressesOpen,
+        setIsManageAddressesOpen,
         signIn,
         updateProfile,
+        loadAddresses,
+        saveAddress,
+        deleteAddress,
+        setDefaultAddress,
         signOut
       }}
     >

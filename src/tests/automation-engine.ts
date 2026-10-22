@@ -771,6 +771,87 @@ export async function runAutomationSuite() {
     assert.strictEqual(res.json?.customer?.pincode, '571423');
   }, c14);
 
+  const testAddrPhone = '9845066666';
+  let addr1Id: string;
+  let addr2Id: string;
+
+  await verifyAsync('Customer can save multiple delivery addresses with distinct tags', async () => {
+    // 1. Save Home Address
+    const res1 = await httpPost('/api/customer/addresses', {
+      customer_phone: testAddrPhone,
+      recipient_name: 'Sharath Farm Home',
+      phone: testAddrPhone,
+      tag: 'Home',
+      street_address: 'Near APMC Mandi, Kikkeri Village',
+      city: 'K.R. Pete, Mandya',
+      state: 'Karnataka',
+      pincode: '571423',
+      is_default: true
+    });
+    assert.strictEqual(res1.status, 200);
+    assert.strictEqual(res1.json?.success, true);
+    assert.strictEqual(res1.json?.address?.tag, 'Home');
+    assert.strictEqual(res1.json?.address?.is_default, true);
+    addr1Id = res1.json?.address?.id;
+    assert(Boolean(addr1Id));
+
+    // 2. Save Wholesale Warehouse Address
+    const res2 = await httpPost('/api/customer/addresses', {
+      customer_phone: testAddrPhone,
+      recipient_name: 'Sharath Wholesale Depot',
+      phone: testAddrPhone,
+      tag: 'Warehouse',
+      street_address: 'Yeshwanthpur Industrial Suburb, Plot 14B',
+      city: 'Bengaluru',
+      state: 'Karnataka',
+      pincode: '560022',
+      is_default: false
+    });
+    assert.strictEqual(res2.status, 200);
+    assert.strictEqual(res2.json?.success, true);
+    assert.strictEqual(res2.json?.address?.tag, 'Warehouse');
+    assert.strictEqual(res2.json?.address?.is_default, false);
+    addr2Id = res2.json?.address?.id;
+
+    // 3. Save Temple Trust Address
+    const res3 = await httpPost('/api/customer/addresses', {
+      customer_phone: testAddrPhone,
+      recipient_name: 'Sri Ganapathi Temple Trust',
+      phone: testAddrPhone,
+      tag: 'Temple',
+      street_address: 'Temple Road, Chamundi Hill Foot',
+      city: 'Mysuru',
+      state: 'Karnataka',
+      pincode: '570010',
+      is_default: false
+    });
+    assert.strictEqual(res3.status, 200);
+    assert.strictEqual(res3.json?.success, true);
+    assert.strictEqual(res3.json?.address?.tag, 'Temple');
+
+    // 4. Retrieve all multiple addresses
+    const getList = await httpGet(`/api/customer/addresses?phone=${testAddrPhone}`);
+    assert.strictEqual(getList.status, 200);
+    assert.strictEqual(getList.json?.success, true);
+    assert(getList.json?.count >= 3);
+    const tags = getList.json?.addresses?.map((a: any) => a.tag);
+    assert(tags.includes('Home'));
+    assert(tags.includes('Warehouse'));
+    assert(tags.includes('Temple'));
+
+    // 5. Delete an address
+    const delRes = await fetch(`${BASE_URL}/api/customer/addresses?id=${addr2Id}&phone=${testAddrPhone}`, {
+      method: 'DELETE'
+    });
+    const delJson = await delRes.json();
+    assert.strictEqual(delRes.status, 200);
+    assert.strictEqual(delJson.success, true);
+
+    // Verify deleted
+    const afterDel = await httpGet(`/api/customer/addresses?phone=${testAddrPhone}`);
+    assert.strictEqual(afterDel.json?.addresses?.some((a: any) => a.id === addr2Id), false);
+  }, c14);
+
   let abandonedCartId: string;
   const testAbandonPhone = '9845077777';
 

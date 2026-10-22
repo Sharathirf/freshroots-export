@@ -4,11 +4,25 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
-import { X, Trash2, Plus, Minus, ShieldCheck, Clock, CheckCircle2, Truck, CreditCard, Smartphone, ArrowRight, Printer } from 'lucide-react';
+import {
+  X,
+  Trash2,
+  Plus,
+  Minus,
+  ShieldCheck,
+  Clock,
+  CheckCircle2,
+  Truck,
+  CreditCard,
+  Smartphone,
+  ArrowRight,
+  Printer,
+  MapPin
+} from 'lucide-react';
 import { Order } from '@/types';
 
 export default function CartDrawer() {
-  const { customer } = useAuth();
+  const { customer, addresses, saveAddress } = useAuth();
   const {
     items,
     removeFromCart,
@@ -28,6 +42,10 @@ export default function CartDrawer() {
   const [customerEmail, setCustomerEmail] = useState(customer?.email || '');
   const [shippingAddress, setShippingAddress] = useState('');
   const [destPincode, setDestPincode] = useState(pincode);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const [isEnteringCustomAddress, setIsEnteringCustomAddress] = useState(false);
+  const [saveNewAddress, setSaveNewAddress] = useState(true);
+  const [newAddressTag, setNewAddressTag] = useState('Home');
 
   useEffect(() => {
     if (customer) {
@@ -36,6 +54,18 @@ export default function CartDrawer() {
       if (customer.email) setCustomerEmail(customer.email);
     }
   }, [customer]);
+
+  // Auto-select default or first address if available
+  useEffect(() => {
+    if (addresses && addresses.length > 0 && !selectedAddressId && !isEnteringCustomAddress) {
+      const def = addresses.find((a) => a.is_default) || addresses[0];
+      setSelectedAddressId(def.id);
+      setShippingAddress(def.street_address);
+      setDestPincode(def.pincode);
+      if (def.recipient_name) setCustomerName(def.recipient_name);
+      if (def.phone) setCustomerPhone(def.phone);
+    }
+  }, [addresses, selectedAddressId, isEnteringCustomAddress]);
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card' | 'cod'>('upi');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderError, setOrderError] = useState<string | null>(null);
@@ -94,6 +124,19 @@ export default function CartDrawer() {
         setConfirmedOrder(data.order);
         setStep('success');
         clearCart();
+
+        // Save newly entered address to customer's multiple addresses if opted in
+        if (saveNewAddress && customerPhone && (isEnteringCustomAddress || addresses.length === 0)) {
+          saveAddress({
+            recipient_name: customerName,
+            phone: customerPhone,
+            tag: newAddressTag || 'Home',
+            street_address: shippingAddress,
+            city: 'Mandya',
+            pincode: destPincode,
+            is_default: addresses.length === 0
+          }).catch(console.warn);
+        }
       } else {
         setOrderError(data.error || 'Failed to process order. Please try again.');
       }
@@ -287,17 +330,118 @@ export default function CartDrawer() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-stone-700 mb-1">Delivery Address & Landmark *</label>
-                  <textarea
-                    required
-                    rows={2}
-                    value={shippingAddress}
-                    onChange={(e) => setShippingAddress(e.target.value)}
-                    placeholder="House/Apartment number, street, cross, near landmark"
-                    className="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none"
-                  />
-                </div>
+                {/* Saved Multiple Addresses Selector */}
+                {addresses && addresses.length > 0 && (
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="text-xs font-bold text-stone-700 flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-emerald-700" />
+                        <span>Select Delivery Address</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const nextState = !isEnteringCustomAddress;
+                          setIsEnteringCustomAddress(nextState);
+                          if (nextState) {
+                            setSelectedAddressId(null);
+                            setShippingAddress('');
+                          } else {
+                            const def = addresses.find((a) => a.is_default) || addresses[0];
+                            setSelectedAddressId(def.id);
+                            setShippingAddress(def.street_address);
+                            setDestPincode(def.pincode);
+                          }
+                        }}
+                        className="text-[11px] text-emerald-800 font-bold hover:underline"
+                      >
+                        {isEnteringCustomAddress ? '← Use Saved Address' : '+ New Address'}
+                      </button>
+                    </div>
+
+                    {!isEnteringCustomAddress && (
+                      <div className="space-y-2 mb-3">
+                        {addresses.map((addr) => (
+                          <div
+                            key={addr.id}
+                            onClick={() => {
+                              setSelectedAddressId(addr.id);
+                              setShippingAddress(addr.street_address);
+                              setDestPincode(addr.pincode);
+                              if (addr.recipient_name) setCustomerName(addr.recipient_name);
+                              if (addr.phone) setCustomerPhone(addr.phone);
+                            }}
+                            className={`p-2.5 rounded-xl border text-xs cursor-pointer transition ${
+                              selectedAddressId === addr.id
+                                ? 'border-emerald-600 bg-emerald-50/70 shadow-xs ring-1 ring-emerald-600'
+                                : 'border-stone-200 bg-white hover:bg-stone-50'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-1.5 font-bold text-stone-900">
+                                <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-stone-100 border border-stone-200 text-stone-700">
+                                  {addr.tag}
+                                </span>
+                                <span>{addr.recipient_name || customerName}</span>
+                                {addr.is_default && (
+                                  <span className="text-[9px] text-emerald-700 font-extrabold uppercase">
+                                    (Default)
+                                  </span>
+                                )}
+                              </div>
+                              <span className="font-mono text-stone-500 font-semibold">{addr.pincode}</span>
+                            </div>
+                            <div className="text-[11px] text-stone-600 mt-1 line-clamp-1">
+                              {addr.street_address}, {addr.city}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Custom Address Input (when no saved addresses or user chose + New Address) */}
+                {(isEnteringCustomAddress || !addresses || addresses.length === 0) && (
+                  <div>
+                    <label className="block text-xs font-bold text-stone-700 mb-1">
+                      Delivery Address &amp; Landmark *
+                    </label>
+                    <textarea
+                      required
+                      rows={2}
+                      value={shippingAddress}
+                      onChange={(e) => setShippingAddress(e.target.value)}
+                      placeholder="House/Apartment number, street, cross, near landmark"
+                      className="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+                    />
+
+                    {customerPhone && (
+                      <div className="mt-2 flex items-center justify-between text-xs text-stone-600 bg-stone-50 p-2 rounded-lg border border-stone-200">
+                        <label className="flex items-center gap-1.5 cursor-pointer font-medium">
+                          <input
+                            type="checkbox"
+                            checked={saveNewAddress}
+                            onChange={(e) => setSaveNewAddress(e.target.checked)}
+                            className="rounded text-emerald-700 focus:ring-emerald-700"
+                          />
+                          <span>Save this address to my account</span>
+                        </label>
+                        <select
+                          value={newAddressTag}
+                          onChange={(e) => setNewAddressTag(e.target.value)}
+                          className="text-[11px] bg-white border border-stone-300 rounded px-1.5 py-0.5 font-bold"
+                        >
+                          <option value="Home">Home</option>
+                          <option value="Warehouse">Warehouse</option>
+                          <option value="Oil Mill">Oil Mill</option>
+                          <option value="Temple">Temple</option>
+                          <option value="Office">Office</option>
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-xs font-bold text-stone-700 mb-1.5">Select Payment Mode</label>
