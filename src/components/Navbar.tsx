@@ -40,6 +40,8 @@ export default function Navbar({
     setIsEditProfileModalOpen,
     setIsOrderHistoryOpen,
     setIsHelpOpen,
+    lang,
+    setLang,
     signOut
   } = useAuth();
   const { wishlistCount, setIsWatchlistOpen } = useWishlist();
@@ -128,7 +130,7 @@ export default function Navbar({
               className="hover:text-white flex items-center gap-1.5 transition text-lime-200 hover:text-white font-semibold"
             >
               <Truck className="w-3.5 h-3.5 text-lime-300" />
-              <span>Track Order</span>
+              <span>{lang === 'kn' ? 'ಟ್ರ್ಯಾಕ್ ಮಾಡಿ' : 'Track Order'}</span>
             </Link>
             <span className="text-emerald-300/60">•</span>
             <button
@@ -137,7 +139,7 @@ export default function Navbar({
               className="hover:text-white flex items-center gap-1.5 transition text-lime-200 hover:text-white font-semibold"
             >
               <RotateCcw className="w-3.5 h-3.5 text-lime-300" />
-              <span>Orders &amp; Reorder</span>
+              <span>{lang === 'kn' ? 'ಮರು ಆರ್ಡರ್' : 'Orders & Reorder'}</span>
             </button>
             <span className="text-emerald-300/60">•</span>
             <button
@@ -146,7 +148,7 @@ export default function Navbar({
               className="hover:text-white flex items-center gap-1.5 transition text-lime-200 hover:text-white font-semibold"
             >
               <HelpCircle className="w-3.5 h-3.5 text-lime-300" />
-              <span>Help</span>
+              <span>{lang === 'kn' ? 'ಸಹಾಯ' : 'Help'}</span>
             </button>
             <span className="hidden md:inline text-emerald-300/60">•</span>
             <a
@@ -255,6 +257,18 @@ export default function Navbar({
 
         {/* Actions Strip */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Language Switcher Pill (Bilingual Kannada / English) */}
+          <button
+            type="button"
+            onClick={() => setLang(lang === 'kn' ? 'en' : 'kn')}
+            className="flex items-center gap-1 text-xs font-black bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-300 px-2.5 py-2 rounded-xl transition shadow-xs"
+            title={lang === 'kn' ? 'Switch to English' : 'ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಿ'}
+            aria-label="Toggle Language"
+          >
+            <span className={lang === 'kn' ? 'text-emerald-700 font-extrabold' : 'text-stone-400 font-normal'}>ಕನ್ನಡ</span>
+            <span className="text-stone-300 font-normal">/</span>
+            <span className={lang === 'en' ? 'text-emerald-700 font-extrabold' : 'text-stone-400 font-normal'}>EN</span>
+          </button>
           {/* Enquire Farm Button */}
           {onOpenEnquiry && (
             <button

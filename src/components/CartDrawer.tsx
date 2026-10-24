@@ -131,6 +131,25 @@ export default function CartDrawer() {
         setStep('success');
         clearCart();
 
+        // Persist latest order in localStorage for instant 1-tap tracking on Homepage
+        try {
+          const latestOrderInfo = {
+            order_number: data.order.order_number,
+            date: data.order.created_at || new Date().toISOString(),
+            total: data.order.grand_total_inr || total,
+            status: data.order.status || 'paid',
+            items_count: items.length,
+            first_item_title: items[0]?.title || 'Farm Produce',
+            payment_method: paymentMethod,
+            customer_phone: customerPhone,
+            tracking_reference: data.order.tracking_reference || ''
+          };
+          localStorage.setItem('agri_latest_order', JSON.stringify(latestOrderInfo));
+          window.dispatchEvent(new Event('agri_order_placed'));
+        } catch (e) {
+          console.warn('Failed to save latest order to localStorage', e);
+        }
+
         // Save newly entered address to customer's multiple addresses if opted in
         if (saveNewAddress && customerPhone && (isEnteringCustomAddress || addresses.length === 0)) {
           saveAddress({

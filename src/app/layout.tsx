@@ -13,6 +13,7 @@ import ManageAddressesModal from '@/components/ManageAddressesModal';
 import OrderHistoryModal from '@/components/OrderHistoryModal';
 import HelpModal from '@/components/HelpModal';
 import MobileBottomNav from '@/components/MobileBottomNav';
+import VoiceOrderFloatingBtn from '@/components/VoiceOrderFloatingBtn';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -78,6 +79,7 @@ export default function RootLayout({
               <OrderHistoryModal />
               <HelpModal />
               <MobileBottomNav />
+              <VoiceOrderFloatingBtn />
             </CartProvider>
           </WishlistProvider>
         </AuthProvider>

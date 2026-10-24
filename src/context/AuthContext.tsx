@@ -30,6 +30,8 @@ interface AuthContextType {
   setIsOrderHistoryOpen: (open: boolean) => void;
   isHelpOpen: boolean;
   setIsHelpOpen: (open: boolean) => void;
+  lang: 'en' | 'kn';
+  setLang: (lang: 'en' | 'kn') => void;
   signIn: (
     phone: string,
     name?: string,
@@ -75,6 +77,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isManageAddressesOpen, setIsManageAddressesOpen] = useState(false);
   const [isOrderHistoryOpen, setIsOrderHistoryOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [lang, setLangState] = useState<'en' | 'kn'>('en');
+
+  useEffect(() => {
+    try {
+      const storedLang = localStorage.getItem('agri_lang');
+      if (storedLang === 'en' || storedLang === 'kn') {
+        setLangState(storedLang);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const setLang = (newLang: 'en' | 'kn') => {
+    setLangState(newLang);
+    try {
+      localStorage.setItem('agri_lang', newLang);
+      window.dispatchEvent(new Event('agri_lang_changed'));
+    } catch {
+      // ignore
+    }
+  };
 
   const loadAddresses = useCallback(async () => {
     if (!customer?.phone) return;
@@ -313,6 +337,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsOrderHistoryOpen,
         isHelpOpen,
         setIsHelpOpen,
+        lang,
+        setLang,
         signIn,
         updateProfile,
         loadAddresses,

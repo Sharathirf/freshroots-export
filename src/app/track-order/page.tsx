@@ -65,6 +65,20 @@ function TrackOrderContent() {
     if (initialQuery) {
       setQueryInput(initialQuery);
       fetchTracking(initialQuery);
+    } else {
+      // Auto-load latest placed order without forcing user to type!
+      try {
+        const stored = localStorage.getItem('agri_latest_order');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed.order_number) {
+            setQueryInput(parsed.order_number);
+            fetchTracking(parsed.order_number);
+          }
+        }
+      } catch (e) {
+        console.warn('Auto-track lookup error:', e);
+      }
     }
   }, [initialQuery]);
 

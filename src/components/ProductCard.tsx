@@ -4,9 +4,63 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
 import { ShoppingBag, Star, Building2, Heart } from 'lucide-react';
 import { useWishlist } from '@/context/WishlistContext';
 import { getProductVariants, getDefaultVariant, ProductVariant } from '@/lib/variants';
+
+const commodityMetadata: Record<string, { emoji: string; titleKn: string; subtitleKn: string }> = {
+  'COC-SEMI-25P-15K': {
+    emoji: '🥥',
+    titleKn: 'ಮಟ್ಟೆ ಸುಲಿದ ತೆಂಗಿನಕಾಯಿ (25 ಕಾಯಿ ಬ್ಯಾಗ್)',
+    subtitleKn: '25 ಕಾಯಿಗಳ ಬ್ಯಾಗ್ (~15 ಕೆ.ಜಿ) • ಉಚಿತ ಡೆಲಿವರಿ'
+  },
+  'COP-BAL-BOX-15K': {
+    emoji: '🥥',
+    titleKn: 'ತಿಪಟೂರು ಸ್ಪೆಷಲ್ ಉಂಡೆ ಕೊಬ್ಬರಿ',
+    subtitleKn: '15kg, 25kg, 30kg ಬಾಕ್ಸ್‌ಗಳು • ಉಚಿತ ಡೆಲಿವರಿ'
+  },
+  'NUR-COC-PLT-01Y': {
+    emoji: '🌴',
+    titleKn: 'ಕಿಕ್ಕೇರಿ ತಳಿಯ ತೆಂಗಿನ ಸಸಿಗಳು (1 ವರ್ಷ)',
+    subtitleKn: '1 ವರ್ಷದ ಸಸಿ • 2 ಅಡಿ ಎತ್ತರ • ಕನಿಷ್ಠ ಮಿತಿ ಇಲ್ಲ'
+  },
+  'OIL-GND-WOD-01L': {
+    emoji: '🥜',
+    titleKn: 'ಮರದ ಗಾಣದ ಶುದ್ಧ ಕಡಲೆಕಾಯಿ ಎಣ್ಣೆ',
+    subtitleKn: '1 ಲೀಟರ್ ಬಾಟಲಿ • ಕೋಲ್ಡ್-ಪ್ರೆಸ್ಡ್'
+  },
+  'MIL-RAG-ORG-05K': {
+    emoji: '🌾',
+    titleKn: 'ಮಂಡ್ಯದ ಪಾಲಿಶ್ ಮಾಡದ ನಾಟಿ ರಾಗಿ',
+    subtitleKn: '5kg, 10kg, 25kg ಪ್ಯಾಕ್ • ಉಚಿತ ಡೆಲಿವರಿ'
+  },
+  'DAI-GHE-BIL-01L': {
+    emoji: '🧈',
+    titleKn: 'ಶುದ್ಧ ಹಳ್ಳಿಯ ಹಸುವಿನ ತುಪ್ಪ (ಬಿಲೋನಾ)',
+    subtitleKn: '500ಮಿಲಿ @ ₹520 • 1ಲೀ @ ₹960'
+  },
+  'COC-TND-BLK-LOT': {
+    emoji: '🥥',
+    titleKn: 'ಮಂಡ್ಯದ ಸಿಹಿ ತಾಜಾ ಎಳನೀರು',
+    subtitleKn: 'ಪ್ರತಿ ಕಾಯಿಗೆ ₹95 • ಕನಿಷ್ಠ ಮಿತಿ ಇಲ್ಲ'
+  },
+  'SPI-GIN-BLK-50K': {
+    emoji: '🫚',
+    titleKn: 'ತೋಟದ ತಾಜಾ ಹಸಿ ಶುಂಠಿ (50 ಕೆ.ಜಿ ಬ್ಯಾಗ್)',
+    subtitleKn: '50 ಕೆ.ಜಿ ಗೋಣಿಚೀಲ • ನೇರ ಫಾರ್ಮ್ ರವಾನೆ'
+  },
+  'COI-SHL-BLK-01T': {
+    emoji: '🥥',
+    titleKn: 'ಒಣಗಿದ ನೈಸರ್ಗಿಕ ತೆಂಗಿನ ಚಿಪ್ಪು (1 ಟನ್)',
+    subtitleKn: 'ಇಂಡಸ್ಟ್ರಿಯಲ್ ಗ್ರೇಡ್ • ಲಾರಿ ಲೋಡ್'
+  },
+  'NUR-ARE-PLT-01Y': {
+    emoji: '🪴',
+    titleKn: 'ದಕ್ಷಿಣ ಕನ್ನಡ ತಳಿಯ ಅಡಿಕೆ ಸಸಿಗಳು',
+    subtitleKn: '1 ರಿಂದ 1.5 ಅಡಿ ಸಸಿ • ಕನಿಷ್ಠ ಮಿತಿ ಇಲ್ಲ'
+  }
+};
 
 interface ProductCardProps {
   product: Product;
@@ -15,12 +69,16 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, onSelectForRFQ }: ProductCardProps) {
   const { addToCart } = useCart();
+  const { lang } = useAuth();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const isWishlisted = isInWishlist(product.id);
   const variants = getProductVariants(product.sku);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     getDefaultVariant(product.sku)
   );
+
+  const meta = commodityMetadata[product.sku];
+  const displayEmoji = meta?.emoji || '🌿';
 
   const basePrice = Number(product.retail_price_inr);
   const activePrice = selectedVariant ? selectedVariant.price : basePrice;
@@ -114,6 +172,11 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
             />
           </button>
 
+          {/* Visual Produce Emoji for illiterate / rapid visual recognition */}
+          <div className="absolute bottom-2.5 left-2.5 text-lg sm:text-xl bg-white/95 px-2 py-0.5 rounded-xl shadow-xs border border-stone-200 pointer-events-none">
+            {displayEmoji}
+          </div>
+
           {/* Origin verification tag */}
           <div className="absolute bottom-2.5 right-2.5 bg-emerald-950/80 backdrop-blur-sm text-emerald-200 text-[10px] font-medium px-2 py-0.5 rounded shadow-sm">
             ✓ Direct APMC
@@ -127,13 +190,15 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
             <span className="text-[#3b6d11] font-semibold uppercase tracking-wider text-[10px]">
               {product.category.replace(/_/g, ' ')}
             </span>
-            <span className="text-stone-400">{unitSubtitle}</span>
+            <span className="text-stone-400">
+              {lang === 'kn' && meta?.subtitleKn ? meta.subtitleKn : unitSubtitle}
+            </span>
           </div>
 
           {/* Product Title */}
           <Link href={`/products/${product.slug}`}>
             <h3 className="font-bold text-stone-900 text-sm sm:text-base leading-snug group-hover:text-[#3b6d11] transition line-clamp-2 min-h-[2.6rem]">
-              {product.title}
+              {lang === 'kn' && meta?.titleKn ? meta.titleKn : product.title}
             </h3>
           </Link>
 
@@ -240,7 +305,11 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
           className="w-full bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-[0.98] text-white font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 group/btn"
         >
           <ShoppingBag className="w-4 h-4" />
-          <span>Add {selectedVariant ? selectedVariant.packSize : 'to Cart (Free Delivery)'}</span>
+          <span>
+            {lang === 'kn'
+              ? 'ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಿ (ಉಚಿತ ಡೆಲಿವರಿ)'
+              : `Add ${selectedVariant ? selectedVariant.packSize : 'to Cart (Free Delivery)'}`}
+          </span>
         </button>
 
         <button
@@ -248,7 +317,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
           className="w-full bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-semibold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5"
         >
           <Building2 className="w-3.5 h-3.5 text-amber-700" />
-          <span>Wholesale / Bulk Quote</span>
+          <span>{lang === 'kn' ? 'ಸಗಟು / ಲಾರಿ ಲೋಡ್ ವಿಚಾರಣೆ' : 'Wholesale / Bulk Quote'}</span>
         </button>
       </div>
     </div>
