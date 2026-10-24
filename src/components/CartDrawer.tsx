@@ -131,8 +131,33 @@ export default function CartDrawer() {
         setStep('success');
         clearCart();
 
-        // Persist latest order in localStorage for instant 1-tap tracking on Homepage
+        // Persist latest order & recent orders in localStorage for instant 1-tap tracking on Homepage
         try {
+          const resolveImg = (sku?: string) => {
+            if (!sku) return 'https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&w=400&q=80';
+            if (sku.includes('ARE')) return 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=400&q=80';
+            if (sku.includes('COC-SEMI') || sku.includes('COC-MAT')) return 'https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&w=400&q=80';
+            if (sku.includes('COP') || sku.includes('BAL')) return '/products/tiptur-ball-copra.jpg';
+            if (sku.includes('NUR-COC')) return '/products/coconut-plants-saplings.jpg';
+            if (sku.includes('OIL') || sku.includes('GNT')) return 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=400&q=80';
+            if (sku.includes('MIL') || sku.includes('RAG')) return 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=400&q=80';
+            if (sku.includes('GHE') || sku.includes('COW') || sku.includes('DAI')) return 'https://images.unsplash.com/photo-1631451095765-2c91616fc9e6?auto=format&fit=crop&w=400&q=80';
+            if (sku.includes('TND')) return 'https://images.unsplash.com/photo-1525385133512-2f3bdd039054?auto=format&fit=crop&w=400&q=80';
+            if (sku.includes('GIN')) return 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=400&q=80';
+            if (sku.includes('SHL')) return '/products/coconut-shells-pile.jpg';
+            return 'https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&w=400&q=80';
+          };
+
+          const orderItemsList = items.map((it) => ({
+            product_id: it.product_id,
+            sku: it.sku,
+            title: it.title,
+            unit_of_measure: it.unit_of_measure,
+            quantity: it.quantity,
+            unit_price_inr: it.unit_price_inr,
+            image_url: resolveImg(it.sku)
+          }));
+
           const latestOrderInfo = {
             order_number: data.order.order_number,
             date: data.order.created_at || new Date().toISOString(),
@@ -140,11 +165,23 @@ export default function CartDrawer() {
             status: data.order.status || 'paid',
             items_count: items.length,
             first_item_title: items[0]?.title || 'Farm Produce',
+            image_url: resolveImg(items[0]?.sku),
+            items: orderItemsList,
             payment_method: paymentMethod,
             customer_phone: customerPhone,
             tracking_reference: data.order.tracking_reference || ''
           };
+
           localStorage.setItem('agri_latest_order', JSON.stringify(latestOrderInfo));
+
+          const recentRaw = localStorage.getItem('agri_recent_orders');
+          const existingRecent = recentRaw ? JSON.parse(recentRaw) : [];
+          const updatedRecent = [
+            latestOrderInfo,
+            ...existingRecent.filter((o: any) => o.order_number !== latestOrderInfo.order_number)
+          ].slice(0, 10);
+          localStorage.setItem('agri_recent_orders', JSON.stringify(updatedRecent));
+
           window.dispatchEvent(new Event('agri_order_placed'));
         } catch (e) {
           console.warn('Failed to save latest order to localStorage', e);

@@ -81,10 +81,7 @@ export default function HomePage() {
       <CartDrawer />
 
       <main className="flex-1">
-        {/* 1. Persistent Active Order Banner (Appears immediately after placing order - No typing required!) */}
-        <ActiveOrderBanner />
-
-        {/* 2. Fast Utility Hero Banner with 4 Direct Action Hubs */}
+        {/* 1. Fast Utility Hero Banner with 4 Direct Action Hubs */}
         <section className="bg-gradient-to-b from-stone-100/90 to-stone-50 border-b border-stone-200/80 pt-6 pb-8 sm:pt-10 sm:pb-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -194,6 +191,9 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* 2. BigHaat-Style Active Order Toast Strip & Recently Ordered Shelf */}
+        <ActiveOrderBanner />
 
         {/* 3. Clean Catalog Section ("Select produce & order") */}
         <section id="catalog" className="pt-6 sm:pt-8 pb-14 sm:pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
