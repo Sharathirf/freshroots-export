@@ -198,13 +198,13 @@ async function runMobileTestSuite() {
 
   const mobileCustomerPhone = '9845088888';
 
-  record('Ghee 500ml Mobile', 'Ghee SKU includes specifications for 500 ml @ ₹520 and 1 Litre @ ₹960', () => {
+  record('Ghee 500ml Mobile', 'Ghee SKU includes specifications for 500 ml @ ₹530 and 1 Litre @ ₹980', () => {
     assert(gheeProd);
-    assert(gheeProd.specifications?.available_sizes?.includes('500 ml (₹520)'));
-    assert(gheeProd.specifications?.available_sizes?.includes('1 Litre (₹960)'));
+    assert(gheeProd.specifications?.available_sizes?.includes('500 ml (₹530)'));
+    assert(gheeProd.specifications?.available_sizes?.includes('1 Litre (₹980)'));
   });
 
-  await recordAsync('Ghee 500ml Mobile', 'Mobile order placing 1 unit of 500 ml variant is booked at ₹520 with 12% GST', async () => {
+  await recordAsync('Ghee 500ml Mobile', 'Mobile order placing 1 unit of 500 ml variant is booked at ₹530 with 12% GST', async () => {
     const res = await fetch(`${BASE_URL}/api/orders`, {
       method: 'POST',
       headers: {
@@ -220,7 +220,7 @@ async function runMobileTestSuite() {
           {
             product_id: gheeProd.id,
             quantity: 1,
-            unit_price_inr: 520,
+            unit_price_inr: 530,
             unit_of_measure: '500 ml Glass Jar'
           }
         ]
@@ -229,11 +229,11 @@ async function runMobileTestSuite() {
     const data = await res.json();
     assert.strictEqual(res.status, 200);
     assert.strictEqual(data.success, true);
-    assert.strictEqual(Number(data.order.subtotal_inr), 520);
-    assert.strictEqual(Number(data.order.tax_inr), 62.40);
+    assert.strictEqual(Number(data.order.subtotal_inr), 530);
+    assert.strictEqual(Number(data.order.tax_inr), 63.60);
     assert.strictEqual(Number(data.order.delivery_fee_inr), 0, '100% Free delivery applies on mobile order');
     const parsedItems = typeof data.order.items === 'string' ? JSON.parse(data.order.items) : data.order.items;
-    assert.strictEqual(parsedItems[0].unit_price_inr, 520);
+    assert.strictEqual(parsedItems[0].unit_price_inr, 530);
     assert.strictEqual(parsedItems[0].unit_of_measure, '500 ml Glass Jar');
   });
 
@@ -337,7 +337,7 @@ async function runMobileTestSuite() {
           {
             product_id: copraProd.id,
             quantity: 1,
-            unit_price_inr: 5400,
+            unit_price_inr: 5508,
             unit_of_measure: '15 kg Box'
           }
         ]
@@ -345,7 +345,7 @@ async function runMobileTestSuite() {
     });
     const data = await res.json();
     assert.strictEqual(res.status, 200);
-    assert.strictEqual(Number(data.order.subtotal_inr), 5400);
+    assert.strictEqual(Number(data.order.subtotal_inr), 5508);
     assert.strictEqual(Number(data.order.delivery_fee_inr), 0, 'All orders must have ₹0 delivery fee');
   });
 

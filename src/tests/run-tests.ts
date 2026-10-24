@@ -48,12 +48,12 @@ it('Milling Copra and Ball Copra moisture thresholds must strictly align at ≤ 
   assert.strictEqual(millingCopraMoisture, 5.50, 'Milling copra catalog limit must be aligned at 5.5%');
 });
 
-it('Per-unit pricing compliance for Semi-Husked 25-piece bag at ₹1,450/unit with 100% Free Delivery', () => {
-  const unitPrice = 1450.00;
+it('Per-unit pricing compliance for Semi-Husked 25-piece bag at ₹1,479/unit (incl. 2% payment platform charge & 100% Free Delivery)', () => {
+  const unitPrice = 1479.00;
   const weightKg = 15.0;
   const ratePerKg = parseFloat((unitPrice / weightKg).toFixed(2));
-  assert.strictEqual(ratePerKg, 96.67, 'Effective rate per kg reflects modest increase to absorb door freight');
-  assert.strictEqual(unitPrice, 1450.00, 'Unit price must equal ₹1,450.00');
+  assert.strictEqual(ratePerKg, 98.60, 'Effective rate per kg reflects freight and 2% payment platform charge absorption');
+  assert.strictEqual(unitPrice, 1479.00, 'Unit price must equal ₹1,479.00');
 });
 
 it('100% Free Doorstep Delivery: All orders qualify for free delivery (₹0 delivery fee, no threshold)', () => {

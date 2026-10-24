@@ -110,16 +110,16 @@ export async function runAutomationSuite() {
   }, c1);
 
   const expectedSkus = [
-    { sku: 'COC-SEMI-25P-15K', price: 1450, unit: '25-Piece Bag (~15 kg)', min: 1 },
-    { sku: 'COP-BAL-BOX-15K', price: 5400, unit: '15 kg Box', min: 1 },
-    { sku: 'NUR-COC-PLT-01Y', price: 280, unit: 'Plant / Sapling', min: 1 },
-    { sku: 'OIL-GND-WOD-01L', price: 650, unit: '1 Litre Bottle', min: 1 },
-    { sku: 'MIL-RAG-ORG-05K', price: 650, unit: '5 kg Pack', min: 1 },
-    { sku: 'DAI-GHE-BIL-01L', price: 960, unit: '1 Litre Glass Jar', min: 1 },
-    { sku: 'COC-TND-BLK-LOT', price: 95, unit: 'Piece / Nut', min: 1 },
-    { sku: 'SPI-GIN-BLK-50K', price: 10500, unit: '50 kg Bag', min: 1 },
-    { sku: 'COI-SHL-BLK-01T', price: 36000, unit: 'Tonne (1,000 kg / MT)', min: 1 },
-    { sku: 'NUR-ARE-PLT-01Y', price: 75, unit: 'Plant / Sapling', min: 1 }
+    { sku: 'COC-SEMI-25P-15K', price: 1479, unit: '25-Piece Bag (~15 kg)', min: 1 },
+    { sku: 'COP-BAL-BOX-15K', price: 5508, unit: '15 kg Box', min: 1 },
+    { sku: 'NUR-COC-PLT-01Y', price: 286, unit: 'Plant / Sapling', min: 1 },
+    { sku: 'OIL-GND-WOD-01L', price: 663, unit: '1 Litre Bottle', min: 1 },
+    { sku: 'MIL-RAG-ORG-05K', price: 663, unit: '5 kg Pack', min: 1 },
+    { sku: 'DAI-GHE-BIL-01L', price: 980, unit: '1 Litre Glass Jar', min: 1 },
+    { sku: 'COC-TND-BLK-LOT', price: 49, unit: 'Piece / Nut', min: 1 },
+    { sku: 'SPI-GIN-BLK-50K', price: 5999, unit: '50 kg Bag', min: 1 },
+    { sku: 'COI-SHL-BLK-01T', price: 36720, unit: 'Tonne (1,000 kg / MT)', min: 1 },
+    { sku: 'NUR-ARE-PLT-01Y', price: 77, unit: 'Plant / Sapling', min: 1 }
   ];
 
   for (const exp of expectedSkus) {
@@ -252,15 +252,15 @@ export async function runAutomationSuite() {
   const gheeProd = products.find((p: any) => p.sku === 'DAI-GHE-BIL-01L');
   verify('Ghee 12% tax calculation check', () => {
     const gheeTax = (Number(gheeProd?.retail_price_inr) * Number(gheeProd?.tax_rate_percentage)) / 100;
-    assert.strictEqual(gheeTax, 115.20);
+    assert.strictEqual(gheeTax, 117.60);
   }, c4);
 
-  verify('Ghee 500 ml @ ₹520 12% tax calculation check', () => {
-    const ghee500Tax = (520 * 12) / 100;
-    assert.strictEqual(ghee500Tax, 62.40);
+  verify('Ghee 500 ml @ ₹530 12% tax calculation check', () => {
+    const ghee500Tax = (530 * 12) / 100;
+    assert.strictEqual(ghee500Tax, 63.60);
   }, c4);
 
-  await verifyAsync('Order 500 ml Pure Desi Cow Ghee variant @ ₹520 calculates authentic subtotal and tax', async () => {
+  await verifyAsync('Order 500 ml Pure Desi Cow Ghee variant @ ₹530 calculates authentic subtotal and tax', async () => {
     const res = await httpPost('/api/orders', {
       customer_name: 'Ghee 500ml Buyer',
       customer_phone: '9845012399',
@@ -270,17 +270,17 @@ export async function runAutomationSuite() {
         {
           product_id: gheeProd?.id,
           quantity: 1,
-          unit_price_inr: 520,
+          unit_price_inr: 530,
           unit_of_measure: '500 ml Glass Jar'
         }
       ]
     });
     assert.strictEqual(res.status, 200);
     assert.strictEqual(res.json?.success, true);
-    assert.strictEqual(Number(res.json?.order?.subtotal_inr), 520);
-    assert.strictEqual(Number(res.json?.order?.tax_inr), 62.40);
+    assert.strictEqual(Number(res.json?.order?.subtotal_inr), 530);
+    assert.strictEqual(Number(res.json?.order?.tax_inr), 63.60);
     const orderItems = typeof res.json?.order?.items === 'string' ? JSON.parse(res.json?.order?.items) : res.json?.order?.items;
-    assert.strictEqual(orderItems[0]?.unit_price_inr, 520);
+    assert.strictEqual(orderItems[0]?.unit_price_inr, 530);
     assert.strictEqual(orderItems[0]?.unit_of_measure, '500 ml Glass Jar');
   }, c4);
 
@@ -370,7 +370,7 @@ export async function runAutomationSuite() {
   }, c5);
 
   await verifyAsync('100% Free Doorstep Delivery: Bulk and retail orders receive zero delivery fee', async () => {
-    // 3 bags of semi-husked mature coconuts = 3 * 1450 = ₹4,350
+    // 3 bags of semi-husked mature coconuts = 3 * 1479 = ₹4,437
     const res = await httpPost('/api/orders', {
       customer_name: 'Sri. Mahesh Gowda',
       customer_phone: '9845033333',
@@ -380,12 +380,12 @@ export async function runAutomationSuite() {
     });
     assert.strictEqual(res.status, 200);
     assert.strictEqual(res.json?.success, true);
-    assert.strictEqual(Number(res.json?.order?.subtotal_inr), 4350);
+    assert.strictEqual(Number(res.json?.order?.subtotal_inr), 4437);
     assert.strictEqual(Number(res.json?.order?.delivery_fee_inr), 0, '100% Free shipping must have zero delivery fee');
   }, c5);
 
   await verifyAsync('Single unit small cart order receives 100% free delivery without minimums', async () => {
-    // 1 bag of semi-husked mature coconuts = ₹1,450
+    // 1 bag of semi-husked mature coconuts = ₹1,479
     const res = await httpPost('/api/orders', {
       customer_name: 'Sri. Prasanna',
       customer_phone: '9845044444',
@@ -395,7 +395,7 @@ export async function runAutomationSuite() {
     });
     assert.strictEqual(res.status, 200);
     assert.strictEqual(res.json?.success, true);
-    assert.strictEqual(Number(res.json?.order?.subtotal_inr), 1450);
+    assert.strictEqual(Number(res.json?.order?.subtotal_inr), 1479);
     assert.strictEqual(Number(res.json?.order?.delivery_fee_inr), 0, 'Single unit order must receive 100% free delivery');
   }, c5);
 

@@ -9,19 +9,16 @@ export default function UspTrustBand() {
     <section className="bg-[#f0fdf0] border-t border-b border-emerald-200/60 py-10 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {/* Pillar 1 */}
-          <Link
-            href="/transportation"
-            className="flex items-center gap-4 bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm hover:border-[#3b6d11] transition group"
-          >
-            <div className="w-12 h-12 rounded-xl bg-[#edf7e1] flex items-center justify-center text-[#3b6d11] shrink-0 group-hover:scale-105 transition">
+          {/* Pillar 1: 100% Free Delivery (Transportation entry placed in footer) */}
+          <div className="flex items-center gap-4 bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm">
+            <div className="w-12 h-12 rounded-xl bg-[#edf7e1] flex items-center justify-center text-[#3b6d11] shrink-0">
               <Truck className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="font-extrabold text-stone-900 text-sm group-hover:text-[#3b6d11] transition">Transportation at Actuals</h4>
-              <p className="text-xs text-stone-500 mt-0.5">Shiprocket live rates &amp; 10T-30T truckload corridors.</p>
+              <h4 className="font-extrabold text-stone-900 text-sm">100% Free Doorstep Delivery</h4>
+              <p className="text-xs text-stone-500 mt-0.5">₹0 delivery fee on ALL orders across India • Zero MOQ.</p>
             </div>
-          </Link>
+          </div>
 
           {/* Pillar 2 */}
           <div className="flex items-center gap-4 bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm">

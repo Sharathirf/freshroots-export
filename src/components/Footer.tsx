@@ -138,6 +138,7 @@ export default function Footer() {
             <ul className="space-y-2 text-stone-400">
               <li><Link href="/refund-policy" className="hover:text-lime-300 transition text-stone-300">100% Spoilage Policy</Link></li>
               <li><Link href="/shipping-policy" className="hover:text-lime-300 transition text-stone-300">Shipping &amp; Delivery Terms</Link></li>
+              <li><Link href="/transportation" className="hover:text-lime-300 transition text-stone-300 font-semibold">Transportation &amp; Freight Policy</Link></li>
               <li><Link href="/privacy" className="hover:text-lime-300 transition text-stone-300">Privacy Policy</Link></li>
               <li><Link href="/terms" className="hover:text-lime-300 transition text-stone-300">Terms &amp; Conditions</Link></li>
               <li><Link href="/contact" className="hover:text-lime-300 transition text-stone-300">Contact &amp; Operations</Link></li>
