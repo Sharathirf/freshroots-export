@@ -16,6 +16,7 @@ export async function GET() {
         p.estimated_weight_kg,
         p.retail_price_inr,
         p.wholesale_benchmark_price_inr,
+        p.bulk_min_quantity,
         p.hsn_code,
         p.tax_rate_percentage,
         p.is_active,
@@ -40,7 +41,7 @@ export async function GET() {
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, retail_price_inr, wholesale_benchmark_price_inr, available_stock, is_active } = body;
+    const { id, retail_price_inr, wholesale_benchmark_price_inr, available_stock, is_active, bulk_min_quantity } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -56,6 +57,13 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    if (bulk_min_quantity !== undefined && (isNaN(Number(bulk_min_quantity)) || Number(bulk_min_quantity) < 1)) {
+      return NextResponse.json(
+        { success: false, error: 'Minimum order quantity must be at least 1' },
+        { status: 400 }
+      );
+    }
+
     if (available_stock !== undefined && Number(available_stock) < 0) {
       return NextResponse.json(
         { success: false, error: 'Stock cannot be negative' },
@@ -63,7 +71,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // 1. Update Product Pricing & Status
+    // 1. Update Product Pricing, Status & Minimum Quantity
     const updateClauses: string[] = [];
     const params: any[] = [];
     let pIdx = 1;
@@ -76,6 +84,11 @@ export async function PATCH(request: NextRequest) {
     if (wholesale_benchmark_price_inr !== undefined && !isNaN(Number(wholesale_benchmark_price_inr))) {
       updateClauses.push(`wholesale_benchmark_price_inr = $${pIdx++}`);
       params.push(Number(wholesale_benchmark_price_inr));
+    }
+
+    if (bulk_min_quantity !== undefined && !isNaN(Number(bulk_min_quantity))) {
+      updateClauses.push(`bulk_min_quantity = $${pIdx++}`);
+      params.push(Math.max(1, parseInt(bulk_min_quantity, 10)));
     }
 
     if (is_active !== undefined) {

@@ -206,7 +206,7 @@ export async function runAutomationSuite() {
       customer_phone: '9845012345',
       shipping_address: 'Mysuru Road, Mandya',
       destination_pincode: '571423',
-      items: [{ product_id: cocPlant?.id, quantity: 1 }]
+      items: [{ product_id: arecaPlant?.id, quantity: 1 }]
     });
     assert.strictEqual(res.status, 200);
     assert.strictEqual(res.json?.success, true);
@@ -743,6 +743,23 @@ export async function runAutomationSuite() {
       available_stock: -20
     });
     assert.strictEqual(negStock.status, 400);
+  }, c12);
+
+  await verifyAsync('Setting bulk_min_quantity < 1 is rejected with 400', async () => {
+    const invalidMoq = await httpPatch('/api/admin/products', {
+      id: semiCoc.id,
+      bulk_min_quantity: 0
+    });
+    assert.strictEqual(invalidMoq.status, 400);
+  }, c12);
+
+  await verifyAsync('Admin can update bulk_min_quantity and it reflects in admin catalog', async () => {
+    const updateRes = await httpPatch('/api/admin/products', {
+      id: semiCoc.id,
+      bulk_min_quantity: 1
+    });
+    assert.strictEqual(updateRes.status, 200);
+    assert.strictEqual(updateRes.json?.product?.bulk_min_quantity, 1);
   }, c12);
 
   let createdReviewId: string;

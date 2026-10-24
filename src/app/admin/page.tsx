@@ -23,11 +23,12 @@ function ProductAdminRow({
   onSave
 }: {
   product: any;
-  onSave: (id: string, retailPrice: number, stock: number, wholesalePrice: number, isActive: boolean) => Promise<void>;
+  onSave: (id: string, retailPrice: number, stock: number, wholesalePrice: number, isActive: boolean, bulkMinQty: number) => Promise<void>;
 }) {
   const [retailPrice, setRetailPrice] = useState(product.retail_price_inr);
   const [stock, setStock] = useState(product.available_stock);
   const [wholesalePrice, setWholesalePrice] = useState(product.wholesale_benchmark_price_inr || '');
+  const [minQty, setMinQty] = useState(product.bulk_min_quantity || 1);
   const [isActive, setIsActive] = useState(product.is_active);
   const [isSaving, setIsSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
@@ -36,13 +37,14 @@ function ProductAdminRow({
     Number(retailPrice) !== Number(product.retail_price_inr) ||
     Number(stock) !== Number(product.available_stock) ||
     Number(wholesalePrice || 0) !== Number(product.wholesale_benchmark_price_inr || 0) ||
+    Number(minQty) !== Number(product.bulk_min_quantity || 1) ||
     isActive !== product.is_active;
 
   const handleSave = async () => {
     setIsSaving(true);
     setSavedSuccess(false);
     try {
-      await onSave(product.id, Number(retailPrice), Number(stock), Number(wholesalePrice || 0), isActive);
+      await onSave(product.id, Number(retailPrice), Number(stock), Number(wholesalePrice || 0), isActive, Number(minQty));
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 2500);
     } finally {
@@ -93,6 +95,18 @@ function ProductAdminRow({
           />
         </div>
         <div className="text-[10px] text-stone-400 mt-1">Available Units / Bags</div>
+      </td>
+      <td className="p-4">
+        <div className="relative w-24">
+          <input
+            type="number"
+            min="1"
+            value={minQty}
+            onChange={(e) => setMinQty(e.target.value)}
+            className="w-full px-2.5 py-1.5 rounded-lg border border-stone-300 font-mono font-bold text-sm text-stone-900 focus:ring-2 focus:ring-emerald-600 focus:outline-none bg-white shadow-inner"
+          />
+        </div>
+        <div className="text-[10px] text-stone-400 mt-1">Min Units (1 = Any Qty)</div>
       </td>
       <td className="p-4">
         <div className="relative w-32">
@@ -381,7 +395,8 @@ export default function AdminPage() {
     retailPrice: number,
     stock: number,
     wholesalePrice: number,
-    isActive: boolean
+    isActive: boolean,
+    bulkMinQty: number
   ) => {
     try {
       const res = await fetch('/api/admin/products', {
@@ -392,7 +407,8 @@ export default function AdminPage() {
           retail_price_inr: retailPrice,
           wholesale_benchmark_price_inr: wholesalePrice,
           available_stock: stock,
-          is_active: isActive
+          is_active: isActive,
+          bulk_min_quantity: bulkMinQty
         })
       });
       const data = await res.json();
@@ -621,6 +637,7 @@ export default function AdminPage() {
                     <th className="p-4">Commodity / SKU</th>
                     <th className="p-4">Retail Price (₹)</th>
                     <th className="p-4">Available Stock</th>
+                    <th className="p-4">Min Order Qty</th>
                     <th className="p-4">Wholesale Benchmark (₹)</th>
                     <th className="p-4">Catalog Status</th>
                     <th className="p-4 text-right">Actions</th>
