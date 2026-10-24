@@ -84,6 +84,8 @@ export interface Order {
   tracking_reference?: string;
   carrier?: string;
   delivery_lead_days?: number;
+  discount_inr?: number;
+  coupon_code?: string;
   items: OrderItem[];
   created_at: string;
 }

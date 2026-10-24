@@ -16,9 +16,13 @@ import {
   Smartphone,
   ArrowRight,
   Printer,
-  MapPin
+  MapPin,
+  Tag,
+  Sparkles,
+  Check
 } from 'lucide-react';
 import { Order } from '@/types';
+import { AVAILABLE_COUPONS, FarmCoupon, validateCoupon } from '@/lib/coupons';
 
 export default function CartDrawer() {
   const { customer, addresses, saveAddress } = useAuth();
@@ -69,6 +73,71 @@ export default function CartDrawer() {
   const [orderError, setOrderError] = useState<string | null>(null);
   const [confirmedOrder, setConfirmedOrder] = useState<Order | null>(null);
 
+  // 1-Tap Coupon State
+  const [appliedCoupon, setAppliedCoupon] = useState<FarmCoupon | null>(null);
+  const [couponCodeInput, setCouponCodeInput] = useState('');
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [couponSuccess, setCouponSuccess] = useState<string | null>(null);
+  const [showCustomCoupon, setShowCustomCoupon] = useState(false);
+
+  // Dynamic Discount & Total Calculation
+  const deliveryFee = 0;
+  const discountAmount = appliedCoupon
+    ? appliedCoupon.type === 'flat'
+      ? Math.min(appliedCoupon.value, subtotal)
+      : Math.round((subtotal * appliedCoupon.value) / 100)
+    : 0;
+
+  const finalTotal = Math.max(0, subtotal - discountAmount + deliveryFee);
+
+  // Re-verify coupon eligibility if cart subtotal changes
+  useEffect(() => {
+    if (appliedCoupon && subtotal < appliedCoupon.minOrderAmount) {
+      setAppliedCoupon(null);
+      setCouponSuccess(null);
+      setCouponError(`Cart value dropped below ₹${appliedCoupon.minOrderAmount}. ${appliedCoupon.code} removed.`);
+    }
+  }, [subtotal, appliedCoupon]);
+
+  const handleToggleCoupon = (coupon: FarmCoupon) => {
+    setCouponError(null);
+    if (appliedCoupon?.code === coupon.code) {
+      setAppliedCoupon(null);
+      setCouponSuccess(null);
+      return;
+    }
+
+    if (subtotal < coupon.minOrderAmount) {
+      setCouponError(`Add items worth ₹${coupon.minOrderAmount - subtotal} more to unlock ${coupon.code}!`);
+      return;
+    }
+
+    const res = validateCoupon(coupon.code, subtotal);
+    if (res.valid) {
+      setAppliedCoupon(coupon);
+      setCouponSuccess(res.message);
+    } else {
+      setCouponError(res.message);
+    }
+  };
+
+  const handleApplyCustomCode = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCouponError(null);
+    setCouponSuccess(null);
+    if (!couponCodeInput.trim()) return;
+
+    const res = validateCoupon(couponCodeInput, subtotal);
+    if (res.valid && res.coupon) {
+      setAppliedCoupon(res.coupon);
+      setCouponSuccess(res.message);
+      setCouponCodeInput('');
+      setShowCustomCoupon(false);
+    } else {
+      setCouponError(res.message);
+    }
+  };
+
   // 15-minute reservation timer state
   const [timeLeft, setTimeLeft] = useState(900); // 15 mins in seconds
 
@@ -113,6 +182,7 @@ export default function CartDrawer() {
           shipping_address: shippingAddress,
           destination_pincode: destPincode,
           payment_method: paymentMethod,
+          coupon_code: appliedCoupon ? appliedCoupon.code : undefined,
           items: items.map((i) => ({
             product_id: i.product_id,
             quantity: i.quantity,
@@ -323,6 +393,127 @@ export default function CartDrawer() {
                           </div>
                         );
                       })}
+                    </div>
+
+                    {/* 1-Tap Farm Savings & Coupons */}
+                    <div className="pt-3 border-t border-stone-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-stone-900">
+                          <Tag className="w-3.5 h-3.5 text-emerald-700" />
+                          <span>1-Tap Farm Coupons</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setShowCustomCoupon(!showCustomCoupon)}
+                          className="text-[11px] font-bold text-emerald-800 hover:underline"
+                        >
+                          {showCustomCoupon ? 'Hide Code Box' : '+ Enter Code'}
+                        </button>
+                      </div>
+
+                      {/* Clickable 1-tap coupon chips */}
+                      <div className="space-y-2">
+                        {AVAILABLE_COUPONS.map((coupon) => {
+                          const isApplied = appliedCoupon?.code === coupon.code;
+                          const isEligible = subtotal >= coupon.minOrderAmount;
+                          const deficit = coupon.minOrderAmount - subtotal;
+
+                          return (
+                            <div
+                              key={coupon.code}
+                              onClick={() => handleToggleCoupon(coupon)}
+                              role="button"
+                              tabIndex={0}
+                              className={`p-2.5 rounded-xl border text-xs cursor-pointer transition-all flex items-center justify-between gap-2.5 ${
+                                isApplied
+                                  ? 'bg-emerald-50/90 border-emerald-600 ring-1 ring-emerald-600 shadow-xs'
+                                  : isEligible
+                                  ? 'bg-white border-stone-200 hover:border-emerald-400 hover:bg-stone-50'
+                                  : 'bg-stone-50/70 border-dashed border-stone-300 opacity-75'
+                              }`}
+                            >
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="font-mono font-black text-xs text-stone-900 px-1.5 py-0.5 rounded bg-stone-100 border border-stone-200">
+                                    {coupon.code}
+                                  </span>
+                                  <span className="font-bold text-stone-800 text-[11px]">{coupon.title}</span>
+                                  <span className="text-[9px] uppercase font-extrabold px-1.5 py-0.5 bg-amber-100 text-amber-900 rounded-full border border-amber-200">
+                                    {coupon.badge}
+                                  </span>
+                                </div>
+                                <div className="text-[11px] text-stone-500 mt-0.5 truncate">
+                                  {coupon.description}
+                                </div>
+                                {!isEligible && (
+                                  <div className="text-[10px] text-amber-700 font-medium mt-0.5">
+                                    Add ₹{deficit.toLocaleString('en-IN')} more to unlock
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="shrink-0">
+                                {isApplied ? (
+                                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[10px] uppercase shadow-xs">
+                                    <Check className="w-3 h-3" />
+                                    Applied
+                                  </span>
+                                ) : isEligible ? (
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-900 hover:bg-emerald-200 font-bold text-[10px] uppercase transition">
+                                    <Sparkles className="w-3 h-3 text-emerald-700" />
+                                    1-Tap Apply
+                                  </span>
+                                ) : (
+                                  <span className="text-[10px] font-semibold text-stone-400 uppercase">
+                                    Locked
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Manual Promo Code input field */}
+                      {showCustomCoupon && (
+                        <form onSubmit={handleApplyCustomCode} className="mt-2.5 flex gap-2">
+                          <input
+                            type="text"
+                            value={couponCodeInput}
+                            onChange={(e) => setCouponCodeInput(e.target.value.toUpperCase())}
+                            placeholder="Enter promo code (e.g. FARM50)"
+                            className="flex-1 px-3 py-1.5 border border-stone-300 rounded-lg text-xs font-mono uppercase focus:ring-2 focus:ring-emerald-600 focus:outline-none"
+                          />
+                          <button
+                            type="submit"
+                            className="px-3 py-1.5 bg-stone-900 hover:bg-stone-800 text-white rounded-lg text-xs font-bold transition"
+                          >
+                            Apply
+                          </button>
+                        </form>
+                      )}
+
+                      {/* Feedback Alerts */}
+                      {couponSuccess && (
+                        <div className="mt-2 p-2 bg-emerald-50 border border-emerald-300 rounded-lg text-xs text-emerald-900 flex items-center justify-between">
+                          <span className="font-semibold">{couponSuccess}</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setAppliedCoupon(null);
+                              setCouponSuccess(null);
+                            }}
+                            className="text-[11px] font-bold text-red-600 hover:underline ml-2"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      )}
+                      {couponError && (
+                        <div className="mt-2 p-2 bg-amber-50 border border-amber-300 rounded-lg text-xs text-amber-900">
+                          {couponError}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -543,6 +734,28 @@ export default function CartDrawer() {
                   </div>
                 </div>
 
+                {appliedCoupon && (
+                  <div className="p-2.5 bg-emerald-50 border border-emerald-300 rounded-xl text-xs flex items-center justify-between text-emerald-950">
+                    <div className="flex items-center gap-1.5 font-bold">
+                      <Tag className="w-3.5 h-3.5 text-emerald-700" />
+                      <span>Coupon Applied: {appliedCoupon.code}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono font-bold text-emerald-800">-₹{discountAmount}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAppliedCoupon(null);
+                          setCouponSuccess(null);
+                        }}
+                        className="text-[10px] text-red-600 font-bold hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 {orderError && (
                   <div className="p-3 bg-red-50 text-red-800 border border-red-200 rounded-xl text-xs">
                     {orderError}
@@ -562,7 +775,7 @@ export default function CartDrawer() {
                     disabled={isSubmitting}
                     className="w-2/3 py-2.5 bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center justify-center gap-1.5"
                   >
-                    {isSubmitting ? 'Processing Payment...' : `Confirm & Pay ₹${total.toLocaleString('en-IN')}`}
+                    {isSubmitting ? 'Processing Payment...' : `Confirm & Pay ₹${finalTotal.toLocaleString('en-IN')}`}
                   </button>
                 </div>
               </form>
@@ -585,6 +798,12 @@ export default function CartDrawer() {
                     <span className="text-stone-500">Amount Paid:</span>
                     <strong className="text-stone-900 font-mono">₹{confirmedOrder.total_amount_inr}</strong>
                   </div>
+                  {confirmedOrder.discount_inr && Number(confirmedOrder.discount_inr) > 0 ? (
+                    <div className="flex justify-between border-b pb-2 text-emerald-800">
+                      <span className="font-semibold">Coupon Savings ({confirmedOrder.coupon_code || 'COUPON'}):</span>
+                      <strong className="font-mono">-₹{confirmedOrder.discount_inr}</strong>
+                    </div>
+                  ) : null}
                   <div className="flex justify-between border-b pb-2">
                     <span className="text-stone-500">Delivery To:</span>
                     <span className="text-stone-800 font-medium">{confirmedOrder.customer_name} ({confirmedOrder.destination_pincode})</span>
@@ -633,6 +852,15 @@ export default function CartDrawer() {
                   <span>Subtotal</span>
                   <span className="font-mono font-medium">₹{subtotal.toLocaleString('en-IN')}</span>
                 </div>
+                {discountAmount > 0 && appliedCoupon && (
+                  <div className="flex justify-between text-emerald-800 font-bold">
+                    <span className="flex items-center gap-1">
+                      <Tag className="w-3.5 h-3.5 text-emerald-700" />
+                      <span>Coupon Discount ({appliedCoupon.code})</span>
+                    </span>
+                    <span className="font-mono">-₹{discountAmount.toLocaleString('en-IN')}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center">
                   <span className="flex items-center gap-1">
                     <Truck className="w-3.5 h-3.5 text-[#3b6d11]" />
@@ -646,7 +874,14 @@ export default function CartDrawer() {
                 </div>
                 <div className="flex justify-between text-stone-900 text-sm font-extrabold pt-2 border-t">
                   <span>Grand Total</span>
-                  <span className="font-mono text-emerald-900 text-base">₹{total.toLocaleString('en-IN')}</span>
+                  <div className="text-right">
+                    {discountAmount > 0 && (
+                      <span className="text-xs text-stone-400 line-through mr-1.5 font-normal">
+                        ₹{subtotal.toLocaleString('en-IN')}
+                      </span>
+                    )}
+                    <span className="font-mono text-emerald-900 text-base">₹{finalTotal.toLocaleString('en-IN')}</span>
+                  </div>
                 </div>
               </div>
 

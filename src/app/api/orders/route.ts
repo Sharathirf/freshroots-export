@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { findMatchingVariant } from '@/lib/variants';
+import { validateCoupon } from '@/lib/coupons';
 import { OrderItem } from '@/types';
 
 export async function POST(request: NextRequest) {
@@ -13,7 +14,8 @@ export async function POST(request: NextRequest) {
       shipping_address,
       destination_pincode,
       payment_method,
-      items
+      items,
+      coupon_code
     } = body;
 
     if (!customer_name || !customer_phone || !shipping_address || !destination_pincode) {
@@ -127,9 +129,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate coupon if provided
+    let discountInr = 0.00;
+    let appliedCouponCode: string | null = null;
+
+    if (coupon_code && typeof coupon_code === 'string' && coupon_code.trim()) {
+      const couponRes = validateCoupon(coupon_code, subtotal);
+      if (!couponRes.valid) {
+        return NextResponse.json(
+          { success: false, error: couponRes.message },
+          { status: 400 }
+        );
+      }
+      discountInr = couponRes.discountAmount;
+      appliedCouponCode = couponRes.coupon?.code || coupon_code.trim().toUpperCase();
+    }
+
     // 100% Free Doorstep Delivery across India on ALL orders (No minimum quantity)
     const deliveryFee = 0.00;
-    const grandTotal = subtotal + deliveryFee + totalTax;
+    const grandTotal = Math.max(0, subtotal - discountInr + deliveryFee + totalTax);
 
     // Generate Order Number: AGR-YYYYMM-XXXX
     const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
@@ -144,8 +162,9 @@ export async function POST(request: NextRequest) {
       `INSERT INTO orders (
         order_number, order_type, status, customer_name, customer_phone, customer_email,
         shipping_address, destination_pincode, subtotal_inr, delivery_fee_inr, tax_inr,
-        total_amount_inr, payment_method, payment_reference, tracking_reference, items
-      ) VALUES ($1, 'retail', 'paid', $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+        total_amount_inr, payment_method, payment_reference, tracking_reference, items,
+        discount_inr, coupon_code
+      ) VALUES ($1, 'retail', 'paid', $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
       RETURNING *`,
       [
         orderNumber,
@@ -161,7 +180,9 @@ export async function POST(request: NextRequest) {
         payment_method || 'upi',
         paymentRef,
         trackingRef,
-        JSON.stringify(validatedItems)
+        JSON.stringify(validatedItems),
+        discountInr,
+        appliedCouponCode
       ]
     );
 
