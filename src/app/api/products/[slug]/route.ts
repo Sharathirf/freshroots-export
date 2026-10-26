@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { getProductImageUrl } from '@/lib/product-images';
+import { getCatalogProductBySlug } from '@/lib/catalog';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
+  const { slug } = await params;
+
+  if (!slug) {
+    return NextResponse.json({ success: false, error: 'Product slug is required' }, { status: 400 });
+  }
+
   try {
-    const { slug } = await params;
-
-    if (!slug) {
-      return NextResponse.json({ success: false, error: 'Product slug is required' }, { status: 400 });
-    }
-
     // Public query: Strictly excludes wholesale_benchmark_price_inr
     const rows = await query(
       `SELECT 
@@ -51,7 +52,11 @@ export async function GET(
       [slug]
     );
 
-    if (rows.length === 0) {
+    if (!rows || rows.length === 0) {
+      const fallback = getCatalogProductBySlug(slug);
+      if (fallback) {
+        return NextResponse.json({ success: true, product: fallback });
+      }
       return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
     }
 
@@ -61,7 +66,10 @@ export async function GET(
     };
     return NextResponse.json({ success: true, product });
   } catch (error: any) {
-    console.error('API Error in /api/products/[slug]:', error);
+    const fallback = getCatalogProductBySlug(slug);
+    if (fallback) {
+      return NextResponse.json({ success: true, product: fallback });
+    }
     return NextResponse.json(
       { success: false, error: 'Failed to fetch product details', details: error.message },
       { status: 500 }

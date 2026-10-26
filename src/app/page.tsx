@@ -11,6 +11,7 @@ import ActiveOrderBanner from '@/components/ActiveOrderBanner';
 import GlobalExportCorridors from '@/components/GlobalExportCorridors';
 import { useAuth } from '@/context/AuthContext';
 import { Product } from '@/types';
+import { getAllCatalogProducts } from '@/lib/catalog';
 import {
   Truck,
   ShieldCheck,
@@ -19,9 +20,9 @@ import {
 } from 'lucide-react';
 
 export default function HomePage() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>(() => getAllCatalogProducts());
   const [filteredCategory, setFilteredCategory] = useState<string>('all');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [isRFQOpen, setIsRFQOpen] = useState(false);
   const [selectedProductForRFQ, setSelectedProductForRFQ] = useState<Product | null>(null);
   const [rfqCountry, setRfqCountry] = useState<string>('India');

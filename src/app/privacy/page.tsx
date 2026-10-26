@@ -1,10 +1,27 @@
-'use client';
-
 import React from 'react';
+import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 import { ShieldCheck, Lock, Eye, FileText } from 'lucide-react';
+import { getSiteUrl, getRobotsDirectives } from '@/lib/seo';
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy | FreshRoots Export',
+  description: 'Understand how FreshRoots Export collects, uses, and protects customer and wholesale order data under the Indian Information Technology Act and SPDI Rules.',
+  alternates: {
+    canonical: `${getSiteUrl()}/privacy`,
+  },
+  robots: getRobotsDirectives(true),
+  openGraph: {
+    title: 'Privacy Policy | FreshRoots Export',
+    description: 'Data protection and transparency policy for FreshRoots Export agricultural commerce platform.',
+    url: `${getSiteUrl()}/privacy`,
+    siteName: 'FreshRoots Export',
+    locale: 'en_IN',
+    type: 'website',
+  },
+};
 
 export default function PrivacyPolicyPage() {
   return (

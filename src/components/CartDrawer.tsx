@@ -320,12 +320,21 @@ export default function CartDrawer() {
           setConfirmedOrder(order);
           setStep('success');
           clearCart();
-          track(order.status === 'paid' ? 'purchase' : 'order_submitted', {
-            value: Number(order.total_amount_inr || order.grand_total_inr || total),
-            currency: 'INR',
-            item_count: items.length,
-            payment_method: method,
-          });
+          if (order.status === 'paid') {
+            track('purchase', {
+              value: Number(order.total_amount_inr || order.grand_total_inr || total),
+              currency: 'INR',
+              item_count: items.length,
+              payment_method: method,
+            });
+          } else {
+            track('order_submitted', {
+              value: Number(order.total_amount_inr || order.grand_total_inr || total),
+              currency: 'INR',
+              item_count: items.length,
+              payment_method: method,
+            });
+          }
 
           // Persist latest order & recent orders in localStorage for instant 1-tap tracking on Homepage
           try {

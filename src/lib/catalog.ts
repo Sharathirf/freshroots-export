@@ -1,0 +1,480 @@
+import { Product } from '@/types';
+import { getProductImageUrl } from './product-images';
+
+export interface CatalogProductItem extends Product {
+  seoTitle: string;
+  seoDescription: string;
+  keywords: string[];
+  created_at?: string;
+}
+
+export const CATALOG_PRODUCTS: CatalogProductItem[] = [
+  {
+    id: 'prod-001-mature-coconut',
+    sku: 'COC-SEMI-25P-15K',
+    title: 'Mature Coconuts (25-Piece Bag, ~15 kg)',
+    slug: 'fresh-semi-husked-mature-coconuts-25-piece',
+    category: 'mature_coconut',
+    grade: 'Grade A Semi-Husked (550g - 650g / Nut)',
+    origin: 'Kikkeri & K.R. Pet Coconut Corridors, Mandya, Karnataka',
+    unit_of_measure: 'Bag (25 Nuts)',
+    estimated_weight_kg: 15.0,
+    moisture_percentage: 12.5,
+    oil_percentage: 64.0,
+    retail_price_inr: 1479.00,
+    bulk_min_quantity: 1,
+    wholesale_benchmark_price_inr: 1100.00,
+    hsn_code: '080112',
+    tax_rate_percentage: 0.00,
+    description: 'Farm-direct mature dehusked coconuts harvested from canal-irrigated groves in Mandya, Karnataka. Each nut is hand-graded for 550g-650g weight, thick white meat, and sweet water content. Ideal for household culinary prep, religious ceremonies, and commercial food processing.',
+    specifications: {
+      bag_quantity: '25 Coconuts',
+      average_nut_weight: '550g - 650g',
+      meat_thickness: '10mm - 14mm thick mature kernel',
+      shelf_life: '35 - 45 days at ambient storage',
+      packaging: 'Ventilated woven polypropylene mesh bag (~15 kg)'
+    },
+    image_url: 'https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&w=800&q=80',
+    is_active: true,
+    available_stock: 450,
+    average_rating: 4.9,
+    review_count: 24,
+    created_at: '2026-10-21T00:00:00Z',
+    seoTitle: 'Semi-Husked Mature Coconuts (25-Piece Bag) Wholesale | FreshRoots Export',
+    seoDescription: 'Direct farm-gate mature coconuts from Mandya, Karnataka. Graded 550g-650g kernel weight, dense sweet meat for culinary, temple, and food processing. 100% Free Doorstep Delivery.',
+    keywords: [
+      'mature coconuts wholesale',
+      'buy coconuts in bag Bangalore',
+      'semi husked coconut supplier Karnataka',
+      'farm fresh coconuts Mandya',
+      'commercial coconut supply India'
+    ]
+  },
+  {
+    id: 'prod-002-tiptur-copra',
+    sku: 'COP-BAL-BOX-15K',
+    title: 'Ball Copra',
+    slug: 'tiptur-ball-copra-boxes-15kg',
+    category: 'copra',
+    grade: 'Special Grade A GI Certified Whole Kernels',
+    origin: 'Tiptur & Turuvekere Horticultural Belts, Karnataka',
+    unit_of_measure: '15 kg Master Box',
+    estimated_weight_kg: 15.0,
+    moisture_percentage: 5.2,
+    oil_percentage: 67.5,
+    retail_price_inr: 5508.00,
+    bulk_min_quantity: 1,
+    wholesale_benchmark_price_inr: 4750.00,
+    hsn_code: '120300',
+    tax_rate_percentage: 5.00,
+    description: 'Authentic Geographical Indication (GI) tagged Tiptur ball copra (Unde Kobbari). Naturally sun-cured over 11 months inside intact coconut shells without sulfur, chemicals, or artificial smoke. Delivers sweet golden kernel, crisp texture, and moisture strictly under 5.2%. Ideal for dry fruit confectioneries, ayurvedic formulations, and daily consumption.',
+    specifications: {
+      gi_registration: 'GI Application No. 73 (Karnataka Horticultural Dept)',
+      moisture_content: 'Strictly <= 5.2% (Agmark certified threshold)',
+      oil_content: '65% to 68% pure unrefined coconut oil',
+      curing_duration: '10 to 12 months natural in-husk curing',
+      packaging: '5-ply corrugated master carton with inner aeration liner'
+    },
+    image_url: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80',
+    is_active: true,
+    available_stock: 220,
+    average_rating: 5.0,
+    review_count: 38,
+    created_at: '2026-10-21T00:00:00Z',
+    seoTitle: 'GI Tiptur Ball Copra (Unde Kobbari) Wholesale | FreshRoots Export',
+    seoDescription: 'Authentic GI-certified Tiptur ball copra from Karnataka. Whole sun-cured coconut kernels, moisture <= 5.2%, rich natural oil content, crisp golden texture. Free doorstep delivery & truckloads.',
+    keywords: [
+      'Tiptur ball copra wholesale',
+      'Unde Kobbari price per quintal',
+      'GI tagged copra Karnataka',
+      'buy dry coconut whole online',
+      'confectionery copra supplier India'
+    ]
+  },
+  {
+    id: 'prod-003-coconut-saplings',
+    sku: 'NUR-COC-PLT-01Y',
+    title: 'Tall Coconut Saplings & Dwarf Coconut Saplings',
+    slug: 'high-yield-coconut-plants-1-year-2-feet',
+    category: 'value_added',
+    grade: 'Certified Mother Palm Progeny (1 Year Field Ready)',
+    origin: 'Kikkeri Nursery Corridors, Mandya, Karnataka',
+    unit_of_measure: 'Plant',
+    estimated_weight_kg: 3.5,
+    moisture_percentage: null,
+    oil_percentage: null,
+    retail_price_inr: 286.00,
+    bulk_min_quantity: 1,
+    wholesale_benchmark_price_inr: 220.00,
+    hsn_code: '060290',
+    tax_rate_percentage: 0.00,
+    description: 'Vigorous 1-year-old tall variety coconut saplings propagated from high-yield 40+ year-old mother palms in Kikkeri, Mandya. Seedlings feature sturdy collar girth, 4 to 6 deep green fronds, and healthy undisturbed root balls packed in nursery soil bags. High drought tolerance and disease resistance.',
+    specifications: {
+      age: '12 to 14 months nursery nurtured',
+      height: '2.0 to 2.5 feet from collar base',
+      girth: '10cm to 12cm collar girth',
+      frond_count: '4 to 6 vigorous leaves',
+      root_ball: 'Moist red soil + organic vermicompost nursery bag'
+    },
+    image_url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80',
+    is_active: true,
+    available_stock: 1200,
+    average_rating: 4.8,
+    review_count: 19,
+    created_at: '2026-10-21T00:00:00Z',
+    seoTitle: '1-Year Coconut Saplings (2 Feet Height) | Farm Nursery Direct',
+    seoDescription: 'Healthy, disease-free 1-year-old Kikkeri tall coconut seedlings. Robust root ball, 2-feet height, ready for field planting across South India. No minimum order, pan-India logistics.',
+    keywords: [
+      'coconut saplings supplier India',
+      'buy coconut plants Karnataka',
+      'high yield tall coconut seedlings',
+      'nursery coconut plants price',
+      'coconut plantation saplings'
+    ]
+  },
+  {
+    id: 'prod-004-groundnut-oil',
+    sku: 'OIL-GND-WOD-01L',
+    title: 'Wood-Pressed Groundnut Oil (Traditional Marachekku)',
+    slug: 'pure-wood-pressed-groundnut-oil-1l',
+    category: 'oil_and_extracts',
+    grade: 'First Cold-Crush Wood Ghani (Mara Chekku)',
+    origin: 'Karnataka Agricultural Belts',
+    unit_of_measure: '1 Litre Bottle',
+    estimated_weight_kg: 0.92,
+    moisture_percentage: 0.15,
+    oil_percentage: 99.8,
+    retail_price_inr: 663.00,
+    bulk_min_quantity: 1,
+    wholesale_benchmark_price_inr: 490.00,
+    hsn_code: '150890',
+    tax_rate_percentage: 5.00,
+    description: 'Pure single-origin cold-pressed peanut oil extracted using traditional vagai wood mortars (Mara Chekku) running below 38°C. Retains natural nutty aroma, golden tint, plant sterols, and natural antioxidants. Completely unrefined, unbleached, and free from hexane solvents.',
+    specifications: {
+      extraction_method: 'Slow wood-pressed mortar crush (< 38°C)',
+      seed_origin: 'Sun-dried native Karnataka peanuts (TMV-2 variety)',
+      filtration: 'Natural multi-layer cotton sedimentation cloth',
+      preservatives: 'Zero artificial preservatives, chemicals, or argemone oil',
+      smoke_point: 'Approx. 225°C (ideal for traditional deep frying)'
+    },
+    image_url: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=800&q=80',
+    is_active: true,
+    available_stock: 310,
+    average_rating: 4.9,
+    review_count: 29,
+    created_at: '2026-10-21T00:00:00Z',
+    seoTitle: 'Pure Wood-Pressed Groundnut Oil (Marachekku Peanut Oil) | FreshRoots Export',
+    seoDescription: 'Traditional cold wood-pressed (Marachekku) groundnut oil. Extracted from premium native peanuts without heat, chemicals, or preservatives. Natural aroma and heart-healthy nutrients. Free delivery.',
+    keywords: [
+      'wood pressed groundnut oil',
+      'marachekku cold pressed peanut oil',
+      'unrefined cooking oil Karnataka',
+      'pure peanut oil 1 litre',
+      'healthy traditional groundnut oil'
+    ]
+  },
+  {
+    id: 'prod-005-ragi-millet',
+    sku: 'MIL-RAG-ORG-05K',
+    title: 'Quality Ragi Millet',
+    slug: 'pure-karnataka-ragi-millet-5kg',
+    category: 'spices',
+    grade: 'Grade A Destoned Native Karnataka Grains',
+    origin: 'Mandya Agricultural Belt, Karnataka',
+    unit_of_measure: '5 kg Pack',
+    estimated_weight_kg: 5.0,
+    moisture_percentage: 10.8,
+    oil_percentage: null,
+    retail_price_inr: 663.00,
+    bulk_min_quantity: 1,
+    wholesale_benchmark_price_inr: 480.00,
+    hsn_code: '100829',
+    tax_rate_percentage: 0.00,
+    description: 'Direct farm-procured native finger millet (Ragi) grown in fertile red loam soils of Mandya. Cleaned, destoned, and packed without chemical fumigation or bran polishing. Abundant in calcium (344mg/100g), dietary fiber, and plant iron. Perfect for making authentic ragi mudde, malt, dosa, and baby porridge.',
+    specifications: {
+      grain_type: 'Native unpolished finger millet (Eleusine coracana)',
+      purity: '99.2% cleaned grains, machine destoned',
+      calcium_content: '344 mg per 100 grams',
+      moisture: '<= 11.0% safe grain storage moisture',
+      packaging: 'Food-grade moisture-barrier pouch (5 kg)'
+    },
+    image_url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800&q=80',
+    is_active: true,
+    available_stock: 580,
+    average_rating: 4.8,
+    review_count: 17,
+    created_at: '2026-10-21T00:00:00Z',
+    seoTitle: 'Native Unpolished Ragi (Finger Millet) 5kg Pack | Mandya Farm Direct',
+    seoDescription: 'Farm-cleaned, destoned native Karnataka finger millet (Ragi). Calcium-rich, unpolished, freshly harvested for authentic ragi mudde, porridge, and flour. Free doorstep delivery.',
+    keywords: [
+      'buy native ragi online',
+      'unpolished finger millet Karnataka',
+      'Mandya ragi 5kg price',
+      'organic calcium rich millet',
+      'farm direct ragi mudde grains'
+    ]
+  },
+  {
+    id: 'prod-006-cow-ghee',
+    sku: 'DAI-GHE-BIL-01L',
+    title: 'Cow Ghee',
+    slug: 'farm-fresh-pure-desi-cow-ghee-1l',
+    category: 'oil_and_extracts',
+    grade: 'A2 Vedic Bilona Granular Curd Ghee',
+    origin: 'Mandya Native Dairy Farms, Karnataka',
+    unit_of_measure: '1 Litre Glass Jar',
+    estimated_weight_kg: 0.91,
+    moisture_percentage: 0.20,
+    oil_percentage: 99.7,
+    retail_price_inr: 980.00,
+    bulk_min_quantity: 1,
+    wholesale_benchmark_price_inr: 780.00,
+    hsn_code: '040590',
+    tax_rate_percentage: 12.00,
+    description: 'Artisanal Vedic Bilona ghee hand-crafted using milk from grass-grazed Hallikar and Malnad Gidda desi cows. Prepared by whole-milk curd setting, traditional bi-directional wooden churning (Bilona), and slow firewood simmering. Features distinct granular (danedaar) texture, golden hue, and authentic aroma.',
+    specifications: {
+      method: '5-step Vedic Bilona process from cultured whole-milk curd',
+      cow_breed: 'Native indigenous Hallikar & Malnad Gidda cattle',
+      texture: 'Coarse golden granular (danedaar)',
+      packaging: 'Heavy amber glass jar with air-tight vacuum seal',
+      additives: 'Zero palm oil, preservatives, coloring, or vanaspati'
+    },
+    image_url: 'https://images.unsplash.com/photo-1631451095765-2c91616fc9e6?auto=format&fit=crop&w=800&q=80',
+    is_active: true,
+    available_stock: 140,
+    average_rating: 5.0,
+    review_count: 31,
+    created_at: '2026-10-21T00:00:00Z',
+    seoTitle: 'Pure Desi Cow Ghee (Traditional Bilona Method) | FreshRoots Export',
+    seoDescription: 'Authentic village Bilona desi cow ghee prepared by culturing curd and hand-churning. Golden granular texture, rich Vedic aroma, free from artificial additives. Free delivery.',
+    keywords: [
+      'traditional bilona ghee online',
+      'pure desi cow ghee Karnataka',
+      'Hallikar cow curd ghee price',
+      'danedaar cow ghee 1 litre',
+      'ayurvedic medicinal ghee'
+    ]
+  },
+  {
+    id: 'prod-007-tender-coconuts',
+    sku: 'COC-TND-BLK-LOT',
+    title: 'Tender Coconuts',
+    slug: 'fresh-farm-tender-coconuts-bulk',
+    category: 'mature_coconut',
+    grade: 'Grade A Sweet Water Elaneeru (400ml+ Water)',
+    origin: 'Mandya & Maddur Coconut Corridors, Karnataka',
+    unit_of_measure: 'Piece / Nut',
+    estimated_weight_kg: 2.2,
+    moisture_percentage: 88.0,
+    oil_percentage: null,
+    retail_price_inr: 95.00,
+    bulk_min_quantity: 1,
+    wholesale_benchmark_price_inr: 80.00,
+    hsn_code: '080119',
+    tax_rate_percentage: 0.00,
+    description: 'Natural mineral-packed sweet tender coconuts (Elaneeru) harvested daily from canal-irrigated plantations in Mandya and Maddur. Yields 350ml-500ml naturally isotonic sweet coconut water with tender soft malai (kernel meat). Direct farm-gate procurement for wholesale buyers, institutions, and events.',
+    specifications: {
+      water_volume: '350 ml to 500 ml natural coconut water per nut',
+      sugar_content: 'Naturally sweet electrolyte water (Brix 5.5 - 6.5)',
+      harvest_cycle: 'Picked on order at 6.5 - 7.0 months maturity',
+      delivery_mode: 'Full truckload (FTL) and scheduled regional van drops'
+    },
+    image_url: 'https://images.unsplash.com/photo-1525385133512-2f3bdd039054?auto=format&fit=crop&w=800&q=80',
+    is_active: true,
+    available_stock: 3500,
+    average_rating: 4.9,
+    review_count: 22,
+    created_at: '2026-10-21T00:00:00Z',
+    seoTitle: 'Fresh Tender Coconuts (Elaneeru) Wholesale Supplier | Karnataka Direct',
+    seoDescription: 'Sweet electrolyte-rich tender coconuts harvested daily from Mandya and Maddur plantations. 350ml-500ml natural water with delicate tender malai. Bulk truckload dispatch for cities & institutions.',
+    keywords: [
+      'tender coconuts wholesale supplier',
+      'buy elaneeru in bulk Bangalore',
+      'green tender coconut distributor',
+      'tender coconut price per piece Karnataka',
+      'Maddur tender coconut truckloads'
+    ]
+  },
+  {
+    id: 'prod-008-ginger',
+    sku: 'SPI-GIN-BLK-50K',
+    title: 'Ginger',
+    slug: 'fresh-farm-ginger-50kg-bulk',
+    category: 'spices',
+    grade: 'Grade A Bold Pungent Rhizomes',
+    origin: 'Karnataka Agricultural Belts',
+    unit_of_measure: '50 kg Bag',
+    estimated_weight_kg: 50.0,
+    moisture_percentage: 82.0,
+    oil_percentage: 2.1,
+    retail_price_inr: 5999.00,
+    bulk_min_quantity: 1,
+    wholesale_benchmark_price_inr: 4500.00,
+    hsn_code: '091011',
+    tax_rate_percentage: 0.00,
+    description: 'Thick, bold, freshly harvested ginger rhizomes procured from highland farms across Karnataka. Washed and dried to remove surface soil, featuring crisp golden flesh, pungent gingerol aroma, and zero chemical bleach treatment. High oleoresin content suitable for spice markets and oleoresin extraction.',
+    specifications: {
+      packaging: '50 kg breathable jute gunny sack',
+      rhizome_caliber: 'Heavy fingers (> 80g per hand)',
+      purity: 'Washed and natural shade cured, minimal moisture rot',
+      transit_readiness: 'Ventilated truck transport across pan-India routes'
+    },
+    image_url: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80',
+    is_active: true,
+    available_stock: 85,
+    average_rating: 4.8,
+    review_count: 14,
+    created_at: '2026-10-21T00:00:00Z',
+    seoTitle: 'Fresh Bold Ginger Wholesale (50 kg Gunny Bag) | Karnataka Farm Lot',
+    seoDescription: 'Grade A pungent ginger rhizomes harvested from Karnataka spice belts. Cleaned, heavy fingers with high gingerol content and strong aroma. Direct farm dispatch for mandi traders and extract processors.',
+    keywords: [
+      'fresh ginger wholesale 50kg bag',
+      'buy ginger bulk Karnataka',
+      'green ginger mandi price per quintal',
+      'spice processing ginger supplier',
+      'unbleached farm ginger India'
+    ]
+  },
+  {
+    id: 'prod-009-coconut-shells',
+    sku: 'COI-SHL-BLK-01T',
+    title: 'Coconut Shells',
+    slug: 'raw-coconut-shells-industrial-bulk-ton',
+    category: 'coir_commodities',
+    grade: 'Industrial Carbon Grade (Clean Broken Halves)',
+    origin: 'Tiptur & Mandya Dehusking Hubs, Karnataka',
+    unit_of_measure: 'Metric Tonne (1,000 kg)',
+    estimated_weight_kg: 1000.0,
+    moisture_percentage: 9.8,
+    oil_percentage: null,
+    retail_price_inr: 36720.00,
+    bulk_min_quantity: 1,
+    wholesale_benchmark_price_inr: 28000.00,
+    hsn_code: '140490',
+    tax_rate_percentage: 5.00,
+    description: 'Seasoned, thoroughly cured raw coconut shell halves collected from copra drying yards and dehusking clusters across Tiptur. Low moisture (< 10%), high fixed carbon content, and minimal coir fiber adhering. Widely used for activated carbon manufacturing, metallurgy carbonization, and clean biomass energy.',
+    specifications: {
+      fixed_carbon: 'Approx. 18% to 22% in raw state (activates to > 85%)',
+      calorific_value: '4,200 to 4,500 kcal/kg',
+      ash_content: '<= 1.8% low-ash combustion profile',
+      dispatch_lot: 'Loose truckload or compressed jumbo bales (1 MT increments)'
+    },
+    image_url: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=800&q=80',
+    is_active: true,
+    available_stock: 45,
+    average_rating: 4.7,
+    review_count: 11,
+    created_at: '2026-10-21T00:00:00Z',
+    seoTitle: 'Raw Coconut Shells Wholesale (1 Metric Tonne) | Industrial Biomass',
+    seoDescription: 'Clean, seasoned natural coconut shells for activated carbon manufacturing, briquette kilns, and biofuel. High calorific value, low moisture (<10%), zero chemical treatment. Full truckloads available.',
+    keywords: [
+      'coconut shells bulk 1 ton',
+      'activated carbon raw material India',
+      'coconut shell charcoal feedstock',
+      'buy coconut shells Karnataka',
+      'biomass coconut shells price per ton'
+    ]
+  },
+  {
+    id: 'prod-010-arecanut-plants',
+    sku: 'NUR-ARE-PLT-01Y',
+    title: 'Arecanut Saplings',
+    slug: 'high-yield-arecanut-plants-1-foot',
+    category: 'value_added',
+    grade: 'Certified South Canara Native Progeny (1 Year)',
+    origin: 'Karnataka Horticultural Nursery Belts',
+    unit_of_measure: 'Plant',
+    estimated_weight_kg: 2.0,
+    moisture_percentage: null,
+    oil_percentage: null,
+    retail_price_inr: 77.00,
+    bulk_min_quantity: 1,
+    wholesale_benchmark_price_inr: 60.00,
+    hsn_code: '060290',
+    tax_rate_percentage: 0.00,
+    description: 'High-yield Mangala and South Canara variety arecanut saplings raised in polybags with sterilized compost and mycorrhizal root inoculants. Acclimatized for intercropping beneath coconut groves or standalone plantations. Resilient against spindle bug and leaf spot diseases with excellent establishment rates.',
+    specifications: {
+      seed_selection: 'Selected from heavy-yielding mature palms (> 350 nuts/year)',
+      plant_height: '1.0 to 1.5 feet healthy foliage',
+      root_system: 'Undisturbed fibrous root mass in UV-stabilized polybag',
+      field_spacing: 'Recommended 2.7m x 2.7m spacing for commercial yields'
+    },
+    image_url: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=800&q=80',
+    is_active: true,
+    available_stock: 2400,
+    average_rating: 4.8,
+    review_count: 16,
+    created_at: '2026-10-21T00:00:00Z',
+    seoTitle: 'High-Yield Arecanut Saplings (1-1.5 Feet) Wholesale | South India Nursery',
+    seoDescription: 'Vigorous, pest-resistant South Canara (Mangala) arecanut saplings. High survival rate, sturdy stems, ready for grove planting and intercropping with coconuts. Direct nursery pricing.',
+    keywords: [
+      'arecanut saplings price per plant',
+      'Mangala variety arecanut plants Karnataka',
+      'buy adike sasi online',
+      'high yield areca nut seedlings',
+      'plantation nursery saplings South India'
+    ]
+  },
+  {
+    id: 'prod-011-shimoga-arecanut',
+    sku: 'ARE-BLK-ADK-01Q',
+    title: 'Arecanut (Adike / Betel Nut)',
+    slug: 'shimoga-arecanut-adike-bulk',
+    category: 'arecanut',
+    grade: 'Commercial Mandi Lot (Grade confirmed on quotation)',
+    origin: 'Shimoga Mandi, Shivamogga, Karnataka',
+    unit_of_measure: 'kg',
+    estimated_weight_kg: 1.0,
+    moisture_percentage: null,
+    oil_percentage: null,
+    retail_price_inr: 708.09,
+    bulk_min_quantity: 100,
+    wholesale_benchmark_price_inr: 708.09,
+    hsn_code: '080280',
+    tax_rate_percentage: 0.00,
+    description: 'Bulk-only Shimoga arecanut (Adike) commodity lots sourced directly from Karnataka mandi corridors. Standardized moisture testing and optical sortation available for Gorabal, Bette, Rashi, and Chali grades. Wholesale consignments priced against ACROP daily mandi benchmarks.',
+    specifications: {
+      commodity_type: 'Processed Areca catechu (Adike / Supari)',
+      grades_handled: 'Rashi, Bette, Gorabal, Chali whole nuts',
+      lot_sizing: 'Minimum 100 kg (1 quintal) up to 20-tonne truckloads',
+      market_pricing: 'Tied to daily spot market index at Shivamogga'
+    },
+    image_url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80',
+    is_active: true,
+    available_stock: 5000,
+    average_rating: 4.8,
+    review_count: 12,
+    created_at: '2026-10-26T00:00:00Z',
+    seoTitle: 'Shimoga Arecanut (Adike) Wholesale Consignments | Karnataka Mandi Lot',
+    seoDescription: 'Commercial-grade Shimoga arecanut (Adike) lots sourced directly from Karnataka mandi corridors. B2B wholesale quotation based on grade, lot size, and ACROP market benchmarks.',
+    keywords: [
+      'Shimoga arecanut wholesale price',
+      'buy Adike in bulk Karnataka',
+      'Rashi arecanut price per quintal',
+      'Shivamogga areca nut supplier',
+      'commercial supari wholesale India'
+    ]
+  }
+];
+
+export function getAllCatalogProducts(): CatalogProductItem[] {
+  return CATALOG_PRODUCTS.map((prod) => ({
+    ...prod,
+    image_url: getProductImageUrl(prod.sku, prod.image_url)
+  }));
+}
+
+export function getCatalogProductBySlug(slug: string): CatalogProductItem | undefined {
+  const normalized = (slug || '').trim().toLowerCase();
+  const found = CATALOG_PRODUCTS.find((p) => p.slug.toLowerCase() === normalized);
+  if (!found) return undefined;
+  return {
+    ...found,
+    image_url: getProductImageUrl(found.sku, found.image_url)
+  };
+}
+
+export function getCatalogProductsByCategory(category: string): CatalogProductItem[] {
+  if (!category || category === 'all') return getAllCatalogProducts();
+  return getAllCatalogProducts().filter((p) => p.category === category);
+}

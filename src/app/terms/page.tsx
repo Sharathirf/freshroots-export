@@ -1,10 +1,27 @@
-'use client';
-
 import React from 'react';
+import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 import { FileCheck, AlertCircle, Scale } from 'lucide-react';
+import { getSiteUrl, getRobotsDirectives } from '@/lib/seo';
+
+export const metadata: Metadata = {
+  title: 'Terms & Conditions | FreshRoots Export',
+  description: 'Terms of sale, agricultural produce quality tolerances, statutory GST classifications, and commercial guidelines for FreshRoots Export.',
+  alternates: {
+    canonical: `${getSiteUrl()}/terms`,
+  },
+  robots: getRobotsDirectives(true),
+  openGraph: {
+    title: 'Terms & Conditions | FreshRoots Export',
+    description: 'Commercial terms and quality tolerances governing farm-direct agricultural commodity transactions.',
+    url: `${getSiteUrl()}/terms`,
+    siteName: 'FreshRoots Export',
+    locale: 'en_IN',
+    type: 'website',
+  },
+};
 
 export default function TermsPage() {
   return (

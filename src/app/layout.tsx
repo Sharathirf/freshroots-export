@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
-import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { CartProvider } from '@/context/CartContext';
 import { WishlistProvider } from '@/context/WishlistContext';
@@ -15,16 +14,7 @@ import HelpModal from '@/components/HelpModal';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import PwaInstallPrompt from '@/components/PwaInstallPrompt';
 import PostHogPageView from '@/components/PostHogPageView';
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
+import { getSiteUrl, getRobotsDirectives, generateOrganizationJsonLd, generateWebSiteJsonLd } from '@/lib/seo';
 
 export const viewport: Viewport = {
   themeColor: '#3b6d11',
@@ -34,8 +24,14 @@ export const viewport: Viewport = {
   userScalable: true
 };
 
+const siteUrl = getSiteUrl();
+
 export const metadata: Metadata = {
-  title: 'FreshRoots Export | Farm-Gate Agricultural Commodities from Karnataka',
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: 'FreshRoots Export | Farm-Gate Agricultural Commodities from Karnataka',
+    template: '%s | FreshRoots Export',
+  },
   description: 'Direct-from-origin agricultural commerce platform selling hand-graded mature coconuts, GI Tiptur ball copra, spices, and pure cold-pressed oils to households and bulk commercial buyers.',
   manifest: '/manifest.webmanifest',
   icons: {
@@ -46,6 +42,10 @@ export const metadata: Metadata = {
     statusBarStyle: 'default',
     title: 'FreshRoots Export'
   },
+  alternates: {
+    canonical: '/',
+  },
+  robots: getRobotsDirectives(true),
   keywords: [
     'FreshRoots Export',
     'buy coconuts online Bangalore',
@@ -58,7 +58,15 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'FreshRoots Export | Karnataka Agricultural Commerce',
     description: 'Zero commission agents. Standardized weight grading. Direct farm-gate procurement from Karnataka agricultural corridors.',
-    type: 'website'
+    url: siteUrl,
+    siteName: 'FreshRoots Export',
+    locale: 'en_IN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'FreshRoots Export | Farm-Gate Produce from Karnataka',
+    description: 'Direct-from-origin agricultural commerce platform supplying hand-graded coconuts, copra, and cold-pressed oils.',
   }
 };
 
@@ -67,9 +75,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const orgJsonLd = generateOrganizationJsonLd(siteUrl);
+  const websiteJsonLd = generateWebSiteJsonLd(siteUrl);
+
   return (
     <html lang="en" className="scroll-smooth overflow-x-hidden max-w-full">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-50 text-stone-900 overflow-x-hidden min-h-screen w-full max-w-full`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+      </head>
+      <body className="font-sans antialiased bg-stone-50 text-stone-900 overflow-x-hidden min-h-screen w-full max-w-full">
         <Script src="/pwa-install-bridge.js" strategy="beforeInteractive" />
         {process.env.NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN && (
           <Script

@@ -61,6 +61,11 @@ const commodityMetadata: Record<string, { emoji: string; titleKn: string; subtit
     emoji: '🪴',
     titleKn: 'ದಕ್ಷಿಣ ಕನ್ನಡ ತಳಿಯ ಅಡಿಕೆ ಸಸಿಗಳು',
     subtitleKn: '1 ರಿಂದ 1.5 ಅಡಿ ಸಸಿ • ಕನಿಷ್ಠ ಮಿತಿ ಇಲ್ಲ'
+  },
+  'ARE-BLK-ADK-01Q': {
+    emoji: '🥜',
+    titleKn: 'ಶಿವಮೊಗ್ಗ ಅಡಿಕೆ (ಬಲ್ಕ್ ಕಮಾಡಿಟಿ)',
+    subtitleKn: 'ಕನಿಷ್ಠ 100 ಕೆ.ಜಿ (1 ಕ್ವಿಂಟಾಲ್) • ಮಂಡಿ ದರ'
   }
 };
 
@@ -82,7 +87,7 @@ const FALLBACK_ARECANUT_RATE: ArecanutMandiRate = {
 
 interface ProductCardProps {
   product: Product;
-  onSelectForRFQ: (product: Product) => void;
+  onSelectForRFQ?: (product: Product) => void;
 }
 
 export default function ProductCard({ product, onSelectForRFQ }: ProductCardProps) {
@@ -156,9 +161,11 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
     product.sku.includes('TND') ||
     product.sku.includes('GIN') ||
     product.sku.includes('SHL') ||
+    product.category === 'arecanut' ||
     product.slug.includes('tender') ||
     product.slug.includes('ginger') ||
-    product.slug.includes('shell')
+    product.slug.includes('shell') ||
+    product.slug.includes('arecanut')
   );
 
   const unitSubtitle = selectedVariant ? selectedVariant.packSize : product.unit_of_measure;
@@ -174,6 +181,8 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
     supportingInfo = 'No Minimum • Field-Ready 1-Year Saplings';
   } else if (product.sku === 'OIL-GND-WOD-01L') {
     supportingInfo = 'Cold-Pressed • Traditional Marachekku';
+  } else if (product.category === 'arecanut' || product.sku === 'ARE-BLK-ADK-01Q') {
+    supportingInfo = 'Minimum bulk lot: 100 kg';
   } else if (isBulkOnly) {
     supportingInfo = `Minimum bulk lot: ${product.bulk_min_quantity || 1} ${product.bulk_min_quantity === 1 ? 'unit' : 'units'}`;
   }
@@ -317,17 +326,20 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
             {product.category === 'arecanut' && isBulkOnly ? (
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-lg sm:text-xl font-extrabold text-stone-900 font-mono tracking-tight bg-transparent">
-                    ₹{arecanutMandiRate.pricePerQuintal.toLocaleString('en-IN')}
+                  <span className="text-sm sm:text-base font-extrabold text-stone-900 font-mono tracking-tight bg-transparent">
+                    Mandi maximum: ₹{arecanutMandiRate.pricePerQuintal.toLocaleString('en-IN')} / quintal
                   </span>
-                  <span className="text-[11px] text-stone-500 font-normal bg-transparent">/ quintal</span>
                   <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-800 bg-amber-100 border border-amber-300 px-1.5 py-0.5 rounded-md select-none">
                     Bulk Orders Only
                   </span>
                 </div>
-                <span className="text-[11px] text-stone-500 truncate bg-transparent">
-                  ₹{arecanutMandiRate.pricePerKg.toFixed(2)} / kg • Reported {arecanutMandiRate.reportedAt}
-                </span>
+                <div className="flex items-center gap-1.5 text-[11px] text-stone-500 truncate bg-transparent">
+                  <span>Minimum bulk lot: 100 kg</span>
+                  <span>•</span>
+                  <span>₹{arecanutMandiRate.pricePerKg.toFixed(2)} / kg</span>
+                  <span>•</span>
+                  <span>Reported {arecanutMandiRate.reportedAt}</span>
+                </div>
               </div>
             ) : isBulkOnly ? (
               <div className="flex flex-col gap-1">
@@ -374,7 +386,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
         {isBulkOnly ? (
           <button
             type="button"
-            onClick={() => onSelectForRFQ(product)}
+            onClick={() => onSelectForRFQ ? onSelectForRFQ(product) : (window.location.href = `/products/${product.slug}`)}
             className="w-full bg-amber-600 hover:bg-amber-700 active:scale-[0.98] text-white font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 select-none"
           >
             <Building2 className="w-4 h-4 text-white" />
@@ -397,7 +409,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
 
             <button
               type="button"
-              onClick={() => onSelectForRFQ(product)}
+              onClick={() => onSelectForRFQ ? onSelectForRFQ(product) : (window.location.href = `/products/${product.slug}`)}
               className="w-full bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-semibold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 select-none"
             >
               <Building2 className="w-3.5 h-3.5 text-amber-700" />

@@ -1,10 +1,28 @@
-'use client';
-
 import React from 'react';
+import type { Metadata } from 'next';
+import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 import { Truck, CheckCircle2, MapPin, Clock } from 'lucide-react';
+import { getSiteUrl, getRobotsDirectives } from '@/lib/seo';
+
+export const metadata: Metadata = {
+  title: 'Shipping & Delivery Policy | FreshRoots Export',
+  description: '100% Free Doorstep Delivery on all orders across 19,000+ Indian PIN codes. Direct dispatch from Mandya plantations with live WhatsApp tracking.',
+  alternates: {
+    canonical: `${getSiteUrl()}/shipping-policy`,
+  },
+  robots: getRobotsDirectives(true),
+  openGraph: {
+    title: 'Shipping & Delivery Policy | FreshRoots Export',
+    description: 'Fast, secure doorstep delivery across India for farm-gate coconuts, copra, and saplings.',
+    url: `${getSiteUrl()}/shipping-policy`,
+    siteName: 'FreshRoots Export',
+    locale: 'en_IN',
+    type: 'website',
+  },
+};
 
 export default function ShippingPolicyPage() {
   return (
@@ -83,7 +101,7 @@ export default function ShippingPolicyPage() {
               We service all valid 6-digit Indian postal PIN codes nationwide through Shiprocket integrated courier partners (Delhivery, Blue Dart, DTDC, Xpressbees, Shadowfax) and regional heavy transport operators (VRL Logistics).
             </p>
             <p>
-              Immediately upon courier pickup, an automated WhatsApp and SMS notification with a live tracking link is transmitted to your registered mobile number. You can also monitor real-time shipment status anytime on our dedicated <a href="/track-order" className="font-bold text-emerald-800 underline">Order Tracking Page</a>.
+              Immediately upon courier pickup, an automated WhatsApp and SMS notification with a live tracking link is transmitted to your registered mobile number. You can also monitor real-time shipment status anytime on our dedicated <Link href="/track-order" className="font-bold text-emerald-800 underline">Order Tracking Page</Link>.
             </p>
           </section>
         </div>

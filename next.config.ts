@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { withSentryConfig } from '@sentry/nextjs/config';
+import { withSentryConfig } from "@sentry/nextjs/config";
 
 const nextConfig: NextConfig = {
   images: {
@@ -21,5 +21,6 @@ const nextConfig: NextConfig = {
 
 export default withSentryConfig(nextConfig, {
   silent: true,
-  telemetry: false,
+  org: process.env.SENTRY_ORG || "freshroots",
+  project: process.env.SENTRY_PROJECT || "freshroots-export",
 });

@@ -103,32 +103,32 @@ export default function Footer() {
           {/* Column 1: Categories */}
           <div className="space-y-3">
             <h4 className="font-bold text-white text-xs uppercase tracking-wider">
-              Commodities
+              Commodity Hubs
             </h4>
             <ul className="space-y-2 text-stone-400">
-              <li><Link href="/#catalog" className="hover:text-white transition">Fresh Coconuts (Grade A/B)</Link></li>
-              <li><Link href="/#catalog" className="hover:text-white transition">GI Tiptur Ball Copra</Link></li>
-              <li><Link href="/#catalog" className="hover:text-white transition">Industrial Milling Copra</Link></li>
-              <li><Link href="/#catalog" className="hover:text-white transition">GI Byadgi Wrinkled Chilli</Link></li>
-              <li><Link href="/#catalog" className="hover:text-white transition">Malnad Bold Black Pepper</Link></li>
-              <li><Link href="/#catalog" className="hover:text-white transition">Virgin Extra Coconut Oil</Link></li>
-              <li><Link href="/#catalog" className="hover:text-white transition">Low-EC Coir Pith Blocks</Link></li>
+              <li><Link href="/category/mature-coconut" className="hover:text-white transition">Fresh Coconuts (Mandya)</Link></li>
+              <li><Link href="/category/copra" className="hover:text-white transition">GI Tiptur Ball Copra</Link></li>
+              <li><Link href="/category/oil-and-extracts" className="hover:text-white transition">Wood-Pressed Oils &amp; Ghee</Link></li>
+              <li><Link href="/category/spices" className="hover:text-white transition">Unpolished Ragi &amp; Spices</Link></li>
+              <li><Link href="/category/nursery-plants" className="hover:text-white transition">Coconut &amp; Arecanut Saplings</Link></li>
+              <li><Link href="/category/coir-commodities" className="hover:text-white transition">Industrial Coconut Shells</Link></li>
+              <li><Link href="/category/arecanut" className="hover:text-white transition">Shivamogga Arecanut (Adike)</Link></li>
             </ul>
           </div>
 
           {/* Column 2: Commercial & Wholesale */}
           <div className="space-y-3">
             <h4 className="font-bold text-white text-xs uppercase tracking-wider">
-              B2B & Sourcing
+              B2B &amp; Sourcing
             </h4>
             <ul className="space-y-2 text-stone-400">
-              <li><Link href="/transportation" className="text-lime-300 font-semibold hover:text-white transition">Transportation & Rates (Shiprocket)</Link></li>
-              <li><a href="#catalog" className="hover:text-white transition">Request Wholesale Quotation</a></li>
-              <li><Link href="/transportation" className="hover:text-white transition">Full Truckload (FTL) Freight</Link></li>
-              <li><a href="#catalog" className="hover:text-white transition">20ft / 40ft Export Containers</a></li>
-              <li><a href="#catalog" className="hover:text-white transition">Phytosanitary Certification</a></li>
+              <li><Link href="/export" className="text-lime-300 font-semibold hover:text-white transition">Global Agri-Export Desk</Link></li>
+              <li><Link href="/guides" className="text-lime-300 font-semibold hover:text-white transition">Guides &amp; Quality Standards</Link></li>
+              <li><Link href="/transportation" className="hover:text-white transition">Pan-India Freight Logistics</Link></li>
+              <li><Link href="/contact" className="hover:text-white transition">Contact Farm-Gate Desk</Link></li>
+              <li><Link href="/#catalog" className="hover:text-white transition">Direct Farm Catalog</Link></li>
+              <li><Link href="/track-order" className="hover:text-white transition">Track Consignment</Link></li>
               <li><Link href="/admin" className="hover:text-white transition">Operations Dashboard</Link></li>
-              <li><a href="#catalog" className="hover:text-white transition">Live Mandi Benchmarks</a></li>
             </ul>
           </div>
 

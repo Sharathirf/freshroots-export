@@ -204,6 +204,7 @@ async function runAll() {
     const req = new Request('http://localhost:3000/api/rfq');
 
     process.env.TURNSTILE_SECRET_KEY = 'test_secret_key';
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY = 'test_site_key';
 
     const r1 = await verifyTurnstile('', req);
     assert.strictEqual(r1.valid, false, 'Empty token must be rejected');
@@ -215,6 +216,7 @@ async function runAll() {
     assert.strictEqual(r3.valid, false, 'Oversized token (>2048 chars) must be rejected');
 
     delete process.env.TURNSTILE_SECRET_KEY;
+    delete process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   });
 
   await test('TurnstileChallenge component is integrated in all inquiry forms', () => {

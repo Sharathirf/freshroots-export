@@ -1,10 +1,27 @@
-'use client';
-
 import React from 'react';
+import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 import { ShieldCheck, RefreshCw, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { getSiteUrl, getRobotsDirectives } from '@/lib/seo';
+
+export const metadata: Metadata = {
+  title: 'Refund & 100% Spoilage Policy | FreshRoots Export',
+  description: '100% Farm-Gate Quality Pledge: Free replacement or refund for transit-damaged, cracked coconuts or spoiled copra within 48 hours.',
+  alternates: {
+    canonical: `${getSiteUrl()}/refund-policy`,
+  },
+  robots: getRobotsDirectives(true),
+  openGraph: {
+    title: 'Refund & Spoilage Guarantee | FreshRoots Export',
+    description: 'Zero-risk buyer assurance on direct farm produce. Cracked or spoiled nuts replaced at zero cost.',
+    url: `${getSiteUrl()}/refund-policy`,
+    siteName: 'FreshRoots Export',
+    locale: 'en_IN',
+    type: 'website',
+  },
+};
 
 export default function RefundPolicyPage() {
   return (

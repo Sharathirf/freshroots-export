@@ -91,7 +91,7 @@ async function runSeed() {
     // 2. Tiptur Ball Copra
     {
       sku: 'COP-BAL-BOX-15K',
-      title: 'Tiptur Ball Copra',
+      title: 'Ball Copra',
       slug: 'tiptur-ball-copra-boxes-15kg',
       category: 'copra',
       grade: 'Special Grade Rajapur Whole Ball',
@@ -121,7 +121,7 @@ async function runSeed() {
     // 3. Coconut Saplings
     {
       sku: 'NUR-COC-PLT-01Y',
-      title: 'Coconut Saplings',
+      title: 'Tall Coconut Saplings & Dwarf Coconut Saplings',
       slug: 'high-yield-coconut-plants-1-year-2-feet',
       category: 'value_added',
       grade: '1-Year Hardy Seedling (Tiptur Tall / DWT Hybrid)',
@@ -180,7 +180,7 @@ async function runSeed() {
     // 5. Karnataka Ragi Millet
     {
       sku: 'MIL-RAG-ORG-05K',
-      title: 'Karnataka Ragi Millet',
+      title: 'Quality Ragi Millet',
       slug: 'pure-karnataka-ragi-millet-5kg',
       category: 'spices',
       grade: 'Machine-Cleaned Whole Native Brown Ragi',
@@ -209,7 +209,7 @@ async function runSeed() {
     // 6. Desi Cow Ghee
     {
       sku: 'DAI-GHE-BIL-01L',
-      title: 'Desi Cow Ghee',
+      title: 'Cow Ghee',
       slug: 'farm-fresh-pure-desi-cow-ghee-1l',
       category: 'oil_and_extracts',
       grade: 'Traditional Cultured Curd Bilona Danedaar Ghee',
@@ -267,7 +267,7 @@ async function runSeed() {
     // 8. Fresh Farm Ginger
     {
       sku: 'SPI-GIN-BLK-50K',
-      title: 'Fresh Farm Ginger',
+      title: 'Ginger',
       slug: 'fresh-farm-ginger-50kg-bulk',
       category: 'spices',
       grade: 'Grade A Bold Pungent Rhizomes',
@@ -295,7 +295,7 @@ async function runSeed() {
     // 9. Raw Coconut Shells
     {
       sku: 'COI-SHL-BLK-01T',
-      title: 'Raw Coconut Shells',
+      title: 'Coconut Shells',
       slug: 'raw-coconut-shells-industrial-bulk-ton',
       category: 'coir_commodities',
       grade: 'Clean Dry Broken Shells (Moisture < 12%)',
@@ -352,7 +352,7 @@ async function runSeed() {
     // 11. Shimoga Arecanut (bulk commodity; distinct from nursery saplings)
     {
       sku: 'ARE-BLK-ADK-01Q',
-      title: 'Shimoga Arecanut (Adike)',
+      title: 'Arecanut (Adike / Betel Nut)',
       slug: 'shimoga-arecanut-adike-bulk',
       category: 'arecanut',
       grade: 'Mandi lot; variety and grade confirmed on quotation',

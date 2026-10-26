@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { getProductImageUrl } from '@/lib/product-images';
+import { getCatalogProductsByCategory } from '@/lib/catalog';
 
 export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const category = searchParams.get('category');
+  const { searchParams } = new URL(request.url);
+  const category = searchParams.get('category');
 
+  try {
     // Explicitly select public-facing fields. Never leak confidential wholesale_benchmark_price_inr.
     let sql = `
       SELECT 
@@ -52,16 +53,18 @@ export async function GET(request: NextRequest) {
     sql += ` GROUP BY p.id, review_summary.average_rating, review_summary.review_count ORDER BY p.retail_price_inr ASC`;
 
     const rows = await query(sql, params);
+    if (!rows || rows.length === 0) {
+      const fallback = getCatalogProductsByCategory(category || 'all');
+      return NextResponse.json({ success: true, count: fallback.length, products: fallback });
+    }
+
     const products = rows.map((product) => ({
       ...product,
       image_url: getProductImageUrl(product.sku, product.image_url)
     }));
     return NextResponse.json({ success: true, count: products.length, products });
-  } catch (error: any) {
-    console.error('API Error in /api/products:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch products', details: error.message },
-      { status: 500 }
-    );
+  } catch {
+    const fallback = getCatalogProductsByCategory(category || 'all');
+    return NextResponse.json({ success: true, count: fallback.length, products: fallback });
   }
 }

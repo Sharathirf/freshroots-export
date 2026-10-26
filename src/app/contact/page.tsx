@@ -1,14 +1,77 @@
-'use client';
-
 import React from 'react';
+import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 import { MapPin, Phone, Mail, Clock, ShieldCheck, Truck, MessageCircle } from 'lucide-react';
+import { getSiteUrl, getRobotsDirectives } from '@/lib/seo';
+
+export const metadata: Metadata = {
+  title: 'Contact Farm-Gate Desk & Operations | FreshRoots Export',
+  description: 'Connect directly with FreshRoots Export operations in Mandya, Karnataka. Inquiries for farm-direct mature coconuts, GI Tiptur ball copra, wholesale consignments, and export RFQs.',
+  alternates: {
+    canonical: `${getSiteUrl()}/contact`,
+  },
+  robots: getRobotsDirectives(true),
+  openGraph: {
+    title: 'Contact FreshRoots Export | Direct Agricultural Trade Desk',
+    description: 'Reach our Kikkeri, Mandya dispatch hub directly for live mandi rates, bulk lot bookings, and international ocean container inquiries.',
+    url: `${getSiteUrl()}/contact`,
+    siteName: 'FreshRoots Export',
+    locale: 'en_IN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Contact FreshRoots Export Operations',
+    description: 'Direct farm-gate desk for agricultural wholesale and export bookings in Karnataka, India.',
+  },
+};
 
 export default function ContactPage() {
+  const siteUrl = getSiteUrl();
+
+  const contactPageJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    '@id': `${siteUrl}/contact#webpage`,
+    url: `${siteUrl}/contact`,
+    name: 'Contact FreshRoots Export Operations Desk',
+    mainEntity: {
+      '@type': 'LocalBusiness',
+      name: 'FreshRoots Export',
+      image: `${siteUrl}/icon.svg`,
+      telephone: '+919591142548',
+      email: 'sharathir198@gmail.com',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Kikkeri, K.R. Pet Taluk, Mandya District',
+        addressRegion: 'Karnataka',
+        postalCode: '571423',
+        addressCountry: 'IN'
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: 12.8344,
+        longitude: 76.4022
+      },
+      openingHoursSpecification: [
+        {
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+          opens: '08:00',
+          closes: '19:30'
+        }
+      ]
+    }
+  };
+
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 font-sans flex flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactPageJsonLd) }}
+      />
       <Navbar />
       <CartDrawer />
 
@@ -36,8 +99,8 @@ export default function ContactPage() {
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-[#3b6d11] shrink-0 mt-0.5" />
                 <div>
-                  <strong className="block text-stone-900">Registered Office:</strong>
-                  <span>Karnataka, India</span>
+                  <strong className="block text-stone-900">Registered Office &amp; Farmland:</strong>
+                  <span>Kikkeri, K.R. Pet Taluk, Mandya District, Karnataka &ndash; 571423, India</span>
                 </div>
               </div>
 

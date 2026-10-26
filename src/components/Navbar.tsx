@@ -377,6 +377,21 @@ export default function Navbar({
             <span className={lang === 'en' ? 'text-emerald-700 font-extrabold' : 'text-stone-400 font-normal'}>EN</span>
           </button>
 
+          {/* Export & Guides Direct Links - Desktop */}
+          <Link
+            href="/export"
+            className="hidden xl:flex items-center gap-1 text-xs font-bold text-stone-700 hover:text-[#3b6d11] px-2.5 py-2 rounded-xl hover:bg-stone-100 transition"
+          >
+            <span>Export</span>
+          </Link>
+
+          <Link
+            href="/guides"
+            className="hidden xl:flex items-center gap-1 text-xs font-bold text-stone-700 hover:text-[#3b6d11] px-2.5 py-2 rounded-xl hover:bg-stone-100 transition"
+          >
+            <span>Guides</span>
+          </Link>
+
           {/* Enquire Farm Button - Desktop only */}
           {onOpenEnquiry && (
             <button
