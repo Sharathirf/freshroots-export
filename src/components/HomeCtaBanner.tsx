@@ -27,7 +27,7 @@ export default function HomeCtaBanner({ onOpenRFQ }: { onOpenRFQ: () => void }) 
         </h2>
 
         <p className="text-stone-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-normal">
-          Get premium quality agricultural produce directly from Tiptur APMC farmers. Transparent moisture certification, zero broker markups, Pan-India courier delivery, and worldwide export containers.
+          Get premium quality agricultural produce directly from Tiptur farmers. Transparent moisture certification, zero broker markups, Pan-India courier delivery, and worldwide export containers.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2">

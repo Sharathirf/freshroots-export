@@ -32,7 +32,7 @@ export default function TermsPage() {
               <span>1. Agreement to Terms</span>
             </h2>
             <p>
-              By accessing or purchasing from Sharath Inorahalli Agri-Commerce Platform, you agree to be bound by these Terms and Conditions in accordance with Indian commercial laws and Karnataka APMC market guidelines.
+              By accessing or purchasing from FreshRoots Export Agri-Commerce Platform, you agree to be bound by these Terms and Conditions in accordance with Indian commercial laws and applicable market guidelines.
             </p>
           </section>
 
@@ -47,7 +47,7 @@ export default function TermsPage() {
             <ul className="list-disc pl-5 space-y-1.5">
               <li><strong>Coconuts &amp; Copra:</strong> Graded according to size, moisture, and weight standards. Minor natural variation in nut dimension or husk texture is inherent to farm produce.</li>
               <li><strong>Minimum Order Quantities (MOQs):</strong> Strictly enforced where specified (e.g. 50 plants for coconut saplings, 200 plants for arecanut saplings) to maintain nursery viability and specialized transport safety.</li>
-              <li><strong>Wholesale Consignments:</strong> Tender coconuts, bulk industrial shells, and 50 kg ginger lots are offered strictly through Request for Quotation (RFQ) based on daily APMC Mandi spot rates.</li>
+              <li><strong>Wholesale Consignments:</strong> Tender coconuts, bulk industrial shells, and 50 kg ginger lots are offered strictly through Request for Quotation (RFQ) based on daily mandi spot rates.</li>
             </ul>
           </section>
 

@@ -14,7 +14,9 @@ import {
   ExternalLink,
   CheckCircle2,
   Star,
-  Trash2
+  Trash2,
+  Lock,
+  LogOut
 } from 'lucide-react';
 import { WholesaleQuotation, Order, InventoryBatch } from '@/types';
 
@@ -171,26 +173,46 @@ export default function AdminPage() {
   const [isAdminAuthed, setIsAdminAuthed] = useState<boolean | null>(null);
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const authed = sessionStorage.getItem('tiptur_admin_authed');
-      setIsAdminAuthed(authed === 'true');
-    }
+    fetch('/api/admin/auth', { cache: 'no-store' })
+      .then((response) => response.json())
+      .then((data) => setIsAdminAuthed(Boolean(data.authenticated)))
+      .catch(() => setIsAdminAuthed(false));
   }, []);
 
-  const handlePinSubmit = (e: React.FormEvent) => {
+  const handlePinSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pinInput === '9591' || pinInput === '9591142548' || pinInput === 'admin') {
-      sessionStorage.setItem('tiptur_admin_authed', 'true');
+    setIsSigningIn(true);
+    setPinError(false);
+    try {
+      const response = await fetch('/api/admin/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pinInput }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.error || 'Sign-in failed');
       setIsAdminAuthed(true);
-      setPinError(false);
-    } else {
+      setPinInput('');
+    } catch {
       setPinError(true);
+    } finally {
+      setIsSigningIn(false);
     }
   };
 
-  const [activeTab, setActiveTab] = useState<'products' | 'rfqs' | 'orders' | 'inventory' | 'reviews' | 'pnl'>('products');
+  const handleAdminLogout = async () => {
+    try {
+      await fetch('/api/admin/auth', { method: 'DELETE' });
+    } finally {
+      setIsAdminAuthed(false);
+      setPinInput('');
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState<'products' | 'rfqs' | 'orders' | 'inventory' | 'reviews' | 'pnl' | 'integrations'>('products');
   const [metrics, setMetrics] = useState<any>(null);
   const [adminProducts, setAdminProducts] = useState<any[]>([]);
   const [rfqs, setRfqs] = useState<WholesaleQuotation[]>([]);
@@ -201,9 +223,11 @@ export default function AdminPage() {
   const [isDeletingReview, setIsDeletingReview] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [productSuccessMsg, setProductSuccessMsg] = useState<string | null>(null);
+  const [integrationStatuses, setIntegrationStatuses] = useState<any[]>([]);
+  const [integrationsCheckedAt, setIntegrationsCheckedAt] = useState<string | null>(null);
 
   // Intake Form State
-  const [intakeMandi, setIntakeMandi] = useState('Tiptur APMC Yard');
+  const [intakeMandi, setIntakeMandi] = useState('Tiptur Yard');
   const [intakeQty, setIntakeQty] = useState('250');
   const [intakeCost, setIntakeCost] = useState('1100');
   const [intakeMsg, setIntakeMsg] = useState<string | null>(null);
@@ -248,22 +272,29 @@ export default function AdminPage() {
   const fetchData = useCallback(async () => {
     setRefreshing(true);
     try {
-      const [mRes, rRes, oRes, iRes, pRes, revRes] = await Promise.all([
+      const [mRes, rRes, oRes, iRes, pRes, revRes, integrationsRes] = await Promise.all([
         fetch('/api/admin/metrics'),
         fetch('/api/rfq'),
         fetch('/api/admin/orders'),
         fetch('/api/admin/inventory'),
         fetch('/api/admin/products'),
-        fetch('/api/reviews')
+        fetch('/api/reviews'),
+        fetch('/api/admin/integrations', { cache: 'no-store' })
       ]);
 
-      const [mData, rData, oData, iData, pData, revData] = await Promise.all([
+      if ([mRes, rRes, oRes, iRes, pRes, integrationsRes].some((response) => response.status === 401)) {
+        setIsAdminAuthed(false);
+        return;
+      }
+
+      const [mData, rData, oData, iData, pData, revData, integrationData] = await Promise.all([
         mRes.json(),
         rRes.json(),
         oRes.json(),
         iRes.json(),
         pRes.json(),
-        revRes.json()
+        revRes.json(),
+        integrationsRes.json()
       ]);
 
       if (mData.success) setMetrics(mData.metrics);
@@ -271,6 +302,8 @@ export default function AdminPage() {
       if (oData.success) setOrders(oData.orders);
       if (pData.success) setAdminProducts(pData.products);
       if (revData.success && Array.isArray(revData.reviews)) setAllReviews(revData.reviews);
+      if (Array.isArray(integrationData.integrations)) setIntegrationStatuses(integrationData.integrations);
+      if (integrationData.checkedAt) setIntegrationsCheckedAt(integrationData.checkedAt);
       if (iData.success) {
         setInventory(iData.batches);
         if (iData.batches.length > 0 && !damagedBatchId) {
@@ -285,8 +318,8 @@ export default function AdminPage() {
   }, [damagedBatchId]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (isAdminAuthed) fetchData();
+  }, [fetchData, isAdminAuthed]);
 
   const handleUpdateRFQStatus = async (id: string, status: string, unitPrice?: number, freight?: number) => {
     try {
@@ -424,22 +457,29 @@ export default function AdminPage() {
     }
   };
 
-  if (isAdminAuthed === false) {
+  if (!isAdminAuthed) {
+    if (isAdminAuthed === null) {
+      return (
+        <div className="min-h-screen bg-stone-900 flex items-center justify-center text-sm font-semibold text-stone-300">
+          Checking administrator session…
+        </div>
+      );
+    }
     return (
       <div className="min-h-screen bg-stone-900 flex items-center justify-center p-4">
         <div className="max-w-sm w-full bg-stone-800 border border-stone-700 rounded-3xl p-6 sm:p-8 text-center space-y-6 shadow-2xl">
           <div className="w-14 h-14 rounded-2xl bg-emerald-900/60 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto">
-            <Sprout className="w-7 h-7 text-lime-400" />
+            <Lock className="w-7 h-7 text-lime-400" />
           </div>
 
           <div>
             <h1 className="text-xl font-black text-white">Operations Desk</h1>
-            <p className="text-xs text-stone-400 mt-1">Sharath Inorahalli APMC Mandi Administration</p>
+            <p className="text-xs text-stone-400 mt-1">FreshRoots Export Administration</p>
           </div>
 
           <form onSubmit={handlePinSubmit} className="space-y-4 text-left">
             <div>
-              <label className="block text-xs font-bold text-stone-300 mb-1">Enter Administrator PIN</label>
+              <label className="block text-xs font-bold text-stone-300 mb-1">Administrator password</label>
               <input
                 type="password"
                 required
@@ -449,19 +489,21 @@ export default function AdminPage() {
                   setPinInput(e.target.value);
                   setPinError(false);
                 }}
-                placeholder="Enter PIN (e.g. 9591)"
-                className="w-full px-4 py-3 rounded-xl bg-stone-900 border border-stone-700 text-white font-mono text-center tracking-widest text-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                autoComplete="current-password"
+                placeholder="Enter your administrator password"
+                className="w-full px-4 py-3 rounded-xl bg-stone-900 border border-stone-700 text-white text-center text-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
               {pinError && (
-                <p className="text-xs text-red-400 mt-1.5 text-center font-medium">Invalid Administrator PIN. Access denied.</p>
+                <p className="text-xs text-red-400 mt-1.5 text-center font-medium">Invalid administrator password. Access denied.</p>
               )}
             </div>
 
             <button
               type="submit"
+              disabled={isSigningIn}
               className="w-full py-3 bg-emerald-700 hover:bg-emerald-600 active:bg-emerald-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-md"
             >
-              Unlock Dashboard
+              {isSigningIn ? 'Signing in…' : 'Sign in securely'}
             </button>
           </form>
 
@@ -491,7 +533,7 @@ export default function AdminPage() {
                 <Sprout className="w-5 h-5 text-emerald-200" />
               </div>
               <div>
-                <span className="font-extrabold text-sm sm:text-base tracking-tight">Sharath Inorahalli Ops</span>
+                <span className="font-extrabold text-sm sm:text-base tracking-tight">FreshRoots Export Ops</span>
                 <span className="text-[10px] text-emerald-400 font-mono ml-2 uppercase bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-800">
                   Operations & Commercial Desk
                 </span>
@@ -507,6 +549,14 @@ export default function AdminPage() {
             >
               <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
               <span>{refreshing ? 'Syncing...' : 'Sync Data'}</span>
+            </button>
+            <button
+              onClick={handleAdminLogout}
+              className="flex items-center gap-1.5 text-xs bg-red-950/70 hover:bg-red-900 border border-red-800/70 text-red-200 px-3 py-1.5 rounded-lg transition"
+              title="Lock Admin Session"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Lock Admin</span>
             </button>
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Connected to PostgreSQL" />
           </div>
@@ -587,7 +637,8 @@ export default function AdminPage() {
             { id: 'orders', label: 'Retail Orders & Fulfillment', count: orders.length },
             { id: 'inventory', label: 'Inventory Batches & Intake', count: inventory.length },
             { id: 'reviews', label: 'Buyer Ratings & Reviews', count: allReviews.length },
-            { id: 'pnl', label: 'Commercial Unit Economics & P&L', count: null }
+            { id: 'pnl', label: 'Commercial Unit Economics & P&L', count: null },
+            { id: 'integrations', label: 'Service Integrations', count: integrationStatuses.filter((item) => item.configured).length }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -607,6 +658,34 @@ export default function AdminPage() {
             </button>
           ))}
         </div>
+
+        {activeTab === 'integrations' && (
+          <section className="space-y-4">
+            <div>
+              <h2 className="text-xl font-extrabold text-stone-900">Third-party service readiness</h2>
+              <p className="text-sm text-stone-600 mt-1">
+                Settings are checked without exposing secrets. A configured status means keys exist; complete a provider-side delivery check before launch.
+                {integrationsCheckedAt && ` Checked ${new Date(integrationsCheckedAt).toLocaleString()}.`}
+              </p>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              {integrationStatuses.map((integration) => (
+                <article key={integration.id} className="bg-white rounded-2xl border border-stone-200 p-5 shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="font-bold text-stone-900">{integration.name}</h3>
+                    <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${integration.configured ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}`}>
+                      {integration.configured ? 'Configured' : 'Needs setup'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-stone-600 mt-2">{integration.connectionCheck}</p>
+                  <p className="text-[11px] text-stone-500 mt-3">
+                    Required: {integration.required.join(', ')}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* TAB 0: COMMODITIES, PRICING & STOCK MANAGER */}
         {activeTab === 'products' && (
@@ -896,7 +975,7 @@ export default function AdminPage() {
                       type="text"
                       value={intakeMandi}
                       onChange={(e) => setIntakeMandi(e.target.value)}
-                      placeholder="e.g. Tiptur APMC Yard Gate 2"
+                      placeholder="e.g. Tiptur Sourcing Yard Gate 2"
                       className="w-full px-3 py-2 border rounded-xl"
                     />
                   </div>

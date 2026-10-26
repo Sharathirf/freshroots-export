@@ -46,7 +46,7 @@ Namaskara ${customerName},
 
 You left *${primaryItem}* ${itemsCount > 1 ? `and ${itemsCount - 1} other item(s)` : ''} in your cart (Total: ₹${subtotal.toLocaleString('en-IN')}).
 
-✨ Direct farm-gate stock from Kikkeri, Mandya is reserved for your parcel.
+✨ Direct farm-gate stock is reserved for your parcel.
 🚚 Express Pan-India surface dispatch available via Shiprocket.
 
 👉 *Click to complete your order:*

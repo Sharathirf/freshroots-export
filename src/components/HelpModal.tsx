@@ -6,7 +6,7 @@ import {
   Phone,
   MessageCircle,
   Mail,
-  MapPin,
+  Truck,
   ChevronDown
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -36,7 +36,7 @@ export default function HelpModal() {
     },
     {
       q: 'Can I purchase bulk container or lorry truckloads?',
-      a: 'Yes. We supply 500 kg to 30 metric tonne truckloads for industrial oil expellers, temples, and exporters with official APMC Mandi gate pass documentation. Tap Wholesale RFQ or call our desk.'
+      a: 'Yes. We supply 500 kg to 30 metric tonne truckloads for industrial oil expellers, temples, and exporters with official gate pass documentation. Tap Wholesale RFQ or call our desk.'
     }
   ];
 
@@ -61,7 +61,7 @@ export default function HelpModal() {
               Customer Support &amp; Help
             </h2>
             <p className="text-xs text-emerald-200/90 mt-0.5">
-              Talk directly with Sharath and our Mandya APMC farm dispatch team.
+              Talk directly with Sharath and our farm dispatch team.
             </p>
           </div>
 
@@ -120,11 +120,11 @@ export default function HelpModal() {
             </a>
           </div>
 
-          {/* Farm Location Note */}
+          {/* Delivery Note */}
           <div className="flex items-center gap-2.5 p-3 rounded-xl bg-stone-50 border border-stone-200 text-xs text-stone-600">
-            <MapPin className="w-4 h-4 text-emerald-700 shrink-0" />
+            <Truck className="w-4 h-4 text-emerald-700 shrink-0" />
             <div>
-              <strong>Dispatch Hub:</strong> APMC Yard, Mandya &amp; Farm in Inorahalli, Karnataka 571401
+              <strong>Pan-India Doorstep Delivery:</strong> 100% Free Shipping on all orders across India
             </div>
           </div>
 

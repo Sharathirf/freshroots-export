@@ -15,16 +15,19 @@ try {
       }
     }
   }
-} catch (e) {}
+} catch {
+  // Ignore if .env.local cannot be read
+}
 
 import { getRazorpayInstance, verifyRazorpaySignature } from '../lib/razorpay';
 import crypto from 'crypto';
 
 async function testRazorpayIntegration() {
-  console.log('🧪 Testing Razorpay Integration on intelligent-raman...');
-
   const keyId = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-  console.log(`🔑 Key ID in use: ${keyId}`);
+  if (!keyId || !process.env.RAZORPAY_KEY_SECRET) {
+    throw new Error('Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET before running the credential check.');
+  }
+  console.log(`🧪 Testing configured Razorpay ${keyId.startsWith('rzp_live_') ? 'live' : 'test'} credentials...`);
 
   const razorpay = getRazorpayInstance();
 
@@ -50,7 +53,7 @@ async function testRazorpayIntegration() {
 
     // Signature verification check
     const mockPaymentId = `pay_mock_${Date.now()}`;
-    const secret = process.env.RAZORPAY_KEY_SECRET || 'KVOf4feu4YAGb721tDSJ9Zzc';
+    const secret = process.env.RAZORPAY_KEY_SECRET;
     const validSignature = crypto
       .createHmac('sha256', secret)
       .update(`${order.id}|${mockPaymentId}`)

@@ -1,12 +1,22 @@
 import { Pool } from 'pg';
 
+declare global {
+  var __pgPool: Pool | undefined;
+}
+
 // Create a singleton connection pool for PostgreSQL
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://apple@localhost:5432/tiptur_direct',
-  max: 10,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-});
+const pool =
+  globalThis.__pgPool ||
+  new Pool({
+    connectionString: process.env.DATABASE_URL || 'postgresql://apple@localhost:5432/tiptur_direct',
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 5000,
+  });
+
+if (process.env.NODE_ENV !== 'production') {
+  globalThis.__pgPool = pool;
+}
 
 export default pool;
 

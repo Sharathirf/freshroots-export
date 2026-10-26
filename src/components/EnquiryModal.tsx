@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, ArrowRight, ShieldCheck, CheckCircle2, Phone } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import TurnstileChallenge, { turnstileEnabled } from '@/components/TurnstileChallenge';
+import { track } from '@/lib/analytics';
 
 interface EnquiryModalProps {
   isOpen: boolean;
@@ -24,6 +26,7 @@ export default function EnquiryModal({ isOpen, onClose, defaultProduceTitle }: E
   const [otpCode, setOtpCode] = useState('1234');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState('');
 
   // Auto-fill details if customer is already verified/logged in
   useEffect(() => {
@@ -93,11 +96,16 @@ export default function EnquiryModal({ isOpen, onClose, defaultProduceTitle }: E
       return;
     }
 
+    if (isLoggedIn && turnstileEnabled && !turnstileToken) {
+      setErrorMsg('Please complete the anti-spam check before submitting.');
+      return;
+    }
+
     setErrorMsg(null);
 
     // If ALREADY logged in, no OTP required! Submit enquiry immediately
     if (isLoggedIn) {
-      await submitEnquiryRecord(cleanPhone.slice(-10), name.trim(), email.trim(), query.trim());
+      await submitEnquiryRecord(cleanPhone.slice(-10), name.trim(), email.trim(), query.trim(), turnstileToken);
       return;
     }
 
@@ -139,18 +147,23 @@ export default function EnquiryModal({ isOpen, onClose, defaultProduceTitle }: E
     }
 
     // 3. Submit enquiry
-    await submitEnquiryRecord(cleanPhone, customerName, customerEmail, query.trim());
+    if (turnstileEnabled && !turnstileToken) {
+      setErrorMsg('Please complete the anti-spam check before submitting.');
+      return;
+    }
+    await submitEnquiryRecord(cleanPhone, customerName, customerEmail, query.trim(), turnstileToken);
   };
 
   const submitEnquiryRecord = async (
     targetPhone: string,
     targetName: string,
     targetEmail: string,
-    targetQuery: string
+    targetQuery: string,
+    challengeToken: string
   ) => {
     setIsSubmitting(true);
     try {
-      await fetch('/api/rfq', {
+      const response = await fetch('/api/rfq', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -159,10 +172,17 @@ export default function EnquiryModal({ isOpen, onClose, defaultProduceTitle }: E
           contact_email: targetEmail || null,
           requested_quantity: '1',
           unit: 'General Enquiry',
-          additional_notes: targetQuery || 'General farm inquiry'
+          product_title: 'General Farm Enquiry',
+          additional_requirements: targetQuery || 'General farm inquiry',
+          turnstileToken: challengeToken
         })
       });
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to submit enquiry. Please try again.');
+      }
       setStep('success');
+      track('rfq_submitted', { source: 'general_enquiry_modal' });
     } catch (err: any) {
       setErrorMsg(err.message || 'Failed to submit enquiry. Please try again.');
     } finally {
@@ -182,7 +202,7 @@ export default function EnquiryModal({ isOpen, onClose, defaultProduceTitle }: E
       onClick={handleResetAndClose}
     >
       <div
-        className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-stone-200 relative animate-in zoom-in-95 overflow-hidden"
+        className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-stone-200 relative animate-in zoom-in-95 max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button - Matches Screenshot 3 */}
@@ -203,7 +223,7 @@ export default function EnquiryModal({ isOpen, onClose, defaultProduceTitle }: E
               Enquiry Received!
             </h3>
             <p className="text-stone-600 mt-2 text-sm leading-relaxed max-w-md mx-auto">
-              Thank you, <span className="font-bold text-stone-900">{name}</span>. Our Kikkeri agri desk has logged your request and will call you back on <span className="font-bold text-stone-800">+91 {phone.replace(/\D/g, '').slice(-10)}</span> within 24 hours.
+              Thank you, <span className="font-bold text-stone-900">{name}</span>. Our agri desk has logged your request and will call you back on <span className="font-bold text-stone-800">+91 {phone.replace(/\D/g, '').slice(-10)}</span> within 24 hours.
             </p>
             <div className="mt-5 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-semibold">
               ✓ Your profile is saved. Next time you enquire, you won&apos;t need to re-verify OTP!
@@ -250,6 +270,7 @@ export default function EnquiryModal({ isOpen, onClose, defaultProduceTitle }: E
                   placeholder="1234"
                   className="w-40 mx-auto block px-4 py-2.5 text-center text-2xl font-mono font-bold tracking-widest rounded-xl border border-stone-300 focus:ring-2 focus:ring-[#1e824c] focus:outline-none"
                 />
+                <TurnstileChallenge onToken={setTurnstileToken} />
                 <div className="text-[11px] text-stone-400 text-center mt-1">
                   (Test demo OTP: <strong>1234</strong>)
                 </div>
@@ -419,6 +440,8 @@ export default function EnquiryModal({ isOpen, onClose, defaultProduceTitle }: E
                   className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm font-medium text-stone-900 focus:ring-2 focus:ring-[#1e824c] focus:outline-none transition placeholder:text-stone-400 resize-none"
                 />
               </div>
+
+              {isLoggedIn && <TurnstileChallenge onToken={setTurnstileToken} />}
 
               {/* Submit Button - Matches Screenshot 3 */}
               <button

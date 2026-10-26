@@ -25,7 +25,7 @@ const SOLUTIONS: RangeSolution[] = [
   },
   {
     title: 'Temple Mandirs, Puja & Retail Stores',
-    badge: 'Grade A APMC Selection',
+    badge: 'Grade A Selection',
     description: 'Uniform 550g+ dehusked coconuts with fresh coconut water and intact eyes. Nil-rated 0% GST compliance.',
     icon: Sparkles,
     productCount: 2,
@@ -61,7 +61,7 @@ const SOLUTIONS: RangeSolution[] = [
   },
   {
     title: 'Pan-India Mandi & Global Container Lots',
-    badge: 'Direct APMC Weighbridge',
+    badge: 'Direct Digital Weighbridge',
     description: 'Full-truckload (10 MT to 25 MT) and 20ft/40ft shipping container lots with Phytosanitary clearance.',
     icon: ShieldAlert,
     productCount: 9,

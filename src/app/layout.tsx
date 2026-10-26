@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { CartProvider } from '@/context/CartContext';
@@ -6,14 +7,14 @@ import { WishlistProvider } from '@/context/WishlistContext';
 import { AuthProvider } from '@/context/AuthContext';
 import WatchlistDrawer from '@/components/WatchlistDrawer';
 import SignInModal from '@/components/SignInModal';
-import ExitIntentModal from '@/components/ExitIntentModal';
 import AccountModal from '@/components/AccountModal';
 import EditProfileModal from '@/components/EditProfileModal';
 import ManageAddressesModal from '@/components/ManageAddressesModal';
 import OrderHistoryModal from '@/components/OrderHistoryModal';
 import HelpModal from '@/components/HelpModal';
 import MobileBottomNav from '@/components/MobileBottomNav';
-import VoiceOrderFloatingBtn from '@/components/VoiceOrderFloatingBtn';
+import PwaInstallPrompt from '@/components/PwaInstallPrompt';
+import PostHogPageView from '@/components/PostHogPageView';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -34,16 +35,19 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Sharath Inorahalli | Farm-Gate Agricultural Commodities from Karnataka',
+  title: 'FreshRoots Export | Farm-Gate Agricultural Commodities from Karnataka',
   description: 'Direct-from-origin agricultural commerce platform selling hand-graded mature coconuts, GI Tiptur ball copra, spices, and pure cold-pressed oils to households and bulk commercial buyers.',
   manifest: '/manifest.webmanifest',
+  icons: {
+    apple: '/apple-touch-icon.png'
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Sharath Agri'
+    title: 'FreshRoots Export'
   },
   keywords: [
-    'Sharath Inorahalli',
+    'FreshRoots Export',
     'buy coconuts online Bangalore',
     'Tiptur ball copra wholesale',
     'coconut suppliers Karnataka',
@@ -52,7 +56,7 @@ export const metadata: Metadata = {
     'agricultural commodities India'
   ],
   openGraph: {
-    title: 'Sharath Inorahalli | Karnataka Agricultural Commerce',
+    title: 'FreshRoots Export | Karnataka Agricultural Commerce',
     description: 'Zero commission agents. Standardized weight grading. Direct farm-gate procurement from Karnataka agricultural corridors.',
     type: 'website'
   }
@@ -64,25 +68,41 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-50 text-stone-900`}>
+    <html lang="en" className="scroll-smooth overflow-x-hidden max-w-full">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-50 text-stone-900 overflow-x-hidden min-h-screen w-full max-w-full`}>
+        <Script src="/pwa-install-bridge.js" strategy="beforeInteractive" />
+        {process.env.NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN && (
+          <Script
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            strategy="afterInteractive"
+            data-cf-beacon={JSON.stringify({
+              token: process.env.NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN,
+              spa: true,
+            })}
+          />
+        )}
         <AuthProvider>
           <WishlistProvider>
             <CartProvider>
               {children}
               <WatchlistDrawer />
               <SignInModal />
-              <ExitIntentModal />
               <AccountModal />
               <EditProfileModal />
               <ManageAddressesModal />
               <OrderHistoryModal />
               <HelpModal />
               <MobileBottomNav />
-              <VoiceOrderFloatingBtn />
             </CartProvider>
           </WishlistProvider>
         </AuthProvider>
+        <PostHogPageView />
+        <PwaInstallPrompt />
+        {/* Razorpay Standard Checkout Script */}
+        <Script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );

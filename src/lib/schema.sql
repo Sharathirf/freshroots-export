@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS products (
     sku VARCHAR(50) UNIQUE NOT NULL,
     title VARCHAR(200) NOT NULL,
     slug VARCHAR(200) UNIQUE NOT NULL,
-    category VARCHAR(50) NOT NULL CHECK (category IN ('mature_coconut', 'copra', 'spices', 'oil_and_extracts', 'coir_commodities', 'value_added')),
+    category VARCHAR(50) NOT NULL CHECK (category IN ('mature_coconut', 'copra', 'arecanut', 'spices', 'oil_and_extracts', 'coir_commodities', 'value_added')),
     grade VARCHAR(100) NOT NULL,
     origin VARCHAR(100) NOT NULL DEFAULT 'Tiptur / Tumakuru, Karnataka',
     unit_of_measure VARCHAR(60) NOT NULL,
@@ -84,6 +84,32 @@ CREATE TABLE IF NOT EXISTS products (
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Daily cache of the latest reported ACROP maximum mandi prices.
+CREATE TABLE IF NOT EXISTS mandi_prices (
+    commodity VARCHAR(30) PRIMARY KEY CHECK (commodity IN ('copra', 'arecanut')),
+    market_name VARCHAR(100) NOT NULL,
+    maximum_price_per_quintal NUMERIC(12, 2) NOT NULL CHECK (maximum_price_per_quintal > 0),
+    reported_at VARCHAR(40) NOT NULL,
+    source_url TEXT NOT NULL,
+    checked_on DATE NOT NULL,
+    refresh_status VARCHAR(20) NOT NULL DEFAULT 'seeded'
+        CHECK (refresh_status IN ('seeded', 'ok', 'error', 'older_report')),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+INSERT INTO mandi_prices (
+    commodity, market_name, maximum_price_per_quintal, reported_at, source_url, checked_on
+) VALUES
+    (
+        'copra', 'Tiptur Mandi', 34599, '22 Oct 2026',
+        'https://acrop.app/mandi/karnataka/tumakuru/tiptur/copra', DATE '2026-10-22'
+    ),
+    (
+        'arecanut', 'Shimoga Mandi', 70809, '22 Oct 2026',
+        'https://acrop.app/mandi/karnataka/shivamogga/shimoga/arecanut', DATE '2026-10-22'
+    )
+ON CONFLICT (commodity) DO NOTHING;
 
 -- 5. Inventory Batches
 CREATE TABLE IF NOT EXISTS inventory_batches (
@@ -122,10 +148,41 @@ CREATE TABLE IF NOT EXISTS orders (
     total_amount_inr NUMERIC(12, 2) NOT NULL,
     payment_method VARCHAR(40) NOT NULL DEFAULT 'upi',
     payment_reference VARCHAR(100),
+    payment_expires_at TIMESTAMPTZ,
     tracking_reference VARCHAR(100),
     items JSONB NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Server-created Razorpay sessions are bound to their persisted order and amount.
+CREATE TABLE IF NOT EXISTS payment_attempts (
+    razorpay_order_id VARCHAR(80) PRIMARY KEY,
+    order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    amount_paise BIGINT NOT NULL CHECK (amount_paise > 0),
+    currency VARCHAR(8) NOT NULL DEFAULT 'INR',
+    status VARCHAR(24) NOT NULL DEFAULT 'created' CHECK (status IN ('created', 'authorized', 'captured', 'failed')),
+    razorpay_payment_id VARCHAR(80) UNIQUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_payment_attempts_order ON payment_attempts(order_id, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS order_inventory_reservations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    batch_id UUID NOT NULL REFERENCES inventory_batches(id),
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    status VARCHAR(16) NOT NULL DEFAULT 'reserved' CHECK (status IN ('reserved', 'fulfilled', 'released')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_order_reservations_order ON order_inventory_reservations(order_id, status);
+
+CREATE TABLE IF NOT EXISTS admin_login_attempts (
+    ip_hash CHAR(64) PRIMARY KEY,
+    window_started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    attempts INTEGER NOT NULL DEFAULT 0 CHECK (attempts >= 0)
 );
 
 -- 7. Wholesale Quotations (RFQ) Table
@@ -210,3 +267,11 @@ CREATE TABLE IF NOT EXISTS product_reviews (
 );
 CREATE INDEX IF NOT EXISTS idx_product_reviews_product_id ON product_reviews (product_id);
 CREATE INDEX IF NOT EXISTS idx_product_reviews_created_at ON product_reviews (created_at DESC);
+
+-- 11. Browser push subscriptions (only saved after explicit user opt-in)
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+    fcm_token TEXT PRIMARY KEY,
+    user_agent VARCHAR(500),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);

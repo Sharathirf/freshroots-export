@@ -24,6 +24,32 @@ import {
 } from 'lucide-react';
 import { Product } from '@/types';
 
+type CopraMandiRate = {
+  pricePerQuintal: number;
+  pricePerKg: number;
+  reportedAt: string;
+  isFallback: boolean;
+  source: string;
+};
+
+type ArecanutMandiRate = CopraMandiRate;
+
+const FALLBACK_COPRA_RATE: CopraMandiRate = {
+  pricePerQuintal: 34_599,
+  pricePerKg: 345.99,
+  reportedAt: '22 Oct 2026',
+  isFallback: true,
+  source: 'https://acrop.app/mandi/karnataka/tumakuru/tiptur/copra',
+};
+
+const FALLBACK_ARECANUT_RATE: ArecanutMandiRate = {
+  pricePerQuintal: 70_809,
+  pricePerKg: 708.09,
+  reportedAt: '22 Oct 2026',
+  isFallback: true,
+  source: 'https://acrop.app/mandi/karnataka/shivamogga/shimoga/arecanut',
+};
+
 export default function Navbar({
   onOpenRFQ,
   onOpenEnquiry
@@ -51,7 +77,65 @@ export default function Navbar({
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [copraMandiRate, setCopraMandiRate] = useState(FALLBACK_COPRA_RATE);
+  const [arecanutMandiRate, setArecanutMandiRate] = useState(FALLBACK_ARECANUT_RATE);
   const searchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadCopraMandiRate() {
+      try {
+        const response = await fetch('/api/mandi/copra', { cache: 'no-store' });
+        if (!response.ok) return;
+
+        const rate = (await response.json()) as CopraMandiRate;
+        if (
+          !cancelled &&
+          Number.isFinite(rate.pricePerKg) &&
+          Number.isFinite(rate.pricePerQuintal) &&
+          typeof rate.reportedAt === 'string'
+        ) {
+          setCopraMandiRate(rate);
+        }
+      } catch {
+        // Keep the dated source value when ACROP or the local endpoint is unavailable.
+      }
+    }
+
+    void loadCopraMandiRate();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadArecanutMandiRate() {
+      try {
+        const response = await fetch('/api/mandi/arecanut', { cache: 'no-store' });
+        if (!response.ok) return;
+
+        const rate = (await response.json()) as ArecanutMandiRate;
+        if (
+          !cancelled &&
+          Number.isFinite(rate.pricePerKg) &&
+          Number.isFinite(rate.pricePerQuintal) &&
+          typeof rate.reportedAt === 'string'
+        ) {
+          setArecanutMandiRate(rate);
+        }
+      } catch {
+        // Keep the dated source value when ACROP or the local endpoint is unavailable.
+      }
+    }
+
+    void loadArecanutMandiRate();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Close search on Escape key
   useEffect(() => {
@@ -111,43 +195,66 @@ export default function Navbar({
   }, [searchQuery, allProducts]);
 
   return (
-    <header className="sticky top-0 z-40 bg-white shadow-sm border-b border-stone-200">
+    <header className="sticky top-0 z-40 bg-white shadow-sm border-b border-stone-200 w-full max-w-full overflow-hidden">
       {/* 1. Mandi Live Rate & Shipping Ticker (Katyayani Header Top Bar) */}
-      <div className="bg-[#1c3809] text-white text-[11px] py-2 px-4 border-b border-[#24470b]">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-2 h-2 rounded-full bg-lime-400 animate-pulse"></span>
-            <span className="font-bold text-lime-300 uppercase tracking-wider">Karnataka Mandi Benchmarks:</span>
-            <span className="hidden sm:inline">Semi-Husked Coconuts: ₹90.00/kg</span>
-            <span className="hidden sm:inline">•</span>
-            <span className="hidden sm:inline">GI Ball Copra: ₹350.00/kg</span>
-            <span className="hidden sm:inline">•</span>
-            <span className="hidden md:inline">Tender Coconut (Bulk): ₹80.00/pc</span>
+      <div className="bg-[#1c3809] text-white text-[10px] sm:text-[11px] py-1.5 sm:py-2 px-3 sm:px-4 border-b border-[#24470b] overflow-hidden">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 truncate">
+            <span className="inline-block w-2 h-2 rounded-full bg-lime-400 animate-pulse shrink-0"></span>
+            <span className="font-bold text-lime-300 uppercase tracking-wider shrink-0">
+              Mandi:
+            </span>
+            <span className="truncate text-lime-100">
+              Coconuts: ₹90/kg •{' '}
+              <a
+                href="https://acrop.app/mandi/karnataka/tumakuru/tiptur/copra"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Tiptur Mandi copra maximum: ₹${copraMandiRate.pricePerQuintal.toLocaleString('en-IN')} per quintal, equivalent to ₹${copraMandiRate.pricePerKg.toFixed(2)} per kg, reported ${copraMandiRate.reportedAt}. Source: ACROP.`}
+                title={`${copraMandiRate.isFallback ? 'Last available ACROP report' : 'ACROP report'}: Tiptur Mandi maximum ₹${copraMandiRate.pricePerQuintal.toLocaleString('en-IN')}/quintal (₹${copraMandiRate.pricePerKg.toFixed(2)}/kg), reported ${copraMandiRate.reportedAt}`}
+                className="underline decoration-dotted underline-offset-2 hover:text-white"
+              >
+                Copra max: ₹{copraMandiRate.pricePerQuintal.toLocaleString('en-IN')}/quintal
+                <span className="hidden sm:inline"> · {copraMandiRate.reportedAt}</span>
+              </a>
+              {' '}•{' '}
+              <a
+                href="https://acrop.app/mandi/karnataka/shivamogga/shimoga/arecanut"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Shimoga Mandi arecanut maximum: ₹${arecanutMandiRate.pricePerQuintal.toLocaleString('en-IN')} per quintal, equivalent to ₹${arecanutMandiRate.pricePerKg.toFixed(2)} per kg, reported ${arecanutMandiRate.reportedAt}. Source: ACROP.`}
+                title={`${arecanutMandiRate.isFallback ? 'Last available ACROP report' : 'ACROP report'}: Shimoga Mandi arecanut maximum ₹${arecanutMandiRate.pricePerQuintal.toLocaleString('en-IN')}/quintal (₹${arecanutMandiRate.pricePerKg.toFixed(2)}/kg), reported ${arecanutMandiRate.reportedAt}`}
+                className="underline decoration-dotted underline-offset-2 hover:text-white"
+              >
+                Arecanut max: ₹{arecanutMandiRate.pricePerQuintal.toLocaleString('en-IN')}/quintal
+                <span className="hidden sm:inline"> · {arecanutMandiRate.reportedAt}</span>
+              </a>
+            </span>
           </div>
-          <div className="flex items-center gap-3 sm:gap-4 text-emerald-100 font-medium">
+          <div className="flex items-center gap-2.5 sm:gap-4 text-emerald-100 font-medium shrink-0 text-[10px] sm:text-[11px]">
             <Link
               href="/track-order"
-              className="hover:text-white flex items-center gap-1.5 transition text-lime-200 hover:text-white font-semibold"
+              className="hover:text-white flex items-center gap-1 transition text-lime-200 hover:text-white font-semibold"
             >
-              <Truck className="w-3.5 h-3.5 text-lime-300" />
-              <span>{lang === 'kn' ? 'ಟ್ರ್ಯಾಕ್ ಮಾಡಿ' : 'Track Order'}</span>
+              <Truck className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-lime-300" />
+              <span>{lang === 'kn' ? 'ಟ್ರ್ಯಾಕ್' : 'Track'}</span>
             </Link>
-            <span className="text-emerald-300/60">•</span>
+            <span className="text-emerald-300/60 hidden sm:inline">•</span>
             <button
               type="button"
               onClick={() => setIsOrderHistoryOpen(true)}
-              className="hover:text-white flex items-center gap-1.5 transition text-lime-200 hover:text-white font-semibold"
+              className="hover:text-white flex items-center gap-1 transition text-lime-200 hover:text-white font-semibold hidden sm:flex"
             >
               <RotateCcw className="w-3.5 h-3.5 text-lime-300" />
-              <span>{lang === 'kn' ? 'ಮರು ಆರ್ಡರ್' : 'Orders & Reorder'}</span>
+              <span>{lang === 'kn' ? 'ಮರು ಆರ್ಡರ್' : 'Orders'}</span>
             </button>
             <span className="text-emerald-300/60">•</span>
             <button
               type="button"
               onClick={() => setIsHelpOpen(true)}
-              className="hover:text-white flex items-center gap-1.5 transition text-lime-200 hover:text-white font-semibold"
+              className="hover:text-white flex items-center gap-1 transition text-lime-200 hover:text-white font-semibold"
             >
-              <HelpCircle className="w-3.5 h-3.5 text-lime-300" />
+              <HelpCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-lime-300" />
               <span>{lang === 'kn' ? 'ಸಹಾಯ' : 'Help'}</span>
             </button>
             <span className="hidden md:inline text-emerald-300/60">•</span>
@@ -158,29 +265,29 @@ export default function Navbar({
               className="hover:text-white flex items-center gap-1 transition hidden sm:flex"
             >
               <Phone className="w-3 h-3 text-lime-300" />
-              Desk: +91 95911 42548
+              95911 42548
             </a>
           </div>
         </div>
       </div>
 
       {/* 2. Main Navigation Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4 sm:gap-6">
+      <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 h-14 sm:h-16 md:h-20 flex items-center justify-between gap-1.5 sm:gap-6">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#3b6d11] to-[#1c3809] flex items-center justify-center text-white shadow-md shadow-emerald-950/20 group-hover:scale-105 transition">
-            <Sprout className="w-6 h-6 text-lime-300" />
+        <Link href="/" className="flex items-center gap-1.5 sm:gap-3 shrink-0 group">
+          <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-[#3b6d11] to-[#1c3809] flex items-center justify-center text-white shadow-md shadow-emerald-950/20 group-hover:scale-105 transition">
+            <Sprout className="w-4 h-4 sm:w-6 sm:h-6 text-lime-300" />
           </div>
           <div>
-            <div className="flex items-center gap-1.5">
-              <span className="font-extrabold text-xl sm:text-2xl tracking-tight text-stone-900">SHARATH</span>
-              <span className="font-black text-xl sm:text-2xl tracking-tight text-[#3b6d11]">INORAHALLI</span>
+            <div className="flex items-center gap-0.5 sm:gap-1.5">
+              <span className="font-extrabold text-sm sm:text-xl md:text-2xl tracking-tight text-stone-900">FreshRoots</span>
+              <span className="font-black text-sm sm:text-xl md:text-2xl tracking-tight text-[#3b6d11]">Export</span>
             </div>
           </div>
         </Link>
 
-        {/* Large Expanded Live Search Bar with Instant Autocomplete */}
-        <div ref={searchRef} className="flex-1 max-w-xl lg:max-w-2xl xl:max-w-3xl relative mx-3 sm:mx-6 min-w-[220px]">
+        {/* Large Expanded Live Search Bar with Instant Autocomplete (Desktop / Tablet) */}
+        <div ref={searchRef} className="hidden lg:block flex-1 max-w-xl lg:max-w-2xl xl:max-w-3xl relative mx-3 sm:mx-6 min-w-[200px]">
           <div className="relative w-full">
             <Search className="w-5 h-5 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
@@ -207,10 +314,10 @@ export default function Navbar({
 
           {/* Autocomplete Dropdown */}
           {isSearchOpen && searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-stone-200 shadow-2xl overflow-hidden z-50 animate-in fade-in max-h-[440px] overflow-y-auto min-w-[340px] sm:min-w-[480px]">
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-stone-200 shadow-2xl overflow-hidden z-50 animate-in fade-in max-h-[440px] overflow-y-auto w-full">
               <div className="p-3 bg-stone-50 text-[11px] font-bold uppercase tracking-wider text-stone-600 border-b border-stone-100 flex justify-between items-center">
                 <span>Matching Produce ({searchResults.length})</span>
-                <span className="text-[10px] text-[#3b6d11] font-extrabold">Direct APMC Stock</span>
+                <span className="text-[10px] text-[#3b6d11] font-extrabold">Direct Farm Stock</span>
               </div>
               <div className="divide-y divide-stone-100">
                 {searchResults.map((p) => (
@@ -256,12 +363,12 @@ export default function Navbar({
         </div>
 
         {/* Actions Strip */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1 sm:gap-3">
           {/* Language Switcher Pill (Bilingual Kannada / English) */}
           <button
             type="button"
             onClick={() => setLang(lang === 'kn' ? 'en' : 'kn')}
-            className="flex items-center gap-1 text-xs font-black bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-300 px-2.5 py-2 rounded-xl transition shadow-xs"
+            className="flex items-center gap-0.5 text-[10px] sm:text-xs font-black bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-300 px-1.5 sm:px-2.5 py-1 sm:py-2 rounded-lg sm:rounded-xl transition shadow-xs"
             title={lang === 'kn' ? 'Switch to English' : 'ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಿ'}
             aria-label="Toggle Language"
           >
@@ -269,30 +376,29 @@ export default function Navbar({
             <span className="text-stone-300 font-normal">/</span>
             <span className={lang === 'en' ? 'text-emerald-700 font-extrabold' : 'text-stone-400 font-normal'}>EN</span>
           </button>
-          {/* Enquire Farm Button */}
+
+          {/* Enquire Farm Button - Desktop only */}
           {onOpenEnquiry && (
             <button
               type="button"
               onClick={onOpenEnquiry}
-              className="flex items-center gap-1.5 text-xs sm:text-sm font-bold bg-emerald-50 hover:bg-emerald-100 text-[#1e824c] border border-emerald-300 px-3 py-2 rounded-xl transition shadow-sm"
+              aria-label="Enquire about a farm"
+              className="hidden md:flex items-center gap-1.5 text-xs sm:text-sm font-bold bg-emerald-50 hover:bg-emerald-100 text-[#1e824c] border border-emerald-300 px-2 xl:px-3 py-2 rounded-xl transition shadow-sm"
             >
               <FileQuestion className="w-4 h-4 text-[#1e824c]" />
-              <span className="hidden sm:inline">Enquire Farm</span>
-              <span className="sm:hidden">Enquire</span>
+              <span className="hidden xl:inline">Enquire Farm</span>
             </button>
           )}
 
-          {/* Wholesale RFQ Button */}
+          {/* Wholesale RFQ Button - Desktop only */}
           <button
             onClick={onOpenRFQ}
-            className="flex items-center gap-1.5 text-xs sm:text-sm font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-3 py-2 rounded-xl transition shadow-sm"
+            aria-label="Request a wholesale quote"
+            className="hidden md:flex items-center gap-1.5 text-xs sm:text-sm font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-2 xl:px-3 py-2 rounded-xl transition shadow-sm"
           >
             <Building2 className="w-4 h-4 text-amber-700" />
-            <span className="hidden sm:inline">Wholesale RFQ</span>
-            <span className="bg-amber-200 text-amber-900 text-[10px] px-1.5 py-0.5 rounded font-extrabold uppercase sm:hidden">
-              RFQ
-            </span>
-            <span className="bg-amber-200 text-amber-900 text-[10px] px-1.5 py-0.5 rounded font-extrabold uppercase hidden lg:inline">
+            <span className="hidden xl:inline">Wholesale RFQ</span>
+            <span className="hidden xl:inline bg-amber-200 text-amber-900 text-[10px] px-1.5 py-0.5 rounded font-extrabold uppercase">
               Bulk
             </span>
           </button>
@@ -301,11 +407,11 @@ export default function Navbar({
           <button
             type="button"
             onClick={() => setIsWatchlistOpen(true)}
-            className="relative p-2.5 text-stone-700 hover:text-red-600 hover:bg-red-50 rounded-xl transition group"
+            className="relative p-2 sm:p-2.5 text-stone-700 hover:text-red-600 hover:bg-red-50 rounded-xl transition group"
             title="My Watchlist"
             aria-label="View Watchlist"
           >
-            <Heart className="w-5 h-5 group-hover:scale-110 transition" />
+            <Heart className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition" />
             {wishlistCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white shadow">
                 {wishlistCount}
@@ -313,128 +419,110 @@ export default function Navbar({
             )}
           </button>
 
-          {/* Customer Sign In / Account Dropdown */}
-          {!isLoggedIn ? (
-            <button
-              type="button"
-              onClick={() => setIsSignInModalOpen(true)}
-              className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-stone-700 hover:text-[#3b6d11] px-2.5 py-2 rounded-xl hover:bg-stone-100 transition"
-              title="Customer Sign In"
-            >
-              <User className="w-4 h-4 text-stone-600" />
-              <span className="hidden md:inline">Sign In</span>
-            </button>
-          ) : (
-            <div className="relative group">
+          {/* Customer Sign In / Account Dropdown (Desktop) */}
+          <div className="hidden md:block">
+            {!isLoggedIn ? (
               <button
                 type="button"
-                onClick={() => setIsAccountModalOpen(true)}
-                className="flex items-center gap-1.5 text-xs font-bold text-[#1c3809] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-2 rounded-xl transition shadow-sm"
-                title="View Your Account"
+                onClick={() => setIsSignInModalOpen(true)}
+                className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-stone-700 hover:text-[#3b6d11] px-2.5 py-2 rounded-xl hover:bg-stone-100 transition"
+                title="Customer Sign In"
               >
-                <div className="w-4 h-4 rounded-full bg-[#3b6d11] text-white flex items-center justify-center text-[9px] font-black">
-                  ✓
-                </div>
-                <span className="hidden md:inline font-bold">
-                  {customer?.name ? customer.name.split(' ')[0] : `+91 ${customer?.phone}`}
-                </span>
+                <User className="w-4 h-4 text-stone-600" />
+                <span>Sign In</span>
               </button>
-              {/* Dropdown Menu */}
-              <div className="absolute right-0 top-full mt-1.5 w-60 bg-white rounded-2xl shadow-xl border border-stone-200 py-1.5 hidden group-hover:block z-50 animate-in fade-in">
-                <div className="px-3.5 py-2.5 border-b border-stone-100 bg-stone-50/70 rounded-t-xl">
-                  <div className="text-[10px] uppercase font-bold text-[#3b6d11]">Verified Customer</div>
-                  <div className="text-xs font-bold text-stone-900 mt-0.5 truncate">
-                    {customer?.name || 'Customer'}
-                  </div>
-                  <div className="text-[11px] font-mono text-stone-600 font-semibold">
-                    +91 {customer?.phone}
-                  </div>
-                  {customer?.email && (
-                    <div className="text-[11px] text-stone-400 truncate mt-0.5">
-                      {customer.email}
-                    </div>
-                  )}
-                </div>
+            ) : (
+              <div className="relative group">
                 <button
                   type="button"
                   onClick={() => setIsAccountModalOpen(true)}
-                  className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition text-left"
+                  className="flex items-center gap-1.5 text-xs font-bold text-[#1c3809] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-2 rounded-xl transition shadow-sm"
+                  title="View Your Account"
                 >
-                  <User className="w-4 h-4 text-stone-500" />
-                  <span>Your Account</span>
+                  <div className="w-4 h-4 rounded-full bg-[#3b6d11] text-white flex items-center justify-center text-[9px] font-black">
+                    ✓
+                  </div>
+                  <span className="font-bold">
+                    {customer?.name ? customer.name.split(' ')[0] : `+91 ${customer?.phone}`}
+                  </span>
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setIsEditProfileModalOpen(true)}
-                  className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition text-left"
-                >
-                  <Pencil className="w-4 h-4 text-stone-500" />
-                  <span>Edit Profile</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsOrderHistoryOpen(true)}
-                  className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition text-left"
-                >
-                  <RotateCcw className="w-4 h-4 text-stone-500" />
-                  <span>Orders &amp; Reorder</span>
-                </button>
-                <Link
-                  href={`/track-order?query=${customer?.phone}`}
-                  className="flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition"
-                >
-                  <Truck className="w-4 h-4 text-stone-500" />
-                  <span>Track Shipments</span>
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setIsHelpOpen(true)}
-                  className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition text-left"
-                >
-                  <HelpCircle className="w-4 h-4 text-stone-500" />
-                  <span>Help &amp; Support</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsWatchlistOpen(true)}
-                  className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition text-left"
-                >
-                  <Heart className="w-4 h-4 text-stone-500" />
-                  <span>My Watchlist ({wishlistCount})</span>
-                </button>
-                <div className="border-t border-stone-100 my-1"></div>
-                <button
-                  type="button"
-                  onClick={signOut}
-                  className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition text-left"
-                >
-                  <LogOut className="w-4 h-4 text-red-500" />
-                  <span>Sign Out</span>
-                </button>
+                {/* Dropdown Menu */}
+                <div className="absolute right-0 top-full mt-1.5 w-60 bg-white rounded-2xl shadow-xl border border-stone-200 py-1.5 hidden group-hover:block z-50 animate-in fade-in">
+                  <div className="px-3.5 py-2.5 border-b border-stone-100 bg-stone-50/70 rounded-t-xl">
+                    <div className="text-[10px] uppercase font-bold text-[#3b6d11]">Verified Customer</div>
+                    <div className="text-xs font-bold text-stone-900 mt-0.5 truncate">
+                      {customer?.name || 'Customer'}
+                    </div>
+                    <div className="text-[11px] font-mono text-stone-600 font-semibold">
+                      +91 {customer?.phone}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsAccountModalOpen(true)}
+                    className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition text-left"
+                  >
+                    <User className="w-4 h-4 text-stone-500" />
+                    <span>Your Account</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditProfileModalOpen(true)}
+                    className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition text-left"
+                  >
+                    <Pencil className="w-4 h-4 text-stone-500" />
+                    <span>Edit Profile</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsOrderHistoryOpen(true)}
+                    className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition text-left"
+                  >
+                    <RotateCcw className="w-4 h-4 text-stone-500" />
+                    <span>Orders &amp; Reorder</span>
+                  </button>
+                  <Link
+                    href={`/track-order?query=${customer?.phone}`}
+                    className="flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition"
+                  >
+                    <Truck className="w-4 h-4 text-stone-500" />
+                    <span>Track Shipments</span>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setIsHelpOpen(true)}
+                    className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-stone-700 hover:bg-stone-50 hover:text-[#3b6d11] transition text-left"
+                  >
+                    <HelpCircle className="w-4 h-4 text-stone-500" />
+                    <span>Help &amp; Support</span>
+                  </button>
+                  <div className="border-t border-stone-100 my-1"></div>
+                  <button
+                    type="button"
+                    onClick={signOut}
+                    className="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition text-left"
+                  >
+                    <LogOut className="w-4 h-4 text-red-500" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
-
-          {/* Admin Link */}
-          <Link
-            href="/admin"
-            className="hidden xl:inline-flex text-xs font-semibold text-stone-600 hover:text-[#3b6d11] bg-stone-100 hover:bg-stone-200 border border-stone-200 px-2.5 py-2 rounded-xl transition"
-          >
-            Admin
-          </Link>
+            )}
+          </div>
 
           {/* Cart Trigger Button */}
           <button
             onClick={() => setIsCartOpen(true)}
-            className="relative flex items-center gap-2 bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-95 text-white px-3 sm:px-4 py-2.5 rounded-xl font-bold shadow-sm transition group"
+            aria-label={`Open cart with ${itemCount} ${itemCount === 1 ? 'item' : 'items'}, total ₹${subtotal.toLocaleString('en-IN')}`}
+            className="relative flex items-center gap-1 sm:gap-2 bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-95 text-white px-2 sm:px-4 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl font-bold shadow-sm transition group"
           >
-            <ShoppingBag className="w-5 h-5 group-hover:scale-105 transition" />
+            <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-105 transition" />
             <div className="text-left hidden sm:block">
               <div className="text-[10px] text-lime-200 uppercase font-semibold leading-none">Cart</div>
               <div className="text-xs font-bold leading-tight font-mono">₹{subtotal.toLocaleString('en-IN')}</div>
             </div>
             {itemCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-stone-950 text-xs font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow">
+              <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-stone-950 text-xs font-black w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center border-2 border-white shadow">
                 {itemCount}
               </span>
             )}
@@ -442,18 +530,92 @@ export default function Navbar({
         </div>
       </div>
 
+      {/* 2b. Mobile Full-Width Search Bar */}
+        <div className="lg:hidden px-3 pb-2 pt-0.5 bg-white border-t border-stone-100 relative">
+        <div className="relative w-full">
+          <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setIsSearchOpen(true);
+            }}
+            onFocus={() => setIsSearchOpen(true)}
+            placeholder={lang === 'kn' ? 'ತೆಂಗಿನಕಾಯಿ, ಕೊಬ್ಬರಿ, ತುಪ್ಪ ಹುಡುಕಿ...' : 'Search coconuts, copra, oils, spices...'}
+            className="w-full pl-9 pr-8 py-2 rounded-full border border-stone-300 text-xs bg-stone-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#3b6d11] transition shadow-inner placeholder:text-stone-400 font-medium"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 p-1"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+
+        {/* Mobile Search Dropdown */}
+        {isSearchOpen && searchResults.length > 0 && (
+          <div className="absolute top-full left-3 right-3 mt-1 bg-white rounded-2xl border border-stone-200 shadow-2xl overflow-hidden z-50 max-h-[360px] overflow-y-auto">
+            <div className="p-2.5 bg-stone-50 text-[10px] font-bold uppercase tracking-wider text-stone-600 border-b border-stone-100 flex justify-between items-center">
+              <span>Matching ({searchResults.length})</span>
+              <span className="text-[#3b6d11]">Direct Farm</span>
+            </div>
+            <div className="divide-y divide-stone-100">
+              {searchResults.map((p) => (
+                <Link
+                  key={p.id}
+                  href={`/products/${p.slug}`}
+                  onClick={() => {
+                    setIsSearchOpen(false);
+                    setSearchQuery('');
+                  }}
+                  className="p-2.5 hover:bg-stone-50 flex items-center justify-between gap-3 group transition"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <img
+                      src={p.image_url}
+                      alt={p.title}
+                      className="w-10 h-10 rounded-lg object-cover bg-stone-100 border border-stone-200 shrink-0"
+                    />
+                    <div className="min-w-0">
+                      <div className="text-xs font-bold text-stone-900 group-hover:text-[#3b6d11] truncate transition">
+                        {p.title}
+                      </div>
+                      <div className="text-[10px] text-stone-500 truncate mt-0.5">
+                        {p.unit_of_measure} • <span className="text-emerald-700 font-semibold">{p.grade}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="text-xs font-mono font-bold text-stone-900">
+                      ₹{Number(p.retail_price_inr).toLocaleString('en-IN')}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* 3. Category Strip / Mega-Menu (Katyayani Header Category Navigation) */}
       <div className="bg-stone-50 border-t border-stone-200/80 hidden md:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between text-xs font-semibold text-stone-700 py-2.5 overflow-x-auto gap-6 scrollbar-none">
           <div className="flex items-center gap-6">
             <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
-              All Commodities (10)
+              All Commodities ({allProducts.length || 11})
             </Link>
             <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
               Fresh Coconuts
             </Link>
             <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
               GI Ball Copra
+            </Link>
+            <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
+              Arecanut Bulk Lots
             </Link>
             <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
               Wood-Pressed Oils & Ghee

@@ -18,9 +18,11 @@ import {
   RotateCcw,
   ArrowLeft,
   ArrowRight,
-  MessageCircle
+  MessageCircle,
+  FileText
 } from 'lucide-react';
 import { Order } from '@/types';
+import GstInvoiceModal from '@/components/GstInvoiceModal';
 
 function TrackOrderContent() {
   const searchParams = useSearchParams();
@@ -31,6 +33,7 @@ function TrackOrderContent() {
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [reordered, setReordered] = useState(false);
 
@@ -118,7 +121,7 @@ function TrackOrderContent() {
               <span>← Exit to Shop</span>
             </Link>
             <span className="text-[11px] text-stone-400 font-medium hidden sm:inline">
-              Track live APMC courier movement
+              Track live courier movement
             </span>
           </div>
 
@@ -246,7 +249,7 @@ function TrackOrderContent() {
                 <div className="grid grid-cols-5 gap-2 text-center relative">
                   {[
                     { label: 'Confirmed', sub: 'Payment Verified' },
-                    { label: 'Allocated', sub: 'APMC Graded' },
+                    { label: 'Allocated', sub: 'Quality Graded' },
                     { label: 'Packed', sub: 'Mesh / 5-Ply' },
                     { label: 'Dispatched', sub: 'Surface Freight' },
                     { label: 'Delivered', sub: 'Destination' }
@@ -350,6 +353,15 @@ function TrackOrderContent() {
                     <span>Help on WhatsApp</span>
                   </a>
 
+                  <button
+                    type="button"
+                    onClick={() => setIsInvoiceOpen(true)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold transition shadow-xs active:scale-95"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-lime-400" />
+                    <span>Official GST Invoice</span>
+                  </button>
+
                   <Link
                     href="/"
                     className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-stone-100 border border-stone-300 text-stone-700 text-xs font-semibold transition"
@@ -368,6 +380,12 @@ function TrackOrderContent() {
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
+
+              <GstInvoiceModal
+                isOpen={isInvoiceOpen}
+                onClose={() => setIsInvoiceOpen(false)}
+                order={selectedOrder}
+              />
             </div>
           )}
 
@@ -388,7 +406,7 @@ function TrackOrderContent() {
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="font-bold text-xs uppercase tracking-wider text-white">APMC Lab Tested</h4>
+                <h4 className="font-bold text-xs uppercase tracking-wider text-white">Farm Lab Tested</h4>
                 <p className="text-[11px] text-stone-400 mt-0.5">100% moisture verified & weight graded.</p>
               </div>
             </div>

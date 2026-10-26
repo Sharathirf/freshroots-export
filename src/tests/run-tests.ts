@@ -395,6 +395,105 @@ it('Admin pricing update rejects negative prices or negative stock quantities', 
 });
 
 // ----------------------------------------------------
+// Test Suite 7: 1st-Order Coupon (FIRST100) Policy
+// ----------------------------------------------------
+console.log('🏷️ Test Suite 7: 1st-Order Coupon (FIRST100) Policy');
+
+import { AVAILABLE_COUPONS, validateCoupon } from '../lib/coupons';
+
+it('Only FIRST100 is available as a public coupon and offers ₹100 flat off', () => {
+  assert.strictEqual(AVAILABLE_COUPONS.length, 1);
+  assert.strictEqual(AVAILABLE_COUPONS[0].code, 'FIRST100');
+  assert.strictEqual(AVAILABLE_COUPONS[0].value, 100);
+  assert.strictEqual(AVAILABLE_COUPONS[0].type, 'flat');
+  assert.strictEqual(AVAILABLE_COUPONS[0].firstOrderOnly, true);
+});
+
+it('FIRST100 successfully applies ₹100 discount for a first order with subtotal >= ₹400', () => {
+  const result = validateCoupon('FIRST100', 500, true);
+  assert.strictEqual(result.valid, true);
+  assert.strictEqual(result.discountAmount, 100);
+});
+
+it('FIRST100 is rejected if subtotal is below minimum order amount (₹400)', () => {
+  const result = validateCoupon('FIRST100', 350, true);
+  assert.strictEqual(result.valid, false);
+  assert.strictEqual(result.discountAmount, 0);
+  assert.ok(result.message.includes('Minimum order for FIRST100 is ₹400'));
+});
+
+it('FIRST100 is strictly rejected if user is NOT a first-time buyer', () => {
+  const result = validateCoupon('FIRST100', 1000, false);
+  assert.strictEqual(result.valid, false);
+  assert.strictEqual(result.discountAmount, 0);
+  assert.ok(result.message.includes('valid exclusively on your 1st farm order'));
+});
+
+it('Legacy coupon codes not in catalog are rejected', () => {
+  const result = validateCoupon('RANDOMCODE99', 1000, true);
+  assert.strictEqual(result.valid, false);
+  assert.strictEqual(result.discountAmount, 0);
+});
+
+// ----------------------------------------------------
+// Test Suite 8: Bulk Order Item Simple Names (1 to 10)
+// ----------------------------------------------------
+console.log('📋 Test Suite 8: Bulk Order Item Simple Names');
+
+import {
+  BULK_ORDER_ITEMS,
+  getBulkOrderDisplayName,
+  getBulkOrderCleanName,
+  sortProductsByBulkOrder
+} from '../lib/bulk-items';
+
+it('Bulk order item selection defines exactly 11 simple items in designated 1-11 sequence', () => {
+  assert.strictEqual(BULK_ORDER_ITEMS.length, 11);
+  assert.strictEqual(BULK_ORDER_ITEMS[0].simpleName, '1. Tender Coconut (Bulk Order Lot)');
+  assert.strictEqual(BULK_ORDER_ITEMS[1].simpleName, '2. Arecanut Plants (1–1.5 Feet Height)');
+  assert.strictEqual(BULK_ORDER_ITEMS[2].simpleName, '3. Coconut Plants (1 Year Old, 2 Feet Height)');
+  assert.strictEqual(BULK_ORDER_ITEMS[3].simpleName, '4. Ragi Millet (5 kg, 10 kg, 25 kg Packs)');
+  assert.strictEqual(BULK_ORDER_ITEMS[4].simpleName, '5. Groundnut Oil (Wood-Pressed, Cold-Pressed)');
+  assert.strictEqual(BULK_ORDER_ITEMS[5].simpleName, '6. Cow Ghee (Traditional Bilona, 1 Litre)');
+  assert.strictEqual(BULK_ORDER_ITEMS[6].simpleName, '7. Mature Coconuts (25-Piece Bag, ~15 kg)');
+  assert.strictEqual(BULK_ORDER_ITEMS[7].simpleName, '8. Ball Copra (15 kg, 25 kg, 30 kg Boxes)');
+  assert.strictEqual(BULK_ORDER_ITEMS[8].simpleName, '9. Fresh Ginger (50 kg Bulk Gunny Bag)');
+  assert.strictEqual(BULK_ORDER_ITEMS[9].simpleName, '10. Coconut Shells (Industrial Grade, Metric Tonne)');
+  assert.strictEqual(BULK_ORDER_ITEMS[10].simpleName, '11. Arecanut (Adike) — Bulk Commodity Lot');
+});
+
+it('getBulkOrderDisplayName correctly resolves catalog products by SKU or title', () => {
+  assert.strictEqual(
+    getBulkOrderDisplayName({ sku: 'COC-TND-BLK-LOT', title: 'Fresh Tender Coconuts' }),
+    '1. Tender Coconut (Bulk Order Lot)'
+  );
+  assert.strictEqual(
+    getBulkOrderDisplayName({ sku: 'NUR-ARE-PLT-01Y', title: 'Arecanut Plants' }),
+    '2. Arecanut Plants (1–1.5 Feet Height)'
+  );
+  assert.strictEqual(
+    getBulkOrderDisplayName({ sku: 'COI-SHL-BLK-01T', title: 'Raw Coconut Shells' }),
+    '10. Coconut Shells (Industrial Grade, Metric Tonne)'
+  );
+  assert.strictEqual(
+    getBulkOrderCleanName({ sku: 'COC-TND-BLK-LOT', title: 'Fresh Tender Coconuts' }),
+    'Tender Coconut (Bulk Order Lot)'
+  );
+});
+
+it('sortProductsByBulkOrder orders arbitrary product list into sequence 1 through 10', () => {
+  const unsorted = [
+    { sku: 'COI-SHL-BLK-01T', title: 'Shells' },
+    { sku: 'COC-TND-BLK-LOT', title: 'Tender' },
+    { sku: 'OIL-GND-WOD-01L', title: 'Groundnut Oil' }
+  ];
+  const sorted = sortProductsByBulkOrder(unsorted);
+  assert.strictEqual(sorted[0].sku, 'COC-TND-BLK-LOT');
+  assert.strictEqual(sorted[1].sku, 'OIL-GND-WOD-01L');
+  assert.strictEqual(sorted[2].sku, 'COI-SHL-BLK-01T');
+});
+
+// ----------------------------------------------------
 // Summary
 // ----------------------------------------------------
 console.log('\n========================================');

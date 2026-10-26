@@ -2,11 +2,15 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import CartDrawer from '@/components/CartDrawer';
 import { 
   Truck, ShieldCheck, Phone, ArrowRight, 
   Package, AlertTriangle, FileText, Scale 
 } from 'lucide-react';
 import ShippingRateCalculator from '@/components/ShippingRateCalculator';
+import GlobalExportCorridors from '@/components/GlobalExportCorridors';
 
 export default function TransportationPage() {
   const truckloadSpecs = [
@@ -43,8 +47,12 @@ export default function TransportationPage() {
   ];
 
   return (
-    <div className="bg-[#fcfbf7] min-h-screen text-stone-900 pb-20">
-      {/* 1. Header / Hero Banner */}
+    <div className="bg-[#fcfbf7] min-h-screen text-stone-900 flex flex-col font-sans">
+      <Navbar />
+      <CartDrawer />
+
+      <main className="flex-1 pb-16">
+        {/* 1. Header / Hero Banner */}
       <section className="bg-gradient-to-b from-[#1c3809] to-[#254b0d] text-white py-14 px-4 sm:px-6 lg:px-8 border-b border-[#2d5a0b]">
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="inline-flex items-center gap-2 bg-lime-400/20 border border-lime-400/40 text-lime-300 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
@@ -57,7 +65,7 @@ export default function TransportationPage() {
               Transportation & Freight Rates
             </h1>
             <p className="text-stone-300 text-sm sm:text-base leading-relaxed">
-              Direct dispatch from farm-gate plantations in <strong>Kikkeri, K.R. Pete, Mandya</strong> and the <strong>Tiptur APMC GI Corridor</strong>. From express retail parcels via Shiprocket to dedicated 30-tonne multi-axle lorries across North and Central India.
+              Direct dispatch from certified farm-gate plantations. From express retail parcels via Shiprocket to dedicated 30-tonne multi-axle lorries across North and Central India.
             </p>
           </div>
 
@@ -106,7 +114,7 @@ export default function TransportationPage() {
             Fleet Capacities & Direct Mandi Corridors
           </h2>
           <p className="text-stone-600 text-xs sm:text-sm max-w-2xl">
-            For wholesale consignments, industrial copra shipments, and tender coconut consignments across India, we arrange certified commercial transport from Kikkeri and Tiptur loading yards.
+            For wholesale consignments, industrial copra shipments, and tender coconut consignments across India, we arrange certified commercial transport from farm loading yards.
           </p>
         </div>
 
@@ -179,7 +187,7 @@ export default function TransportationPage() {
               Dispatch Verification & Safety Standards
             </h2>
             <p className="text-stone-300 text-xs sm:text-sm">
-              We eliminate consignment disputes and transit loss through strict APMC weighbridge protocols.
+              We eliminate consignment disputes and transit loss through strict digital weighbridge protocols.
             </p>
           </div>
 
@@ -190,7 +198,7 @@ export default function TransportationPage() {
               </div>
               <h4 className="font-bold text-white text-sm">Computer Weighbridge Slip</h4>
               <p className="text-stone-300 text-xs leading-relaxed">
-                Gross and tare vehicle weight verified at licensed APMC computer weighbridges in Mandya before departure.
+                Gross and tare vehicle weight verified at licensed computer weighbridges before departure.
               </p>
             </div>
 
@@ -227,7 +235,10 @@ export default function TransportationPage() {
         </div>
       </section>
 
-      {/* 5. Contact & WhatsApp Logistics Desk */}
+      {/* 5. Global Ocean Container Export Corridors */}
+      <GlobalExportCorridors />
+
+      {/* 6. Contact & WhatsApp Logistics Desk */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
         <div className="bg-lime-50/70 border border-lime-200 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2 text-center md:text-left">
@@ -235,7 +246,7 @@ export default function TransportationPage() {
               Need Custom Logistics Planning?
             </span>
             <h3 className="text-xl sm:text-2xl font-black text-stone-900">
-              Speak to our Mandya APMC Dispatch Manager
+              Speak to our Dispatch Manager
             </h3>
             <p className="text-stone-600 text-xs sm:text-sm">
               Get route feasibility, backhaul truck discounts, or container stuffing estimates for export ports.
@@ -261,6 +272,9 @@ export default function TransportationPage() {
           </div>
         </div>
       </section>
+      </main>
+
+      <Footer />
     </div>
   );
 }

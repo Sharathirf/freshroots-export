@@ -93,7 +93,7 @@ export default function ShopByCategory({ activeCategory, onSelectCategory }: Sho
           <div>
             <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#3b6d11] mb-1.5">
               <Sprout className="w-4 h-4" />
-              <span>APMC Certified Commodities</span>
+              <span>Certified Commodities</span>
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-stone-900 tracking-tight">
               Shop by Category

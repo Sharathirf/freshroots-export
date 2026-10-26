@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, OrderItem } from '@/types';
+import { track } from '@/lib/analytics';
 
 export interface PackVariantOption {
   title?: string;
@@ -42,10 +43,64 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Load cart from localStorage or URL resume parameter
   useEffect(() => {
     try {
+      const isBulkSku = (sku?: string, title?: string) => {
+        const s = `${sku || ''} ${title || ''}`.toLowerCase();
+        return s.includes('tnd') || s.includes('tender') || s.includes('ginger') || s.includes('gin') || s.includes('shl') || s.includes('shell') || s.includes('blk');
+      };
+
       const saved = localStorage.getItem('tiptur_direct_cart');
       if (saved) {
-        setItems(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        const filtered = Array.isArray(parsed)
+          ? parsed.filter((it: any) => !isBulkSku(it.sku, it.title))
+          : [];
+        setItems(filtered);
+        if (Array.isArray(parsed) && filtered.length !== parsed.length) {
+          localStorage.setItem('tiptur_direct_cart', JSON.stringify(filtered));
+        }
       }
+
+      // Reconcile and auto-heal any stale product IDs with active database products
+      fetch('/api/products')
+        .then((r) => r.json())
+        .then((data) => {
+          if (data && Array.isArray(data.products) && data.products.length > 0) {
+            setItems((currItems) => {
+              if (currItems.length === 0) return currItems;
+              let changed = false;
+              const healed = currItems.map((it: any) => {
+                const directMatch = data.products.find((p: any) => p.id === it.product_id);
+                if (directMatch) {
+                  if (it.tax_rate_percentage !== undefined) return it;
+                  changed = true;
+                  return { ...it, tax_rate_percentage: Number(directMatch.tax_rate_percentage || 0) };
+                }
+                // Fallback by SKU or Title keyword
+                const skuMatch = data.products.find(
+                  (p: any) => p.sku === it.sku || (it.title && p.title.toLowerCase().includes(it.title.toLowerCase().slice(0, 15)))
+                );
+                if (skuMatch) {
+                  changed = true;
+                  return {
+                    ...it,
+                    product_id: skuMatch.id,
+                    sku: skuMatch.sku,
+                    tax_rate_percentage: Number(skuMatch.tax_rate_percentage || 0)
+                  };
+                }
+                return it;
+              });
+              if (changed) {
+                try {
+                  localStorage.setItem('tiptur_direct_cart', JSON.stringify(healed));
+                } catch {}
+                return healed;
+              }
+              return currItems;
+            });
+          }
+        })
+        .catch(() => {});
 
       // Check for cart resumption token from WhatsApp / SMS recovery link
       if (typeof window !== 'undefined') {
@@ -146,6 +201,30 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [items]);
 
   const addToCart = (product: Product, quantity = 1, variant?: PackVariantOption) => {
+    const isBulk = Boolean(
+      product.sku?.includes('BLK') ||
+      product.sku?.includes('TND') ||
+      product.sku?.includes('GIN') ||
+      product.sku?.includes('SHL') ||
+      product.slug?.includes('tender') ||
+      product.slug?.includes('ginger') ||
+      product.slug?.includes('shell') ||
+      product.title?.toLowerCase().includes('tender')
+    );
+
+    if (isBulk) {
+      alert(`${product.title} is strictly reserved for commercial bulk & wholesale orders. Please submit a wholesale quote inquiry.`);
+      return;
+    }
+
+    track('add_to_cart', {
+      product_id: product.id,
+      sku: product.sku,
+      category: product.category,
+      quantity,
+      unit_price_inr: variant ? variant.price : Number(product.retail_price_inr),
+    });
+
     const itemTitle = variant ? `${product.title} (${variant.packSize})` : product.title;
     const itemUnit = variant ? variant.packSize : product.unit_of_measure;
     const unitPrice = variant ? variant.price : Number(product.retail_price_inr);
@@ -177,6 +256,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           quantity,
           unit_price_inr: unitPrice,
           total_price_inr: quantity * unitPrice,
+          tax_rate_percentage: Number(product.tax_rate_percentage || 0),
           estimated_weight_kg: unitWeight * quantity,
           item_key: itemKey
         }
@@ -222,6 +302,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const removeFromCart = (idOrKey: string) => {
+    const itemToRemove = items.find((i) => (i.item_key || i.product_id) === idOrKey);
+    if (itemToRemove) {
+      track('remove_from_cart', {
+        product_id: itemToRemove.product_id,
+        sku: itemToRemove.sku,
+        title: itemToRemove.title,
+      });
+    }
+
     setItems((prev) =>
       prev.filter((item) => {
         const itemIdentifier = item.item_key || item.product_id;
@@ -237,6 +326,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       removeFromCart(idOrKey);
       return;
     }
+
+    track('update_cart_quantity', {
+      id: idOrKey,
+      quantity,
+    });
     setItems((prev) =>
       prev.map((item) => {
         const itemIdentifier = item.item_key || item.product_id;

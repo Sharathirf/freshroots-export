@@ -235,7 +235,7 @@ export default function ManageAddressesModal() {
                   required
                   value={streetAddress}
                   onChange={(e) => setStreetAddress(e.target.value)}
-                  placeholder="e.g. Near APMC Market Yard, Main Bazaar Road, Kikkeri"
+                  placeholder="e.g. Flat 102, Main Bazaar Road, Landmark"
                   className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-medium focus:ring-2 focus:ring-[#1e824c] focus:outline-none resize-none"
                 />
               </div>

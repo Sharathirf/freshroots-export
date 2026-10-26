@@ -36,8 +36,8 @@ export default function ContactPage() {
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-[#3b6d11] shrink-0 mt-0.5" />
                 <div>
-                  <strong className="block text-stone-900">Registered Farm Office:</strong>
-                  <span>Main Bazaar Road, Kikkeri Village, K.R. Pete Taluk, Mandya District, Karnataka, India - 571423</span>
+                  <strong className="block text-stone-900">Registered Office:</strong>
+                  <span>Karnataka, India</span>
                 </div>
               </div>
 
@@ -93,8 +93,8 @@ export default function ContactPage() {
 
               <div className="space-y-3 text-xs text-stone-600">
                 <div className="p-3 bg-white rounded-xl border border-stone-200">
-                  <span className="font-bold text-stone-900 block">APMC Mandi Registration:</span>
-                  <span>Registered trader &amp; producer under the Karnataka Agricultural Produce Marketing (Regulation and Development) Act.</span>
+                  <span className="font-bold text-stone-900 block">Agricultural Trader &amp; Producer:</span>
+                  <span>Registered producer under Karnataka Agricultural Produce Marketing regulations.</span>
                 </div>
 
                 <div className="p-3 bg-white rounded-xl border border-stone-200">

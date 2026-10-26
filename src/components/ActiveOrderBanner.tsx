@@ -146,7 +146,7 @@ export default function ActiveOrderBanner() {
       slug: (item.sku || item.title).toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       category: 'value_added',
       grade: 'Farm Fresh Standard',
-      origin: 'Kikkeri, Mandya, Karnataka',
+      origin: 'Karnataka, India',
       unit_of_measure: item.unit_of_measure || 'Unit',
       estimated_weight_kg: 1,
       moisture_percentage: null,

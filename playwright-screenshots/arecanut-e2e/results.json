@@ -1,0 +1,62 @@
+[
+  {
+    "id": "01",
+    "name": "home-catalog-loads",
+    "status": "passed",
+    "screenshot": "01-home-catalog-loads.png"
+  },
+  {
+    "id": "02",
+    "name": "daily-mandi-price-cache",
+    "status": "passed",
+    "screenshot": "02-daily-mandi-price-cache.png"
+  },
+  {
+    "id": "03",
+    "name": "filter-arecanut-catalog",
+    "status": "passed",
+    "screenshot": "03-filter-arecanut-catalog.png"
+  },
+  {
+    "id": "04",
+    "name": "bulk-only-product-card",
+    "status": "passed",
+    "screenshot": "04-bulk-only-product-card.png"
+  },
+  {
+    "id": "05",
+    "name": "prefilled-wholesale-quotation",
+    "status": "passed",
+    "screenshot": "05-prefilled-wholesale-quotation.png"
+  },
+  {
+    "id": "06",
+    "name": "product-detail-wholesale-only",
+    "status": "passed",
+    "screenshot": "06-product-detail-wholesale-only.png"
+  },
+  {
+    "id": "07",
+    "name": "minimum-lot-validation",
+    "status": "passed",
+    "screenshot": "07-minimum-lot-validation.png"
+  },
+  {
+    "id": "08",
+    "name": "submit-valid-one-quintal-rfq",
+    "status": "passed",
+    "screenshot": "08-submit-valid-one-quintal-rfq.png"
+  },
+  {
+    "id": "09",
+    "name": "retail-checkout-rejected",
+    "status": "passed",
+    "screenshot": "09-retail-checkout-rejected.png"
+  },
+  {
+    "id": "10",
+    "name": "mobile-arecanut-buyer-flow",
+    "status": "passed",
+    "screenshot": "10-mobile-arecanut-buyer-flow.png"
+  }
+]

@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { query } from '@/lib/db';
+import { verifyTurnstile } from '@/lib/turnstile';
+import { deliverTransactionalEmail, emailIsConfigured } from '@/lib/email';
+import { requireAdmin } from '@/lib/admin-auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,7 +24,8 @@ export async function POST(request: NextRequest) {
       delivery_address,
       preferred_delivery_date,
       additional_requirements,
-      notes
+      notes,
+      turnstileToken
     } = body;
 
     const name = (contact_person || customer_name)?.trim();
@@ -62,6 +67,14 @@ export async function POST(request: NextRequest) {
     if (!unitOfMeasure) {
       return NextResponse.json(
         { success: false, error: 'Unit of measurement is required' },
+        { status: 400 }
+      );
+    }
+
+    const turnstile = await verifyTurnstile(turnstileToken, request);
+    if (!turnstile.valid) {
+      return NextResponse.json(
+        { success: false, error: 'Please complete the security check and try again.' },
         { status: 400 }
       );
     }
@@ -136,6 +149,45 @@ export async function POST(request: NextRequest) {
       [inserted[0].id, JSON.stringify({ quote_number: quoteNumber, name, phone, email, qty, unit: unitOfMeasure })]
     );
 
+    if (emailIsConfigured()) {
+      const deliveryCity = destination_city?.trim() || 'To be confirmed';
+      const emailTasks = [];
+      if (email) {
+        emailTasks.push(deliverTransactionalEmail({
+          to: email,
+          subject: `We received your bulk quotation request ${quoteNumber}`,
+          text: [
+            `Hello ${name},`,
+            '',
+            `We received your request for ${qty} ${unitOfMeasure} of ${finalTitle}.`,
+            `Reference: ${quoteNumber}`,
+            `Destination: ${deliveryCity}`,
+            '',
+            'Our commercial desk will review the harvest lot, volume, and route and contact you with a quotation.',
+            '',
+            'FreshRoots Export',
+          ].join('\n'),
+        }, 'rfq_buyer_confirmation'));
+      }
+      if (process.env.ADMIN_NOTIFICATION_EMAIL) {
+        emailTasks.push(deliverTransactionalEmail({
+          to: process.env.ADMIN_NOTIFICATION_EMAIL,
+          subject: `New bulk enquiry ${quoteNumber}`,
+          text: [
+            `New RFQ ${quoteNumber}`,
+            `Buyer: ${name}`,
+            `Company: ${company_name?.trim() || 'Individual / Commercial Buyer'}`,
+            `Phone: ${phone || 'Not provided'}`,
+            `Email: ${email || 'Not provided'}`,
+            `Product: ${finalTitle}`,
+            `Requested: ${qty} ${unitOfMeasure}`,
+            `Destination: ${deliveryCity}`,
+          ].join('\n'),
+        }, 'rfq_admin_notification'));
+      }
+      await Promise.all(emailTasks);
+    }
+
     // Public response: Never leak wholesale internal pricing or benchmarks!
     return NextResponse.json({
       success: true,
@@ -154,6 +206,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('API Error in /api/rfq (POST):', error);
+    Sentry.captureException(error, { tags: { route: '/api/rfq', method: 'POST' } });
     return NextResponse.json(
       { success: false, error: 'Failed to submit quote inquiry', details: error.message },
       { status: 500 }
@@ -161,7 +214,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const auth = requireAdmin(request);
+  if (auth) return auth;
   try {
     const quotes = await query(
       `SELECT * FROM wholesale_quotations ORDER BY created_at DESC LIMIT 50`

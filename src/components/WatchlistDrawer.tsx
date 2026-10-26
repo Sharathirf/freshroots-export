@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { X, Heart, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
+import { X, Heart, ShoppingBag, Trash2, ArrowRight, Building2 } from 'lucide-react';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCart } from '@/context/CartContext';
 
@@ -111,16 +111,33 @@ export default function WatchlistDrawer() {
 
                 {/* Actions */}
                 <div className="pt-2 border-t border-stone-100 flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      addToCart(item, 1);
-                      setIsWatchlistOpen(false);
-                    }}
-                    className="flex-1 bg-[#3b6d11] hover:bg-[#2d5a0b] text-white font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm"
-                  >
-                    <ShoppingBag className="w-3.5 h-3.5" />
-                    <span>Add to Cart</span>
-                  </button>
+                  {Boolean(
+                    item.sku?.includes('BLK') ||
+                    item.sku?.includes('TND') ||
+                    item.sku?.includes('GIN') ||
+                    item.sku?.includes('SHL') ||
+                    item.title?.toLowerCase().includes('tender')
+                  ) ? (
+                    <Link
+                      href={`/products/${item.slug}`}
+                      onClick={() => setIsWatchlistOpen(false)}
+                      className="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm text-center"
+                    >
+                      <Building2 className="w-3.5 h-3.5" />
+                      <span>Request Bulk Quote</span>
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        addToCart(item, 1);
+                        setIsWatchlistOpen(false);
+                      }}
+                      className="flex-1 bg-[#3b6d11] hover:bg-[#2d5a0b] text-white font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm"
+                    >
+                      <ShoppingBag className="w-3.5 h-3.5" />
+                      <span>Add to Cart</span>
+                    </button>
+                  )}
 
                   <Link
                     href={`/products/${item.slug}`}

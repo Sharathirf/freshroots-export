@@ -6,35 +6,19 @@ export interface FarmCoupon {
   value: number; // ₹ value or % value
   minOrderAmount: number;
   badge: string;
+  firstOrderOnly?: boolean;
 }
 
 export const AVAILABLE_COUPONS: FarmCoupon[] = [
   {
-    code: 'FARM50',
-    title: '₹50 Flat OFF',
-    description: 'Save ₹50 on any farm order above ₹400',
-    type: 'flat',
-    value: 50,
-    minOrderAmount: 400,
-    badge: 'Popular'
-  },
-  {
-    code: 'MANDYA5',
-    title: '5% Farm Direct',
-    description: 'Get 5% instant discount on orders above ₹1,000',
-    type: 'percentage',
-    value: 5,
-    minOrderAmount: 1000,
-    badge: '5% OFF'
-  },
-  {
-    code: 'BULK100',
-    title: '₹100 Bulk Saver',
-    description: 'Save ₹100 on large farm orders above ₹2,500',
+    code: 'FIRST100',
+    title: '₹100 Flat OFF',
+    description: 'Get ₹100 instant discount on your first farm order',
     type: 'flat',
     value: 100,
-    minOrderAmount: 2500,
-    badge: 'Wholesale'
+    minOrderAmount: 400,
+    badge: '1st Order Only',
+    firstOrderOnly: true
   }
 ];
 
@@ -45,14 +29,30 @@ export interface CouponValidationResult {
   discountAmount: number;
 }
 
-export function validateCoupon(code: string, subtotal: number): CouponValidationResult {
-  const normalized = (code || '').trim().toUpperCase();
+export function validateCoupon(
+  code: string,
+  subtotal: number,
+  isFirstOrder: boolean = true
+): CouponValidationResult {
+  let normalized = (code || '').trim().toUpperCase();
+  if (normalized === 'WELCOME100' || normalized === 'FARM100' || normalized === 'FARM50') {
+    normalized = 'FIRST100';
+  }
+
   const coupon = AVAILABLE_COUPONS.find((c) => c.code === normalized);
 
   if (!coupon) {
     return {
       valid: false,
       message: `Coupon code "${normalized}" is invalid or expired.`,
+      discountAmount: 0
+    };
+  }
+
+  if (coupon.firstOrderOnly && !isFirstOrder) {
+    return {
+      valid: false,
+      message: `Coupon ${coupon.code} is valid exclusively on your 1st farm order. You have previous orders on record.`,
       discountAmount: 0
     };
   }
@@ -75,7 +75,7 @@ export function validateCoupon(code: string, subtotal: number): CouponValidation
 
   return {
     valid: true,
-    message: `🎉 Coupon ${coupon.code} applied! You saved ₹${discount}.`,
+    message: `🎉 Coupon ${coupon.code} applied! You saved ₹${discount} on your 1st order.`,
     coupon,
     discountAmount: discount
   };

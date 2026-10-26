@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { requireAdmin } from '@/lib/admin-auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -156,6 +157,8 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  const auth = requireAdmin(request, true);
+  if (auth) return auth;
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');

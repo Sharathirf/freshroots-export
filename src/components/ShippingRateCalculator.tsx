@@ -27,16 +27,16 @@ export default function ShippingRateCalculator({
   const [selectedCourierId, setSelectedCourierId] = useState<number | null>(null);
 
   const productPresets = [
-    { sku: 'COC-SEMI-25P-15K', name: 'Fresh Mature Coconuts (25-pc bag, ~15 kg)', weight: 15 },
-    { sku: 'COP-BAL-BOX-15K', name: 'GI Ball Copra (15 kg Master Box)', weight: 15 },
-    { sku: 'COP-BAL-BOX-25K', name: 'GI Ball Copra (25 kg Master Box)', weight: 25 },
-    { sku: 'COP-BAL-BOX-30K', name: 'GI Ball Copra (30 kg Master Box)', weight: 30 },
-    { sku: 'NUR-COC-PLT-01Y', name: 'Coconut Plants (50 saplings MOQ, ~175 kg)', weight: 175 },
-    { sku: 'NUR-ARE-PLT-01Y', name: 'Arecanut Plants (200 saplings MOQ, ~240 kg)', weight: 240 },
-    { sku: 'OIL-GND-WOD-01L', name: 'Wood-Pressed Groundnut Oil (1 Litre, ~1 kg)', weight: 1 },
-    { sku: 'MIL-RAG-ORG-05K', name: 'Karnataka Ragi Millet (5 kg Pack)', weight: 5 },
-    { sku: 'MIL-RAG-ORG-25K', name: 'Karnataka Ragi Millet (25 kg Gunny)', weight: 25 },
-    { sku: 'DAI-GHE-BIL-01L', name: 'Pure Desi Cow Ghee (1 Litre Jar, ~1.2 kg)', weight: 1.2 },
+    { sku: 'COC-TND-BLK-LOT', name: '1. Tender Coconut (Bulk Order Lot)', weight: 2.2 },
+    { sku: 'NUR-ARE-PLT-01Y', name: '2. Arecanut Plants (1–1.5 Feet Height)', weight: 1.2 },
+    { sku: 'NUR-COC-PLT-01Y', name: '3. Coconut Plants (1 Year Old, 2 Feet Height)', weight: 3.5 },
+    { sku: 'MIL-RAG-ORG-05K', name: '4. Ragi Millet (5 kg, 10 kg, 25 kg Packs)', weight: 5 },
+    { sku: 'OIL-GND-WOD-01L', name: '5. Groundnut Oil (Wood-Pressed, Cold-Pressed)', weight: 1 },
+    { sku: 'DAI-GHE-BIL-01L', name: '6. Cow Ghee (Traditional Bilona, 1 Litre)', weight: 1.2 },
+    { sku: 'COC-SEMI-25P-15K', name: '7. Mature Coconuts (25-Piece Bag, ~15 kg)', weight: 15 },
+    { sku: 'COP-BAL-BOX-15K', name: '8. Ball Copra (15 kg, 25 kg, 30 kg Boxes)', weight: 15 },
+    { sku: 'SPI-GIN-BLK-50K', name: '9. Fresh Ginger (50 kg Bulk Gunny Bag)', weight: 50 },
+    { sku: 'COI-SHL-BLK-01T', name: '10. Coconut Shells (Industrial Grade, Metric Tonne)', weight: 1000 },
     { sku: 'CUSTOM', name: 'Custom Weight (Enter Below)', weight: initialWeight }
   ];
 
@@ -119,7 +119,7 @@ export default function ShippingRateCalculator({
 
         <div className="flex items-center gap-2 bg-stone-50 border border-stone-200 px-3 py-1.5 rounded-xl text-xs text-stone-600">
           <MapPin className="w-3.5 h-3.5 text-[#3b6d11] shrink-0" />
-          <span>Origin: <strong>Kikkeri, Mandya (571423)</strong></span>
+          <span>Coverage: <strong>Pan-India Doorstep Delivery</strong></span>
         </div>
       </div>
 
@@ -311,7 +311,7 @@ export default function ShippingRateCalculator({
                   Heavy Consignment / Full Truckload (FTL) Notice (10T, 25T, 30T):
                 </div>
                 <div className="text-amber-900 leading-relaxed text-[11px]">
-                  For high-tonnage consignments (e.g. 50+ bags of mature coconuts, tender coconut lots, or 500+ plant saplings), transportation is arranged via dedicated multi-axle lorries directly from Kikkeri weighbridge. Direct transport cost is charged at actuals with weighbridge slips and driver contacts.
+                  For high-tonnage consignments (e.g. 50+ bags of mature coconuts, tender coconut lots, or 500+ plant saplings), transportation is arranged via dedicated multi-axle lorries directly from the farm weighbridge. Direct transport cost is charged at actuals with weighbridge slips and driver contacts.
                 </div>
               </div>
             </div>

@@ -3,6 +3,9 @@
 import React, { useState } from 'react';
 import { Product } from '@/types';
 import { Building2, CheckCircle2, ShieldCheck, Clock, ArrowRight, Phone } from 'lucide-react';
+import { getBulkOrderDisplayName } from '@/lib/bulk-items';
+import TurnstileChallenge, { turnstileEnabled } from '@/components/TurnstileChallenge';
+import { track } from '@/lib/analytics';
 
 interface BulkInquiryFormProps {
   product: Product;
@@ -18,7 +21,7 @@ export default function BulkInquiryForm({ product, onSuccess }: BulkInquiryFormP
   const [unit, setUnit] = useState(
     product.category === 'mature_coconut'
       ? 'Nuts'
-      : product.category === 'copra' || product.category === 'spices'
+      : product.category === 'copra' || product.category === 'spices' || product.category === 'arecanut'
       ? 'kg'
       : product.unit_of_measure.split(' ')[0] || 'Units'
   );
@@ -35,6 +38,10 @@ export default function BulkInquiryForm({ product, onSuccess }: BulkInquiryFormP
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [submittedQuote, setSubmittedQuote] = useState<any | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const submittedUnit = Number(submittedQuote?.requested_quantity) === 1
+    ? String(submittedQuote?.unit || '').replace(/s$/i, '')
+    : submittedQuote?.unit;
 
   // Available units based on product
   const getUnitOptions = () => {
@@ -61,6 +68,14 @@ export default function BulkInquiryForm({ product, onSuccess }: BulkInquiryFormP
         { value: 'Metric Tonnes', label: 'Metric Tonnes (1,000 kg)' }
       ];
     }
+    if (product.category === 'arecanut') {
+      return [
+        { value: 'kg', label: 'Kilograms (kg)' },
+        { value: 'Quintals', label: 'Quintals (100 kg)' },
+        { value: 'Metric Tonnes', label: 'Metric Tonnes (1,000 kg)' }
+      ];
+    }
+
     if (product.category === 'oil_and_extracts') {
       return [
         { value: 'Litres', label: 'Litres (L)' },
@@ -95,6 +110,19 @@ export default function BulkInquiryForm({ product, onSuccess }: BulkInquiryFormP
       return;
     }
 
+    if (product.category === 'arecanut') {
+      const requestedKg = unit === 'Quintals' ? qty * 100 : unit === 'Metric Tonnes' ? qty * 1000 : qty;
+      if (requestedKg < product.bulk_min_quantity) {
+        setErrorMsg(`Arecanut is supplied in lots of at least ${product.bulk_min_quantity} kg (1 quintal).`);
+        return;
+      }
+    }
+
+    if (turnstileEnabled && !turnstileToken) {
+      setErrorMsg('Please complete the anti-spam check before submitting.');
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMsg(null);
 
@@ -115,13 +143,15 @@ export default function BulkInquiryForm({ product, onSuccess }: BulkInquiryFormP
           destination_city: destinationCity,
           delivery_address: deliveryAddress,
           preferred_delivery_date: preferredDate,
-          additional_requirements: additionalNotes
+          additional_requirements: additionalNotes,
+          turnstileToken
         })
       });
 
       const data = await res.json();
       if (data.success) {
         setSubmittedQuote(data.quotation);
+        track('rfq_submitted', { source: 'product_bulk_form', category: product.category, unit });
         if (onSuccess) onSuccess();
       } else {
         setErrorMsg(data.error || 'Failed to submit quote inquiry. Please try again.');
@@ -158,7 +188,7 @@ export default function BulkInquiryForm({ product, onSuccess }: BulkInquiryFormP
           </div>
           <div className="flex justify-between border-b pb-1.5">
             <span className="text-stone-500">Required Quantity:</span>
-            <span className="font-semibold text-stone-800">{submittedQuote.requested_quantity} {submittedQuote.unit}</span>
+            <span className="font-semibold text-stone-800">{submittedQuote.requested_quantity} {submittedUnit}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-stone-500">Response Turnaround:</span>
@@ -196,6 +226,16 @@ export default function BulkInquiryForm({ product, onSuccess }: BulkInquiryFormP
         <Building2 className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
         <div className="leading-relaxed">
           <strong>Commercial Wholesale Sourcing:</strong> Wholesale prices are customized based on order volume, freight route, and harvest lot. Request a quote below for volume inquiries.
+        </div>
+      </div>
+
+      {/* Produce Display */}
+      <div>
+        <label className="block text-xs font-bold text-stone-700 mb-1">
+          Bulk Order Commodity
+        </label>
+        <div className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50 text-sm font-bold text-stone-900">
+          {getBulkOrderDisplayName(product)}
         </div>
       </div>
 
@@ -314,7 +354,7 @@ export default function BulkInquiryForm({ product, onSuccess }: BulkInquiryFormP
             type="text"
             value={destinationCity}
             onChange={(e) => setDestinationCity(e.target.value)}
-            placeholder="e.g. Bengaluru, Salem, JNPT Export Port"
+            placeholder="e.g. Dubai, Chittagong, New York, Jebel Ali, or domestic city"
             className="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-xs sm:text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none"
           />
         </div>
@@ -365,6 +405,8 @@ export default function BulkInquiryForm({ product, onSuccess }: BulkInquiryFormP
         </div>
       )}
 
+      <TurnstileChallenge onToken={setTurnstileToken} />
+
       {/* Submit Button */}
       <div className="pt-2">
         <button
@@ -385,7 +427,7 @@ export default function BulkInquiryForm({ product, onSuccess }: BulkInquiryFormP
 
       <div className="flex items-center gap-2 text-[11px] text-stone-500 justify-center">
         <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-        <span>Direct APMC source • Private quotation without public price exposure</span>
+        <span>Direct farm source • Private quotation without public price exposure</span>
       </div>
     </form>
   );

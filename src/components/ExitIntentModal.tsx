@@ -110,7 +110,7 @@ export default function ExitIntentModal() {
       onClick={handleDismiss}
     >
       <div
-        className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border-2 border-amber-300 relative animate-in zoom-in-95 overflow-hidden"
+        className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border-2 border-amber-300 relative animate-in zoom-in-95 max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Farm Ribbon Decoration */}
@@ -134,11 +134,11 @@ export default function ExitIntentModal() {
               Farm Lot Reserved!
             </h3>
             <p className="text-stone-600 mt-2 text-sm leading-relaxed max-w-md mx-auto">
-              Your Kikkeri farm lot and prices are locked in. A direct WhatsApp order link has been prepared for <span className="font-bold text-stone-800">+91 {phone.replace(/\D/g, '').slice(-10)}</span>.
+              Your farm lot and prices are locked in. A direct WhatsApp order link has been prepared for <span className="font-bold text-stone-800">+91 {phone.replace(/\D/g, '').slice(-10)}</span>.
             </p>
             <div className="mt-5 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center justify-center gap-2">
               <Clock className="w-4 h-4 text-amber-700" />
-              <span>Price lock active for 24 hours against APMC market fluctuations.</span>
+              <span>Price lock active for 24 hours against market fluctuations.</span>
             </div>
           </div>
         ) : (
@@ -150,10 +150,10 @@ export default function ExitIntentModal() {
             </div>
 
             <h3 className="text-2xl font-black text-stone-900 tracking-tight leading-snug">
-              Lock in Today&apos;s Mandya Farm-Gate Price
+              Lock in Today&apos;s Farm-Gate Price
             </h3>
             <p className="text-stone-600 text-sm mt-2 leading-relaxed">
-              You have <span className="font-bold text-stone-900">{itemCount} item(s)</span> in your cart totaling <span className="font-bold text-emerald-800">₹{subtotal.toLocaleString('en-IN')}</span>. APMC auction prices fluctuate daily. Leave your WhatsApp number to hold your batch and receive an instant recovery link.
+              You have <span className="font-bold text-stone-900">{itemCount} item(s)</span> in your cart totaling <span className="font-bold text-emerald-800">₹{subtotal.toLocaleString('en-IN')}</span>. Market auction prices fluctuate daily. Leave your WhatsApp number to hold your batch and receive an instant recovery link.
             </p>
 
             {/* Price Guarantee Card */}
@@ -161,7 +161,7 @@ export default function ExitIntentModal() {
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-emerald-600 flex-shrink-0" />
                 <div>
-                  <div className="font-bold text-stone-900">Direct From Kikkeri, Mandya</div>
+                  <div className="font-bold text-stone-900">Direct From Farm-Gate</div>
                   <div className="text-stone-500">Zero middlemen · 100% genuine farm lot</div>
                 </div>
               </div>
@@ -234,7 +234,7 @@ export default function ExitIntentModal() {
                 onClick={handleDismiss}
                 className="text-stone-400 hover:text-stone-600 text-xs font-medium underline underline-offset-2"
               >
-                No thanks, I will risk APMC price changes
+                No thanks, I will risk market price changes
               </button>
             </div>
           </div>

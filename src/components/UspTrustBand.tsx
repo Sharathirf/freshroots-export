@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { Truck, ShieldCheck, Headphones, CreditCard } from 'lucide-react';
 
 export default function UspTrustBand() {

@@ -60,7 +60,7 @@ export interface ShippingCalculationResult {
 
 export const FREE_SHIPPING_THRESHOLD = 0; // 100% Free Delivery on all orders
 export const ORIGIN_PICKUP_POSTCODE = '571423'; // Kikkeri, Mandya, Karnataka
-export const ORIGIN_HUB_NAME = 'SHARATH INORAHALLI Mandya APMC Logistics Hub';
+export const ORIGIN_HUB_NAME = 'SHARATH INORAHALLI Logistics Hub';
 
 /**
  * Determine postal shipping zone from Mandya, Karnataka (571423)
@@ -78,10 +78,10 @@ export function determineShippingZone(destinationPincode: string): {
   // Zone A: Intra-district / Local Hub (Mandya, Mysuru, Hassan)
   if (['571', '570', '573'].includes(prefix3)) {
     return {
-      zone: 'Zone A (Mandya / Mysuru Local APMC Corridor)',
+      zone: 'Zone A (Mandya / Mysuru Local Corridor)',
       zone_code: 'A',
       state: 'Karnataka',
-      region: 'Local Mandya APMC'
+      region: 'Local Mandya Corridor'
     };
   }
 

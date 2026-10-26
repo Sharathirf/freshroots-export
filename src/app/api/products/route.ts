@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { getProductImageUrl } from '@/lib/product-images';
 
 export async function GET(request: NextRequest) {
   try {
@@ -27,11 +28,18 @@ export async function GET(request: NextRequest) {
         p.description,
         p.specifications,
         p.image_url,
+        review_summary.average_rating::numeric(2, 1) AS average_rating,
+        review_summary.review_count::int AS review_count,
         p.is_active,
         p.created_at,
         COALESCE(SUM(ib.available_quantity), 0)::int AS available_stock
       FROM products p
       LEFT JOIN inventory_batches ib ON p.id = ib.product_id
+      LEFT JOIN LATERAL (
+        SELECT AVG(pr.rating) AS average_rating, COUNT(*) AS review_count
+        FROM product_reviews pr
+        WHERE pr.product_id = p.id AND pr.is_approved = true
+      ) review_summary ON true
       WHERE p.is_active = true
     `;
     const params: any[] = [];
@@ -41,9 +49,13 @@ export async function GET(request: NextRequest) {
       params.push(category);
     }
 
-    sql += ` GROUP BY p.id ORDER BY p.retail_price_inr ASC`;
+    sql += ` GROUP BY p.id, review_summary.average_rating, review_summary.review_count ORDER BY p.retail_price_inr ASC`;
 
-    const products = await query(sql, params);
+    const rows = await query(sql, params);
+    const products = rows.map((product) => ({
+      ...product,
+      image_url: getProductImageUrl(product.sku, product.image_url)
+    }));
     return NextResponse.json({ success: true, count: products.length, products });
   } catch (error: any) {
     console.error('API Error in /api/products:', error);

@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
         retail_available: true,
         wholesale_available: true,
         worldwide_bulk_available: true,
-        message: `Direct delivery active in ${pin.delivery_lead_days} business day(s) from ${pin.hub_location}.`
+        message: `Direct delivery active in ${pin.delivery_lead_days} business day(s).`
       });
     }
 

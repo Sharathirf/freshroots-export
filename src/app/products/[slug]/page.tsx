@@ -3,6 +3,7 @@
 import React, { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 import ProductImageZoom from '@/components/ProductImageZoom';
 import BulkInquiryForm from '@/components/BulkInquiryForm';
@@ -12,6 +13,7 @@ import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { Product } from '@/types';
 import { getProductVariants, getDefaultVariant, ProductVariant } from '@/lib/variants';
+import { track } from '@/lib/analytics';
 import {
   ShieldCheck,
   Truck,
@@ -78,7 +80,16 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
           if (p.bulk_min_quantity && p.bulk_min_quantity > 1) {
             setRetailQty(p.bulk_min_quantity);
           }
-          if (p.sku.includes('BLK')) {
+          const isBulkProduct = Boolean(
+            p.sku?.includes('BLK') ||
+            p.sku?.includes('TND') ||
+            p.sku?.includes('GIN') ||
+            p.sku?.includes('SHL') ||
+            p.slug?.includes('tender') ||
+            p.slug?.includes('ginger') ||
+            p.slug?.includes('shell')
+          );
+          if (isBulkProduct) {
             setPurchasingMode('bulk');
           }
         } else {
@@ -96,6 +107,16 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
     }
     loadData();
   }, [slug]);
+
+  useEffect(() => {
+    if (product) {
+      track('product_detail_viewed', {
+        product_id: product.id,
+        sku: product.sku,
+        category: product.category,
+      });
+    }
+  }, [product]);
 
   if (loading) {
     return (
@@ -200,7 +221,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
       <Navbar onOpenEnquiry={() => setIsEnquiryOpen(true)} />
       <CartDrawer />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full space-y-12">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full space-y-12 pb-28 md:pb-12">
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center gap-2 text-xs text-stone-500">
           <Link href="/" className="hover:text-emerald-700 transition">
@@ -261,8 +282,8 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                 <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
                   {product.category.replace(/_/g, ' ')}
                 </span>
-                <span className="text-xs text-stone-500">
-                  Origin: <strong>{product.origin}</strong>
+                <span className="text-xs text-stone-500 font-medium">
+                  Farm Direct • Fresh Harvest
                 </span>
               </div>
 
@@ -282,36 +303,64 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
             </div>
 
             {/* Purchasing Mode Segmented Switcher */}
-            <div className="bg-stone-200/80 p-1 rounded-2xl flex text-xs font-bold">
-              <button
-                type="button"
-                onClick={() => setPurchasingMode('retail')}
-                className={`flex-1 py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-1.5 ${
-                  purchasingMode === 'retail'
-                    ? 'bg-white text-stone-900 shadow-sm'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                <ShoppingBag className="w-4 h-4 text-emerald-700" />
-                <span>Retail Household Pack</span>
-              </button>
+            {Boolean(
+              product.sku?.includes('BLK') ||
+              product.sku?.includes('TND') ||
+              product.sku?.includes('GIN') ||
+              product.sku?.includes('SHL') ||
+              product.slug?.includes('tender') ||
+              product.slug?.includes('ginger') ||
+              product.slug?.includes('shell')
+            ) ? (
+              <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300 text-amber-950 space-y-1.5 shadow-2xs">
+                <div className="font-extrabold text-sm flex items-center gap-2 text-amber-900">
+                  <Building2 className="w-4 h-4 text-amber-700" />
+                  <span>Wholesale &amp; Commercial Bulk Consignment Only</span>
+                </div>
+                <p className="text-xs text-amber-800 leading-relaxed">
+                  Individual retail orders are currently disabled for {product.title}. Available strictly in commercial wholesale lots (crates or truckloads). Please submit your bulk requirement below.
+                </p>
+              </div>
+            ) : (
+              <div className="bg-stone-200/80 p-1 rounded-2xl flex text-xs font-bold">
+                <button
+                  type="button"
+                  onClick={() => setPurchasingMode('retail')}
+                  className={`flex-1 py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-1.5 ${
+                    purchasingMode === 'retail'
+                      ? 'bg-white text-stone-900 shadow-sm'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  <ShoppingBag className="w-4 h-4 text-emerald-700" />
+                  <span>Retail Household Pack</span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => setPurchasingMode('bulk')}
-                className={`flex-1 py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-1.5 ${
-                  purchasingMode === 'bulk'
-                    ? 'bg-white text-stone-900 shadow-sm'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
-              >
-                <Building2 className="w-4 h-4 text-amber-700" />
-                <span>Wholesale & Bulk Inquiry</span>
-              </button>
-            </div>
+                <button
+                  type="button"
+                  onClick={() => setPurchasingMode('bulk')}
+                  className={`flex-1 py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-1.5 ${
+                    purchasingMode === 'bulk'
+                      ? 'bg-white text-stone-900 shadow-sm'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  <Building2 className="w-4 h-4 text-amber-700" />
+                  <span>Wholesale & Bulk Inquiry</span>
+                </button>
+              </div>
+            )}
 
             {/* MODE A: RETAIL PURCHASING */}
-            {purchasingMode === 'retail' && (
+            {purchasingMode === 'retail' && !Boolean(
+              product.sku?.includes('BLK') ||
+              product.sku?.includes('TND') ||
+              product.sku?.includes('GIN') ||
+              product.sku?.includes('SHL') ||
+              product.slug?.includes('tender') ||
+              product.slug?.includes('ginger') ||
+              product.slug?.includes('shell')
+            ) && (
               <div className="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-5">
                 {/* Price Display */}
                 <div className="flex items-baseline justify-between border-b pb-4">
@@ -339,6 +388,19 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                     </span>
                   </div>
                 </div>
+
+                {/* Live Sapling Transit Radius Notice */}
+                {(product.sku?.includes('NUR') || (product.category as string) === 'nursery_plants' || product.title?.toLowerCase().includes('sapling') || product.title?.toLowerCase().includes('plant')) && (
+                  <div className="p-3.5 rounded-2xl bg-amber-50/90 border border-amber-300 text-xs text-amber-950 space-y-1.5 shadow-2xs">
+                    <div className="flex items-center gap-2 font-extrabold text-amber-900">
+                      <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
+                      <span>Live Nursery Sapling Regional Transit Notice</span>
+                    </div>
+                    <p className="text-[11px] text-amber-800 leading-relaxed">
+                      Root-ball saplings are dispatched live from our nursery. 100% root survival is guaranteed for <strong>South Indian destinations (Karnataka, Tamil Nadu, Kerala, AP &amp; Telangana within 48–72h)</strong>. For distant states, live transit guarantee is limited. Please contact Sharath on WhatsApp (+91 95911 42548) prior to booking for specialized crating advice.
+                    </p>
+                  </div>
+                )}
 
                 {/* Pack Size / Variant Selector (e.g. 500 ml @ ₹480 vs 1 Litre @ ₹900) */}
                 {variants && variants.length > 0 && (
@@ -568,7 +630,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
               <h3 className="text-lg font-extrabold text-stone-900">About {product.title}</h3>
               <p className="text-stone-700 text-sm leading-relaxed">{product.description}</p>
               <div className="bg-stone-50 p-4 rounded-2xl border border-stone-100 text-xs text-stone-600 space-y-1">
-                <strong>Origin & Sourcing Corridor:</strong> {product.origin}. Sourced directly through registered farmer producer networks and APMC auction corridors in Karnataka with zero intermediary hoarding.
+                <strong>Sourcing:</strong> Sourced directly through registered farmer producer networks in Karnataka with zero intermediary hoarding.
               </div>
             </div>
           )}
@@ -675,7 +737,7 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
                 <div className="p-4 rounded-2xl border border-stone-200 bg-stone-50 space-y-1">
                   <strong className="text-stone-900 text-sm block">How does wholesale quote pricing work?</strong>
                   <p className="text-stone-600 leading-relaxed">
-                    Wholesale commodity prices fluctuate with daily APMC Mandi arrivals. When you submit a quote request, our desk locks a guaranteed 48-hour landed price including freight for your exact destination.
+                    Wholesale commodity prices fluctuate with daily mandi arrivals. When you submit a quote request, our desk locks a guaranteed 48-hour landed price including freight for your exact destination.
                   </p>
                 </div>
                 <div className="p-4 rounded-2xl border border-stone-200 bg-stone-50 space-y-1">
@@ -759,6 +821,70 @@ export default function ProductDetailPage({ params }: ProductPageProps) {
           </div>
         )}
       </main>
+
+      {/* Mobile Sticky Bottom Purchasing Bar (Thumb-Zone Fast Buy) */}
+      {product && (
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-stone-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.12)] px-4 pt-2.5 pb-[max(0.6rem,env(safe-area-inset-bottom))] flex items-center justify-between gap-3">
+          {Boolean(
+            product.sku?.includes('BLK') ||
+            product.sku?.includes('TND') ||
+            product.sku?.includes('GIN') ||
+            product.sku?.includes('SHL') ||
+            product.slug?.includes('tender') ||
+            product.slug?.includes('ginger') ||
+            product.slug?.includes('shell')
+          ) ? (
+            <button
+              type="button"
+              onClick={() => setIsEnquiryOpen(true)}
+              className="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2"
+            >
+              <Building2 className="w-4 h-4 text-white" />
+              <span>Request Wholesale / Bulk Quote</span>
+            </button>
+          ) : (
+            <>
+              <div className="flex flex-col min-w-0">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-lg font-black text-stone-900 font-mono">
+                    ₹{price.toLocaleString('en-IN')}
+                  </span>
+                  {selectedVariant && (
+                    <span className="text-[10px] text-stone-500 font-medium truncate max-w-[85px]">
+                      /{selectedVariant.packSize}
+                    </span>
+                  )}
+                </div>
+                <span className="text-[10px] font-extrabold text-emerald-700 leading-none">
+                  Free Doorstep Delivery
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => addToCart(product, retailQty, selectedVariant || undefined)}
+                  className="bg-white border-2 border-stone-900 text-stone-900 font-bold text-xs py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-2xs active:scale-95"
+                >
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  <span>Cart</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleBuyNow}
+                  className="bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-95 text-white font-black text-xs py-2.5 px-3.5 rounded-xl transition shadow-md flex items-center justify-center gap-1.5"
+                >
+                  <Zap className="w-3.5 h-3.5 text-lime-300" />
+                  <span>Buy Now</span>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      <Footer />
 
       <EnquiryModal
         isOpen={isEnquiryOpen}

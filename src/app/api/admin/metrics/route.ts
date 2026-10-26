@@ -1,7 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { requireAdmin } from '@/lib/admin-auth';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const auth = requireAdmin(request);
+  if (auth) return auth;
   try {
     // 1. Order KPIs
     const orderStats = await query(`

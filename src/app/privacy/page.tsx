@@ -32,7 +32,7 @@ export default function PrivacyPolicyPage() {
               <span>1. Overview &amp; Commitment to Privacy</span>
             </h2>
             <p>
-              Sharath Inorahalli Agri-Commerce Platform (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;), operating from Kikkeri, Mandya District, Karnataka, respects your privacy. This policy explains how we collect, store, utilize, and protect your personal information when you visit or make a purchase from our website.
+              FreshRoots Export Agri-Commerce Platform (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;), operating in Karnataka, India, respects your privacy. This policy explains how we collect, store, utilize, and protect your personal information when you visit or make a purchase from our website.
             </p>
           </section>
 
@@ -62,6 +62,15 @@ export default function PrivacyPolicyPage() {
               <li>Send WhatsApp delivery tracking links and GST tax invoices.</li>
               <li>Notify you of abandoned cart reservations if you opted in during session creation.</li>
               <li>Maintain order history and saved delivery addresses for fast repeat checkouts.</li>
+              <li>Measure the shopping journey, protect enquiry forms from spam, send requested transactional emails, and deliver mandi price alerts when you enable browser notifications.</li>
+            </ul>
+            <h3 className="text-sm font-bold text-stone-900">Service providers used for these features</h3>
+            <ul className="list-disc pl-5 space-y-1.5">
+              <li><strong>Cloudflare Web Analytics</strong> receives aggregate traffic and page performance measurements. <strong>PostHog</strong> receives page paths and commerce funnel events such as product views, cart additions, checkout starts, purchases, and RFQ submissions. Automatic form capture and session replay are disabled; these events do not include your contact, address, or payment details.</li>
+              <li><strong>Cloudflare Turnstile</strong> processes a challenge token and request network details when you submit an enquiry, to verify the submission is likely from a person.</li>
+              <li><strong>Resend</strong> processes email addresses and order or quotation details needed to send transactional confirmations and operations notifications.</li>
+              <li><strong>Sentry</strong> processes technical error and route information to help diagnose production failures. Request bodies, headers, cookies, user identifiers, and URL query strings are removed from captured errors.</li>
+              <li><strong>Firebase Cloud Messaging</strong> stores a browser push token only after you opt in to mandi price alerts. Use the alert control in the footer to turn them off and remove the stored token.</li>
             </ul>
             <p className="font-semibold text-stone-900">
               We strictly do NOT sell, rent, or trade your personal telephone numbers or data to third-party telemarketers or ad brokers.
@@ -85,7 +94,7 @@ export default function PrivacyPolicyPage() {
             </p>
             <div className="bg-stone-50 p-4 rounded-xl border border-stone-200 text-xs space-y-1">
               <div><strong>Grievance Officer:</strong> Sharath Inorahalli</div>
-              <div><strong>Address:</strong> Main Bazaar Road, Kikkeri, K.R. Pete Taluk, Mandya, Karnataka - 571423</div>
+              <div><strong>Address:</strong> Karnataka, India - 571423</div>
               <div><strong>Phone:</strong> +91 95911 42548</div>
               <div><strong>Email:</strong> sharathir198@gmail.com</div>
             </div>

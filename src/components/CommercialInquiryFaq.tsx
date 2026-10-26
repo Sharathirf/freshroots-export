@@ -2,6 +2,9 @@
 
 import React, { useState } from 'react';
 import { ChevronDown, Send, CheckCircle2 } from 'lucide-react';
+import { BULK_ORDER_ITEMS } from '@/lib/bulk-items';
+import TurnstileChallenge, { turnstileEnabled } from '@/components/TurnstileChallenge';
+import { track } from '@/lib/analytics';
 
 interface FaqItem {
   question: string;
@@ -15,7 +18,7 @@ const FAQS: FaqItem[] = [
   },
   {
     question: 'How do you test and certify copra moisture and oil content?',
-    answer: 'Every incoming batch from Tiptur APMC farmers is tested using digital capacitance moisture meters calibrated to AGMARK standards. We reject lots above 5.8% moisture, ensuring our delivered copra is strictly ≤ 5.5% moisture with ≥ 68% natural oil content. This eliminates internal mold, ensures maximum oil yield for expellers, and extends shelf life to over 6 months.'
+    answer: 'Every incoming batch from Tiptur farmers is tested using digital capacitance moisture meters calibrated to AGMARK standards. We reject lots above 5.8% moisture, ensuring our delivered copra is strictly ≤ 5.5% moisture with ≥ 68% natural oil content. This eliminates internal mold, ensures maximum oil yield for expellers, and extends shelf life to over 6 months.'
   },
   {
     question: 'Are coconuts and agricultural commodities subject to GST?',
@@ -23,7 +26,7 @@ const FAQS: FaqItem[] = [
   },
   {
     question: 'Do you support international container export orders and phytosanitary certificates?',
-    answer: 'Yes. We regularly supply 20ft (approx. 10–12 MT) and 40ft (approx. 22–25 MT) shipping containers to the Middle East, Southeast Asia, and Europe through Chennai, Mangalore, and JNPT Mumbai ports. We provide complete export documentation including Phytosanitary Certificates (PSC), Certificates of Origin (COO), Lab Test Reports, and palletized fumigation packaging.'
+    answer: 'Yes. We regularly supply 20ft (approx. 10–12 MT) and 40ft (approx. 22–25 MT) ocean shipping containers to Vietnam, Bangladesh, United Arab Emirates (UAE), Nepal, Saudi Arabia, United States (USA), Cambodia, Qatar, Malaysia, Kuwait, Iran, and the United Kingdom (UK) through Chennai, Mangalore, and JNPT Mumbai ports. We provide complete export documentation including Phytosanitary Certificates (PSC), Certificates of Origin (COO), Lab Test Reports, and palletized fumigation packaging.'
   },
   {
     question: 'What is your transit damage and spoilage guarantee?',
@@ -31,7 +34,7 @@ const FAQS: FaqItem[] = [
   },
   {
     question: 'How fast are orders packed and dispatched?',
-    answer: 'Retail consumer orders are packed and dispatched within 24 to 48 hours via express air and road couriers with real-time SMS/WhatsApp tracking. Commercial bulk orders (truckloads) are loaded directly from the Tiptur APMC yard and weighed on electronic weighbridges, with transit time typically 2 to 4 days across India.'
+    answer: 'Retail consumer orders are packed and dispatched within 24 to 48 hours via express air and road couriers with real-time SMS/WhatsApp tracking. Commercial bulk orders (truckloads) are loaded directly from the Tiptur yard and weighed on electronic weighbridges, with transit time typically 2 to 4 days across India.'
   }
 ];
 
@@ -43,12 +46,13 @@ export default function CommercialInquiryFaq() {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [customerType, setCustomerType] = useState('Commercial Buyer / Wholesaler');
-  const [productTitle, setProductTitle] = useState('GI-Tagged Tiptur Ball Copra (Whole Dry)');
+  const [productTitle, setProductTitle] = useState(BULK_ORDER_ITEMS[0].simpleName);
   const [quantity, setQuantity] = useState('500');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,6 +67,11 @@ export default function CommercialInquiryFaq() {
     const qty = parseInt(quantity, 10);
     if (isNaN(qty) || qty <= 0) {
       setErrorMsg('Please enter a valid requested quantity greater than 0');
+      return;
+    }
+
+    if (turnstileEnabled && !turnstileToken) {
+      setErrorMsg('Please complete the anti-spam check before submitting.');
       return;
     }
 
@@ -81,13 +90,15 @@ export default function CommercialInquiryFaq() {
           product_title: productTitle,
           requested_quantity: qty,
           unit: 'Units / kg',
-          additional_requirements: message ? `[Customer Type: ${customerType}] ${message}` : `Customer Type: ${customerType}`
+          additional_requirements: message ? `[Customer Type: ${customerType}] ${message}` : `Customer Type: ${customerType}`,
+          turnstileToken
         })
       });
 
       const data = await res.json();
       if (data.success) {
         setSubmitted(true);
+        track('rfq_submitted', { source: 'commercial_faq_form', buyer_type: customerType });
       } else {
         setErrorMsg(data.error || 'Failed to submit inquiry. Please try again.');
       }
@@ -106,7 +117,7 @@ export default function CommercialInquiryFaq() {
           <div className="lg:col-span-5 bg-stone-50 border border-stone-200/90 rounded-3xl p-6 sm:p-8 shadow-sm">
             <div className="mb-6">
               <span className="text-xs font-bold uppercase tracking-wider text-[#3b6d11] bg-emerald-100/70 px-3 py-1 rounded-full">
-                Direct APMC Sourcing Desk
+                Direct Farm Sourcing Desk
               </span>
               <h3 className="text-2xl font-extrabold text-stone-900 tracking-tight mt-2.5">
                 Get in Touch
@@ -121,7 +132,7 @@ export default function CommercialInquiryFaq() {
                 <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
                 <h4 className="font-extrabold text-emerald-900 text-lg">Inquiry Received!</h4>
                 <p className="text-xs text-emerald-800 leading-relaxed">
-                  Thank you, <strong>{name}</strong>. Our commercial trade manager is reviewing current APMC mandi spot rates and will contact you via WhatsApp or Email within 2 business hours.
+                  Thank you, <strong>{name}</strong>. Our commercial trade manager is reviewing current mandi spot rates and will contact you via WhatsApp or Email within 2 business hours.
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
@@ -194,21 +205,18 @@ export default function CommercialInquiryFaq() {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-stone-700 mb-1">
-                      Commodity of Interest
+                      Bulk Order Item <span className="text-red-500">*</span>
                     </label>
                     <select
                       value={productTitle}
                       onChange={(e) => setProductTitle(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-xl border border-stone-300 text-xs focus:ring-2 focus:ring-[#3b6d11] focus:outline-none bg-white"
+                      className="w-full px-3 py-2.5 rounded-xl border border-stone-300 text-xs focus:ring-2 focus:ring-[#3b6d11] focus:outline-none bg-white font-medium"
                     >
-                      <option value="GI-Tagged Tiptur Ball Copra (Whole Dry)">GI Ball Copra</option>
-                      <option value="Fresh Grade A Mature Coconuts (Bag of 50)">Grade A Coconuts</option>
-                      <option value="Industrial Milling Copra (High Oil Cut)">Industrial Milling Copra</option>
-                      <option value="GI-Tagged Byadgi Chilli (Stemless 10kg)">Byadgi Chilli</option>
-                      <option value="Malnad Garbled Extra Bold Black Pepper (5kg)">Malnad Black Pepper</option>
-                      <option value="Cold-Pressed Raw Extra Virgin Coconut Oil (5L)">Extra Virgin Coconut Oil</option>
-                      <option value="Washed Low-EC Horticultural Coir Pith (5x 5kg)">Coir Pith Blocks</option>
-                      <option value="Tumakuru Whole Red Areca Nut (25kg)">Tumakuru Areca Nut</option>
+                      {BULK_ORDER_ITEMS.map((item) => (
+                        <option key={item.order} value={item.simpleName}>
+                          {item.simpleName}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -239,6 +247,8 @@ export default function CommercialInquiryFaq() {
                   />
                 </div>
 
+                <TurnstileChallenge onToken={setTurnstileToken} />
+
                 {errorMsg && (
                   <div className="p-3 bg-red-50 text-red-800 border border-red-200 rounded-xl text-xs font-medium">
                     {errorMsg}
@@ -255,7 +265,7 @@ export default function CommercialInquiryFaq() {
                 </button>
 
                 <p className="text-[11px] text-stone-400 text-center">
-                  We usually reply within one business hour • Direct APMC rates
+                  We usually reply within one business hour • Direct farm rates
                 </p>
               </form>
             )}

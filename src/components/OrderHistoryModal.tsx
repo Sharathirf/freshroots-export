@@ -13,11 +13,13 @@ import {
   ShoppingBag,
   Search,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  FileText
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { Order } from '@/types';
+import GstInvoiceModal from '@/components/GstInvoiceModal';
 
 export default function OrderHistoryModal() {
   const { customer, isOrderHistoryOpen, setIsOrderHistoryOpen } = useAuth();
@@ -29,6 +31,8 @@ export default function OrderHistoryModal() {
   const [hasSearched, setHasSearched] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [reorderSuccessId, setReorderSuccessId] = useState<string | null>(null);
+  const [selectedInvoiceOrder, setSelectedInvoiceOrder] = useState<Order | null>(null);
+  const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
 
   const fetchOrders = async (phone: string) => {
     const clean = phone.replace(/\D/g, '').slice(-10);
@@ -271,6 +275,20 @@ export default function OrderHistoryModal() {
                       <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
                       <span>Order Help</span>
                     </a>
+
+                    {/* GST Invoice Button */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedInvoiceOrder(ord);
+                        setIsInvoiceOpen(true);
+                      }}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-stone-200 hover:bg-stone-50 text-stone-700 text-xs font-semibold transition"
+                      title="View Official GST Invoice"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-emerald-700" />
+                      <span>Invoice</span>
+                    </button>
                   </div>
 
                   {/* 1-Tap Reorder Button */}
@@ -295,7 +313,7 @@ export default function OrderHistoryModal() {
                 </div>
                 <h4 className="font-bold text-stone-800 text-sm">No Previous Orders Yet</h4>
                 <p className="text-xs text-stone-500 max-w-sm mx-auto">
-                  Ready to place your first farm-gate produce order? Explore our 10 fresh APMC commodities!
+                  Ready to place your first farm-gate produce order? Explore our 10 fresh farm commodities!
                 </p>
                 <button
                   type="button"
@@ -330,7 +348,7 @@ export default function OrderHistoryModal() {
         <div className="p-3 bg-stone-50 border-t border-stone-200/80 flex items-center justify-between text-xs text-stone-500 shrink-0 px-4">
           <div className="flex items-center gap-1.5 text-[11px]">
             <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Direct Farm APMC Orders • Fast 24-48h Delivery</span>
+            <span>Direct Farm Orders • Fast 24-48h Delivery</span>
           </div>
           <button
             onClick={() => setIsOrderHistoryOpen(false)}
@@ -340,6 +358,12 @@ export default function OrderHistoryModal() {
           </button>
         </div>
       </div>
+
+      <GstInvoiceModal
+        isOpen={isInvoiceOpen}
+        onClose={() => setIsInvoiceOpen(false)}
+        order={selectedInvoiceOrder}
+      />
     </div>
   );
 }

@@ -3,6 +3,7 @@
 export type ProductCategory =
   | 'mature_coconut'
   | 'copra'
+  | 'arecanut'
   | 'spices'
   | 'oil_and_extracts'
   | 'coir_commodities'
@@ -28,6 +29,8 @@ export interface Product {
   description: string;
   specifications: Record<string, string>;
   image_url: string;
+  average_rating?: number;
+  review_count?: number;
   is_active: boolean;
   available_stock?: number;
 }
@@ -61,6 +64,7 @@ export interface OrderItem {
   quantity: number;
   unit_price_inr: number;
   total_price_inr: number;
+  tax_rate_percentage?: number;
   estimated_weight_kg: number;
   item_key?: string;
 }
@@ -86,6 +90,7 @@ export interface Order {
   delivery_lead_days?: number;
   discount_inr?: number;
   coupon_code?: string;
+  whatsapp_alert_url?: string;
   items: OrderItem[];
   created_at: string;
 }

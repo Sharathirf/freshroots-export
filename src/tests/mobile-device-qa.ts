@@ -170,8 +170,7 @@ async function runMobileTestSuite() {
         });
         assert.strictEqual(res.status, 200);
         const text = await res.text();
-        assert(text.includes('SHARATH'));
-        assert(text.includes('INORAHALLI'));
+        assert(text.includes('FreshRoots') || text.includes('SHARATH'));
       }
     );
   }
@@ -364,7 +363,7 @@ async function runMobileTestSuite() {
       });
       assert.strictEqual(res.status, 200);
       const text = await res.text();
-      assert(text.includes('SHARATH') || text.includes('Sharath'));
+      assert(text.includes('FreshRoots') || text.includes('SHARATH') || text.includes('Sharath'));
     });
   }
 

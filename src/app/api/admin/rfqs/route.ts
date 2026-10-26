@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { query } from '@/lib/db';
+import { requireAdmin } from '@/lib/admin-auth';
 
 export async function PATCH(request: NextRequest) {
+  const auth = requireAdmin(request, true);
+  if (auth) return auth;
   try {
     const body = await request.json();
     const { id, status, proposed_unit_price_inr, freight_charges_inr, admin_notes } = body;
@@ -44,6 +48,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ success: true, quotation: updated[0] });
   } catch (error: any) {
     console.error('API Error in /api/admin/rfqs (PATCH):', error);
+    Sentry.captureException(error, { tags: { route: '/api/admin/rfqs', method: 'PATCH' } });
     return NextResponse.json(
       { success: false, error: 'Failed to update quotation', details: error.message },
       { status: 500 }

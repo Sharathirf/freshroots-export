@@ -2,21 +2,38 @@
   "name": "intelligent-raman",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "test": "tsx src/tests/run-tests.ts",
-    "db:seed": "tsx src/scripts/seed.ts"
+    "test:integrations": "tsx src/tests/test-all-integrations.ts",
+    "test:razorpay": "tsx src/tests/test-razorpay-e2e-flow.ts",
+    "test:e2e": "tsx src/tests/playwright-e2e-transaction.ts",
+    "db:seed": "tsx src/scripts/seed.ts",
+    "db:migrate-arecanut": "tsx src/scripts/add-arecanut.ts",
+    "db:migrate-integrations": "tsx src/scripts/add-integrations.ts",
+    "db:migrate-secure-checkout": "node src/scripts/migrate-secure-checkout.cjs",
+    "setup:local-admin": "node src/scripts/setup-local-admin.cjs",
+    "test:e2e:mandi": "tsx src/tests/arecanut-user-journeys.ts"
   },
   "dependencies": {
+    "@sentry/nextjs": "^11.9.0",
     "clsx": "^2.1.1",
+    "firebase": "12.6.0",
+    "firebase-admin": "^14.5.0",
     "lucide-react": "^1.61.0",
     "next": "15.5.28",
     "pg": "^8.23.1",
+    "posthog-js": "^1.438.23",
+    "razorpay": "^2.9.8",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "resend": "^6.34.1",
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
@@ -28,6 +45,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.28",
+    "playwright": "^1.64.1",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"

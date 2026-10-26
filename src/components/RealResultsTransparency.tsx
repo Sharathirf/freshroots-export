@@ -22,7 +22,7 @@ const STORIES: TransparencyStory[] = [
   {
     id: '1',
     badge: 'Moisture Lab Test',
-    title: 'Digital Moisture Verification at Tiptur APMC Yard',
+    title: 'Digital Moisture Verification at Tiptur Yard',
     location: 'Tiptur Mandi, Tumakuru District',
     metric: '5.20%',
     metricLabel: 'Certified Moisture (Limit ≤ 5.5%)',
@@ -49,7 +49,7 @@ const STORIES: TransparencyStory[] = [
     id: '3',
     badge: 'GI Certification',
     title: 'GI-Tagged Byadgi Wrinkled Red Chilli Sourcing',
-    location: 'Haveri & Byadgi APMC Mandi',
+    location: 'Haveri & Byadgi Mandi',
     metric: '155+',
     metricLabel: 'ASTA Certified Color Value',
     description: 'Direct procurement of handpicked, stemless Byadgi chillies known globally for deep paprika-like natural red hue with mild culinary heat.',
@@ -72,7 +72,7 @@ export default function RealResultsTransparency() {
           <div>
             <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/80 px-3.5 py-1 rounded-full border border-emerald-800">
               <Award className="w-4 h-4" />
-              <span>APMC Traceability & Lab Testing</span>
+              <span>Farm Traceability & Lab Testing</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mt-3">
               Real Farmers, Real Results

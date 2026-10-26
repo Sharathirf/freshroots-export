@@ -962,7 +962,7 @@ export async function runAutomationSuite() {
       recipient_name: 'Sharath Farm Home',
       phone: testAddrPhone,
       tag: 'Home',
-      street_address: 'Near APMC Mandi, Kikkeri Village',
+      street_address: 'Main Bazaar Road, Kikkeri Village',
       city: 'K.R. Pete, Mandya',
       state: 'Karnataka',
       pincode: '571423',

@@ -37,7 +37,7 @@ export default function KatyayaniHero({ onOpenRFQ }: KatyayaniHeroProps) {
 
           {/* Staggered Multi-line Headline */}
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.08] text-white">
-            <span className="block text-white">Direct from APMC.</span>
+            <span className="block text-white">Direct from Farm.</span>
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-lime-200 to-amber-200">
               Lab-Tested Purity.
             </span>
@@ -78,11 +78,11 @@ export default function KatyayaniHero({ onOpenRFQ }: KatyayaniHeroProps) {
             </span>
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-              Worldwide Container Export
+              Container Exports to 12+ Countries (USA, UAE, UK, Vietnam, Saudi Arabia &amp; more)
             </span>
             <span className="flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-              APMC Weighbridge Verification
+              Certified Weighbridge Verification
             </span>
           </div>
         </div>

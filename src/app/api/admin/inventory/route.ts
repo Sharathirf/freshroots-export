@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { requireAdmin } from '@/lib/admin-auth';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const auth = requireAdmin(request);
+  if (auth) return auth;
   try {
     const batches = await query(`
       SELECT 
@@ -25,6 +28,8 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = requireAdmin(request, true);
+  if (auth) return auth;
   try {
     const body = await request.json();
     const { action, batch_id, product_id, origin_mandi, quantity, cost_per_unit, damaged_count, reason } = body;
