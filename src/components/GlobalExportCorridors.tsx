@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Globe, Ship, FileCheck, ArrowRight, CheckCircle2, ShieldCheck, Anchor } from 'lucide-react';
+import { Globe, Ship, FileCheck, ArrowRight, CheckCircle2, ShieldCheck, Anchor, ExternalLink } from 'lucide-react';
 import { EXPORT_COUNTRIES, ExportCountry } from '@/lib/export-countries';
 
 interface GlobalExportCorridorsProps {
@@ -101,9 +101,16 @@ export default function GlobalExportCorridors({ onOpenRFQ }: GlobalExportCorrido
                       {c.flag}
                     </span>
                     <div>
-                      <h3 className="font-extrabold text-white text-base leading-snug group-hover:text-lime-300 transition">
-                        {c.name}
-                      </h3>
+                      <a
+                        href={c.wikiUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-extrabold text-white text-base leading-snug hover:text-lime-300 hover:underline transition inline-flex items-center gap-1.5"
+                        title={`Read more about ${c.name} on Wikipedia`}
+                      >
+                        <span>{c.name}</span>
+                        <ExternalLink className="w-3.5 h-3.5 text-stone-400 hover:text-lime-300 transition" />
+                      </a>
                       <span className="text-[11px] text-emerald-400 font-semibold block">
                         {c.region}
                       </span>

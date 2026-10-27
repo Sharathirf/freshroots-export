@@ -14,6 +14,7 @@ import {
 } from '../lib/seo';
 import { EDUCATIONAL_GUIDES } from '../lib/guides';
 import { CATEGORIES } from '../lib/categories';
+import { EXPORT_COUNTRIES } from '../lib/export-countries';
 
 console.log('🧪 Starting FreshRoots Export Technical SEO & Metadata Test Suite...\n');
 
@@ -235,6 +236,16 @@ async function runSeoTests() {
     assert.equal(schema['@type'], 'FAQPage');
     assert.equal(schema.mainEntity[0].name, 'What is the moisture percentage?');
     assert.equal(schema.mainEntity[0].acceptedAnswer.text, 'Under 5.5%.');
+  });
+
+  // Test 11: Export Countries Wikipedia Links
+  test('All 12 active global export corridors have verified Wikipedia links', () => {
+    assert.equal(EXPORT_COUNTRIES.length, 12, 'Must have exactly 12 active export countries');
+    for (const c of EXPORT_COUNTRIES) {
+      assert.ok(c.wikiUrl, `Missing wikiUrl for ${c.name}`);
+      assert.ok(c.wikiUrl.startsWith('https://en.wikipedia.org/wiki/'), `Invalid Wikipedia URL for ${c.name}: ${c.wikiUrl}`);
+      assert.ok(c.flag, `Missing flag for ${c.name}`);
+    }
   });
 
   console.log(`\n🎉 All ${passCount} Technical SEO tests passed successfully!`);

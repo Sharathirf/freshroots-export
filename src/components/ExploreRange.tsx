@@ -20,7 +20,7 @@ const SOLUTIONS: RangeSolution[] = [
     description: 'Industrial Milling Copra cut and dried to ≤ 5.5% moisture, optimized for rotary and expeller oil mills without aflatoxin risk.',
     icon: Factory,
     productCount: 2,
-    image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=600&q=80',
+    image: '/products/ball-copra-4k.jpg',
     filterKey: 'copra'
   },
   {
@@ -29,7 +29,7 @@ const SOLUTIONS: RangeSolution[] = [
     description: 'Uniform 550g+ dehusked coconuts with fresh coconut water and intact eyes. Nil-rated 0% GST compliance.',
     icon: Sparkles,
     productCount: 2,
-    image: 'https://images.unsplash.com/photo-1544378730-8b5104b18790?auto=format&fit=crop&w=600&q=80',
+    image: '/products/mature-coconuts-4k.jpg',
     filterKey: 'mature_coconut'
   },
   {
@@ -38,7 +38,7 @@ const SOLUTIONS: RangeSolution[] = [
     description: 'GI-tagged Byadgi stemless dry chillies and Malnad bold black pepper with verified oleoresin and natural pungency.',
     icon: Utensils,
     productCount: 2,
-    image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=600&q=80',
+    image: '/products/ragi-millet-4k.jpg',
     filterKey: 'spices'
   },
   {
@@ -47,7 +47,7 @@ const SOLUTIONS: RangeSolution[] = [
     description: 'Triple-washed and cured 5kg compressed coir pith blocks offering 75L moisture retention per block.',
     icon: Sprout,
     productCount: 1,
-    image: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=600&q=80',
+    image: '/products/coconut-saplings-4k.jpg',
     filterKey: 'coir_commodities'
   },
   {
@@ -56,7 +56,7 @@ const SOLUTIONS: RangeSolution[] = [
     description: 'Raw extra virgin coconut oil extracted from fresh sulfur-free copra under 45°C to preserve lauric acid.',
     icon: HeartPulse,
     productCount: 1,
-    image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80',
+    image: '/products/groundnut-oil-4k.jpg',
     filterKey: 'oil_and_extracts'
   },
   {
@@ -65,7 +65,7 @@ const SOLUTIONS: RangeSolution[] = [
     description: 'Full-truckload (10 MT to 25 MT) and 20ft/40ft shipping container lots with Phytosanitary clearance.',
     icon: ShieldAlert,
     productCount: 9,
-    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=600&q=80',
+    image: '/products/arecanut-adike-4k.jpg',
     filterKey: 'all'
   }
 ];

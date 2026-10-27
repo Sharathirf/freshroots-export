@@ -27,7 +27,8 @@ import {
   Copy,
   AlertTriangle,
   RefreshCw,
-  AlertCircle
+  AlertCircle,
+  Lock
 } from 'lucide-react';
 import { Order } from '@/types';
 import { AVAILABLE_COUPONS, FarmCoupon, validateCoupon } from '@/lib/coupons';
@@ -179,10 +180,29 @@ export default function CartDrawer() {
   const isDistantStatePincode =
     Boolean(destPincode && destPincode.length >= 2 && !/^(5[0-3]|5[6-9]|6[0-4]|6[7-9])/.test(destPincode));
 
+  // Required delivery fields validation (name, 10-digit phone, 6-digit PIN, address)
+  const cleanPhone = customerPhone.replace(/\D/g, '');
+  const cleanPincode = destPincode.replace(/\D/g, '');
+  const isNameValid = customerName.trim().length >= 2;
+  const isPhoneValid = cleanPhone.length === 10;
+  const isPincodeValid = cleanPincode.length === 6;
+  const isAddressValid = shippingAddress.trim().length >= 5;
+  const isDeliveryDetailsComplete = isNameValid && isPhoneValid && isPincodeValid && isAddressValid;
+
+  const missingDeliveryFields: string[] = [];
+  if (!isNameValid) missingDeliveryFields.push(isKannada ? 'ಪೂರ್ಣ ಹೆಸರು' : 'Full Name');
+  if (!isPhoneValid) missingDeliveryFields.push(isKannada ? '10-ಅಂಕಿಯ ಮೊಬೈಲ್' : '10-digit Mobile');
+  if (!isPincodeValid) missingDeliveryFields.push(isKannada ? '6-ಅಂಕಿಯ ಪಿನ್ ಕೋಡ್' : '6-digit PIN Code');
+  if (!isAddressValid) missingDeliveryFields.push(isKannada ? 'ವಿತರಣಾ ವಿಳಾಸ' : 'Delivery Address');
+
   // Live Direct UPI Payment Details
   const farmUpiId = '9591142548@upi';
-  const upiPayLink = `upi://pay?pa=${farmUpiId}&pn=Farmer%20Sharath%20Inorahalli&am=${finalTotal}&cu=INR&tn=Agri_Order_${customerPhone || 'Direct'}`;
-  const upiQrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiPayLink)}`;
+  const customerRef = cleanPhone || 'Direct';
+  const upiTransactionNote = `FreshRoots_${customerRef}`;
+  const upiPayLink = `upi://pay?pa=${farmUpiId}&pn=Farmer%20Sharath%20Inorahalli&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(upiTransactionNote)}`;
+  const upiQrCodeUrl = isDeliveryDetailsComplete
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiPayLink)}`
+    : '';
 
   // Re-verify coupon eligibility if cart subtotal changes
   useEffect(() => {
@@ -270,13 +290,12 @@ export default function CartDrawer() {
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customerName || !customerPhone || !shippingAddress || !destPincode) {
-      setOrderError('Please fill in all mandatory shipping fields.');
-      return;
-    }
-
-    if (customerPhone.replace(/\D/g, '').length < 10) {
-      setOrderError('Please provide a valid 10-digit Indian phone number.');
+    if (!isDeliveryDetailsComplete) {
+      setOrderError(
+        isKannada
+          ? `ದಯವಿಟ್ಟು ಈ ಕೆಳಗಿನ ಅಗತ್ಯ ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ: ${missingDeliveryFields.join(', ')}.`
+          : `Please complete all required delivery details before proceeding: ${missingDeliveryFields.join(', ')}.`
+      );
       return;
     }
 
@@ -339,18 +358,18 @@ export default function CartDrawer() {
           // Persist latest order & recent orders in localStorage for instant 1-tap tracking on Homepage
           try {
             const resolveImg = (sku?: string) => {
-              if (!sku) return 'https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&w=400&q=80';
-              if (sku.includes('ARE')) return 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=400&q=80';
-              if (sku.includes('COC-SEMI') || sku.includes('COC-MAT')) return 'https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&w=400&q=80';
-              if (sku.includes('COP') || sku.includes('BAL')) return '/products/tiptur-ball-copra.jpg';
-              if (sku.includes('NUR-COC')) return '/products/coconut-plants-saplings.jpg';
-              if (sku.includes('OIL') || sku.includes('GNT')) return 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=400&q=80';
-              if (sku.includes('MIL') || sku.includes('RAG')) return 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=400&q=80';
-              if (sku.includes('GHE') || sku.includes('COW') || sku.includes('DAI')) return 'https://images.unsplash.com/photo-1631451095765-2c91616fc9e6?auto=format&fit=crop&w=400&q=80';
-              if (sku.includes('TND')) return 'https://images.unsplash.com/photo-1525385133512-2f3bdd039054?auto=format&fit=crop&w=400&q=80';
-              if (sku.includes('GIN')) return 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=400&q=80';
-              if (sku.includes('SHL')) return '/products/coconut-shells-pile.jpg';
-              return 'https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&w=400&q=80';
+              if (!sku) return '/products/mature-coconuts-4k.jpg';
+              if (sku.includes('ARE')) return '/products/arecanut-saplings-4k.jpg';
+              if (sku.includes('COC-SEMI') || sku.includes('COC-MAT')) return '/products/mature-coconuts-4k.jpg';
+              if (sku.includes('COP') || sku.includes('BAL')) return '/products/ball-copra-4k.jpg';
+              if (sku.includes('NUR-COC')) return '/products/coconut-saplings-4k.jpg';
+              if (sku.includes('OIL') || sku.includes('GNT')) return '/products/groundnut-oil-4k.jpg';
+              if (sku.includes('MIL') || sku.includes('RAG')) return '/products/ragi-millet-4k.jpg';
+              if (sku.includes('GHE') || sku.includes('COW') || sku.includes('DAI')) return '/products/cow-ghee-4k.jpg';
+              if (sku.includes('TND')) return '/products/tender-coconuts-4k.jpg';
+              if (sku.includes('GIN')) return '/products/ginger-4k.jpg';
+              if (sku.includes('SHL')) return '/products/coconut-shells-4k.jpg';
+              return '/products/mature-coconuts-4k.jpg';
             };
 
             const orderItemsList = items.map((it) => ({
@@ -1061,7 +1080,8 @@ export default function CartDrawer() {
                   )}
 
                   {paymentMethod === 'upi' && (
-                    <div className="mt-2.5 p-3 rounded-xl bg-stone-50 border border-stone-200 text-xs space-y-2">
+                    <div className="mt-2.5 p-3 rounded-xl bg-stone-50 border border-stone-200 text-xs space-y-2.5">
+                      {/* Farm UPI ID Header */}
                       <div className="flex items-center justify-between">
                         <span className="text-stone-600 font-medium">Farm Direct UPI VPA:</span>
                         <div className="flex items-center gap-1.5">
@@ -1082,25 +1102,111 @@ export default function CartDrawer() {
                           </button>
                         </div>
                       </div>
-                      <a
-                        href={upiPayLink}
-                        className="inline-flex w-full items-center justify-center gap-1.5 bg-stone-900 hover:bg-stone-800 text-white font-bold py-2 rounded-lg text-xs transition shadow-xs active:scale-98"
-                      >
-                        <Smartphone className="w-3.5 h-3.5" />
-                        <span>Tap to Launch UPI App (GPay / PhonePe / Paytm)</span>
-                      </a>
 
-                      {/* Dynamic Scannable QR Code */}
-                      <div className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-stone-200">
-                        <img
-                          src={upiQrCodeUrl}
-                          alt="Scan to Pay via UPI"
-                          className="w-20 h-20 object-contain rounded-lg border border-stone-100 shrink-0"
-                        />
-                        <div className="text-[11px] text-stone-600 leading-snug">
-                          Scan with any phone camera or banking app (<strong>GPay, PhonePe, Paytm, BHIM</strong>) for direct farm account settlement.
+                      {/* Locked vs Unlocked UPI QR & App Trigger */}
+                      {!isDeliveryDetailsComplete ? (
+                        <div className="space-y-2.5">
+                          {/* Locked Notice */}
+                          <div className="bg-amber-50/95 border border-amber-300 rounded-xl p-3 text-xs text-amber-950 space-y-2 shadow-2xs">
+                            <div className="flex items-center gap-2 font-bold text-amber-900">
+                              <Lock className="w-4 h-4 text-amber-700 shrink-0" />
+                              <span>{isKannada ? 'QR ಕೋಡ್ ಲಾಕ್ ಆಗಿದೆ — ವಿಳಾಸ ಭರ್ತಿ ಮಾಡಿ' : 'UPI QR Code Locked — Enter Address First'}</span>
+                            </div>
+                            <p className="text-[11px] text-amber-800 leading-relaxed">
+                              {isKannada
+                                ? 'ಪಾವತಿ ಮಾಡುವ ಮೊದಲು ದಯವಿಟ್ಟು ಮೇಲೆ ನಿಮ್ಮ ಹೆಸರು, ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಮತ್ತು ವಿಳಾಸವನ್ನು ಭರ್ತಿ ಮಾಡಿ. ನಂತರ UPI QR ಕೋಡ್ ತಕ್ಷಣವೇ ಅನ್‌ಲಾಕ್ ಆಗುತ್ತದೆ.'
+                                : 'Please fill in your Delivery Address, Full Name & 10-digit Phone above to unlock the dynamic UPI QR code. This ensures your payment is automatically mapped to your dispatch slip.'}
+                            </p>
+                            <div className="pt-0.5 flex flex-wrap gap-1.5">
+                              {missingDeliveryFields.map((field) => (
+                                <span
+                                  key={field}
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white border border-amber-300 text-amber-900 text-[10px] font-bold shadow-2xs"
+                                >
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                  {field} required
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Disabled Launch Button */}
+                          <button
+                            type="button"
+                            disabled
+                            className="inline-flex w-full items-center justify-center gap-2 bg-stone-200 text-stone-500 font-bold py-2.5 rounded-xl text-xs cursor-not-allowed border border-stone-300"
+                            title="Please complete delivery details above to unlock UPI apps"
+                          >
+                            <Lock className="w-3.5 h-3.5 text-stone-500" />
+                            <span>{isKannada ? 'ವಿಳಾಸ ಭರ್ತಿ ಮಾಡಿದ ನಂತರ UPI ತೆರೆಯಿರಿ' : 'Fill Address Above to Launch UPI App'}</span>
+                          </button>
+
+                          {/* Non-scannable Locked QR Placeholder */}
+                          <div className="flex items-center gap-3 bg-stone-100/90 p-3 rounded-xl border border-dashed border-stone-300">
+                            <div className="w-20 h-20 rounded-lg bg-stone-200/90 border border-stone-300 flex flex-col items-center justify-center text-stone-500 shrink-0 shadow-inner">
+                              <Lock className="w-6 h-6 text-stone-600 mb-0.5" />
+                              <span className="text-[9px] font-black uppercase tracking-wider text-stone-600">Locked</span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-xs font-bold text-stone-800">
+                                {isKannada ? 'QR ಕೋಡ್ ಪಡೆಯಲು ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ' : 'Address Required to Generate QR'}
+                              </div>
+                              <p className="text-[11px] text-stone-600 mt-1 leading-snug">
+                                {isKannada
+                                  ? 'ವಿಳಾಸ ಭರ್ತಿಯಾದ ತಕ್ಷಣ ₹' + finalTotal.toLocaleString('en-IN') + ' ಮೊತ್ತದ ಸ್ಕ್ಯಾನರ್ ಸಕ್ರಿಯಗೊಳ್ಳುತ್ತದೆ.'
+                                  : `Once address is filled, a secure ₹${finalTotal.toLocaleString('en-IN')} QR code linked to your phone will appear here.`}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="space-y-2.5">
+                          {/* Verified Details Indicator */}
+                          <div className="bg-emerald-50 border border-emerald-300 rounded-xl px-2.5 py-1.5 text-xs text-emerald-950 flex items-center justify-between shadow-2xs">
+                            <div className="flex items-center gap-1.5 font-bold">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                              <span className="text-[11px]">
+                                {customerName} ({destPincode}) — Ready to Pay
+                              </span>
+                            </div>
+                            <span className="text-[9px] bg-emerald-200/80 text-emerald-900 font-extrabold uppercase px-1.5 py-0.5 rounded-full">
+                              QR Unlocked
+                            </span>
+                          </div>
+
+                          {/* Active Launch Button */}
+                          <a
+                            href={upiPayLink}
+                            className="inline-flex w-full items-center justify-center gap-1.5 bg-stone-900 hover:bg-stone-800 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-xs active:scale-98"
+                          >
+                            <Smartphone className="w-3.5 h-3.5 text-emerald-400" />
+                            <span>{isKannada ? 'UPI ಆ್ಯಪ್ ತೆರೆಯಿರಿ (GPay / PhonePe / Paytm)' : 'Tap to Launch UPI App (GPay / PhonePe / Paytm)'}</span>
+                          </a>
+
+                          {/* Dynamic Scannable QR Code */}
+                          <div className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-emerald-300 shadow-xs">
+                            <img
+                              src={upiQrCodeUrl}
+                              alt={`Scan to Pay ₹${finalTotal} via UPI`}
+                              className="w-24 h-24 object-contain rounded-lg border border-stone-200 shrink-0"
+                            />
+                            <div className="text-[11px] text-stone-700 leading-snug space-y-1">
+                              <p className="font-semibold text-stone-900">
+                                Scan with any camera or UPI app:
+                              </p>
+                              <div className="flex items-center gap-1 flex-wrap font-bold text-emerald-950 text-[10px]">
+                                <span className="bg-stone-100 px-1.5 py-0.5 rounded border border-stone-200">GPay</span>
+                                <span className="bg-stone-100 px-1.5 py-0.5 rounded border border-stone-200">PhonePe</span>
+                                <span className="bg-stone-100 px-1.5 py-0.5 rounded border border-stone-200">Paytm</span>
+                                <span className="bg-stone-100 px-1.5 py-0.5 rounded border border-stone-200">BHIM</span>
+                              </div>
+                              <p className="text-[10px] text-stone-500 pt-0.5">
+                                Direct settlement for ₹{finalTotal.toLocaleString('en-IN')}.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Optional UTR / Reference ID */}
                       <div>

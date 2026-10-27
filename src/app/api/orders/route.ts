@@ -63,12 +63,19 @@ export async function POST(request: NextRequest) {
     let totalTax = 0;
     const validatedItems: OrderItem[] = [];
 
+    const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
     for (const item of items) {
-      let dbProd = await query(
-        `SELECT id, sku, title, retail_price_inr, unit_of_measure, estimated_weight_kg, tax_rate_percentage, bulk_min_quantity 
-         FROM products WHERE id = $1 AND is_active = true`,
-        [item.product_id]
-      );
+      let dbProd: any[] = [];
+      const hasValidUuid = UUID_REGEX.test(item.product_id || '');
+
+      if (hasValidUuid) {
+        dbProd = await query(
+          `SELECT id, sku, title, retail_price_inr, unit_of_measure, estimated_weight_kg, tax_rate_percentage, bulk_min_quantity 
+           FROM products WHERE id = $1 AND is_active = true`,
+          [item.product_id]
+        );
+      }
 
       // Fallback 1: Match by SKU if provided (heals stale product_id from prior sessions/re-seeds)
       if (dbProd.length === 0 && item.sku) {

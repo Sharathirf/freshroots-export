@@ -12,6 +12,7 @@
     "lint": "eslint",
     "test": "tsx src/tests/run-tests.ts && tsx src/tests/test-seo-foundation.ts",
     "test:seo": "tsx src/tests/test-seo-foundation.ts",
+    "test:auth": "tsx src/tests/test-google-auth-and-metadata.ts",
     "test:integrations": "tsx src/tests/test-all-integrations.ts",
     "test:razorpay": "tsx src/tests/test-razorpay-e2e-flow.ts",
     "test:e2e": "tsx src/tests/playwright-e2e-transaction.ts",
@@ -19,6 +20,7 @@
     "db:migrate-arecanut": "tsx src/scripts/add-arecanut.ts",
     "db:migrate-integrations": "tsx src/scripts/add-integrations.ts",
     "db:migrate-secure-checkout": "node src/scripts/migrate-secure-checkout.cjs",
+    "db:migrate-google-auth": "node src/scripts/migrate-google-auth.cjs",
     "setup:local-admin": "node src/scripts/setup-local-admin.cjs",
     "test:e2e:mandi": "tsx src/tests/arecanut-user-journeys.ts"
   },

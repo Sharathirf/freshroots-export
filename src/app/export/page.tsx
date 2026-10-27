@@ -18,15 +18,19 @@ import {
   MessageCircle,
   ChevronRight,
   Building2,
-  ArrowRight
+  ArrowRight,
+  ExternalLink
 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Indian Agricultural Commodities Export | Coconuts, Copra & Spices | FreshRoots',
-  description: 'Direct farm-origin agricultural exports from Karnataka, India. FCL & LCL consignments of fresh mature coconuts, GI Tiptur ball copra, and cold-pressed oils. FOB/CIF via JNPT & Mangalore ports.',
+  title: 'Indian Agricultural Commodities Export | Coconuts, Copra, Arecanut & Oils | FreshRoots',
+  description: 'Direct farm-origin agricultural exports from Karnataka, India. FCL & LCL consignments of fresh mature coconuts, GI ball copra (0801.12.10), raw copra (1203.00.00), arecanut (0802.80.10), and refined copra oil (1513.19.00). FOB/CIF via JNPT & Mangalore ports.',
   keywords: [
     'coconut export from India',
     'buy ball copra bulk export',
+    'raw copra 1203.00.00 export',
+    'arecanut export 0802.80.10',
+    'refined copra oil 1513.19.00',
     'Tiptur copra exporter Karnataka',
     'Indian agricultural commodities supplier',
     'FOB JNPT fresh coconuts',
@@ -158,7 +162,8 @@ export default function ExportPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* 1. Fresh Semi-Husked Coconuts */}
             <div className="bg-white border border-stone-200 rounded-3xl p-6 hover:shadow-lg transition">
               <div className="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center text-2xl mb-5">
                 🥥
@@ -179,12 +184,13 @@ export default function ExportPage() {
               </ul>
             </div>
 
+            {/* 2. GI Tiptur Ball Copra */}
             <div className="bg-white border border-stone-200 rounded-3xl p-6 hover:shadow-lg transition">
               <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-2xl mb-5">
                 ✨
               </div>
               <h3 className="text-lg font-black text-stone-900">
-                GI Tiptur Ball Copra (Unde Kobbari)
+                Ball Copra (GI Tiptur Unde Kobbari)
               </h3>
               <p className="text-xs text-amber-800 font-semibold mt-1">
                 HS Code: 0801.12.10
@@ -199,23 +205,87 @@ export default function ExportPage() {
               </ul>
             </div>
 
+            {/* 3. Raw Copra (Milling Grade) */}
+            <div className="bg-white border border-stone-200 rounded-3xl p-6 hover:shadow-lg transition">
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-2xl mb-5">
+                🥥
+              </div>
+              <h3 className="text-lg font-black text-stone-900">
+                Raw Copra (Milling Grade)
+              </h3>
+              <p className="text-xs text-amber-800 font-semibold mt-1">
+                HS Code: 1203.00.00
+              </p>
+              <p className="text-xs text-stone-600 mt-3 leading-relaxed">
+                High-grade sun-dried raw milling copra cups from Tiptur and Mandya drying yards. High oil content (minimum 64%) and low free fatty acid levels, ideal for large-scale industrial vegetable oil expellers and bio-refineries.
+              </p>
+              <ul className="text-xs text-stone-500 mt-4 space-y-1.5 border-t border-stone-100 pt-3">
+                <li>• Oil Yield: 64% - 68% high recovery rate</li>
+                <li>• Moisture: Strict industrial threshold &lt; 6.0%</li>
+                <li>• Packaging: 50 kg breathable PP gunny bags / 20T bulk FCL</li>
+              </ul>
+            </div>
+
+            {/* 4. Commercial Arecanut */}
+            <div className="bg-white border border-stone-200 rounded-3xl p-6 hover:shadow-lg transition">
+              <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-2xl mb-5">
+                🪴
+              </div>
+              <h3 className="text-lg font-black text-stone-900">
+                Commercial Arecanut (Adike / Betel Nut)
+              </h3>
+              <p className="text-xs text-orange-800 font-semibold mt-1">
+                HS Code: 0802.80.10
+              </p>
+              <p className="text-xs text-stone-600 mt-3 leading-relaxed">
+                Whole and split Arecanut (Areca catechu) lots sourced directly from Shivamogga, Sagar, and Malnad APMC corridors. Optical sortation available across Rashi, Bette, Gorabal, and Chali grades.
+              </p>
+              <ul className="text-xs text-stone-500 mt-4 space-y-1.5 border-t border-stone-100 pt-3">
+                <li>• Moisture: Strictly verified &lt; 10.0%</li>
+                <li>• Packaging: 50 kg / 70 kg double-stitched jute sacks</li>
+                <li>• Container: 20ft (18-20 MT) dry maritime containers</li>
+              </ul>
+            </div>
+
+            {/* 5. Cold-Pressed & Wood-Pressed Oils */}
             <div className="bg-white border border-stone-200 rounded-3xl p-6 hover:shadow-lg transition">
               <div className="w-12 h-12 rounded-2xl bg-lime-100 flex items-center justify-center text-2xl mb-5">
                 🌿
               </div>
               <h3 className="text-lg font-black text-stone-900">
-                Cold-Pressed & Wood-Pressed Oils
+                Cold-Pressed Virgin Oils
               </h3>
               <p className="text-xs text-lime-800 font-semibold mt-1">
                 HS Code: 1513.11.00
               </p>
               <p className="text-xs text-stone-600 mt-3 leading-relaxed">
-                Artisan wood-pressed coconut and groundnut oils extracted below 45°C. Unrefined, unbleached, and naturally settled without chemical filtering agents.
+                Artisan wood-pressed virgin coconut and groundnut oils extracted below 45°C. Unrefined, unbleached, and naturally settled without chemical filtering agents. High lauric acid and natural tocopherols.
               </p>
               <ul className="text-xs text-stone-500 mt-4 space-y-1.5 border-t border-stone-100 pt-3">
-                <li>• Packaging: 1L food-grade bottles / 200L steel drums / IBC totes</li>
                 <li>• Free Fatty Acids (FFA): &lt; 0.5% (cold pressed)</li>
+                <li>• Packaging: 1L bottles / 200L steel drums / IBC totes</li>
                 <li>• Testing: FSSAI export-compliant fatty acid profile</li>
+              </ul>
+            </div>
+
+            {/* 6. Refined Copra Oil (RBD) */}
+            <div className="bg-white border border-stone-200 rounded-3xl p-6 hover:shadow-lg transition">
+              <div className="w-12 h-12 rounded-2xl bg-yellow-100 flex items-center justify-center text-2xl mb-5">
+                🫗
+              </div>
+              <h3 className="text-lg font-black text-stone-900">
+                Refined Copra Oil (RBD)
+              </h3>
+              <p className="text-xs text-yellow-800 font-semibold mt-1">
+                HS Code: 1513.19.00
+              </p>
+              <p className="text-xs text-stone-600 mt-3 leading-relaxed">
+                Refined, Bleached & Deodorized (RBD) industrial and culinary copra oil. Conforms to CODEX STAN 210-1999 international standards. Clear, odor-free with high thermal stability for commercial food manufacturing and cosmetics.
+              </p>
+              <ul className="text-xs text-stone-500 mt-4 space-y-1.5 border-t border-stone-100 pt-3">
+                <li>• Free Fatty Acids (FFA): &lt; 0.10% (as lauric acid)</li>
+                <li>• Packaging: 200L epoxy-lined steel drums / 21T Flexitanks</li>
+                <li>• Quality: Non-hydrogenated, zero trans-fat guarantee</li>
               </ul>
             </div>
           </div>
@@ -241,7 +311,16 @@ export default function ExportPage() {
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-2xl">{country.flag}</span>
-                    <span className="font-bold text-xs text-stone-900">{country.name}</span>
+                    <a
+                      href={country.wikiUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold text-xs text-stone-900 hover:text-emerald-700 hover:underline inline-flex items-center gap-1 transition"
+                      title={`Learn more about ${country.name} on Wikipedia`}
+                    >
+                      <span>{country.name}</span>
+                      <ExternalLink className="w-3 h-3 text-stone-400 hover:text-emerald-700" />
+                    </a>
                   </div>
                   <div className="text-[11px] text-stone-500">
                     <span className="font-semibold text-stone-700">Port:</span> {country.majorPort}

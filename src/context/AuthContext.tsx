@@ -4,13 +4,18 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { CustomerAddress } from '@/types';
 
 export interface CustomerUser {
-  phone: string;
+  phone?: string;
   name?: string;
   email?: string;
   address?: string;
   city?: string;
   state?: string;
   pincode?: string;
+  avatar_url?: string;
+  auth_provider?: string;
+  provider_id?: string;
+  email_verified?: boolean;
+  metadata?: Record<string, any>;
   signedInAt: string;
 }
 
@@ -39,8 +44,20 @@ interface AuthContextType {
     address?: string,
     city?: string,
     state?: string,
-    pincode?: string
+    pincode?: string,
+    avatar_url?: string,
+    auth_provider?: string,
+    provider_id?: string
   ) => void;
+  signInWithGoogle: (profile: {
+    sub: string;
+    name: string;
+    email: string;
+    picture?: string;
+    email_verified?: boolean;
+    locale?: string;
+    phone?: string;
+  }) => Promise<void>;
   updateProfile: (details: {
     name?: string;
     email?: string;
@@ -48,6 +65,7 @@ interface AuthContextType {
     city?: string;
     state?: string;
     pincode?: string;
+    phone?: string;
   }) => Promise<void>;
   loadAddresses: () => Promise<void>;
   saveAddress: (addr: {
@@ -120,8 +138,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const parsed = JSON.parse(saved);
         setCustomer(parsed);
         // Refresh profile and addresses from server
-        if (parsed.phone) {
-          fetch(`/api/customer/profile?phone=${encodeURIComponent(parsed.phone)}`)
+        const queryParam = parsed.phone
+          ? `phone=${encodeURIComponent(parsed.phone)}`
+          : parsed.email
+          ? `email=${encodeURIComponent(parsed.email)}`
+          : parsed.provider_id
+          ? `provider_id=${encodeURIComponent(parsed.provider_id)}`
+          : null;
+
+        if (queryParam) {
+          fetch(`/api/customer/profile?${queryParam}`)
             .then((r) => r.json())
             .then((data) => {
               if (data.success && data.customer) {
@@ -129,6 +155,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                   ...parsed,
                   name: data.customer.name || parsed.name,
                   email: data.customer.email || parsed.email,
+                  phone: data.customer.phone || parsed.phone,
+                  avatar_url: data.customer.avatar_url || parsed.avatar_url,
+                  auth_provider: data.customer.auth_provider || parsed.auth_provider,
+                  provider_id: data.customer.provider_id || parsed.provider_id,
+                  email_verified: data.customer.email_verified ?? parsed.email_verified,
                   address: data.customer.address || parsed.address,
                   city: data.customer.city || parsed.city,
                   state: data.customer.state || parsed.state,
@@ -140,14 +171,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             })
             .catch((e) => console.warn('Could not refresh profile from server:', e));
 
-          fetch(`/api/customer/addresses?phone=${encodeURIComponent(parsed.phone)}`)
-            .then((r) => r.json())
-            .then((data) => {
-              if (data.success && Array.isArray(data.addresses)) {
-                setAddresses(data.addresses);
-              }
-            })
-            .catch((e) => console.warn('Could not load addresses from server:', e));
+          if (parsed.phone) {
+            fetch(`/api/customer/addresses?phone=${encodeURIComponent(parsed.phone)}`)
+              .then((r) => r.json())
+              .then((data) => {
+                if (data.success && Array.isArray(data.addresses)) {
+                  setAddresses(data.addresses);
+                }
+              })
+              .catch((e) => console.warn('Could not load addresses from server:', e));
+          }
         }
       }
     } catch (e) {
@@ -171,7 +204,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     address?: string,
     city?: string,
     state?: string,
-    pincode?: string
+    pincode?: string,
+    avatar_url?: string,
+    auth_provider: string = 'phone',
+    provider_id?: string
   ) => {
     const user: CustomerUser = {
       phone,
@@ -181,6 +217,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       city: city?.trim() || undefined,
       state: state?.trim() || undefined,
       pincode: pincode?.trim() || undefined,
+      avatar_url: avatar_url?.trim() || undefined,
+      auth_provider,
+      provider_id: provider_id?.trim() || undefined,
       signedInAt: new Date().toISOString()
     };
     setCustomer(user);
@@ -192,6 +231,76 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsSignInModalOpen(false);
   };
 
+  const signInWithGoogle = async (profile: {
+    sub: string;
+    name: string;
+    email: string;
+    picture?: string;
+    email_verified?: boolean;
+    locale?: string;
+    phone?: string;
+  }) => {
+    const cleanPhone = profile.phone ? profile.phone.replace(/\D/g, '').slice(-10) : undefined;
+    const user: CustomerUser = {
+      phone: cleanPhone,
+      name: profile.name,
+      email: profile.email,
+      avatar_url: profile.picture,
+      auth_provider: 'google',
+      provider_id: profile.sub,
+      email_verified: Boolean(profile.email_verified),
+      metadata: {
+        locale: profile.locale,
+        google_sub: profile.sub,
+        authenticated_at: new Date().toISOString()
+      },
+      signedInAt: new Date().toISOString()
+    };
+
+    setCustomer(user);
+    try {
+      localStorage.setItem('tiptur_customer_session', JSON.stringify(user));
+    } catch (e) {
+      console.error('Failed to save customer session:', e);
+    }
+
+    // Persist to PostgreSQL backend
+    try {
+      const res = await fetch('/api/customer/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: cleanPhone || null,
+          full_name: profile.name,
+          email: profile.email,
+          auth_provider: 'google',
+          provider_id: profile.sub,
+          avatar_url: profile.picture,
+          email_verified: profile.email_verified,
+          metadata: {
+            locale: profile.locale,
+            source: 'google_gis_web'
+          }
+        })
+      });
+      const data = await res.json();
+      if (data.success && data.customer) {
+        const enriched: CustomerUser = {
+          ...user,
+          phone: data.customer.phone || user.phone,
+          address: data.customer.address || user.address,
+          city: data.customer.city || user.city,
+          state: data.customer.state || user.state,
+          pincode: data.customer.pincode || user.pincode
+        };
+        setCustomer(enriched);
+        localStorage.setItem('tiptur_customer_session', JSON.stringify(enriched));
+      }
+    } catch (err) {
+      console.warn('Backend profile sync warning:', err);
+    }
+  };
+
   const updateProfile = async (details: {
     name?: string;
     email?: string;
@@ -199,12 +308,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     city?: string;
     state?: string;
     pincode?: string;
+    phone?: string;
   }) => {
     if (!customer) return;
     const updated: CustomerUser = {
       ...customer,
       name: details.name !== undefined ? details.name.trim() : customer.name,
       email: details.email !== undefined ? details.email.trim() : customer.email,
+      phone: details.phone !== undefined ? details.phone.trim() : customer.phone,
       address: details.address !== undefined ? details.address.trim() : customer.address,
       city: details.city !== undefined ? details.city.trim() : customer.city,
       state: details.state !== undefined ? details.state.trim() : customer.state,
@@ -223,13 +334,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          phone: customer.phone,
+          phone: updated.phone || null,
           full_name: updated.name || customer.name,
           email: updated.email || null,
           address: updated.address || null,
           city: updated.city || null,
           state: updated.state || null,
-          pincode: updated.pincode || null
+          pincode: updated.pincode || null,
+          auth_provider: customer.auth_provider || 'phone',
+          provider_id: customer.provider_id || null,
+          avatar_url: customer.avatar_url || null
         })
       });
     } catch (err) {
@@ -340,6 +454,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         lang,
         setLang,
         signIn,
+        signInWithGoogle,
         updateProfile,
         loadAddresses,
         saveAddress,

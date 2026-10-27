@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Sprout, Phone, Mail, MapPin, ArrowRight, CheckCircle2 } from 'lucide-react';
 import PushNotificationOptIn from '@/components/PushNotificationOptIn';
+import { EXPORT_COUNTRIES } from '@/lib/export-countries';
 
 export default function Footer() {
   const [emailInput, setEmailInput] = useState('');
@@ -160,29 +161,21 @@ export default function Footer() {
             </span>
           </div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-stone-300 font-medium">
-            <span>🇻🇳 Vietnam</span>
-            <span className="text-stone-600">•</span>
-            <span>🇧🇩 Bangladesh</span>
-            <span className="text-stone-600">•</span>
-            <span>🇦🇪 United Arab Emirates (UAE)</span>
-            <span className="text-stone-600">•</span>
-            <span>🇳🇵 Nepal</span>
-            <span className="text-stone-600">•</span>
-            <span>🇸🇦 Saudi Arabia</span>
-            <span className="text-stone-600">•</span>
-            <span>🇺🇸 United States (USA)</span>
-            <span className="text-stone-600">•</span>
-            <span>🇰🇭 Cambodia</span>
-            <span className="text-stone-600">•</span>
-            <span>🇶🇦 Qatar</span>
-            <span className="text-stone-600">•</span>
-            <span>🇲🇾 Malaysia</span>
-            <span className="text-stone-600">•</span>
-            <span>🇰🇼 Kuwait</span>
-            <span className="text-stone-600">•</span>
-            <span>🇮🇷 Iran</span>
-            <span className="text-stone-600">•</span>
-            <span>🇬🇧 United Kingdom (UK)</span>
+            {EXPORT_COUNTRIES.map((country, idx) => (
+              <React.Fragment key={country.code}>
+                {idx > 0 && <span className="text-stone-600" aria-hidden="true">•</span>}
+                <a
+                  href={country.wikiUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-lime-300 hover:underline transition-colors inline-flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-lime-400 rounded-sm"
+                  title={`View ${country.name} on Wikipedia (opens in new tab)`}
+                >
+                  <span role="img" aria-label={country.name}>{country.flag}</span>
+                  <span>{country.name}</span>
+                </a>
+              </React.Fragment>
+            ))}
           </div>
         </div>
 

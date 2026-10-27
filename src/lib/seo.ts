@@ -130,13 +130,14 @@ export function generateProductJsonLd(product: CatalogProductItem, siteUrl: stri
   const productUrl = `${siteUrl}/products/${product.slug}`;
   const price = Number(product.retail_price_inr);
   const inStock = (product.available_stock || 0) > 0;
+  const fullImageUrl = product.image_url.startsWith('http') ? product.image_url : `${siteUrl}${product.image_url}`;
 
   const schema: Record<string, any> = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     '@id': `${productUrl}#product`,
     name: product.title,
-    image: [product.image_url],
+    image: [fullImageUrl],
     description: product.description,
     sku: product.sku,
     category: product.category.replace(/_/g, ' '),
@@ -302,9 +303,9 @@ export function generateProductMetadata(product: CatalogProductItem): Metadata {
       type: 'website',
       images: [
         {
-          url: product.image_url,
-          width: 800,
-          height: 800,
+          url: product.image_url.startsWith('http') ? product.image_url : `${siteUrl}${product.image_url}`,
+          width: 3840,
+          height: 2560,
           alt: product.title,
         },
       ],
@@ -313,7 +314,7 @@ export function generateProductMetadata(product: CatalogProductItem): Metadata {
       card: 'summary_large_image',
       title: product.seoTitle,
       description: product.seoDescription,
-      images: [product.image_url],
+      images: [product.image_url.startsWith('http') ? product.image_url : `${siteUrl}${product.image_url}`],
     },
   };
 }

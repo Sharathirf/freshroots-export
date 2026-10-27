@@ -59,7 +59,6 @@ export default function PwaInstallPrompt() {
     const isIos =
       /iphone|ipad|ipod/i.test(userAgent) ||
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    const supportsBrowserInstallHelp = /chrome|chromium|edg/i.test(userAgent);
 
     const onInstallPromptReady = () => {
       const promptEvent = window.__freshRootsInstallPrompt;
@@ -76,8 +75,9 @@ export default function PwaInstallPrompt() {
     };
 
     window.addEventListener('freshroots:install-prompt-ready', onInstallPromptReady);
-    if (isIos) setMode('ios');
-    else if (supportsBrowserInstallHelp) setMode('browser');
+    if (isIos && window.innerWidth < 768) {
+      setMode('ios');
+    }
     onInstallPromptReady();
 
     window.addEventListener('freshroots:app-installed', onAppInstalled);
@@ -123,7 +123,7 @@ export default function PwaInstallPrompt() {
     <aside
       aria-label="Install FreshRoots Export app"
       aria-live="polite"
-      className="fixed inset-x-0 bottom-0 z-[80] px-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-4 sm:pb-4"
+      className="fixed inset-x-0 bottom-0 z-30 px-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-4 sm:pb-4"
     >
       <div className="relative mx-auto max-w-[704px] rounded-[28px] border border-emerald-700 bg-[#173b0b] p-4 text-white shadow-[0_16px_55px_rgba(0,0,0,0.28)] sm:p-6">
         <button

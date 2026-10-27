@@ -19,13 +19,18 @@ CREATE TABLE IF NOT EXISTS serviceable_pincodes (
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     full_name VARCHAR(120) NOT NULL,
-    phone VARCHAR(20) UNIQUE NOT NULL,
+    phone VARCHAR(20) UNIQUE,
     email VARCHAR(255) UNIQUE,
     address TEXT,
     city VARCHAR(100),
     state VARCHAR(100),
     pincode VARCHAR(20),
     role VARCHAR(30) DEFAULT 'retail_customer' CHECK (role IN ('retail_customer', 'wholesale_customer', 'hub_staff', 'admin')),
+    auth_provider VARCHAR(50) DEFAULT 'phone',
+    provider_id VARCHAR(255),
+    avatar_url TEXT,
+    email_verified BOOLEAN DEFAULT FALSE,
+    metadata JSONB DEFAULT '{}'::jsonb,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

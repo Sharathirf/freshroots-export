@@ -20,7 +20,7 @@ const CATEGORIES: CategoryItem[] = [
     description: '25-piece semi-husked mature bags (15kg) and sweet water tender coconuts',
     count: 2,
     iconBg: '#edf7e1',
-    image: 'https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&w=300&q=80',
+    image: '/products/mature-coconuts-4k.jpg',
     filterKey: 'mature_coconut'
   },
   {
@@ -29,7 +29,7 @@ const CATEGORIES: CategoryItem[] = [
     description: '15kg, 25kg, and 30kg master boxes naturally attic-cured without sulphur',
     count: 1,
     iconBg: '#edf7e1',
-    image: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?auto=format&fit=crop&w=300&q=80',
+    image: '/products/ball-copra-4k.jpg',
     filterKey: 'copra'
   },
   {
@@ -38,7 +38,7 @@ const CATEGORIES: CategoryItem[] = [
     description: 'Traditional Marachekku groundnut oil & farm-fresh cultured bilona cow ghee',
     count: 2,
     iconBg: '#edf7e1',
-    image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=300&q=80',
+    image: '/products/groundnut-oil-4k.jpg',
     filterKey: 'oil_and_extracts'
   },
   {
@@ -47,7 +47,7 @@ const CATEGORIES: CategoryItem[] = [
     description: 'Whole brown finger millet in 5/10/25kg bags & 50kg farm-fresh ginger',
     count: 2,
     iconBg: '#edf7e1',
-    image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=300&q=80',
+    image: '/products/ragi-millet-4k.jpg',
     filterKey: 'spices'
   },
   {
@@ -56,7 +56,7 @@ const CATEGORIES: CategoryItem[] = [
     description: '1-Year 2ft coconut plants & 1-1.5ft arecanut saplings from certified nurseries',
     count: 2,
     iconBg: '#edf7e1',
-    image: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=300&q=80',
+    image: '/products/coconut-saplings-4k.jpg',
     filterKey: 'value_added'
   },
   {
@@ -65,7 +65,7 @@ const CATEGORIES: CategoryItem[] = [
     description: 'High-calorific dry broken shells for industrial activated carbon & charcoal',
     count: 1,
     iconBg: '#edf7e1',
-    image: 'https://images.unsplash.com/photo-1582281298055-e25b84a30b0b?auto=format&fit=crop&w=300&q=80',
+    image: '/products/coconut-shells-4k.jpg',
     filterKey: 'coir_commodities'
   },
   {
@@ -74,7 +74,7 @@ const CATEGORIES: CategoryItem[] = [
     description: 'Wholesale truckload freight and institutional supply from Mandya',
     count: 10,
     iconBg: '#edf7e1',
-    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=300&q=80',
+    image: '/products/arecanut-adike-4k.jpg',
     filterKey: 'all'
   }
 ];

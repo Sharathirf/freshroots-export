@@ -454,11 +454,19 @@ export default function Navbar({
                   className="flex items-center gap-1.5 text-xs font-bold text-[#1c3809] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-2 rounded-xl transition shadow-sm"
                   title="View Your Account"
                 >
-                  <div className="w-4 h-4 rounded-full bg-[#3b6d11] text-white flex items-center justify-center text-[9px] font-black">
-                    ✓
-                  </div>
+                  {customer?.avatar_url ? (
+                    <img
+                      src={customer.avatar_url}
+                      alt=""
+                      className="w-4 h-4 rounded-full object-cover shrink-0"
+                    />
+                  ) : (
+                    <div className="w-4 h-4 rounded-full bg-[#3b6d11] text-white flex items-center justify-center text-[9px] font-black">
+                      ✓
+                    </div>
+                  )}
                   <span className="font-bold">
-                    {customer?.name ? customer.name.split(' ')[0] : `+91 ${customer?.phone}`}
+                    {customer?.name ? customer.name.split(' ')[0] : customer?.phone ? `+91 ${customer.phone}` : 'Account'}
                   </span>
                 </button>
                 {/* Dropdown Menu */}
@@ -468,9 +476,15 @@ export default function Navbar({
                     <div className="text-xs font-bold text-stone-900 mt-0.5 truncate">
                       {customer?.name || 'Customer'}
                     </div>
-                    <div className="text-[11px] font-mono text-stone-600 font-semibold">
-                      +91 {customer?.phone}
-                    </div>
+                    {customer?.phone ? (
+                      <div className="text-[11px] font-mono text-stone-600 font-semibold">
+                        +91 {customer.phone}
+                      </div>
+                    ) : customer?.email ? (
+                      <div className="text-[11px] text-stone-500 truncate">
+                        {customer.email}
+                      </div>
+                    ) : null}
                   </div>
                   <button
                     type="button"

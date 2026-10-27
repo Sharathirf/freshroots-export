@@ -5,6 +5,7 @@ export interface ExportCountry {
   region: string;
   majorPort: string;
   popularCommodities: string;
+  wikiUrl: string;
 }
 
 export const EXPORT_COUNTRIES: ExportCountry[] = [
@@ -14,7 +15,8 @@ export const EXPORT_COUNTRIES: ExportCountry[] = [
     flag: '🇻🇳',
     region: 'Southeast Asia',
     majorPort: 'Cat Lai / Hai Phong',
-    popularCommodities: 'Ball Copra, Coir Pith, Desiccated Coconut'
+    popularCommodities: 'Ball Copra, Coir Pith, Desiccated Coconut',
+    wikiUrl: 'https://en.wikipedia.org/wiki/Vietnam'
   },
   {
     name: 'Bangladesh',
@@ -22,7 +24,8 @@ export const EXPORT_COUNTRIES: ExportCountry[] = [
     flag: '🇧🇩',
     region: 'South Asia',
     majorPort: 'Chittagong / Benapole Land Port',
-    popularCommodities: 'Mature Coconuts, Ball Copra, Fresh Ginger'
+    popularCommodities: 'Mature Coconuts, Ball Copra, Fresh Ginger',
+    wikiUrl: 'https://en.wikipedia.org/wiki/Bangladesh'
   },
   {
     name: 'United Arab Emirates (UAE)',
@@ -30,7 +33,8 @@ export const EXPORT_COUNTRIES: ExportCountry[] = [
     flag: '🇦🇪',
     region: 'Middle East (GCC)',
     majorPort: 'Jebel Ali / Dubai / Sharjah',
-    popularCommodities: 'Grade A Coconuts, Pure Cow Ghee, Spices'
+    popularCommodities: 'Grade A Coconuts, Pure Cow Ghee, Spices',
+    wikiUrl: 'https://en.wikipedia.org/wiki/United_Arab_Emirates'
   },
   {
     name: 'Nepal',
@@ -38,7 +42,8 @@ export const EXPORT_COUNTRIES: ExportCountry[] = [
     flag: '🇳🇵',
     region: 'South Asia',
     majorPort: 'Birgunj ICD / Raxaul Border',
-    popularCommodities: 'Ball Copra, Dehusked Coconuts, Ragi'
+    popularCommodities: 'Ball Copra, Dehusked Coconuts, Ragi',
+    wikiUrl: 'https://en.wikipedia.org/wiki/Nepal'
   },
   {
     name: 'Saudi Arabia',
@@ -46,7 +51,8 @@ export const EXPORT_COUNTRIES: ExportCountry[] = [
     flag: '🇸🇦',
     region: 'Middle East (GCC)',
     majorPort: 'Jeddah Islamic Port / Dammam',
-    popularCommodities: 'GI Tiptur Ball Copra, Cold-Pressed Oils'
+    popularCommodities: 'GI Tiptur Ball Copra, Cold-Pressed Oils',
+    wikiUrl: 'https://en.wikipedia.org/wiki/Saudi_Arabia'
   },
   {
     name: 'United States (USA)',
@@ -54,7 +60,8 @@ export const EXPORT_COUNTRIES: ExportCountry[] = [
     flag: '🇺🇸',
     region: 'North America',
     majorPort: 'New York / Los Angeles / Savannah',
-    popularCommodities: 'Virgin Coconut Oil, Organic Millets, Spices'
+    popularCommodities: 'Virgin Coconut Oil, Organic Millets, Spices',
+    wikiUrl: 'https://en.wikipedia.org/wiki/United_States'
   },
   {
     name: 'Cambodia',
@@ -62,7 +69,8 @@ export const EXPORT_COUNTRIES: ExportCountry[] = [
     flag: '🇰🇭',
     region: 'Southeast Asia',
     majorPort: 'Sihanoukville / Phnom Penh',
-    popularCommodities: 'Horticultural Coir Pith, Copra'
+    popularCommodities: 'Horticultural Coir Pith, Copra',
+    wikiUrl: 'https://en.wikipedia.org/wiki/Cambodia'
   },
   {
     name: 'Qatar',
@@ -70,7 +78,8 @@ export const EXPORT_COUNTRIES: ExportCountry[] = [
     flag: '🇶🇦',
     region: 'Middle East (GCC)',
     majorPort: 'Hamad Port (Doha)',
-    popularCommodities: 'Dehusked Coconuts, Pure Cow Ghee'
+    popularCommodities: 'Dehusked Coconuts, Pure Cow Ghee',
+    wikiUrl: 'https://en.wikipedia.org/wiki/Qatar'
   },
   {
     name: 'Malaysia',
@@ -78,7 +87,8 @@ export const EXPORT_COUNTRIES: ExportCountry[] = [
     flag: '🇲🇾',
     region: 'Southeast Asia',
     majorPort: 'Port Klang / Penang',
-    popularCommodities: 'Ball Copra, Coconut Shells, Spices'
+    popularCommodities: 'Ball Copra, Coconut Shells, Spices',
+    wikiUrl: 'https://en.wikipedia.org/wiki/Malaysia'
   },
   {
     name: 'Kuwait',
@@ -86,7 +96,8 @@ export const EXPORT_COUNTRIES: ExportCountry[] = [
     flag: '🇰🇼',
     region: 'Middle East (GCC)',
     majorPort: 'Shuwaikh / Shuaiba',
-    popularCommodities: 'Grade A Coconuts, Tiptur Copra, Cow Ghee'
+    popularCommodities: 'Grade A Coconuts, Tiptur Copra, Cow Ghee',
+    wikiUrl: 'https://en.wikipedia.org/wiki/Kuwait'
   },
   {
     name: 'Iran',
@@ -94,7 +105,8 @@ export const EXPORT_COUNTRIES: ExportCountry[] = [
     flag: '🇮🇷',
     region: 'Middle East',
     majorPort: 'Bandar Abbas',
-    popularCommodities: 'Ball Copra, Unprocessed Agricultural Produce'
+    popularCommodities: 'Ball Copra, Unprocessed Agricultural Produce',
+    wikiUrl: 'https://en.wikipedia.org/wiki/Iran'
   },
   {
     name: 'United Kingdom (UK)',
@@ -102,6 +114,7 @@ export const EXPORT_COUNTRIES: ExportCountry[] = [
     flag: '🇬🇧',
     region: 'Europe',
     majorPort: 'London Gateway / Felixstowe',
-    popularCommodities: 'Virgin Cold-Pressed Oils, Byadgi Chillies, Ghee'
+    popularCommodities: 'Virgin Cold-Pressed Oils, Byadgi Chillies, Ghee',
+    wikiUrl: 'https://en.wikipedia.org/wiki/United_Kingdom'
   }
 ];

@@ -34,7 +34,7 @@ export const CATALOG_PRODUCTS: CatalogProductItem[] = [
       shelf_life: '35 - 45 days at ambient storage',
       packaging: 'Ventilated woven polypropylene mesh bag (~15 kg)'
     },
-    image_url: 'https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&w=800&q=80',
+    image_url: '/products/mature-coconuts-4k.jpg',
     is_active: true,
     available_stock: 450,
     average_rating: 4.9,
@@ -75,7 +75,7 @@ export const CATALOG_PRODUCTS: CatalogProductItem[] = [
       curing_duration: '10 to 12 months natural in-husk curing',
       packaging: '5-ply corrugated master carton with inner aeration liner'
     },
-    image_url: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80',
+    image_url: '/products/ball-copra-4k.jpg',
     is_active: true,
     available_stock: 220,
     average_rating: 5.0,
@@ -116,7 +116,7 @@ export const CATALOG_PRODUCTS: CatalogProductItem[] = [
       frond_count: '4 to 6 vigorous leaves',
       root_ball: 'Moist red soil + organic vermicompost nursery bag'
     },
-    image_url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80',
+    image_url: '/products/coconut-saplings-4k.jpg',
     is_active: true,
     available_stock: 1200,
     average_rating: 4.8,
@@ -157,7 +157,7 @@ export const CATALOG_PRODUCTS: CatalogProductItem[] = [
       preservatives: 'Zero artificial preservatives, chemicals, or argemone oil',
       smoke_point: 'Approx. 225°C (ideal for traditional deep frying)'
     },
-    image_url: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=800&q=80',
+    image_url: '/products/groundnut-oil-4k.jpg',
     is_active: true,
     available_stock: 310,
     average_rating: 4.9,
@@ -198,7 +198,7 @@ export const CATALOG_PRODUCTS: CatalogProductItem[] = [
       moisture: '<= 11.0% safe grain storage moisture',
       packaging: 'Food-grade moisture-barrier pouch (5 kg)'
     },
-    image_url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800&q=80',
+    image_url: '/products/ragi-millet-4k.jpg',
     is_active: true,
     available_stock: 580,
     average_rating: 4.8,
@@ -239,7 +239,7 @@ export const CATALOG_PRODUCTS: CatalogProductItem[] = [
       packaging: 'Heavy amber glass jar with air-tight vacuum seal',
       additives: 'Zero palm oil, preservatives, coloring, or vanaspati'
     },
-    image_url: 'https://images.unsplash.com/photo-1631451095765-2c91616fc9e6?auto=format&fit=crop&w=800&q=80',
+    image_url: '/products/cow-ghee-4k.jpg',
     is_active: true,
     available_stock: 140,
     average_rating: 5.0,
@@ -279,7 +279,7 @@ export const CATALOG_PRODUCTS: CatalogProductItem[] = [
       harvest_cycle: 'Picked on order at 6.5 - 7.0 months maturity',
       delivery_mode: 'Full truckload (FTL) and scheduled regional van drops'
     },
-    image_url: 'https://images.unsplash.com/photo-1525385133512-2f3bdd039054?auto=format&fit=crop&w=800&q=80',
+    image_url: '/products/tender-coconuts-4k.jpg',
     is_active: true,
     available_stock: 3500,
     average_rating: 4.9,
@@ -319,7 +319,7 @@ export const CATALOG_PRODUCTS: CatalogProductItem[] = [
       purity: 'Washed and natural shade cured, minimal moisture rot',
       transit_readiness: 'Ventilated truck transport across pan-India routes'
     },
-    image_url: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80',
+    image_url: '/products/ginger-4k.jpg',
     is_active: true,
     available_stock: 85,
     average_rating: 4.8,
@@ -359,7 +359,7 @@ export const CATALOG_PRODUCTS: CatalogProductItem[] = [
       ash_content: '<= 1.8% low-ash combustion profile',
       dispatch_lot: 'Loose truckload or compressed jumbo bales (1 MT increments)'
     },
-    image_url: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=800&q=80',
+    image_url: '/products/coconut-shells-4k.jpg',
     is_active: true,
     available_stock: 45,
     average_rating: 4.7,
@@ -399,7 +399,7 @@ export const CATALOG_PRODUCTS: CatalogProductItem[] = [
       root_system: 'Undisturbed fibrous root mass in UV-stabilized polybag',
       field_spacing: 'Recommended 2.7m x 2.7m spacing for commercial yields'
     },
-    image_url: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=800&q=80',
+    image_url: '/products/arecanut-saplings-4k.jpg',
     is_active: true,
     available_stock: 2400,
     average_rating: 4.8,
@@ -439,7 +439,7 @@ export const CATALOG_PRODUCTS: CatalogProductItem[] = [
       lot_sizing: 'Minimum 100 kg (1 quintal) up to 20-tonne truckloads',
       market_pricing: 'Tied to daily spot market index at Shivamogga'
     },
-    image_url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80',
+    image_url: '/products/arecanut-adike-4k.jpg',
     is_active: true,
     available_stock: 5000,
     average_rating: 4.8,

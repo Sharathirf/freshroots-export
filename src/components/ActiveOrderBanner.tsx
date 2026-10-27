@@ -30,18 +30,18 @@ export interface ActiveOrderToast {
 }
 
 function resolveProductImage(sku?: string): string {
-  if (!sku) return 'https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&w=400&q=80';
-  if (sku.includes('ARE')) return 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=400&q=80';
-  if (sku.includes('COC-SEMI') || sku.includes('COC-MAT')) return 'https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&w=400&q=80';
-  if (sku.includes('COP') || sku.includes('BAL')) return '/products/tiptur-ball-copra.jpg';
-  if (sku.includes('NUR-COC')) return '/products/coconut-plants-saplings.jpg';
-  if (sku.includes('OIL') || sku.includes('GNT')) return 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=400&q=80';
-  if (sku.includes('MIL') || sku.includes('RAG')) return 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=400&q=80';
-  if (sku.includes('GHE') || sku.includes('COW') || sku.includes('DAI')) return 'https://images.unsplash.com/photo-1631451095765-2c91616fc9e6?auto=format&fit=crop&w=400&q=80';
-  if (sku.includes('TND')) return 'https://images.unsplash.com/photo-1525385133512-2f3bdd039054?auto=format&fit=crop&w=400&q=80';
-  if (sku.includes('GIN')) return 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=400&q=80';
-  if (sku.includes('SHL')) return '/products/coconut-shells-pile.jpg';
-  return 'https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&w=400&q=80';
+  if (!sku) return '/products/mature-coconuts-4k.jpg';
+  if (sku.includes('ARE')) return '/products/arecanut-saplings-4k.jpg';
+  if (sku.includes('COC-SEMI') || sku.includes('COC-MAT')) return '/products/mature-coconuts-4k.jpg';
+  if (sku.includes('COP') || sku.includes('BAL')) return '/products/ball-copra-4k.jpg';
+  if (sku.includes('NUR-COC')) return '/products/coconut-saplings-4k.jpg';
+  if (sku.includes('OIL') || sku.includes('GNT')) return '/products/groundnut-oil-4k.jpg';
+  if (sku.includes('MIL') || sku.includes('RAG')) return '/products/ragi-millet-4k.jpg';
+  if (sku.includes('GHE') || sku.includes('COW') || sku.includes('DAI')) return '/products/cow-ghee-4k.jpg';
+  if (sku.includes('TND')) return '/products/tender-coconuts-4k.jpg';
+  if (sku.includes('GIN')) return '/products/ginger-4k.jpg';
+  if (sku.includes('SHL')) return '/products/coconut-shells-4k.jpg';
+  return '/products/mature-coconuts-4k.jpg';
 }
 
 export default function ActiveOrderBanner() {

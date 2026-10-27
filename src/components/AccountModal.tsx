@@ -90,16 +90,26 @@ export default function AccountModal() {
           <div className="bg-stone-50/80 rounded-2xl border border-stone-200/80 p-5 sm:p-6 mb-6 relative">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-center gap-3.5">
-                <div className="w-14 h-14 rounded-full bg-[#daf1de] border border-[#a8e0b4] flex items-center justify-center text-[#1e824c] shrink-0">
-                  <User className="w-7 h-7 stroke-[2]" />
+                <div className="w-14 h-14 rounded-full bg-[#daf1de] border border-[#a8e0b4] flex items-center justify-center text-[#1e824c] shrink-0 overflow-hidden">
+                  {customer?.avatar_url ? (
+                    <img src={customer.avatar_url} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <User className="w-7 h-7 stroke-[2]" />
+                  )}
                 </div>
                 <div>
                   <h3 className="text-lg font-black text-stone-900">
-                    {customer?.name || 'Guest User'}
+                    {customer?.name || 'Customer'}
                   </h3>
-                  <div className="text-xs font-semibold text-stone-600 font-mono mt-0.5">
-                    +91 {customer?.phone || '9591142548'}
-                  </div>
+                  {customer?.phone ? (
+                    <div className="text-xs font-semibold text-stone-600 font-mono mt-0.5">
+                      +91 {customer.phone}
+                    </div>
+                  ) : customer?.email ? (
+                    <div className="text-xs text-stone-500 mt-0.5 truncate">
+                      {customer.email}
+                    </div>
+                  ) : null}
                 </div>
               </div>
 
