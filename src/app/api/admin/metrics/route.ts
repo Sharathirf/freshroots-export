@@ -22,9 +22,9 @@ export async function GET(request: NextRequest) {
     const rfqStats = await query(`
       SELECT 
         COUNT(*)::int AS total_rfqs,
-        COALESCE(SUM(total_quote_inr), 0)::numeric(12,2) AS total_pipeline_value,
-        COUNT(CASE WHEN status = 'submitted' THEN 1 END)::int AS pending_review,
-        COUNT(CASE WHEN status = 'quote_issued' THEN 1 END)::int AS quotes_active,
+        COALESCE(SUM(total_quote_inr) FILTER (WHERE status NOT IN ('rejected', 'cancelled', 'expired')), 0)::numeric(12,2) AS total_pipeline_value,
+        COUNT(CASE WHEN status IN ('submitted', 'new_rfq', 'under_review', 'needs_information') THEN 1 END)::int AS pending_review,
+        COUNT(CASE WHEN status IN ('quote_issued', 'revised_quotation_issued', 'discussion_in_progress') THEN 1 END)::int AS quotes_active,
         COUNT(CASE WHEN status = 'accepted' THEN 1 END)::int AS quotes_accepted
       FROM wholesale_quotations
     `);

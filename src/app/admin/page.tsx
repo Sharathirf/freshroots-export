@@ -16,9 +16,19 @@ import {
   Star,
   Trash2,
   Lock,
-  LogOut
+  LogOut,
+  Search
 } from 'lucide-react';
 import { WholesaleQuotation, Order, InventoryBatch } from '@/types';
+import B2bRfqDetailModal from '@/components/admin/B2bRfqDetailModal';
+import B2bRejectionModal from '@/components/admin/B2bRejectionModal';
+import B2bReopenModal from '@/components/admin/B2bReopenModal';
+import B2bDiscussionModal from '@/components/admin/B2bDiscussionModal';
+import B2bRevisionModal from '@/components/admin/B2bRevisionModal';
+import B2bHandoverModal from '@/components/admin/B2bHandoverModal';
+import B2bFulfilmentModal from '@/components/admin/B2bFulfilmentModal';
+import B2bPaymentModal from '@/components/admin/B2bPaymentModal';
+import B2bDeskActionsDropdown from '@/components/admin/B2bDeskActionsDropdown';
 
 function ProductAdminRow({
   product,
@@ -226,6 +236,20 @@ export default function AdminPage() {
   const [integrationStatuses, setIntegrationStatuses] = useState<any[]>([]);
   const [integrationsCheckedAt, setIntegrationsCheckedAt] = useState<string | null>(null);
 
+  // B2B RFQ Modals & Operations State
+  const [selectedRfqForDetail, setSelectedRfqForDetail] = useState<string | null>(null);
+  const [selectedRfqForReject, setSelectedRfqForReject] = useState<any | null>(null);
+  const [selectedRfqForReopen, setSelectedRfqForReopen] = useState<any | null>(null);
+  const [selectedRfqForDiscussion, setSelectedRfqForDiscussion] = useState<any | null>(null);
+  const [selectedRfqForRevision, setSelectedRfqForRevision] = useState<any | null>(null);
+  const [selectedRfqForHandover, setSelectedRfqForHandover] = useState<any | null>(null);
+  const [selectedRfqForFulfilment, setSelectedRfqForFulfilment] = useState<{ rfq: any; tab?: string } | null>(null);
+  const [selectedRfqForPayment, setSelectedRfqForPayment] = useState<any | null>(null);
+
+  // RFQ Filtering & Search
+  const [rfqSearch, setRfqSearch] = useState('');
+  const [rfqStageFilter, setRfqStageFilter] = useState<'all' | 'intake' | 'quotation' | 'fulfilment' | 'closed'>('all');
+
   // Intake Form State
   const [intakeMandi, setIntakeMandi] = useState('Tiptur Yard');
   const [intakeQty, setIntakeQty] = useState('250');
@@ -274,7 +298,7 @@ export default function AdminPage() {
     try {
       const [mRes, rRes, oRes, iRes, pRes, revRes, integrationsRes] = await Promise.all([
         fetch('/api/admin/metrics'),
-        fetch('/api/rfq'),
+        fetch('/api/admin/rfqs'),
         fetch('/api/admin/orders'),
         fetch('/api/admin/inventory'),
         fetch('/api/admin/products'),
@@ -321,27 +345,133 @@ export default function AdminPage() {
     if (isAdminAuthed) fetchData();
   }, [fetchData, isAdminAuthed]);
 
-  const handleUpdateRFQStatus = async (id: string, status: string, unitPrice?: number, freight?: number) => {
+  const handleTransitionStatus = async (id: string, targetStatus: string, reason?: string) => {
     try {
       const res = await fetch('/api/admin/rfqs', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id,
-          status,
-          proposed_unit_price_inr: unitPrice,
-          freight_charges_inr: freight
+          status: targetStatus,
+          reopen_reason: reason
         })
       });
       const data = await res.json();
       if (data.success) {
         fetchData();
+        setProductSuccessMsg(`RFQ status transitioned to ${targetStatus.replace(/_/g, ' ')}`);
+        setTimeout(() => setProductSuccessMsg(null), 3000);
       } else {
-        alert(data.error);
+        alert(data.error || 'Failed to update RFQ status');
       }
     } catch {
-      alert('Error updating RFQ status');
+      alert('Network error updating RFQ status');
     }
+  };
+
+  const handleConfirmReject = async (data: { id: string; rejection_category: string; rejection_reason: string; rejection_notes?: string }) => {
+    const res = await fetch('/api/admin/rfqs', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: data.id,
+        status: 'rejected',
+        rejection_category: data.rejection_category,
+        rejection_reason: data.rejection_reason,
+        rejection_notes: data.rejection_notes
+      })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'Failed to reject RFQ');
+    fetchData();
+    setProductSuccessMsg(`Quotation rejected: ${data.rejection_category}`);
+    setTimeout(() => setProductSuccessMsg(null), 3000);
+  };
+
+  const handleConfirmReopen = async (data: { id: string; reopen_reason: string }) => {
+    const res = await fetch('/api/admin/rfqs', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: data.id,
+        status: 'under_review',
+        reopen_reason: data.reopen_reason
+      })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'Failed to reopen RFQ');
+    fetchData();
+    setProductSuccessMsg('RFQ successfully reopened into Under Review');
+    setTimeout(() => setProductSuccessMsg(null), 3000);
+  };
+
+  const handleSaveDiscussion = async (data: any) => {
+    const res = await fetch(`/api/admin/rfqs/${data.rfq_id}/discussions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'Failed to save discussion');
+    fetchData();
+    setProductSuccessMsg('Discussion recorded in activity timeline');
+    setTimeout(() => setProductSuccessMsg(null), 3000);
+  };
+
+  const handleSaveRevision = async (data: any) => {
+    if (!selectedRfqForRevision) return;
+    const res = await fetch(`/api/admin/rfqs/${selectedRfqForRevision.id}/revisions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'Failed to issue revision');
+    fetchData();
+    setProductSuccessMsg(`Quotation Revision ${json.revision_number} issued`);
+    setTimeout(() => setProductSuccessMsg(null), 3000);
+  };
+
+  const handleConfirmHandover = async (data: any) => {
+    if (!selectedRfqForHandover) return;
+    const res = await fetch(`/api/admin/rfqs/${selectedRfqForHandover.id}/handover`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'Failed to process handover');
+    fetchData();
+    setProductSuccessMsg('Sales-to-Operations handover updated');
+    setTimeout(() => setProductSuccessMsg(null), 3000);
+  };
+
+  const handleSaveFulfilment = async (data: any) => {
+    if (!selectedRfqForFulfilment) return;
+    const res = await fetch(`/api/admin/rfqs/${selectedRfqForFulfilment.rfq.id}/fulfilment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'Failed to update fulfilment');
+    fetchData();
+    setProductSuccessMsg('Fulfilment operations record saved');
+    setTimeout(() => setProductSuccessMsg(null), 3000);
+  };
+
+  const handleRecordPayment = async (data: any) => {
+    if (!selectedRfqForPayment) return;
+    const res = await fetch(`/api/admin/rfqs/${selectedRfqForPayment.id}/payments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'Failed to record payment');
+    fetchData();
+    setProductSuccessMsg(`Payment of ₹${Number(data.amount_paid_inr).toLocaleString('en-IN')} recorded`);
+    setTimeout(() => setProductSuccessMsg(null), 3000);
   };
 
   const handleUpdateOrderStatus = async (id: string, nextStatus: string) => {
@@ -738,13 +868,58 @@ export default function AdminPage() {
 
         {/* TAB 1: WHOLESALE RFQs */}
         {activeTab === 'rfqs' && (
-          <div className="bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm">
-            <div className="p-5 border-b border-stone-100 flex justify-between items-center">
+          <div className="bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm space-y-4">
+            <div className="p-5 border-b border-stone-100 flex flex-wrap justify-between items-center gap-4">
               <div>
                 <h3 className="font-extrabold text-stone-900 text-lg">Wholesale Quotation Requests (B2B Pipeline)</h3>
                 <p className="text-xs text-stone-500 mt-0.5">
-                  Review buyer consignment specs, adjust Mandi unit prices, calculate vehicle freight, and issue official quotations.
+                  End-to-end commercial workflow: RFQ Intake ➔ Quotation & Negotiation ➔ Operations Handover ➔ Fulfilment & Settlement.
                 </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={fetchData}
+                  className="text-xs font-bold text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-xl border border-stone-200 transition"
+                >
+                  ↻ Sync Pipeline
+                </button>
+              </div>
+            </div>
+
+            {/* Filter Pills & Search Bar */}
+            <div className="px-5 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-1.5 overflow-x-auto text-xs">
+                {[
+                  { id: 'all', label: `All Enquiries (${rfqs.length})` },
+                  { id: 'intake', label: 'Stage A: Intake & Review' },
+                  { id: 'quotation', label: 'Stage B: Quotation Active' },
+                  { id: 'fulfilment', label: 'Stage C: In Fulfilment' },
+                  { id: 'closed', label: 'Closed & Declined' }
+                ].map((st) => (
+                  <button
+                    key={st.id}
+                    type="button"
+                    onClick={() => setRfqStageFilter(st.id as any)}
+                    className={`px-3 py-1.5 rounded-xl font-bold transition whitespace-nowrap ${
+                      rfqStageFilter === st.id
+                        ? 'bg-stone-900 text-white shadow-xs'
+                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                    }`}
+                  >
+                    {st.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="relative w-full sm:w-64">
+                <Search className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={rfqSearch}
+                  onChange={(e) => setRfqSearch(e.target.value)}
+                  placeholder="Search RFQ, company, phone..."
+                  className="w-full pl-8 pr-3 py-1.5 text-xs border border-stone-200 rounded-xl bg-stone-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-emerald-700"
+                />
               </div>
             </div>
 
@@ -752,115 +927,153 @@ export default function AdminPage() {
               <table className="w-full text-left text-xs">
                 <thead className="bg-stone-50 text-stone-600 uppercase font-semibold border-b">
                   <tr>
-                    <th className="p-4">RFQ Number</th>
+                    <th className="p-4">RFQ Number & Date</th>
                     <th className="p-4">Company & Buyer</th>
                     <th className="p-4">Consignment</th>
                     <th className="p-4">Destination</th>
                     <th className="p-4">Quoted Total</th>
-                    <th className="p-4">Status</th>
+                    <th className="p-4">Workflow State</th>
                     <th className="p-4 text-right">Desk Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-100">
-                  {rfqs.map((q) => (
-                    <tr key={q.id} className="hover:bg-stone-50/80 transition">
-                      <td className="p-4">
-                        <div className="font-mono font-bold text-stone-900">{q.quote_number}</div>
-                        <div className="text-[11px] text-stone-500 mt-0.5">
-                          {q.created_at
-                            ? new Date(q.created_at).toLocaleDateString('en-IN', {
-                                day: '2-digit',
-                                month: 'short',
-                                year: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              })
-                            : 'Recent'}
-                        </div>
-                        {q.valid_until && (
-                          <div className="text-[10px] text-amber-700 font-medium">
-                            Valid: {new Date(q.valid_until).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                  {rfqs
+                    .filter((q: any) => {
+                      if (rfqStageFilter === 'intake') {
+                        if (!['submitted', 'new_rfq', 'under_review', 'needs_information', 'ready_to_quote', 'on_hold'].includes(q.status)) return false;
+                      } else if (rfqStageFilter === 'quotation') {
+                        if (!['quotation_draft', 'pending_approval', 'quote_issued', 'discussion_in_progress', 'revision_requested', 'revised_quotation_issued'].includes(q.status)) return false;
+                      } else if (rfqStageFilter === 'fulfilment') {
+                        if (q.status !== 'accepted') return false;
+                      } else if (rfqStageFilter === 'closed') {
+                        if (!['rejected', 'cancelled', 'expired'].includes(q.status)) return false;
+                      }
+                      if (rfqSearch.trim()) {
+                        const needle = rfqSearch.toLowerCase();
+                        const match =
+                          (q.quote_number || '').toLowerCase().includes(needle) ||
+                          (q.company_name || '').toLowerCase().includes(needle) ||
+                          (q.contact_person || '').toLowerCase().includes(needle) ||
+                          (q.contact_phone || '').toLowerCase().includes(needle) ||
+                          (q.destination_city || '').toLowerCase().includes(needle) ||
+                          (q.product_title || '').toLowerCase().includes(needle);
+                        if (!match) return false;
+                      }
+                      return true;
+                    })
+                    .map((q: any) => (
+                      <tr key={q.id} className="hover:bg-stone-50/80 transition">
+                        <td className="p-4">
+                          <button
+                            onClick={() => setSelectedRfqForDetail(q.id)}
+                            className="font-mono font-bold text-stone-900 hover:text-emerald-700 hover:underline flex items-center gap-1 text-left"
+                            title="Click to open full operations dossier"
+                          >
+                            <span>{q.quote_number}</span>
+                            {Number(q.revision_number) > 1 && (
+                              <span className="text-[10px] bg-blue-100 text-blue-800 px-1.5 py-0.2 rounded-md font-sans">
+                                Rev {q.revision_number}
+                              </span>
+                            )}
+                          </button>
+                          <div className="text-[11px] text-stone-500 mt-0.5">
+                            {q.created_at
+                              ? new Date(q.created_at).toLocaleDateString('en-IN', {
+                                  day: '2-digit',
+                                  month: 'short',
+                                  year: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })
+                              : 'Recent'}
                           </div>
-                        )}
-                      </td>
-                      <td className="p-4">
-                        <div className="font-bold text-stone-900">{q.company_name}</div>
-                        <div className="text-[11px] text-stone-500">
-                          {q.contact_person}
-                          {q.contact_phone ? ` • ${q.contact_phone}` : ''}
-                          {q.contact_email ? ` • ${q.contact_email}` : ''}
-                        </div>
-                        {q.gstin && <div className="text-[10px] font-mono text-emerald-800">GSTIN: {q.gstin}</div>}
-                        {q.notes && <div className="text-[10px] text-stone-500 italic max-w-xs truncate mt-0.5">{q.notes}</div>}
-                      </td>
-                      <td className="p-4">
-                        <div className="font-semibold text-stone-800">{q.product_title}</div>
-                        <div className="text-[11px] text-stone-500">
-                          {q.requested_quantity} {q.unit} @ ₹{q.proposed_unit_price_inr}/unit
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div>{q.destination_city}</div>
-                        <div className="text-[11px] text-stone-400 font-mono">{q.destination_pincode}</div>
-                      </td>
-                      <td className="p-4 font-mono font-bold text-emerald-900 text-sm">
-                        ₹{Number(q.total_quote_inr || 0).toLocaleString('en-IN')}
-                        <div className="text-[10px] text-stone-400 font-normal">
-                          (Freight: ₹{q.freight_charges_inr || 0})
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <span
-                          className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                            q.status === 'submitted'
-                              ? 'bg-amber-100 text-amber-800'
-                              : q.status === 'quote_issued'
-                              ? 'bg-blue-100 text-blue-800'
-                              : q.status === 'accepted'
-                              ? 'bg-emerald-100 text-emerald-800'
-                              : 'bg-stone-100 text-stone-600'
-                          }`}
-                        >
-                          {q.status.replace(/_/g, ' ')}
-                        </span>
-                      </td>
-                      <td className="p-4 text-right space-x-2">
-                        {q.status === 'submitted' && (
-                          <button
-                            onClick={() => handleUpdateRFQStatus(q.id, 'quote_issued')}
-                            className="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-[11px] px-3 py-1.5 rounded-lg transition"
-                          >
-                            Issue Quote
-                          </button>
-                        )}
-                        {q.status === 'quote_issued' && (
-                          <button
-                            onClick={() => handleUpdateRFQStatus(q.id, 'accepted')}
-                            className="bg-blue-700 hover:bg-blue-800 text-white font-semibold text-[11px] px-3 py-1.5 rounded-lg transition"
-                          >
-                            Mark Accepted
-                          </button>
-                        )}
-                        {q.contact_phone ? (
-                          <a
-                            href={`https://wa.me/${q.contact_phone.replace(/\D/g, '')}?text=Hello%20${encodeURIComponent(q.contact_person || 'Buyer')},%20regarding%20your%20quotation%20${q.quote_number}%20for%20${encodeURIComponent(q.company_name || q.product_title || 'agricultural commodities')}.`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="border border-stone-300 hover:bg-stone-100 text-stone-700 text-[11px] font-medium px-2.5 py-1.5 rounded-lg inline-block"
-                          >
-                            WhatsApp
-                          </a>
-                        ) : q.contact_email ? (
-                          <a
-                            href={`mailto:${q.contact_email}?subject=Quotation%20${q.quote_number}%20-%20Tiptur%20Direct&body=Hello%20${encodeURIComponent(q.contact_person || 'Buyer')},%0D%0A%0D%0ARegarding%20your%20inquiry%20for%20quote%20${q.quote_number}.`}
-                            className="border border-stone-300 hover:bg-stone-100 text-stone-700 text-[11px] font-medium px-2.5 py-1.5 rounded-lg inline-block"
-                          >
-                            Email
-                          </a>
-                        ) : null}
-                      </td>
-                    </tr>
-                  ))}
+                          {q.valid_until && (
+                            <div className="text-[10px] text-amber-700 font-medium">
+                              Valid: {new Date(q.valid_until).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                            </div>
+                          )}
+                        </td>
+                        <td className="p-4">
+                          <div className="font-bold text-stone-900">{q.company_name || 'Individual Buyer'}</div>
+                          <div className="text-[11px] text-stone-500">
+                            {q.contact_person}
+                            {q.contact_phone ? ` • ${q.contact_phone}` : ''}
+                            {q.contact_email ? ` • ${q.contact_email}` : ''}
+                          </div>
+                          {q.gstin && <div className="text-[10px] font-mono text-emerald-800">GSTIN: {q.gstin}</div>}
+                          {q.sales_owner_name && (
+                            <div className="text-[10px] text-stone-400 mt-0.5">
+                              Owner: <strong>{q.sales_owner_name}</strong>
+                            </div>
+                          )}
+                        </td>
+                        <td className="p-4">
+                          <div className="font-semibold text-stone-800">{q.product_title}</div>
+                          <div className="text-[11px] text-stone-500">
+                            {q.requested_quantity} {q.unit} @ ₹{q.proposed_unit_price_inr}/unit
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div>{q.destination_city}</div>
+                          <div className="text-[11px] text-stone-400 font-mono">{q.destination_pincode}</div>
+                        </td>
+                        <td className="p-4 font-mono font-bold text-emerald-900 text-sm">
+                          ₹{Number(q.total_quote_inr || 0).toLocaleString('en-IN')}
+                          <div className="text-[10px] text-stone-400 font-normal">
+                            (Freight: ₹{q.freight_charges_inr || 0})
+                          </div>
+                          {q.payment_status && q.payment_status !== 'unpaid' && (
+                            <div className="text-[10px] font-sans font-bold uppercase text-emerald-700 mt-0.5">
+                              {q.payment_status}
+                            </div>
+                          )}
+                        </td>
+                        <td className="p-4 space-y-1">
+                          <div>
+                            <span
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                                q.status === 'submitted' || q.status === 'new_rfq'
+                                  ? 'bg-amber-100 text-amber-800'
+                                  : q.status === 'under_review'
+                                  ? 'bg-indigo-100 text-indigo-800'
+                                  : q.status === 'quote_issued' || q.status === 'revised_quotation_issued'
+                                  ? 'bg-blue-100 text-blue-800'
+                                  : q.status === 'discussion_in_progress'
+                                  ? 'bg-purple-100 text-purple-800'
+                                  : q.status === 'accepted'
+                                  ? 'bg-emerald-100 text-emerald-800'
+                                  : q.status === 'rejected'
+                                  ? 'bg-red-100 text-red-800'
+                                  : 'bg-stone-100 text-stone-600'
+                              }`}
+                            >
+                              {q.status.replace(/_/g, ' ')}
+                            </span>
+                          </div>
+                          {q.fulfilment_status && q.fulfilment_status !== 'not_started' && (
+                            <div>
+                              <span className="px-2 py-0.5 rounded-md text-[9px] font-extrabold uppercase bg-stone-100 text-stone-700">
+                                🚜 {q.fulfilment_status.replace(/_/g, ' ')}
+                              </span>
+                            </div>
+                          )}
+                        </td>
+                        <td className="p-4 text-right">
+                          <B2bDeskActionsDropdown
+                            rfq={q}
+                            onViewDetails={(target) => setSelectedRfqForDetail(target.id)}
+                            onTransitionStatus={handleTransitionStatus}
+                            onOpenRejectModal={(target) => setSelectedRfqForReject(target)}
+                            onOpenReopenModal={(target) => setSelectedRfqForReopen(target)}
+                            onOpenDiscussionModal={(target) => setSelectedRfqForDiscussion(target)}
+                            onOpenRevisionModal={(target) => setSelectedRfqForRevision(target)}
+                            onOpenHandoverModal={(target) => setSelectedRfqForHandover(target)}
+                            onOpenFulfilmentModal={(target, tab) => setSelectedRfqForFulfilment({ rfq: target, tab })}
+                            onOpenPaymentModal={(target) => setSelectedRfqForPayment(target)}
+                          />
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
@@ -1347,6 +1560,71 @@ export default function AdminPage() {
             </div>
           </div>
         )}
+
+        {/* B2B OPERATIONS MODALS */}
+        <B2bRfqDetailModal
+          isOpen={Boolean(selectedRfqForDetail)}
+          onClose={() => setSelectedRfqForDetail(null)}
+          rfqId={selectedRfqForDetail}
+          onRefreshParent={fetchData}
+          onOpenRevisionModal={(target) => setSelectedRfqForRevision(target)}
+          onOpenDiscussionModal={(target) => setSelectedRfqForDiscussion(target)}
+          onOpenHandoverModal={(target) => setSelectedRfqForHandover(target)}
+          onOpenFulfilmentModal={(target, tab) => setSelectedRfqForFulfilment({ rfq: target, tab })}
+          onOpenPaymentModal={(target) => setSelectedRfqForPayment(target)}
+          onOpenRejectModal={(target) => setSelectedRfqForReject(target)}
+          onOpenReopenModal={(target) => setSelectedRfqForReopen(target)}
+        />
+
+        <B2bRejectionModal
+          isOpen={Boolean(selectedRfqForReject)}
+          onClose={() => setSelectedRfqForReject(null)}
+          rfq={selectedRfqForReject}
+          onConfirmReject={handleConfirmReject}
+        />
+
+        <B2bReopenModal
+          isOpen={Boolean(selectedRfqForReopen)}
+          onClose={() => setSelectedRfqForReopen(null)}
+          rfq={selectedRfqForReopen}
+          onConfirmReopen={handleConfirmReopen}
+        />
+
+        <B2bDiscussionModal
+          isOpen={Boolean(selectedRfqForDiscussion)}
+          onClose={() => setSelectedRfqForDiscussion(null)}
+          rfq={selectedRfqForDiscussion}
+          onSaveDiscussion={handleSaveDiscussion}
+        />
+
+        <B2bRevisionModal
+          isOpen={Boolean(selectedRfqForRevision)}
+          onClose={() => setSelectedRfqForRevision(null)}
+          rfq={selectedRfqForRevision}
+          onSaveRevision={handleSaveRevision}
+        />
+
+        <B2bHandoverModal
+          isOpen={Boolean(selectedRfqForHandover)}
+          onClose={() => setSelectedRfqForHandover(null)}
+          rfq={selectedRfqForHandover}
+          onConfirmHandover={handleConfirmHandover}
+        />
+
+        <B2bFulfilmentModal
+          isOpen={Boolean(selectedRfqForFulfilment)}
+          onClose={() => setSelectedRfqForFulfilment(null)}
+          rfq={selectedRfqForFulfilment?.rfq || null}
+          initialTab={selectedRfqForFulfilment?.tab as any}
+          onSaveFulfilment={handleSaveFulfilment}
+        />
+
+        <B2bPaymentModal
+          isOpen={Boolean(selectedRfqForPayment)}
+          onClose={() => setSelectedRfqForPayment(null)}
+          rfq={selectedRfqForPayment}
+          onRecordPayment={handleRecordPayment}
+        />
       </main>
     </div>
   );

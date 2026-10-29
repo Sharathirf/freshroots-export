@@ -96,12 +96,67 @@ export interface Order {
 }
 
 export type QuotationStatus =
+  // Stage A: RFQ Intake & Review
   | 'submitted'
+  | 'new_rfq'
   | 'under_review'
-  | 'quote_issued'
-  | 'accepted'
+  | 'needs_information'
+  | 'ready_to_quote'
+  | 'on_hold'
   | 'rejected'
+  | 'cancelled'
+  // Stage B: Quotation & Negotiation
+  | 'quotation_draft'
+  | 'pending_approval'
+  | 'quote_issued'
+  | 'discussion_in_progress'
+  | 'revision_requested'
+  | 'revised_quotation_issued'
+  | 'accepted'
   | 'expired';
+
+export type B2bPaymentStatus =
+  | 'unpaid'
+  | 'partially_paid'
+  | 'paid'
+  | 'refund_pending'
+  | 'partially_refunded'
+  | 'refunded';
+
+export type B2bFulfilmentStatus =
+  | 'not_started'
+  | 'procurement_in_progress'
+  | 'quality_check'
+  | 'ready_for_dispatch'
+  | 'partially_dispatched'
+  | 'dispatched'
+  | 'in_transit'
+  | 'out_for_delivery'
+  | 'delivery_exception'
+  | 'partially_delivered'
+  | 'delivered'
+  | 'returned'
+  | 'completed';
+
+export type ActivityVisibility = 'internal_note' | 'ops_update' | 'buyer_visible';
+
+export type CommunicationChannel =
+  | 'whatsapp'
+  | 'phone'
+  | 'email'
+  | 'meeting'
+  | 'web_inquiry'
+  | 'video'
+  | 'internal'
+  | 'other';
+
+export type StaffRole =
+  | 'sales'
+  | 'quotation_manager'
+  | 'operations'
+  | 'finance'
+  | 'management'
+  | 'admin';
 
 export interface WholesaleQuotation {
   id: string;
@@ -117,12 +172,186 @@ export interface WholesaleQuotation {
   unit: string;
   destination_city: string;
   destination_pincode: string;
+  delivery_address?: string;
+  preferred_delivery_date?: string;
   proposed_unit_price_inr?: number;
   freight_charges_inr?: number;
   total_quote_inr?: number;
   status: QuotationStatus;
   valid_until?: string;
   notes?: string;
+  created_at: string;
+  updated_at?: string;
+  // B2B Operational & Governance Extensions
+  sales_owner_name?: string;
+  operations_owner_name?: string;
+  revision_number?: number;
+  rejection_category?: string;
+  rejection_reason?: string;
+  rejection_notes?: string;
+  rejection_actor?: string;
+  rejection_timestamp?: string;
+  reopen_reason?: string;
+  reopened_by?: string;
+  reopened_at?: string;
+  payment_status?: B2bPaymentStatus;
+  fulfilment_status?: B2bFulfilmentStatus;
+  internal_notes?: string;
+  // Linked entities count / summary
+  activity_count?: number;
+  discussion_count?: number;
+  pending_followup_count?: number;
+}
+
+export interface RfqActivity {
+  id: string;
+  rfq_id: string;
+  order_id?: string;
+  quotation_revision: number;
+  activity_type: string;
+  activity_title: string;
+  description?: string;
+  previous_status?: string;
+  new_status?: string;
+  comments?: string;
+  reason?: string;
+  communication_source?: string;
+  acting_user: string;
+  actor_role: StaffRole;
+  visibility: ActivityVisibility;
+  metadata?: Record<string, any>;
+  created_at: string;
+}
+
+export interface RfqDiscussion {
+  id: string;
+  rfq_id: string;
+  discussion_date: string;
+  communication_channel: CommunicationChannel;
+  channel_other_explanation?: string;
+  employee_name: string;
+  employee_role: StaffRole;
+  buyer_contact_person: string;
+  discussion_summary: string;
+  buyer_concerns?: string;
+  price_changes_requested?: string;
+  spec_changes_requested?: string;
+  delivery_terms?: string;
+  payment_terms?: string;
+  commercial_commitments?: string;
+  outstanding_questions?: string;
+  next_action?: string;
+  followup_due_date?: string;
+  responsible_employee?: string;
+  visibility: ActivityVisibility;
+  created_at: string;
+}
+
+export interface QuotationRevision {
+  id: string;
+  rfq_id: string;
+  revision_number: number;
+  quote_number: string;
+  proposed_unit_price_inr: number;
+  freight_charges_inr: number;
+  total_quote_inr: number;
+  requested_quantity: number;
+  unit: string;
+  change_reason: string;
+  created_by: string;
+  status: string;
+  valid_until?: string;
+  notes?: string;
+  created_at: string;
+}
+
+export interface B2bHandover {
+  id: string;
+  rfq_id: string;
+  order_id?: string;
+  initiated_by: string;
+  operations_owner: string;
+  product_specs?: string;
+  confirmed_quantity: number;
+  unit: string;
+  quotation_revision: number;
+  destination: string;
+  commercial_terms?: string;
+  payment_terms?: string;
+  packaging_requirements?: string;
+  delivery_commitments?: string;
+  quality_requirements?: string;
+  buyer_discussions_summary?: string;
+  outstanding_questions?: string;
+  required_ops_actions?: string;
+  handover_status: 'pending_acknowledgement' | 'acknowledged' | 'needs_clarification';
+  acknowledged_by?: string;
+  acknowledged_at?: string;
+  acknowledgement_comments?: string;
+  created_at: string;
+}
+
+export interface B2bFulfilment {
+  id: string;
+  rfq_id: string;
+  order_id?: string;
+  procurement_status: 'not_started' | 'in_progress' | 'sourced' | 'delayed';
+  procurement_source?: string;
+  procurement_expected_readiness?: string;
+  procurement_notes?: string;
+  quality_status: 'pending' | 'passed' | 'failed' | 'conditional_pass';
+  quality_inspector?: string;
+  quality_inspected_quantity?: number;
+  quality_inspection_date?: string;
+  quality_observations?: string;
+  dispatch_status: 'pending' | 'ready_for_dispatch' | 'partially_dispatched' | 'dispatched';
+  dispatched_quantity: number;
+  dispatch_date?: string;
+  transporter_name?: string;
+  vehicle_number?: string;
+  driver_name?: string;
+  driver_phone?: string;
+  lr_number?: string;
+  tracking_reference?: string;
+  bag_or_box_count?: number;
+  delivery_status: 'pending' | 'in_transit' | 'out_for_delivery' | 'delivery_exception' | 'partially_delivered' | 'delivered' | 'returned' | 'completed';
+  delivered_quantity: number;
+  delivery_date?: string;
+  recipient_name?: string;
+  delivery_remarks?: string;
+  delivery_exception_notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface B2bPayment {
+  id: string;
+  rfq_id: string;
+  order_id?: string;
+  confirmed_order_value_inr: number;
+  amount_paid_inr: number;
+  payment_method: string;
+  transaction_reference: string;
+  payment_date: string;
+  recorded_by: string;
+  reconciliation_status: 'pending_reconciliation' | 'reconciled' | 'disputed';
+  reconciled_by?: string;
+  reconciled_at?: string;
+  payment_notes?: string;
+  created_at: string;
+}
+
+export interface B2bFollowup {
+  id: string;
+  rfq_id: string;
+  followup_type: string;
+  due_date: string;
+  responsible_employee: string;
+  assigned_by: string;
+  notes?: string;
+  status: 'pending' | 'completed' | 'rescheduled' | 'cancelled';
+  completed_at?: string;
+  completion_notes?: string;
   created_at: string;
 }
 
