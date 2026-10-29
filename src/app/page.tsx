@@ -16,15 +16,25 @@ import {
   Truck,
   ShieldCheck,
   CheckCircle2,
-  MessageCircle,
-  LayoutGrid,
-  Grid2X2
+  MessageCircle
 } from 'lucide-react';
+
+function isBulkOnly(product: Product): boolean {
+  return Boolean(
+    product.sku.includes('BLK') ||
+    product.sku.includes('TND') ||
+    product.sku.includes('GIN') ||
+    product.sku.includes('SHL') ||
+    product.category === 'arecanut' ||
+    product.slug.includes('tender') ||
+    product.slug.includes('ginger') ||
+    product.slug.includes('shell') ||
+    product.slug.includes('arecanut')
+  );
+}
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>(() => getAllCatalogProducts());
-  const [filteredCategory, setFilteredCategory] = useState<string>('all');
-  const [gridDensity, setGridDensity] = useState<'compact' | 'spacious'>('compact');
   const [loading, setLoading] = useState(false);
   const [isRFQOpen, setIsRFQOpen] = useState(false);
   const [selectedProductForRFQ, setSelectedProductForRFQ] = useState<Product | null>(null);
@@ -56,10 +66,12 @@ export default function HomePage() {
     setIsRFQOpen(true);
   };
 
-  const displayedProducts =
-    filteredCategory === 'all'
-      ? products
-      : products.filter((p) => p.category === filteredCategory);
+  const displayedProducts = [...products].sort((a, b) => {
+    const aBulk = isBulkOnly(a);
+    const bBulk = isBulkOnly(b);
+    if (aBulk === bBulk) return 0;
+    return aBulk ? 1 : -1;
+  });
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans">
@@ -75,88 +87,21 @@ export default function HomePage() {
         <ActiveOrderBanner />
 
         {/* 2. Clean Catalog Section ("Select produce & order") */}
-        <section id="catalog" className="pt-4 sm:pt-6 pb-12 sm:pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-3 lg:grid-cols-[minmax(16rem,0.8fr)_minmax(0,2fr)] lg:items-center mb-4 sm:mb-6">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
-                  {lang === 'kn' ? 'ನಿಮ್ಮ ಫಾರ್ಮ್ ಉತ್ಪನ್ನಗಳನ್ನು ಆರಿಸಿ' : 'Select Your Produce'}
-                </h2>
-                <p className="text-stone-500 text-xs sm:text-sm mt-0.5">
-                  {lang === 'kn'
-                    ? 'ಕರ್ನಾಟಕದ ತೋಟಗಳಿಂದ ನೇರ ರವಾನೆ • 100% ಉಚಿತ ಮನೆ ಬಾಗಿಲು ಡೆಲಿವರಿ.'
-                    : 'Authentic, lab-graded lots with direct farm dispatch in 24 hours.'}
-                </p>
-              </div>
-
-              {/* Grid Density View Switcher (6-8 items on screen) */}
-              <div className="inline-flex items-center gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200 text-xs" role="group" aria-label="Catalog layout density">
-                <button
-                  type="button"
-                  onClick={() => setGridDensity('compact')}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-bold transition ${
-                    gridDensity === 'compact'
-                      ? 'bg-stone-900 text-white shadow-2xs'
-                      : 'text-stone-600 hover:text-stone-900'
-                  }`}
-                  title="Compact View: 8 items visible per screen"
-                >
-                  <LayoutGrid className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">8 / Screen</span>
-                  <span className="sm:hidden">8</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setGridDensity('spacious')}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-bold transition ${
-                    gridDensity === 'spacious'
-                      ? 'bg-stone-900 text-white shadow-2xs'
-                      : 'text-stone-600 hover:text-stone-900'
-                  }`}
-                  title="Comfort View: 6 items visible per screen"
-                >
-                  <Grid2X2 className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">6 / Screen</span>
-                  <span className="sm:hidden">6</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Category Filter Tabs */}
-            <div className="flex flex-wrap gap-1.5 bg-stone-200/80 p-1.5 rounded-2xl w-full min-w-0" role="group" aria-label={lang === 'kn' ? 'ಉತ್ಪನ್ನ ವರ್ಗಗಳು' : 'Product categories'}>
-              {[
-                { id: 'all', label: lang === 'kn' ? `ಎಲ್ಲಾ ಉತ್ಪನ್ನಗಳು (${products.length || 11})` : `All Produce (${products.length || 11})` },
-                { id: 'mature_coconut', label: lang === 'kn' ? 'ತಾಜಾ ತೆಂಗಿನಕಾಯಿ' : 'Fresh Coconuts' },
-                { id: 'copra', label: lang === 'kn' ? 'ಉಂಡೆ ಕೊಬ್ಬರಿ' : 'GI Ball Copra' },
-                { id: 'arecanut', label: lang === 'kn' ? 'ಅಡಿಕೆ (ಬಲ್ಕ್)' : 'Arecanut (Bulk)' },
-                { id: 'oil_and_extracts', label: lang === 'kn' ? 'ತುಪ್ಪ & ಗಾಣದ ಎಣ್ಣೆ' : 'Ghee & Cold-Pressed Oils' },
-                { id: 'spices', label: lang === 'kn' ? 'ರಾಗಿ & ಶುಂಠಿ' : 'Ragi & Spices' },
-                { id: 'value_added', label: lang === 'kn' ? 'ತೋಟದ ಸಸಿಗಳು' : 'Nursery Plants' },
-                { id: 'coir_commodities', label: lang === 'kn' ? 'ತೆಂಗಿನ ಚಿಪ್ಪು' : 'Coconut Shells' }
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setFilteredCategory(tab.id)}
-                  aria-pressed={filteredCategory === tab.id}
-                  className={`text-xs font-bold px-3.5 py-2 rounded-xl transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3b6d11] focus-visible:ring-offset-2 ${
-                    filteredCategory === tab.id
-                      ? 'bg-[#3b6d11] text-white shadow-sm'
-                      : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+        <section id="catalog" className="pt-3 sm:pt-4 pb-12 sm:pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-3 sm:mb-4">
+            <h2 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
+              {lang === 'kn' ? 'ನಿಮ್ಮ ಫಾರ್ಮ್ ಉತ್ಪನ್ನಗಳನ್ನು ಆರಿಸಿ' : 'Select Your Produce'}
+            </h2>
+            <p className="text-stone-500 text-xs sm:text-sm mt-0.5">
+              {lang === 'kn'
+                ? 'ಕರ್ನಾಟಕದ ತೋಟಗಳಿಂದ ನೇರ ರವಾನೆ • 100% ಉಚಿತ ಮನೆ ಬಾಗಿಲು ಡೆಲಿವರಿ.'
+                : 'Authentic, lab-graded lots with direct farm dispatch in 24 hours.'}
+            </p>
           </div>
 
-          {/* Product Grid */}
+          {/* Product Grid - Compact 4 columns on desktop, retail first, bulk-only last */}
           {loading ? (
-            <div className={`grid gap-3 sm:gap-4 lg:gap-5 py-4 ${
-              gridDensity === 'compact'
-                ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'
-                : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-            }`}>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 py-4">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
                 <div
                   key={n}
@@ -165,11 +110,7 @@ export default function HomePage() {
               ))}
             </div>
           ) : (
-            <div className={`grid gap-3 sm:gap-4 lg:gap-5 ${
-              gridDensity === 'compact'
-                ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'
-                : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-            }`}>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
               {displayedProducts.map((product) => (
                 <ProductCard
                   key={product.id}
