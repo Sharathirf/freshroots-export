@@ -214,7 +214,7 @@ export default function CartDrawer() {
   if (!isAddressValid) missingDeliveryFields.push(isKannada ? 'ವಿತರಣಾ ವಿಳಾಸ' : 'Delivery Address');
 
   // Live Direct UPI Payment Details
-  const farmUpiId = process.env.NEXT_PUBLIC_UPI_VPA || 'freshrootsexportx@axl';
+  const farmUpiId = process.env.NEXT_PUBLIC_UPI_VPA || 'freshrootsexports@axl';
   // If preallocated order exists, embed the order number so banking apps tag the exact transaction note and ref
   const orderTrackingTag = preallocatedOrder?.order_number
     ? preallocatedOrder.order_number
