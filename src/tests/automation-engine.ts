@@ -473,7 +473,7 @@ export async function runAutomationSuite() {
   await verifyAsync('Valid RFQ with phone only succeeds', async () => {
     const res = await httpPost('/api/rfq', {
       customer_name: 'M/s Karnataka Oil Traders',
-      contact_phone: '9591142548',
+      contact_phone: '9008462568',
       product_title: 'Raw Coconut Shells (Industrial Grade - Bulk Orders Only)',
       requested_quantity: 10,
       unit: 'Tonnes',
@@ -915,15 +915,15 @@ export async function runAutomationSuite() {
     return { valid: false, error: 'Please enter a valid 10-digit Indian mobile number' };
   };
 
-  verify('Validate 10-digit mobile number 9591142548', () => assert.strictEqual(validatePhone('9591142548').valid, true), c14);
-  verify('Validate mobile with +91 country code', () => assert.strictEqual(validatePhone('+91 95911 42548').valid, true), c14);
-  verify('Validate mobile with leading 0', () => assert.strictEqual(validatePhone('09591142548').valid, true), c14);
+  verify('Validate 10-digit mobile number 9008462568', () => assert.strictEqual(validatePhone('9008462568').valid, true), c14);
+  verify('Validate mobile with +91 country code', () => assert.strictEqual(validatePhone('+91 90084 62568').valid, true), c14);
+  verify('Validate mobile with leading 0', () => assert.strictEqual(validatePhone('09008462568').valid, true), c14);
   verify('Reject invalid starting digit', () => assert.strictEqual(validatePhone('1234567890').valid, false), c14);
   verify('Reject alphabetic input', () => assert.strictEqual(validatePhone('abcdefghij').valid, false), c14);
 
   await verifyAsync('POST /api/customer/profile saves customer name, email, and address securely', async () => {
     const res = await httpPost('/api/customer/profile', {
-      phone: '9591142548',
+      phone: '9008462568',
       full_name: 'Sharath Inorahalli',
       email: 'sharathir198@gmail.com',
       address: 'Main Bazaar Road, Kikkeri',
@@ -941,7 +941,7 @@ export async function runAutomationSuite() {
   }, c14);
 
   await verifyAsync('GET /api/customer/profile retrieves customer profile with address details', async () => {
-    const res = await httpGet('/api/customer/profile?phone=9591142548');
+    const res = await httpGet('/api/customer/profile?phone=9008462568');
     assert.strictEqual(res.status, 200);
     assert.strictEqual(res.json?.exists, true);
     assert.strictEqual(res.json?.customer?.name, 'Sharath Inorahalli');
@@ -1088,7 +1088,7 @@ export async function runAutomationSuite() {
     assert.strictEqual(sent.customer_phone, testAbandonPhone);
     assert(sent.message_preview.includes('SHARATH INORAHALLI'));
     assert(sent.message_preview.includes('cart?resume='));
-    assert(sent.message_preview.includes('95911 42548'));
+    assert(sent.message_preview.includes('90084 62568'));
   }, c14);
 
   cycleResults.push({

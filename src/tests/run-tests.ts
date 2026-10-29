@@ -329,10 +329,10 @@ it('Order tracking search pattern correctly classifies Order Number, Tracking Re
   const res2 = parseTrackingQuery('VRL-BLR-181729');
   assert.strictEqual(res2.isOrderOrRef, true);
 
-  const res3 = parseTrackingQuery('+91 95911 42548');
+  const res3 = parseTrackingQuery('+91 90084 62568');
   assert.strictEqual(res3.isOrderOrRef, false);
   assert.strictEqual(res3.hasPhoneDigits, true);
-  assert.strictEqual(res3.phoneSlice, '9591142548');
+  assert.strictEqual(res3.phoneSlice, '9008462568');
 });
 
 it('Customer Sign-In requires valid 10-digit Indian phone number', () => {
@@ -345,8 +345,8 @@ it('Customer Sign-In requires valid 10-digit Indian phone number', () => {
     return { valid: false, error: 'Enter a valid 10-digit Indian mobile number' };
   };
 
-  assert.strictEqual(validatePhoneLogin('9591142548').valid, true);
-  assert.strictEqual(validatePhoneLogin('+91 95911 42548').valid, true);
+  assert.strictEqual(validatePhoneLogin('9008462568').valid, true);
+  assert.strictEqual(validatePhoneLogin('+91 90084 62568').valid, true);
   assert.strictEqual(validatePhoneLogin('12345').valid, false);
   assert.strictEqual(validatePhoneLogin('1234567890').valid, false); // invalid starting digit
 });

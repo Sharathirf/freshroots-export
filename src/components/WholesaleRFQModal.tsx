@@ -358,7 +358,7 @@ export default function WholesaleRFQModal({
 
             <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
               <a
-                href={`https://wa.me/919591142548?text=Hello%20Sharath,%20I%20have%20submitted%20wholesale%20RFQ%20${submittedQuote.quote_number}%20for%20${submittedQuote.company_name}.%20Please%20expedite.`}
+                href={`https://wa.me/919008462568?text=Hello%20Sharath,%20I%20have%20submitted%20wholesale%20RFQ%20${submittedQuote.quote_number}%20for%20${submittedQuote.company_name}.%20Please%20expedite.`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-xl transition flex items-center justify-center gap-2"

@@ -88,8 +88,8 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-lime-400 shrink-0" />
-                <a href="https://wa.me/919591142548" target="_blank" rel="noopener noreferrer" className="hover:text-lime-300 transition">
-                  Desk & WhatsApp: +91 95911 42548
+                <a href="https://wa.me/919008462568" target="_blank" rel="noopener noreferrer" className="hover:text-lime-300 transition">
+                  Desk & WhatsApp: +91 90084 62568
                 </a>
               </div>
               <div className="flex items-center gap-2">

@@ -168,7 +168,7 @@ function TrackOrderContent() {
               <div>
                 <strong>Order Not Found:</strong> {errorMsg}
                 <div className="text-[11px] text-amber-700 mt-1">
-                  Need help? Contact our desk directly at <strong>+91 95911 42548</strong>.
+                  Need help? Contact our desk directly at <strong>+91 90084 62568</strong>.
                 </div>
               </div>
             </div>
@@ -417,7 +417,7 @@ function TrackOrderContent() {
               <div className="bg-stone-50 border-t border-stone-200/90 p-4 sm:p-6 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <a
-                    href={`https://wa.me/919591142548?text=${encodeURIComponent(
+                    href={`https://wa.me/919008462568?text=${encodeURIComponent(
                       `Hi Sharath, I have a query about my order ${selectedOrder.order_number}`
                     )}`}
                     target="_blank"
@@ -502,7 +502,7 @@ function TrackOrderContent() {
               </div>
               <div>
                 <h4 className="font-bold text-xs uppercase tracking-wider text-white">Agri Desk Support</h4>
-                <p className="text-[11px] text-stone-400 mt-0.5">WhatsApp consultation Mon–Sat (+91 95911 42548).</p>
+                <p className="text-[11px] text-stone-400 mt-0.5">WhatsApp consultation Mon–Sat (+91 90084 62568).</p>
               </div>
             </div>
           </div>

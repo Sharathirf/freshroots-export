@@ -21,6 +21,10 @@ interface CartContextType {
   clearCart: () => void;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
+  checkoutStep: 'cart' | 'checkout' | 'success';
+  setCheckoutStep: (step: 'cart' | 'checkout' | 'success') => void;
+  openCheckout: () => void;
+  openCart: () => void;
   itemCount: number;
   subtotal: number;
   freeShippingThreshold: number;
@@ -39,8 +43,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const { isLoggedIn, requireAuth } = useAuth();
   const [items, setItems] = useState<OrderItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [checkoutStep, setCheckoutStep] = useState<'cart' | 'checkout' | 'success'>('cart');
   const [pincode, setPincode] = useState('560001'); // Default to Bengaluru Urban
   const [pincodeServiceable, setPincodeServiceable] = useState<boolean | null>(true);
+
+  const openCheckout = () => {
+    setCheckoutStep('checkout');
+    setIsCartOpen(true);
+  };
+
+  const openCart = () => {
+    setCheckoutStep('cart');
+    setIsCartOpen(true);
+  };
 
   // Load cart from localStorage or URL resume parameter
   useEffect(() => {
@@ -205,6 +220,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const addToCart = (product: Product, quantity = 1, variant?: PackVariantOption) => {
     // Auth gate: If fresh/unauthenticated user clicks Add to Cart, prompt to sign in and auto-resume
     if (!isLoggedIn) {
+      try {
+        sessionStorage.setItem('freshroots_post_login_intent', JSON.stringify({ type: 'cart' }));
+      } catch {}
       requireAuth('Sign in with your mobile number to add items to your cart & check 1st-order discount eligibility', () => {
         addToCart(product, quantity, variant);
         setIsCartOpen(true);
@@ -382,6 +400,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         clearCart,
         isCartOpen,
         setIsCartOpen,
+        checkoutStep,
+        setCheckoutStep,
+        openCheckout,
+        openCart,
         itemCount,
         subtotal,
         freeShippingThreshold,

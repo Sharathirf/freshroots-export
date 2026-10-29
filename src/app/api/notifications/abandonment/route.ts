@@ -52,7 +52,7 @@ You left *${primaryItem}* ${itemsCount > 1 ? `and ${itemsCount - 1} other item(s
 👉 *Click to complete your order:*
 https://tipturdirect.in/cart?resume=${cart.id}
 
-Need bulk truckload assistance or custom rates? Reply directly to this WhatsApp message or call our agri desk: +91 95911 42548.`;
+Need bulk truckload assistance or custom rates? Reply directly to this WhatsApp message or call our agri desk: +91 90084 62568.`;
 
       // Update abandoned_carts table to 'notified'
       await query(

@@ -407,7 +407,7 @@ export async function POST(request: NextRequest) {
       await Promise.all(emailTasks);
     }
 
-    // Generate Direct WhatsApp Alert Link for Farm Desk (+91 95911 42548)
+    // Generate Direct WhatsApp Alert Link for Farm Desk (+91 90084 62568)
     const alertMessage = encodeURIComponent(
       `🌾 *NEW FARM ORDER #${orderNumber}*\n` +
       `👤 *Customer:* ${customer_name} (${customer_phone})\n` +
@@ -418,7 +418,7 @@ export async function POST(request: NextRequest) {
       `🚚 *Courier Ref:* ${trackingRef}\n` +
       `⚠️ Do not dispatch until payment is verified in the Operations Desk.`
     );
-    const whatsappAlertUrl = `https://wa.me/919591142548?text=${alertMessage}`;
+    const whatsappAlertUrl = `https://wa.me/919008462568?text=${alertMessage}`;
 
     const orderRecord = {
       ...order,

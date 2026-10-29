@@ -48,8 +48,12 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
 
   const toggleWishlist = (product: Product) => {
     if (!isLoggedIn) {
+      try {
+        sessionStorage.setItem('freshroots_post_login_intent', JSON.stringify({ type: 'watchlist' }));
+      } catch {}
       requireAuth('Sign in with your mobile number to save items to your personal harvest watchlist', () => {
         toggleWishlist(product);
+        setIsWatchlistOpen(true);
       });
       return;
     }

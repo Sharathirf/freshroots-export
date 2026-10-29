@@ -48,7 +48,7 @@ export default function HomeCtaBanner({ onOpenRFQ }: { onOpenRFQ: () => void }) 
           </button>
 
           <a
-            href="https://wa.me/919591142548?text=Hello%20Sharath,%20I%20would%20like%20to%20consult%20with%20you%20about%20agricultural%20commodity%20sourcing."
+            href="https://wa.me/919008462568?text=Hello%20Sharath,%20I%20would%20like%20to%20consult%20with%20you%20about%20agricultural%20commodity%20sourcing."
             target="_blank"
             rel="noopener noreferrer"
             className="w-full sm:w-auto bg-white/10 hover:bg-white/15 text-stone-200 border border-white/20 font-bold text-sm sm:text-base px-6 py-3.5 rounded-xl backdrop-blur-md transition flex items-center justify-center gap-2"

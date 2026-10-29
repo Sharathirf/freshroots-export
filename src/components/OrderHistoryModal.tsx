@@ -265,7 +265,7 @@ export default function OrderHistoryModal() {
 
                     {/* WhatsApp Help Button */}
                     <a
-                      href={`https://wa.me/919591142548?text=${encodeURIComponent(
+                      href={`https://wa.me/919008462568?text=${encodeURIComponent(
                         `Hi Sharath, I have a query about my order ${ord.order_number}`
                       )}`}
                       target="_blank"

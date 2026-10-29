@@ -80,7 +80,7 @@ export default function VoiceOrderFloatingBtn() {
             {/* WhatsApp Message CTA Action */}
             <div className="pt-1">
               <a
-                href={`https://wa.me/919591142548?text=${whatsappMessage}`}
+                href={`https://wa.me/919008462568?text=${whatsappMessage}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsOpen(false)}

@@ -28,7 +28,7 @@ export default function HelpModal() {
     },
     {
       q: 'What if items arrive damaged or broken in transit?',
-      a: 'We offer a 100% free immediate replacement or full refund guarantee. Simply share a quick photo of the package on WhatsApp (+91 95911 42548) and we dispatch a fresh batch immediately.'
+      a: 'We offer a 100% free immediate replacement or full refund guarantee. Simply share a quick photo of the package on WhatsApp (+91 90084 62568) and we dispatch a fresh batch immediately.'
     },
     {
       q: 'How can I quickly reorder past commodities?',
@@ -80,7 +80,7 @@ export default function HelpModal() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             {/* WhatsApp */}
             <a
-              href="https://wa.me/919591142548?text=Hi%20Sharath,%20I%20need%20help%20with%20an%20order/inquiry"
+              href="https://wa.me/919008462568?text=Hi%20Sharath,%20I%20need%20help%20with%20an%20order/inquiry"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 p-3.5 rounded-2xl flex flex-col items-center text-center transition group shadow-sm"
@@ -89,33 +89,33 @@ export default function HelpModal() {
                 <MessageCircle className="w-5 h-5" />
               </div>
               <div className="text-xs font-bold text-stone-900">WhatsApp Desk</div>
-              <div className="text-[10px] text-emerald-700 font-semibold mt-0.5">+91 95911 42548</div>
+              <div className="text-[10px] text-emerald-700 font-semibold mt-0.5">+91 90084 62568</div>
               <span className="text-[10px] text-stone-400 mt-1">Instant Response</span>
             </a>
 
             {/* Direct Call */}
             <a
-              href="tel:+919591142548"
+              href="tel:+919008462568"
               className="bg-lime-50 hover:bg-lime-100/80 border border-lime-200 p-3.5 rounded-2xl flex flex-col items-center text-center transition group shadow-sm"
             >
               <div className="w-10 h-10 rounded-full bg-[#3b6d11] text-white flex items-center justify-center mb-2 shadow-sm group-hover:scale-105 transition">
                 <Phone className="w-5 h-5" />
               </div>
               <div className="text-xs font-bold text-stone-900">Call Farm Direct</div>
-              <div className="text-[10px] text-emerald-800 font-semibold mt-0.5">+91 95911 42548</div>
+              <div className="text-[10px] text-emerald-800 font-semibold mt-0.5">+91 90084 62568</div>
               <span className="text-[10px] text-stone-400 mt-1">7 AM – 9 PM IST</span>
             </a>
 
             {/* Email */}
             <a
-              href="mailto:sharath@tipturdirect.com"
+              href="mailto:sharathir198@gmail.com"
               className="bg-stone-50 hover:bg-stone-100 border border-stone-200 p-3.5 rounded-2xl flex flex-col items-center text-center transition group shadow-sm"
             >
               <div className="w-10 h-10 rounded-full bg-stone-700 text-white flex items-center justify-center mb-2 shadow-sm group-hover:scale-105 transition">
                 <Mail className="w-5 h-5" />
               </div>
               <div className="text-xs font-bold text-stone-900">Email Desk</div>
-              <div className="text-[10px] text-stone-600 font-semibold mt-0.5">sharath@...</div>
+              <div className="text-[10px] text-stone-600 font-semibold mt-0.5 break-all max-w-[130px] truncate" title="sharathir198@gmail.com">sharathir198@gmail.com</div>
               <span className="text-[10px] text-stone-400 mt-1">Official Inquiry</span>
             </a>
           </div>

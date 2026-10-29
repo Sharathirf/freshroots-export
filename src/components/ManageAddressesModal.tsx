@@ -220,7 +220,7 @@ export default function ManageAddressesModal() {
                     maxLength={10}
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value.replace(/\D/g, ''))}
-                    placeholder="9591142548"
+                    placeholder="9008462568"
                     className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-medium focus:ring-2 focus:ring-[#1e824c] focus:outline-none font-mono"
                   />
                 </div>

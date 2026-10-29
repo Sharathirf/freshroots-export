@@ -400,7 +400,7 @@ export default function ExportPage() {
 
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
-                href="https://wa.me/919591142548?text=Hello%20FreshRoots%20Export%20Desk,%20I%20am%20an%20international%20buyer%20interested%20in%20an%20FCL%20export%20quotation."
+                href="https://wa.me/919008462568?text=Hello%20FreshRoots%20Export%20Desk,%20I%20am%20an%20international%20buyer%20interested%20in%20an%20FCL%20export%20quotation."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto px-8 py-3.5 bg-[#25D366] hover:bg-[#20ba59] text-stone-950 font-black text-sm rounded-xl transition flex items-center justify-center gap-2 shadow-lg"
@@ -419,7 +419,7 @@ export default function ExportPage() {
             </div>
 
             <p className="text-stone-400 text-xs mt-5">
-              Direct Desk: +91 95911 42548 · Email: sharathir198@gmail.com · Kikkeri, Mandya, Karnataka, India
+              Direct Desk: +91 90084 62568 · Email: sharathir198@gmail.com · Kikkeri, Mandya, Karnataka, India
             </p>
           </div>
         </section>

@@ -41,7 +41,7 @@ export default function ContactPage() {
       '@type': 'LocalBusiness',
       name: 'FreshRoots Export',
       image: `${siteUrl}/icon.svg`,
-      telephone: '+919591142548',
+      telephone: '+919008462568',
       email: 'sharathir198@gmail.com',
       address: {
         '@type': 'PostalAddress',
@@ -108,8 +108,8 @@ export default function ContactPage() {
                 <Phone className="w-5 h-5 text-[#3b6d11] shrink-0 mt-0.5" />
                 <div>
                   <strong className="block text-stone-900">Direct Telephone / Helpline:</strong>
-                  <a href="tel:+919591142548" className="font-mono font-bold text-stone-900 hover:text-emerald-700">
-                    +91 95911 42548
+                  <a href="tel:+919008462568" className="font-mono font-bold text-stone-900 hover:text-emerald-700">
+                    +91 90084 62568
                   </a>
                 </div>
               </div>
@@ -136,7 +136,7 @@ export default function ContactPage() {
 
             <div className="pt-2">
               <a
-                href="https://wa.me/919591142548?text=Hello%20Sharath,%20I%20have%20an%20inquiry%20regarding%20agricultural%20commodities."
+                href="https://wa.me/919008462568?text=Hello%20Sharath,%20I%20have%20an%20inquiry%20regarding%20agricultural%20commodities."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full bg-[#3b6d11] hover:bg-[#2e590c] text-white font-bold text-sm py-3 px-4 rounded-xl transition shadow-md flex items-center justify-center gap-2"

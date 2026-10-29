@@ -42,6 +42,9 @@ export default function WatchlistDrawer() {
             </div>
             <button
               onClick={() => {
+                try {
+                  sessionStorage.setItem('freshroots_post_login_intent', JSON.stringify({ type: 'watchlist' }));
+                } catch {}
                 setIsWatchlistOpen(false);
                 requireAuth('Sign in to view and manage your farm produce watchlist', () => {
                   setIsWatchlistOpen(true);

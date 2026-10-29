@@ -36,7 +36,7 @@ import GstInvoiceModal from '@/components/GstInvoiceModal';
 import { track } from '@/lib/analytics';
 
 export default function CartDrawer() {
-  const { customer, addresses, saveAddress, lang, signIn } = useAuth();
+  const { customer, addresses, saveAddress, lang, signIn, isLoggedIn, requireAuth } = useAuth();
   const isKannada = lang === 'kn';
   const {
     items,
@@ -47,10 +47,13 @@ export default function CartDrawer() {
     setIsCartOpen,
     subtotal,
     total,
-    pincode
+    pincode,
+    checkoutStep,
+    setCheckoutStep
   } = useCart();
 
-  const [step, setStep] = useState<'cart' | 'checkout' | 'success'>('cart');
+  const step = checkoutStep;
+  const setStep = setCheckoutStep;
   const [customerName, setCustomerName] = useState(customer?.name || '');
   const [customerPhone, setCustomerPhone] = useState(customer?.phone || '');
   const [customerEmail, setCustomerEmail] = useState(customer?.email || '');
@@ -189,7 +192,7 @@ export default function CartDrawer() {
     ? `ನಮಸ್ಕಾರ ಶರತ್ ಅವರೇ, ನಾನು ಈ ಕೆಳಗಿನ ಫಾರ್ಮ್ ಉತ್ಪನ್ನಗಳನ್ನು ಆರ್ಡರ್ ಮಾಡಲು ಬಯಸುತ್ತೇನೆ:\n\n${waItemsText}\n\n*ಒಟ್ಟು ಮೊತ್ತ:* ₹${finalTotal.toLocaleString('en-IN')}${appliedCoupon ? ` (ಕೂಪನ್: ${appliedCoupon.code})` : ''}\n\nನನಗೆ ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ವಿಳಾಸ ಟೈಪ್ ಮಾಡಲು ಕಷ್ಟವಾಗುತ್ತಿದೆ. ದಯವಿಟ್ಟು ನನ್ನ ವಿಳಾಸವನ್ನು ವಾಟ್ಸಾಪ್ ವಾಯ್ಸ್ ನೋಟ್ ಅಥವಾ ನೇರ ಫೋನ್ ಕರೆ ಮೂಲಕ ಪಡೆದು ಆರ್ಡರ್ ಕನ್ಫರ್ಮ್ ಮಾಡಿಕೊಳ್ಳಿ.`
     : `Hello Sharath, I would like to order these farm items:\n\n${waItemsText}\n\n*Cart Total:* ₹${finalTotal.toLocaleString('en-IN')}${appliedCoupon ? ` (Coupon: ${appliedCoupon.code})` : ''}\n\nI need help entering my delivery address. Please take my address over WhatsApp voice note or a quick phone call and confirm my order.`;
 
-  const waVoiceCheckoutUrl = `https://wa.me/919591142548?text=${encodeURIComponent(waCheckoutMessage)}`;
+  const waVoiceCheckoutUrl = `https://wa.me/919008462568?text=${encodeURIComponent(waCheckoutMessage)}`;
 
   // Live Sapling distant transit check
   const hasSaplingInCart = items.some(
@@ -573,7 +576,7 @@ export default function CartDrawer() {
               const verifyData = await verifyRes.json();
               if (!verifyData.success || !verifyData.verified) {
                 setOrderError(
-                  `Payment verification failed: ${verifyData.error || 'Invalid signature'}. If your account was debited, contact WhatsApp support (+91 95911 42548) with Payment ID ${response.razorpay_payment_id}.`
+                  `Payment verification failed: ${verifyData.error || 'Invalid signature'}. If your account was debited, contact WhatsApp support (+91 90084 62568) with Payment ID ${response.razorpay_payment_id}.`
                 );
                 setIsSubmitting(false);
                 return;
@@ -914,11 +917,11 @@ export default function CartDrawer() {
                           </span>
                         </a>
                         <a
-                          href="tel:919591142548"
+                          href="tel:919008462568"
                           className="inline-flex items-center gap-1 text-[11px] font-bold text-stone-600 hover:text-emerald-800 px-2 py-1 rounded-lg hover:bg-stone-100 transition"
                         >
                           <PhoneCall className="w-3.5 h-3.5 text-emerald-700" />
-                          <span>9591142548</span>
+                          <span>9008462568</span>
                         </a>
                       </div>
                     </div>
@@ -1120,7 +1123,7 @@ export default function CartDrawer() {
                     <p className="text-[11px] text-amber-800 leading-relaxed">
                       {isKannada
                         ? 'ಲೈವ್ ಸಸಿಗಳು ಕರ್ನಾಟಕ ಮತ್ತು ದಕ್ಷಿಣ ಭಾರತಕ್ಕೆ (48-72 ಗಂಟೆ) ಸುರಕ್ಷಿತವಾಗಿ ತಲುಪುತ್ತವೆ. ದೂರದ ರಾಜ್ಯಗಳಿಗೆ ಸಸಿಗಳ ಬೇರು ಬದುಕುಳಿಯುವ ಖಾತರಿ ಸೀಮಿತವಾಗಿದೆ. ದಯವಿಟ್ಟು ಆರ್ಡರ್ ಮಾಡುವ ಮೊದಲು ಶರತ್ ಅವರೊಂದಿಗೆ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಮಾತನಾಡಿ.'
-                        : 'Root-ball saplings require moist nutrient soil balls that withstand transit best within Karnataka & South India (48–72h). For distant states, express crate packaging is required. Please coordinate with Sharath on WhatsApp (9591142548) to ensure zero root mortality.'}
+                        : 'Root-ball saplings require moist nutrient soil balls that withstand transit best within Karnataka & South India (48–72h). For distant states, express crate packaging is required. Please coordinate with Sharath on WhatsApp (9008462568) to ensure zero root mortality.'}
                     </p>
                   </div>
                 )}
@@ -1548,7 +1551,7 @@ export default function CartDrawer() {
                           </button>
                         </div>
                         <a
-                          href={`https://wa.me/919591142548?text=${encodeURIComponent(
+                          href={`https://wa.me/919008462568?text=${encodeURIComponent(
                             `Hi Sharath, I faced a payment issue during checkout for ₹${finalTotal}. Please assist me with manual order booking.`
                           )}`}
                           target="_blank"
@@ -1556,7 +1559,7 @@ export default function CartDrawer() {
                           className="w-full py-1.5 bg-white border border-stone-300 hover:bg-stone-100 text-stone-800 rounded-lg text-[11px] font-semibold transition flex items-center justify-center gap-1.5"
                         >
                           <MessageCircle className="w-3.5 h-3.5 text-emerald-700" />
-                          <span>WhatsApp Farm Desk (+91 9591142548)</span>
+                          <span>WhatsApp Farm Desk (+91 9008462568)</span>
                         </a>
                       </div>
                     )}
@@ -1653,7 +1656,7 @@ export default function CartDrawer() {
                   <a
                     href={
                       confirmedOrder.whatsapp_alert_url ||
-                      `https://wa.me/919591142548?text=${encodeURIComponent(
+                      `https://wa.me/919008462568?text=${encodeURIComponent(
                         `Hi Sharath, I have placed order #${confirmedOrder.order_number} for ₹${confirmedOrder.total_amount_inr}. Please confirm dispatch.`
                       )}`
                     }
@@ -1738,6 +1741,16 @@ export default function CartDrawer() {
               <button
                 onClick={() => {
                   track('begin_checkout', { value: subtotal, currency: 'INR', item_count: items.length });
+                  if (!isLoggedIn) {
+                    try {
+                      sessionStorage.setItem('freshroots_post_login_intent', JSON.stringify({ type: 'checkout' }));
+                    } catch {}
+                    requireAuth('Sign in to continue to Fast Checkout', () => {
+                      setStep('checkout');
+                      setIsCartOpen(true);
+                    });
+                    return;
+                  }
                   setStep('checkout');
                 }}
                 className="w-full py-3 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md transition flex items-center justify-center gap-2 group"

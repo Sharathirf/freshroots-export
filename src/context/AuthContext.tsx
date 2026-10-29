@@ -230,6 +230,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signedInAt: new Date().toISOString()
     };
     setCustomer(user);
+    setIsSignInModalOpen(false);
+    if (pendingAction) {
+      const act = pendingAction;
+      setPendingAction(null);
+      setTimeout(() => act(), 100);
+    }
     try {
       localStorage.setItem('tiptur_customer_session', JSON.stringify(user));
     } catch (e) {
@@ -265,6 +271,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     setCustomer(user);
+    setIsSignInModalOpen(false);
+    if (pendingAction) {
+      const act = pendingAction;
+      setPendingAction(null);
+      setTimeout(() => act(), 100);
+    }
     try {
       localStorage.setItem('tiptur_customer_session', JSON.stringify(user));
     } catch (e) {

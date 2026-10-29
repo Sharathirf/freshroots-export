@@ -116,7 +116,7 @@ async function runSeoTests() {
     const site = generateWebSiteJsonLd(siteUrl);
 
     assert.equal(org['@type'], 'Organization');
-    assert.equal(org.telephone, '+919591142548');
+    assert.equal(org.telephone, '+919008462568');
     assert.equal(org.email, 'sharathir198@gmail.com');
     assert.ok(Array.isArray(org.areaServed));
     assert.equal(org.areaServed.length, 13); // India + 12 corridors

@@ -225,7 +225,7 @@ export default async function GuideArticlePage({ params }: GuidePageProps) {
 
             <div className="flex flex-wrap items-center gap-3">
               <a
-                href={`https://wa.me/919591142548?text=Hello%20Sharath,%20I%20read%20your%20guide%20on%20${encodeURIComponent(guide.title)}%20and%20want%20to%20inquire%20about%20a%20consignment.`}
+                href={`https://wa.me/919008462568?text=Hello%20Sharath,%20I%20read%20your%20guide%20on%20${encodeURIComponent(guide.title)}%20and%20want%20to%20inquire%20about%20a%20consignment.`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-lime-400 hover:bg-lime-300 text-stone-950 font-black text-xs px-5 py-3 rounded-2xl transition flex items-center gap-2 shadow-md"

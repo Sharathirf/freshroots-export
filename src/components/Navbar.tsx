@@ -258,13 +258,13 @@ export default function Navbar({
             </button>
             <span className="hidden md:inline text-emerald-300/60">•</span>
             <a
-              href="https://wa.me/919591142548"
+              href="https://wa.me/919008462568"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white flex items-center gap-1 transition hidden sm:flex"
             >
               <Phone className="w-3 h-3 text-lime-300" />
-              95911 42548
+              90084 62568
             </a>
           </div>
         </div>

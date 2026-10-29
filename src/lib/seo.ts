@@ -63,7 +63,7 @@ export function generateOrganizationJsonLd(siteUrl: string) {
     url: siteUrl,
     logo: `${siteUrl}/icon.svg`,
     description: 'Farm-direct agricultural commerce platform supplying hand-graded mature coconuts, GI Tiptur ball copra, spices, cold-pressed oils, and nursery saplings from Karnataka, India.',
-    telephone: '+919591142548',
+    telephone: '+919008462568',
     email: 'sharathir198@gmail.com',
     address: {
       '@type': 'PostalAddress',
@@ -95,14 +95,14 @@ export function generateOrganizationJsonLd(siteUrl: string) {
     contactPoint: [
       {
         '@type': 'ContactPoint',
-        telephone: '+919591142548',
+        telephone: '+919008462568',
         contactType: 'customer service',
         availableLanguage: ['English', 'Kannada'],
         areaServed: 'IN'
       },
       {
         '@type': 'ContactPoint',
-        telephone: '+919591142548',
+        telephone: '+919008462568',
         contactType: 'sales',
         availableLanguage: ['English', 'Kannada'],
         areaServed: ['IN', 'AE', 'VN', 'BD', 'US', 'SA', 'MY', 'GB']

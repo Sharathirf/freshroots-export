@@ -180,8 +180,8 @@ async function runMobileTestSuite() {
   // --------------------------------------------------------------------------
   console.log('\n▶ Test Group 4: WhatsApp Mobile 1-Tap Deep-Linking & Direct Desk...');
 
-  record('WhatsApp Deep-Link', 'All WhatsApp links use standardized https://wa.me/919591142548 for mobile intent', () => {
-    assert(homeHtml.includes('https://wa.me/919591142548'));
+  record('WhatsApp Deep-Link', 'All WhatsApp links use standardized https://wa.me/919008462568 for mobile intent', () => {
+    assert(homeHtml.includes('https://wa.me/919008462568'));
     // Must NOT contain localhost or test phone numbers in public links
     assert(!homeHtml.includes('wa.me/919876543210'));
   });

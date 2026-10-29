@@ -11,6 +11,7 @@ import EnquiryModal from '@/components/EnquiryModal';
 import ProductReviewsSection from '@/components/ProductReviewsSection';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
+import { useAuth } from '@/context/AuthContext';
 import { Product } from '@/types';
 import { getProductVariants, getDefaultVariant, ProductVariant } from '@/lib/variants';
 import { track } from '@/lib/analytics';
@@ -39,8 +40,9 @@ export default function ProductDetailClient({
   allProducts: initialAllProducts = [],
   slug
 }: ProductDetailClientProps) {
-  const { addToCart, setIsCartOpen } = useCart();
+  const { addToCart, setIsCartOpen, openCheckout } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { isLoggedIn, requireAuth } = useAuth();
 
   const [product, setProduct] = useState<Product | null>(initialProduct || null);
   const [allProducts, setAllProducts] = useState<Product[]>(initialAllProducts);
@@ -226,8 +228,18 @@ export default function ProductDetailClient({
 
   const handleBuyNow = () => {
     if (!product) return;
+    if (!isLoggedIn) {
+      try {
+        sessionStorage.setItem('freshroots_post_login_intent', JSON.stringify({ type: 'checkout' }));
+      } catch {}
+      requireAuth('Sign in to continue to Fast Checkout', () => {
+        addToCart(product, retailQty, selectedVariant || undefined);
+        openCheckout();
+      });
+      return;
+    }
     addToCart(product, retailQty, selectedVariant || undefined);
-    setIsCartOpen(true);
+    openCheckout();
   };
 
   return (

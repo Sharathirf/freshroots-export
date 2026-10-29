@@ -112,7 +112,7 @@ export default function PrivacyPolicyPage() {
             <div className="bg-stone-50 p-4 rounded-xl border border-stone-200 text-xs space-y-1">
               <div><strong>Grievance Officer:</strong> Sharath Inorahalli</div>
               <div><strong>Address:</strong> Karnataka, India - 571423</div>
-              <div><strong>Phone:</strong> +91 95911 42548</div>
+              <div><strong>Phone:</strong> +91 90084 62568</div>
               <div><strong>Email:</strong> sharathir198@gmail.com</div>
             </div>
           </section>

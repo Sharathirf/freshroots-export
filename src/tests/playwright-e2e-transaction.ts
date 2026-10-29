@@ -276,8 +276,8 @@ async function runPlaywrightE2E() {
                 🔄 Retry Payment
               </button>
             </div>
-            <a href="https://wa.me/919591142548" class="w-full py-1.5 bg-white border border-stone-300 text-stone-800 rounded-lg text-[11px] font-semibold text-center block">
-              💬 WhatsApp Farm Desk Support (+91 9591142548)
+            <a href="https://wa.me/919008462568" class="w-full py-1.5 bg-white border border-stone-300 text-stone-800 rounded-lg text-[11px] font-semibold text-center block">
+              💬 WhatsApp Farm Desk Support (+91 9008462568)
             </a>
           </div>
         `;

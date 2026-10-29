@@ -203,7 +203,7 @@ export default function ExitIntentModal() {
                   <input
                     type="tel"
                     maxLength={10}
-                    placeholder="95911 42548"
+                    placeholder="90084 62568"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     required

@@ -123,7 +123,7 @@ export default function PwaInstallPrompt() {
     <aside
       aria-label="Install FreshRoots Export app"
       aria-live="polite"
-      className="fixed inset-x-0 bottom-0 z-30 px-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-4 sm:pb-4"
+      className="fixed inset-x-0 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] md:bottom-4 z-[60] px-2.5 sm:px-4 pointer-events-auto"
     >
       <div className="relative mx-auto max-w-[704px] rounded-[28px] border border-emerald-700 bg-[#173b0b] p-4 text-white shadow-[0_16px_55px_rgba(0,0,0,0.28)] sm:p-6">
         <button

@@ -79,7 +79,7 @@ export default function GstInvoiceModal({ isOpen, onClose, order }: GstInvoiceMo
               <div className="mt-2 text-[11px] text-stone-500 space-y-0.5 font-mono">
                 <div>GSTIN: <strong className="text-stone-800">29AAKPI7841N1ZX</strong></div>
                 <div>FSSAI Reg. No: <strong className="text-stone-800">21224195000438</strong> (Mandya Division)</div>
-                <div>WhatsApp &amp; Support Desk: <strong className="text-stone-800">+91 95911 42548</strong></div>
+                <div>WhatsApp &amp; Support Desk: <strong className="text-stone-800">+91 90084 62568</strong></div>
               </div>
             </div>
 

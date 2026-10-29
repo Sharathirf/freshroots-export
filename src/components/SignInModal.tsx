@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { Phone, X, ArrowRight, CheckCircle2, ShieldCheck, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 
 export default function SignInModal() {
   const {
@@ -14,6 +16,8 @@ export default function SignInModal() {
     pendingAction,
     setPendingAction
   } = useAuth();
+  const { openCheckout } = useCart();
+  const { setIsWatchlistOpen } = useWishlist();
 
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -107,6 +111,15 @@ export default function SignInModal() {
         throw new Error(data.error || 'Invalid verification code');
       }
 
+      let intent: { type?: string } | null = null;
+      try {
+        const stored = sessionStorage.getItem('freshroots_post_login_intent');
+        if (stored) {
+          intent = JSON.parse(stored);
+          sessionStorage.removeItem('freshroots_post_login_intent');
+        }
+      } catch {}
+
       // Successful verification
       signIn(cleanPhone, fullName.trim(), emailAddress.trim() || undefined);
 
@@ -116,7 +129,24 @@ export default function SignInModal() {
       if (pendingAction) {
         const action = pendingAction;
         setPendingAction(null);
-        setTimeout(() => action(), 100);
+        setTimeout(() => {
+          try {
+            action();
+          } catch (e) {
+            console.error('Failed to run pending action:', e);
+          }
+        }, 100);
+      }
+
+      // Explicit routing based on intent to guarantee navigation
+      if (intent?.type === 'checkout') {
+        setTimeout(() => {
+          openCheckout();
+        }, 150);
+      } else if (intent?.type === 'watchlist') {
+        setTimeout(() => {
+          setIsWatchlistOpen(true);
+        }, 150);
       }
     } catch (err: any) {
       setErrorMsg(err.message || 'Verification failed. Please check the code.');

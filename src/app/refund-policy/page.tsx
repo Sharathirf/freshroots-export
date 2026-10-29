@@ -77,8 +77,8 @@ export default function RefundPolicyPage() {
               <li>Take 2&ndash;3 clear photos or a short video showing the cracked or damaged items and outer shipping label.</li>
               <li>
                 Send the photos via WhatsApp to our direct desk at{' '}
-                <a href="https://wa.me/919591142548" className="font-mono font-bold text-emerald-800 hover:underline">
-                  +91 95911 42548
+                <a href="https://wa.me/919008462568" className="font-mono font-bold text-emerald-800 hover:underline">
+                  +91 90084 62568
                 </a>{' '}
                 or email <strong>sharathir198@gmail.com</strong> with your Order Number (e.g. <code>AGR-202610-XXXXX</code>).
               </li>

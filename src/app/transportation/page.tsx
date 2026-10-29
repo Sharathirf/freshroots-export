@@ -213,7 +213,7 @@ export default function TransportationPage() {
                 </div>
 
                 <a
-                  href="https://wa.me/919591142548?text=Hello%20Sharath,%20I%20need%20a%20full%20truckload%20transport%20quote%20for%20my%20consignment"
+                  href="https://wa.me/919008462568?text=Hello%20Sharath,%20I%20need%20a%20full%20truckload%20transport%20quote%20for%20my%20consignment"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-2.5 text-center bg-stone-100 hover:bg-[#3b6d11] hover:text-white text-stone-800 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5"
@@ -306,13 +306,13 @@ export default function TransportationPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <a
-                href="https://wa.me/919591142548?text=Hello%20Sharath,%20I%20have%20a%20transportation%20query%20for%20my%20agricultural%20order"
+                href="https://wa.me/919008462568?text=Hello%20Sharath,%20I%20have%20a%20transportation%20query%20for%20my%20agricultural%20order"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-[#3b6d11] hover:bg-[#2d5a0b] text-white px-5 py-3 rounded-2xl text-xs font-bold transition flex items-center gap-2 shadow-md"
               >
                 <Phone className="w-4 h-4 text-lime-300" />
-                <span>WhatsApp Logistics: +91 95911 42548</span>
+                <span>WhatsApp Logistics: +91 90084 62568</span>
               </a>
               <Link
                 href="/#catalog"

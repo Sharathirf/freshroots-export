@@ -46,14 +46,14 @@ export default function EnquiryModal({ isOpen, onClose, defaultProduceTitle }: E
     // Realistic simulation of 3rd party SDK authentication
     setTimeout(async () => {
       let mockName = 'Sharath Inorahalli';
-      let mockPhone = '9591142548';
+      let mockPhone = '9008462568';
       let mockEmail = 'sharathir198@gmail.com';
 
       if (provider === 'google') {
         mockEmail = 'sharathir198@gmail.com';
         mockName = 'Sharath Inorahalli (Google)';
       } else if (provider === 'truecaller') {
-        mockPhone = '9591142548';
+        mockPhone = '9008462568';
         mockName = 'Sharath I (Truecaller Verified)';
       } else if (provider === 'shop') {
         mockName = 'Sharath Inorahalli (Shop Pay)';

@@ -9,6 +9,7 @@ import EnquiryModal from '@/components/EnquiryModal';
 import Footer from '@/components/Footer';
 import ActiveOrderBanner from '@/components/ActiveOrderBanner';
 import GlobalExportCorridors from '@/components/GlobalExportCorridors';
+import SiteVisitorCounter from '@/components/SiteVisitorCounter';
 import { useAuth } from '@/context/AuthContext';
 import { Product } from '@/types';
 import { getAllCatalogProducts } from '@/lib/catalog';
@@ -165,7 +166,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-stone-900">Direct WhatsApp Desk</div>
-                  <div className="text-[11px] text-stone-500">+91 95911 42548 (7am–9pm)</div>
+                  <div className="text-[11px] text-stone-500">+91 90084 62568 (7am–9pm)</div>
                 </div>
               </div>
             </div>
@@ -173,7 +174,10 @@ export default function HomePage() {
         </section>
       </main>
 
-      {/* 6. Minimalist Legal & Contact Footer */}
+      {/* 6. Live App Traffic & Public Site Visitor Counter */}
+      <SiteVisitorCounter />
+
+      {/* 7. Minimalist Legal & Contact Footer */}
       <Footer />
 
       {/* 7. On-demand Wholesale RFQ Modal */}
