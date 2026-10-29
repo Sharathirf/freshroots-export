@@ -42,13 +42,13 @@ function test(name: string, fn: () => void | Promise<void>) {
 
 async function runSeoTests() {
   // Test 1: Catalog Integrity
-  test('Catalog contains exactly 13 distinct agricultural commodities with valid SKUs and slugs', () => {
+  test('Catalog contains exactly 14 distinct agricultural commodities with valid SKUs and slugs', () => {
     const products = getAllCatalogProducts();
-    assert.equal(products.length, 13, `Expected 13 catalog products, got ${products.length}`);
+    assert.equal(products.length, 14, `Expected 14 catalog products, got ${products.length}`);
     const slugs = new Set(products.map((p) => p.slug));
-    assert.equal(slugs.size, 13, 'All product slugs must be unique');
+    assert.equal(slugs.size, 14, 'All product slugs must be unique');
     const skus = new Set(products.map((p) => p.sku));
-    assert.equal(skus.size, 13, 'All product SKUs must be unique');
+    assert.equal(skus.size, 14, 'All product SKUs must be unique');
   });
 
   // Test 2: Product Metadata Uniqueness
@@ -160,7 +160,7 @@ async function runSeoTests() {
   });
 
   // Test 7: Sitemap Generation in Production vs Staging
-  test('Sitemap includes all 13 products + static routes in production with verified lastModified date', () => {
+  test('Sitemap includes all 14 products + static routes in production with verified lastModified date', () => {
     const originalEnv = process.env.APP_ENV;
     const originalNodeEnv = process.env.NODE_ENV;
 
@@ -169,12 +169,12 @@ async function runSeoTests() {
     const stagingSitemap = sitemap();
     assert.equal(stagingSitemap.length, 0, 'Staging sitemap must be empty array');
 
-    // Simulate production: must return 9 static + 7 categories + 13 products + 5 guides = 34 total entries
+    // Simulate production: must return 9 static + 7 categories + 14 products + 5 guides = 35 total entries
     delete process.env.APP_ENV;
     delete process.env.VERCEL_ENV;
     (process.env as any).NODE_ENV = 'production';
     const prodSitemap = sitemap();
-    assert.equal(prodSitemap.length, 34, `Expected 34 sitemap items (9 static + 7 categories + 13 products + 5 guides), got ${prodSitemap.length}`);
+    assert.equal(prodSitemap.length, 35, `Expected 35 sitemap items (9 static + 7 categories + 14 products + 5 guides), got ${prodSitemap.length}`);
 
     // Verify lastModified is a valid Date without dynamic regeneration
     for (const item of prodSitemap) {

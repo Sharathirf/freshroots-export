@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -22,6 +23,8 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { Product } from '@/types';
+import { getAllCatalogProducts } from '@/lib/catalog';
+import { searchMatchesProduct } from '@/lib/search-matcher';
 
 type CopraMandiRate = {
   pricePerQuintal: number;
@@ -51,11 +54,16 @@ const FALLBACK_ARECANUT_RATE: ArecanutMandiRate = {
 
 export default function Navbar({
   onOpenRFQ,
-  onOpenEnquiry: _onOpenEnquiry
+  onOpenEnquiry: _onOpenEnquiry,
+  searchQueryValue,
+  onSearchChange
 }: {
   onOpenRFQ?: () => void;
   onOpenEnquiry?: () => void;
+  searchQueryValue?: string;
+  onSearchChange?: (query: string) => void;
 }) {
+  const router = useRouter();
   const { itemCount, subtotal, setIsCartOpen } = useCart();
   const {
     customer,
@@ -72,13 +80,21 @@ export default function Navbar({
   const { wishlistCount, setIsWatchlistOpen } = useWishlist();
 
   // Live Search state
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(searchQueryValue || '');
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>(() => getAllCatalogProducts());
   const [copraMandiRate, setCopraMandiRate] = useState(FALLBACK_COPRA_RATE);
   const [arecanutMandiRate, setArecanutMandiRate] = useState(FALLBACK_ARECANUT_RATE);
   const searchRef = useRef<HTMLDivElement>(null);
+  const mobileSearchRef = useRef<HTMLDivElement>(null);
+
+  // Sync external search query updates (e.g. from Home page clear filter)
+  useEffect(() => {
+    if (searchQueryValue !== undefined) {
+      setSearchQuery(searchQueryValue);
+    }
+  }, [searchQueryValue]);
 
   useEffect(() => {
     let cancelled = false;
@@ -149,24 +165,33 @@ export default function Navbar({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isSearchOpen]);
 
-  // Click outside to close search dropdown
+  // Click outside to close search dropdown (supporting both desktop and mobile containers)
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
-        setIsSearchOpen(false);
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as Node;
+      if (
+        (searchRef.current && searchRef.current.contains(target)) ||
+        (mobileSearchRef.current && mobileSearchRef.current.contains(target))
+      ) {
+        return;
       }
+      setIsSearchOpen(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
   }, []);
 
-  // Preload products for search
+  // Preload live products for search
   useEffect(() => {
     async function loadCatalog() {
       try {
         const res = await fetch('/api/products');
         const data = await res.json();
-        if (data.success) {
+        if (data.success && Array.isArray(data.products) && data.products.length > 0) {
           setAllProducts(data.products);
         }
       } catch (err) {
@@ -176,22 +201,38 @@ export default function Navbar({
     loadCatalog();
   }, []);
 
-  // Filter search results
+  // Filter search results using intelligent multi-term & Kannada transliteration matcher
   useEffect(() => {
-    const q = searchQuery.trim().toLowerCase();
+    const q = searchQuery.trim();
     if (!q) {
       setSearchResults([]);
       return;
     }
-    const matches = allProducts.filter(
-      (p) =>
-        p.title.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q) ||
-        p.description.toLowerCase().includes(q) ||
-        p.grade.toLowerCase().includes(q)
-    );
+    const matches = allProducts.filter((p) => searchMatchesProduct(p, q));
     setSearchResults(matches);
   }, [searchQuery, allProducts]);
+
+  const handleSearchSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const q = searchQuery.trim();
+    if (!q) return;
+
+    setIsSearchOpen(false);
+    if (onSearchChange) {
+      onSearchChange(q);
+    }
+
+    if (typeof window !== 'undefined' && window.location.pathname === '/') {
+      const el = document.getElementById('catalog');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } else if (searchResults.length > 0) {
+      router.push(`/products/${searchResults[0].slug}`);
+    } else {
+      router.push(`/?search=${encodeURIComponent(q)}#catalog`);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-40 bg-white shadow-sm border-b border-stone-200 w-full max-w-full overflow-hidden">
@@ -287,76 +328,115 @@ export default function Navbar({
 
         {/* Large Expanded Live Search Bar with Instant Autocomplete (Desktop / Tablet) */}
         <div ref={searchRef} className="hidden lg:block flex-1 max-w-xl lg:max-w-2xl xl:max-w-3xl relative mx-3 sm:mx-6 min-w-[200px]">
-          <div className="relative w-full">
-            <Search className="w-5 h-5 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <form onSubmit={handleSearchSubmit} className="relative w-full">
+            <button
+              type="submit"
+              aria-label="Search produce"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 hover:text-[#3b6d11] transition"
+            >
+              <Search className="w-5 h-5" />
+            </button>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
                 setIsSearchOpen(true);
+                if (onSearchChange) onSearchChange(e.target.value);
               }}
               onFocus={() => setIsSearchOpen(true)}
-              placeholder="Search coconuts, copra, spices, cold-pressed oils..."
+              placeholder="Search coconuts, copra, coconut oil, spices, flours..."
               className="w-full pl-12 pr-10 py-3 rounded-full border border-stone-300/90 text-sm bg-stone-50/90 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#3b6d11] focus:border-transparent transition shadow-inner placeholder:text-stone-400 font-medium"
             />
             {searchQuery && (
               <button
                 type="button"
-                onClick={() => setSearchQuery('')}
+                onClick={() => {
+                  setSearchQuery('');
+                  if (onSearchChange) onSearchChange('');
+                }}
                 className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 p-1 rounded-full hover:bg-stone-200/60 transition"
               >
                 <X className="w-4 h-4" />
               </button>
             )}
-          </div>
+          </form>
 
           {/* Autocomplete Dropdown */}
-          {isSearchOpen && searchResults.length > 0 && (
+          {isSearchOpen && searchQuery.trim() && (
             <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-stone-200 shadow-2xl overflow-hidden z-50 animate-in fade-in max-h-[440px] overflow-y-auto w-full">
-              <div className="p-3 bg-stone-50 text-[11px] font-bold uppercase tracking-wider text-stone-600 border-b border-stone-100 flex justify-between items-center">
-                <span>Matching Produce ({searchResults.length})</span>
-                <span className="text-[10px] text-[#3b6d11] font-extrabold">Direct Farm Stock</span>
-              </div>
-              <div className="divide-y divide-stone-100">
-                {searchResults.map((p) => (
-                  <Link
-                    key={p.id}
-                    href={`/products/${p.slug}`}
-                    onClick={() => {
-                      setIsSearchOpen(false);
-                      setSearchQuery('');
-                    }}
-                    className="p-3.5 hover:bg-stone-50/90 flex items-center justify-between gap-4 group transition"
-                  >
-                    <div className="flex items-center gap-3.5 min-w-0">
-                      <img
-                        src={p.image_url}
-                        alt={p.title}
-                        className="w-12 h-12 rounded-xl object-cover bg-stone-100 border border-stone-200 shrink-0"
-                      />
-                      <div className="min-w-0">
-                        <div className="text-sm font-bold text-stone-900 group-hover:text-[#3b6d11] truncate transition">
-                          {p.title}
+              {searchResults.length > 0 ? (
+                <>
+                  <div className="p-3 bg-stone-50 text-[11px] font-bold uppercase tracking-wider text-stone-600 border-b border-stone-100 flex justify-between items-center">
+                    <span>Matching Produce ({searchResults.length})</span>
+                    <span className="text-[10px] text-[#3b6d11] font-extrabold">Direct Farm Stock</span>
+                  </div>
+                  <div className="divide-y divide-stone-100">
+                    {searchResults.map((p) => (
+                      <Link
+                        key={p.id}
+                        href={`/products/${p.slug}`}
+                        onClick={() => {
+                          setIsSearchOpen(false);
+                          setSearchQuery('');
+                          if (onSearchChange) onSearchChange('');
+                        }}
+                        className="p-3.5 hover:bg-stone-50/90 flex items-center justify-between gap-4 group transition"
+                      >
+                        <div className="flex items-center gap-3.5 min-w-0">
+                          <img
+                            src={p.image_url}
+                            alt={p.title}
+                            className="w-12 h-12 rounded-xl object-cover bg-stone-100 border border-stone-200 shrink-0"
+                          />
+                          <div className="min-w-0">
+                            <div className="text-sm font-bold text-stone-900 group-hover:text-[#3b6d11] truncate transition">
+                              {p.title}
+                            </div>
+                            <div className="text-[11px] text-stone-500 flex items-center gap-2 mt-0.5">
+                              <span className="font-medium text-stone-600">{p.unit_of_measure}</span>
+                              <span>•</span>
+                              <span className="text-emerald-700 font-semibold">{p.grade}</span>
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-[11px] text-stone-500 flex items-center gap-2 mt-0.5">
-                          <span className="font-medium text-stone-600">{p.unit_of_measure}</span>
-                          <span>•</span>
-                          <span className="text-emerald-700 font-semibold">{p.grade}</span>
+                        <div className="text-right shrink-0">
+                          <div className="text-sm font-mono font-bold text-stone-900">
+                            ₹{Number(p.retail_price_inr).toLocaleString('en-IN')}
+                          </div>
+                          <span className="text-[11px] text-[#3b6d11] font-bold flex items-center justify-end gap-0.5 mt-0.5">
+                            View <ChevronRight className="w-3.5 h-3.5" />
+                          </span>
                         </div>
-                      </div>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <div className="text-sm font-mono font-bold text-stone-900">
-                        ₹{Number(p.retail_price_inr).toLocaleString('en-IN')}
-                      </div>
-                      <span className="text-[11px] text-[#3b6d11] font-bold flex items-center justify-end gap-0.5 mt-0.5">
-                        View <ChevronRight className="w-3.5 h-3.5" />
-                      </span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+                      </Link>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="p-4 sm:p-5 text-center">
+                  <p className="text-xs sm:text-sm font-semibold text-stone-700">
+                    No produce matching &ldquo;{searchQuery}&rdquo; found
+                  </p>
+                  <p className="text-[11px] text-stone-500 mt-1">
+                    Try searching for:
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-1.5 mt-2.5">
+                    {['Coconut Oil', 'Tiptur Copra', 'Cow Ghee', 'Ragi Flour', 'Rice Flour', 'Tender Coconuts', 'Groundnut Oil'].map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => {
+                          setSearchQuery(tag);
+                          if (onSearchChange) onSearchChange(tag);
+                        }}
+                        className="text-[11px] font-medium bg-stone-100 hover:bg-emerald-50 hover:text-emerald-800 text-stone-700 px-2.5 py-1 rounded-full transition"
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -548,72 +628,108 @@ export default function Navbar({
       </div>
 
       {/* 2b. Mobile Full-Width Search Bar */}
-        <div className="lg:hidden px-3 pb-2 pt-0.5 bg-white border-t border-stone-100 relative">
-        <div className="relative w-full">
-          <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+      <div ref={mobileSearchRef} className="lg:hidden px-3 pb-2 pt-0.5 bg-white border-t border-stone-100 relative">
+        <form onSubmit={handleSearchSubmit} className="relative w-full">
+          <button
+            type="submit"
+            aria-label="Search produce"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-[#3b6d11] transition"
+          >
+            <Search className="w-4 h-4" />
+          </button>
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
               setIsSearchOpen(true);
+              if (onSearchChange) onSearchChange(e.target.value);
             }}
             onFocus={() => setIsSearchOpen(true)}
-            placeholder={lang === 'kn' ? 'ತೆಂಗಿನಕಾಯಿ, ಕೊಬ್ಬರಿ, ತುಪ್ಪ ಹುಡುಕಿ...' : 'Search coconuts, copra, oils, spices...'}
+            placeholder={lang === 'kn' ? 'ತೆಂಗಿನಕಾಯಿ, ಕೊಬ್ಬರಿ, ತೆಂಗಿನ ಎಣ್ಣೆ, ಹಿಟ್ಟು ಹುಡುಕಿ...' : 'Search coconuts, copra, coconut oil, flours...'}
             className="w-full pl-9 pr-8 py-2 rounded-full border border-stone-300 text-xs bg-stone-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#3b6d11] transition shadow-inner placeholder:text-stone-400 font-medium"
           />
           {searchQuery && (
             <button
               type="button"
-              onClick={() => setSearchQuery('')}
+              onClick={() => {
+                setSearchQuery('');
+                if (onSearchChange) onSearchChange('');
+              }}
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 p-1"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           )}
-        </div>
+        </form>
 
         {/* Mobile Search Dropdown */}
-        {isSearchOpen && searchResults.length > 0 && (
+        {isSearchOpen && searchQuery.trim() && (
           <div className="absolute top-full left-3 right-3 mt-1 bg-white rounded-2xl border border-stone-200 shadow-2xl overflow-hidden z-50 max-h-[360px] overflow-y-auto">
-            <div className="p-2.5 bg-stone-50 text-[10px] font-bold uppercase tracking-wider text-stone-600 border-b border-stone-100 flex justify-between items-center">
-              <span>Matching ({searchResults.length})</span>
-              <span className="text-[#3b6d11]">Direct Farm</span>
-            </div>
-            <div className="divide-y divide-stone-100">
-              {searchResults.map((p) => (
-                <Link
-                  key={p.id}
-                  href={`/products/${p.slug}`}
-                  onClick={() => {
-                    setIsSearchOpen(false);
-                    setSearchQuery('');
-                  }}
-                  className="p-2.5 hover:bg-stone-50 flex items-center justify-between gap-3 group transition"
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <img
-                      src={p.image_url}
-                      alt={p.title}
-                      className="w-10 h-10 rounded-lg object-cover bg-stone-100 border border-stone-200 shrink-0"
-                    />
-                    <div className="min-w-0">
-                      <div className="text-xs font-bold text-stone-900 group-hover:text-[#3b6d11] truncate transition">
-                        {p.title}
+            {searchResults.length > 0 ? (
+              <>
+                <div className="p-2.5 bg-stone-50 text-[10px] font-bold uppercase tracking-wider text-stone-600 border-b border-stone-100 flex justify-between items-center">
+                  <span>Matching ({searchResults.length})</span>
+                  <span className="text-[#3b6d11]">Direct Farm</span>
+                </div>
+                <div className="divide-y divide-stone-100">
+                  {searchResults.map((p) => (
+                    <Link
+                      key={p.id}
+                      href={`/products/${p.slug}`}
+                      onClick={() => {
+                        setIsSearchOpen(false);
+                        setSearchQuery('');
+                        if (onSearchChange) onSearchChange('');
+                      }}
+                      className="p-2.5 hover:bg-stone-50 flex items-center justify-between gap-3 group transition"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <img
+                          src={p.image_url}
+                          alt={p.title}
+                          className="w-10 h-10 rounded-lg object-cover bg-stone-100 border border-stone-200 shrink-0"
+                        />
+                        <div className="min-w-0">
+                          <div className="text-xs font-bold text-stone-900 group-hover:text-[#3b6d11] truncate transition">
+                            {p.title}
+                          </div>
+                          <div className="text-[10px] text-stone-500 truncate mt-0.5">
+                            {p.unit_of_measure} • <span className="text-emerald-700 font-semibold">{p.grade}</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-[10px] text-stone-500 truncate mt-0.5">
-                        {p.unit_of_measure} • <span className="text-emerald-700 font-semibold">{p.grade}</span>
+                      <div className="text-right shrink-0">
+                        <div className="text-xs font-mono font-bold text-stone-900">
+                          ₹{Number(p.retail_price_inr).toLocaleString('en-IN')}
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <div className="text-xs font-mono font-bold text-stone-900">
-                      ₹{Number(p.retail_price_inr).toLocaleString('en-IN')}
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                    </Link>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="p-3.5 text-center">
+                <p className="text-xs font-semibold text-stone-700">
+                  No produce matching &ldquo;{searchQuery}&rdquo; found
+                </p>
+                <div className="flex flex-wrap justify-center gap-1.5 mt-2">
+                  {['Coconut Oil', 'Copra', 'Cow Ghee', 'Ragi Flour', 'Rice Flour'].map((tag) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery(tag);
+                        if (onSearchChange) onSearchChange(tag);
+                      }}
+                      className="text-[10px] font-medium bg-stone-100 hover:bg-emerald-50 hover:text-emerald-800 text-stone-700 px-2 py-0.5 rounded-full transition"
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

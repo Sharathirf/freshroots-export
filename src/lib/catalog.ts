@@ -538,6 +538,49 @@ export const CATALOG_PRODUCTS: CatalogProductItem[] = [
       'gluten free fine rice flour',
       'idiyappam rice flour free delivery'
     ]
+  },
+  {
+    id: 'prod-014-coconut-oil',
+    sku: 'OIL-COC-WOD-01L',
+    title: 'Wood-Pressed Coconut Oil (Traditional Marachekku)',
+    slug: 'wood-pressed-coconut-oil-1-litre',
+    category: 'oil_and_extracts',
+    grade: 'Extra Virgin Cold-Pressed / Marachekku (Zero Heat, Unrefined)',
+    origin: 'Tiptur Horticultural Belt & Kikkeri, Karnataka',
+    unit_of_measure: '1 Litre Bottle',
+    estimated_weight_kg: 0.92,
+    moisture_percentage: 0.2,
+    oil_percentage: 100.0,
+    retail_price_inr: 540.00,
+    bulk_min_quantity: 1,
+    wholesale_benchmark_price_inr: 420.00,
+    hsn_code: '15131900',
+    tax_rate_percentage: 5.00,
+    description: 'Authentic cold-pressed virgin coconut oil extracted from naturally sun-dried Tiptur copra using traditional Vaagai wood (Mara Chekku) expellers. Pressed at room temperature under 40°C without chemicals, sulfur, bleaching agents, or mineral oil. Retains natural lauric acid, aroma, and rich nutrients. Perfect for daily cooking, traditional hair/skin wellness, and ayurvedic therapies.',
+    specifications: {
+      extraction_method: 'Traditional Wooden Cold-Press (Marachekku / Vaagai Wood)',
+      copra_source: 'Sun-dried sulfur-free Tiptur Ball Copra & mature copra',
+      processing_temperature: 'Strictly under 40°C (Cold-Pressed Raw Extra Virgin)',
+      lauric_acid_content: '48% to 52% natural Lauric Acid',
+      shelf_life: '12 Months at ambient room temperature',
+      packaging: 'Food-grade leakproof bottle with tamper-evident seal'
+    },
+    image_url: '/products/coconut-oil-4k.jpg',
+    is_active: true,
+    available_stock: 260,
+    average_rating: 5.0,
+    review_count: 28,
+    created_at: '2026-10-29T00:00:00Z',
+    seoTitle: 'Wood-Pressed Coconut Oil (Mara Chekku, 1 Litre) Buy Online | FreshRoots Export',
+    seoDescription: 'Direct farm-pressed virgin coconut oil from Tiptur sun-cured copra. 100% pure cold-pressed in traditional wooden mills, zero heat, rich in lauric acid. Free doorstep delivery across India.',
+    keywords: [
+      'wood pressed coconut oil Bangalore',
+      'marachekku coconut oil price Karnataka',
+      'cold pressed virgin coconut oil online',
+      'pure kobbari enne buy online',
+      'Tiptur coconut oil 1 litre free delivery',
+      'cold pressed edible coconut oil'
+    ]
   }
 ];
 

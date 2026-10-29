@@ -83,6 +83,12 @@ export const BULK_ORDER_ITEMS: BulkOrderItemMeta[] = [
     simpleName: '13. Rice Flour (Pure Stone-Ground 5 kg Bag)',
     cleanName: 'Rice Flour (Pure Stone-Ground 5 kg Bag)',
     skuMatch: 'FLR-RIC-STN-05K'
+  },
+  {
+    order: 14,
+    simpleName: '14. Coconut Oil (Wood-Pressed, Cold-Pressed)',
+    cleanName: 'Coconut Oil (Wood-Pressed, Cold-Pressed)',
+    skuMatch: 'OIL-COC-WOD-01L'
   }
 ];
 
@@ -145,6 +151,16 @@ export function getBulkOrderItemMeta(item?: {
   // 4. Ragi Millet
   if (sku.includes('RAG') || slug.includes('ragi') || title.includes('ragi')) {
     return BULK_ORDER_ITEMS[3];
+  }
+  // 14. Coconut Oil
+  if (
+    sku.includes('OIL-COC') ||
+    sku.includes('COC-OIL') ||
+    (slug.includes('coconut') && slug.includes('oil')) ||
+    (title.includes('coconut') && title.includes('oil')) ||
+    title.includes('kobbari enne')
+  ) {
+    return BULK_ORDER_ITEMS[13];
   }
   // 5. Groundnut Oil
   if (

@@ -13,11 +13,14 @@ import SiteVisitorCounter from '@/components/SiteVisitorCounter';
 import { useAuth } from '@/context/AuthContext';
 import { Product } from '@/types';
 import { getAllCatalogProducts } from '@/lib/catalog';
+import { searchMatchesProduct } from '@/lib/search-matcher';
 import {
   Truck,
   ShieldCheck,
   CheckCircle2,
-  MessageCircle
+  MessageCircle,
+  Search,
+  X
 } from 'lucide-react';
 
 function isBulkOnly(product: Product): boolean {
@@ -36,6 +39,7 @@ function isBulkOnly(product: Product): boolean {
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>(() => getAllCatalogProducts());
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [isRFQOpen, setIsRFQOpen] = useState(false);
   const [selectedProductForRFQ, setSelectedProductForRFQ] = useState<Product | null>(null);
@@ -45,11 +49,19 @@ export default function HomePage() {
   const { lang } = useAuth();
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get('search');
+      if (q) setSearchQuery(q);
+    }
+  }, []);
+
+  useEffect(() => {
     async function loadProducts() {
       try {
         const res = await fetch('/api/products');
         const data = await res.json();
-        if (data.success) {
+        if (data.success && Array.isArray(data.products) && data.products.length > 0) {
           setProducts(data.products);
         }
       } catch (err) {
@@ -67,12 +79,16 @@ export default function HomePage() {
     setIsRFQOpen(true);
   };
 
-  const displayedProducts = [...products].sort((a, b) => {
+  const sortedProducts = [...products].sort((a, b) => {
     const aBulk = isBulkOnly(a);
     const bBulk = isBulkOnly(b);
     if (aBulk === bBulk) return 0;
     return aBulk ? 1 : -1;
   });
+
+  const displayedProducts = searchQuery.trim()
+    ? sortedProducts.filter((p) => searchMatchesProduct(p, searchQuery))
+    : sortedProducts;
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans">
@@ -80,6 +96,8 @@ export default function HomePage() {
       <Navbar
         onOpenRFQ={() => handleOpenRFQ()}
         onOpenEnquiry={() => setIsEnquiryOpen(true)}
+        searchQueryValue={searchQuery}
+        onSearchChange={(q) => setSearchQuery(q)}
       />
       <CartDrawer />
 
@@ -100,6 +118,26 @@ export default function HomePage() {
             </p>
           </div>
 
+          {/* Search Query Filter Pill */}
+          {searchQuery.trim() && (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2 bg-emerald-50 border border-emerald-200/90 rounded-2xl p-3 sm:px-4 shadow-2xs">
+              <div className="text-xs sm:text-sm text-emerald-950 font-medium flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#3b6d11] animate-pulse"></span>
+                <span>
+                  Showing produce matching <span className="font-extrabold text-[#1c3809]">&ldquo;{searchQuery}&rdquo;</span> ({displayedProducts.length} {displayedProducts.length === 1 ? 'item' : 'items'} found)
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="text-xs font-bold text-emerald-800 hover:text-emerald-950 bg-white hover:bg-emerald-100/50 border border-emerald-300 px-3 py-1 rounded-full shadow-2xs transition flex items-center gap-1"
+              >
+                <span>Clear Filter</span>
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
           {/* Product Grid - Compact 4 columns on desktop, retail first, bulk-only last */}
           {loading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 py-4">
@@ -109,6 +147,25 @@ export default function HomePage() {
                   className="bg-white rounded-2xl h-72 animate-pulse border border-stone-200"
                 />
               ))}
+            </div>
+          ) : displayedProducts.length === 0 ? (
+            <div className="text-center py-12 px-4 bg-white rounded-3xl border border-dashed border-stone-300 my-4">
+              <div className="w-12 h-12 rounded-2xl bg-stone-100 flex items-center justify-center mx-auto text-stone-400 mb-3">
+                <Search className="w-6 h-6" />
+              </div>
+              <h3 className="text-base font-bold text-stone-900">
+                No agricultural produce found for &ldquo;{searchQuery}&rdquo;
+              </h3>
+              <p className="text-xs text-stone-500 mt-1 max-w-sm mx-auto">
+                Try searching for coconuts, copra, coconut oil, groundnut oil, ragi, or ghee.
+              </p>
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-[#3b6d11] hover:bg-[#2e550d] text-white text-xs font-bold rounded-xl shadow transition"
+              >
+                View All 14 Commodities
+              </button>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">

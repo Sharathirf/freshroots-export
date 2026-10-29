@@ -155,6 +155,68 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
       title: 'Pure Rice Flour (Akki Hittu 25 kg Sack)',
       isDefault: false
     }
+  ],
+
+  // Wood-Pressed Coconut Oil (Traditional Marachekku): 500 ml @ ₹290, 1 Litre @ ₹540, 5 Litre @ ₹2,550
+  'OIL-COC-WOD-01L': [
+    {
+      packSize: '500 ml Bottle',
+      label: '500 ml Bottle @ ₹290',
+      price: 290,
+      weightKg: 0.46,
+      unitOfMeasure: '500 ml Bottle',
+      title: 'Wood-Pressed Coconut Oil (500 ml Bottle)',
+      isDefault: false
+    },
+    {
+      packSize: '1 Litre Bottle',
+      label: '1 Litre Bottle @ ₹540',
+      price: 540,
+      weightKg: 0.92,
+      unitOfMeasure: '1 Litre Bottle',
+      title: 'Wood-Pressed Coconut Oil (1 Litre Bottle)',
+      isDefault: true
+    },
+    {
+      packSize: '5 Litre Can',
+      label: '5 Litre Can @ ₹2,550',
+      price: 2550,
+      weightKg: 4.6,
+      unitOfMeasure: '5 Litre Can',
+      title: 'Wood-Pressed Coconut Oil (5 Litre Master Can)',
+      isDefault: false
+    }
+  ],
+
+  // Wood-Pressed Groundnut Oil (Traditional Marachekku): 500 ml @ ₹250, 1 Litre @ ₹469, 5 Litre @ ₹2,250
+  'OIL-GND-WOD-01L': [
+    {
+      packSize: '500 ml Bottle',
+      label: '500 ml Bottle @ ₹250',
+      price: 250,
+      weightKg: 0.46,
+      unitOfMeasure: '500 ml Bottle',
+      title: 'Wood-Pressed Groundnut Oil (500 ml Bottle)',
+      isDefault: false
+    },
+    {
+      packSize: '1 Litre Bottle',
+      label: '1 Litre Bottle @ ₹469',
+      price: 469,
+      weightKg: 0.92,
+      unitOfMeasure: '1 Litre Bottle',
+      title: 'Wood-Pressed Groundnut Oil (1 Litre Bottle)',
+      isDefault: true
+    },
+    {
+      packSize: '5 Litre Can',
+      label: '5 Litre Can @ ₹2,250',
+      price: 2250,
+      weightKg: 4.6,
+      unitOfMeasure: '5 Litre Can',
+      title: 'Wood-Pressed Groundnut Oil (5 Litre Master Can)',
+      isDefault: false
+    }
   ]
 };
 

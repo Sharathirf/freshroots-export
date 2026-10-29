@@ -32,6 +32,11 @@ const commodityMetadata: Record<string, { emoji: string; titleKn: string; subtit
     titleKn: 'ಮರದ ಗಾಣದ ಶುದ್ಧ ಕಡಲೆಕಾಯಿ ಎಣ್ಣೆ',
     subtitleKn: '1 ಲೀಟರ್ ಬಾಟಲಿ • ಕೋಲ್ಡ್-ಪ್ರೆಸ್ಡ್'
   },
+  'OIL-COC-WOD-01L': {
+    emoji: '🥥',
+    titleKn: 'ಮರದ ಗಾಣದ ಶುದ್ಧ ತೆಂಗಿನ ಎಣ್ಣೆ (ಕೊಬ್ಬರಿ ಎಣ್ಣೆ)',
+    subtitleKn: '1 ಲೀಟರ್ ಬಾಟಲಿ • ಕೋಲ್ಡ್-ಪ್ರೆಸ್ಡ್ • ಉಚಿತ ಡೆಲಿವರಿ'
+  },
   'MIL-RAG-ORG-05K': {
     emoji: '🌾',
     titleKn: 'ಮಂಡ್ಯದ ಪಾಲಿಶ್ ಮಾಡದ ನಾಟಿ ರಾಗಿ',

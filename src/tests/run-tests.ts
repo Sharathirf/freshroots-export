@@ -447,8 +447,8 @@ import {
   sortProductsByBulkOrder
 } from '../lib/bulk-items';
 
-it('Bulk order item selection defines exactly 13 simple items in designated 1-13 sequence', () => {
-  assert.strictEqual(BULK_ORDER_ITEMS.length, 13);
+it('Bulk order item selection defines exactly 14 simple items in designated 1-14 sequence', () => {
+  assert.strictEqual(BULK_ORDER_ITEMS.length, 14);
   assert.strictEqual(BULK_ORDER_ITEMS[0].simpleName, '1. Tender Coconut (Bulk Order Lot)');
   assert.strictEqual(BULK_ORDER_ITEMS[1].simpleName, '2. Arecanut Plants (1–1.5 Feet Height)');
   assert.strictEqual(BULK_ORDER_ITEMS[2].simpleName, '3. Coconut Plants (1 Year Old, 2 Feet Height)');
@@ -462,6 +462,7 @@ it('Bulk order item selection defines exactly 13 simple items in designated 1-13
   assert.strictEqual(BULK_ORDER_ITEMS[10].simpleName, '11. Arecanut (Adike) — Bulk Commodity Lot');
   assert.strictEqual(BULK_ORDER_ITEMS[11].simpleName, '12. Ragi Flour (Mandya Stone-Ground 5 kg Bag)');
   assert.strictEqual(BULK_ORDER_ITEMS[12].simpleName, '13. Rice Flour (Pure Stone-Ground 5 kg Bag)');
+  assert.strictEqual(BULK_ORDER_ITEMS[13].simpleName, '14. Coconut Oil (Wood-Pressed, Cold-Pressed)');
 });
 
 it('getBulkOrderDisplayName correctly resolves catalog products by SKU or title', () => {
@@ -493,6 +494,45 @@ it('sortProductsByBulkOrder orders arbitrary product list into sequence 1 throug
   assert.strictEqual(sorted[0].sku, 'COC-TND-BLK-LOT');
   assert.strictEqual(sorted[1].sku, 'OIL-GND-WOD-01L');
   assert.strictEqual(sorted[2].sku, 'COI-SHL-BLK-01T');
+});
+
+// ----------------------------------------------------
+console.log('🔍 Test Suite 9: Intelligent Commodity Search & Synonyms');
+
+import { searchMatchesProduct } from '../lib/search-matcher';
+import { getAllCatalogProducts } from '../lib/catalog';
+
+it('Search matcher accurately finds Coconut Oil via title, synonyms and regional terms', () => {
+  const products = getAllCatalogProducts();
+  const coconutOil = products.find((p) => p.sku === 'OIL-COC-WOD-01L')!;
+  assert.ok(coconutOil, 'Wood-Pressed Coconut Oil must be present in catalog');
+
+  assert.strictEqual(searchMatchesProduct(coconutOil, 'coconut oil'), true);
+  assert.strictEqual(searchMatchesProduct(coconutOil, 'marachekku'), true);
+  assert.strictEqual(searchMatchesProduct(coconutOil, 'kobbari enne'), true);
+  assert.strictEqual(searchMatchesProduct(coconutOil, 'virgin oil'), true);
+  assert.strictEqual(searchMatchesProduct(coconutOil, 'tiptur oil'), true);
+});
+
+it('Search matcher separates Groundnut Oil from Coconut Oil accurately', () => {
+  const products = getAllCatalogProducts();
+  const groundnutOil = products.find((p) => p.sku === 'OIL-GND-WOD-01L')!;
+  assert.ok(groundnutOil, 'Groundnut Oil must be present');
+
+  assert.strictEqual(searchMatchesProduct(groundnutOil, 'groundnut oil'), true);
+  assert.strictEqual(searchMatchesProduct(groundnutOil, 'peanut'), true);
+  assert.strictEqual(searchMatchesProduct(groundnutOil, 'coconut'), false);
+});
+
+it('Search matcher resolves regional Kannada terms for Copra, Ghee, Flour and Saplings', () => {
+  const products = getAllCatalogProducts();
+  const copra = products.find((p) => p.sku === 'COP-BAL-BOX-15K')!;
+  const ghee = products.find((p) => p.sku === 'DAI-GHE-BIL-01L')!;
+  const ragiFlour = products.find((p) => p.sku === 'FLR-RAG-STN-05K')!;
+
+  assert.strictEqual(searchMatchesProduct(copra, 'kobbari'), true);
+  assert.strictEqual(searchMatchesProduct(ghee, 'tuppa'), true);
+  assert.strictEqual(searchMatchesProduct(ragiFlour, 'ragi hittu'), true);
 });
 
 // ----------------------------------------------------

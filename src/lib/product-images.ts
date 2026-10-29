@@ -15,6 +15,7 @@ export function resolveProductImageBySku(sku?: string): string {
   const s = sku.toUpperCase();
   if (s.includes('ARE-BLK') || s.includes('ADK')) return '/products/arecanut-adike-4k.jpg';
   if (s.includes('NUR-ARE') || s.includes('ARE')) return '/products/arecanut-saplings-4k.jpg';
+  if (s.includes('OIL-COC') || s.includes('COC-OIL')) return '/products/coconut-oil-4k.jpg';
   if (s.includes('COC-SEMI') || s.includes('COC-MAT')) return '/products/mature-coconuts-4k.jpg';
   if (s.includes('COP') || s.includes('BAL')) return '/products/ball-copra-4k.jpg';
   if (s.includes('NUR-COC')) return '/products/coconut-saplings-4k.jpg';
