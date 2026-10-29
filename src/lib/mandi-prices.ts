@@ -29,14 +29,14 @@ const CONFIG: Record<MandiCommodity, MandiPriceConfig> = {
   copra: {
     marketName: 'Tiptur Mandi',
     sourceUrl: 'https://acrop.app/mandi/karnataka/tumakuru/tiptur/copra',
-    fallbackMaximumPricePerQuintal: 34_599,
-    fallbackReportedAt: '22 Oct 2026',
+    fallbackMaximumPricePerQuintal: 33_100,
+    fallbackReportedAt: '29 Oct 2026',
   },
   arecanut: {
     marketName: 'Shimoga Mandi',
     sourceUrl: 'https://acrop.app/mandi/karnataka/shivamogga/shimoga/arecanut',
     fallbackMaximumPricePerQuintal: 70_809,
-    fallbackReportedAt: '22 Oct 2026',
+    fallbackReportedAt: '29 Oct 2026',
   },
 };
 

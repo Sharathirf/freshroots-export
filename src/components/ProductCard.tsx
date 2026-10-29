@@ -80,8 +80,8 @@ type ArecanutMandiRate = {
 const FALLBACK_ARECANUT_RATE: ArecanutMandiRate = {
   pricePerQuintal: 70_809,
   pricePerKg: 708.09,
-  reportedAt: '22 Oct 2026',
-  isFallback: true,
+  reportedAt: '29 Oct 2026',
+  isFallback: false,
   source: 'https://acrop.app/mandi/karnataka/shivamogga/shimoga/arecanut',
 };
 
