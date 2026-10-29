@@ -214,14 +214,14 @@ export default function CartDrawer() {
   if (!isAddressValid) missingDeliveryFields.push(isKannada ? 'ವಿತರಣಾ ವಿಳಾಸ' : 'Delivery Address');
 
   // Live Direct UPI Payment Details
-  const farmUpiId = '9591142548@upi';
+  const farmUpiId = process.env.NEXT_PUBLIC_UPI_VPA || 'freshrootsexportx@axl';
   // If preallocated order exists, embed the order number so banking apps tag the exact transaction note and ref
   const orderTrackingTag = preallocatedOrder?.order_number
     ? preallocatedOrder.order_number
     : (cleanPhone ? `FR_${cleanPhone}` : 'FreshRoots_Direct');
 
   const upiTransactionNote = `Order_${orderTrackingTag}`;
-  const upiPayLink = `upi://pay?pa=${farmUpiId}&pn=Farmer%20Sharath%20Inorahalli&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(upiTransactionNote)}&tr=${encodeURIComponent(orderTrackingTag)}`;
+  const upiPayLink = `upi://pay?pa=${farmUpiId}&pn=FreshRoots%20Export&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(upiTransactionNote)}&tr=${encodeURIComponent(orderTrackingTag)}`;
   const upiQrCodeUrl = (isDeliveryDetailsComplete && isPhoneVerified)
     ? `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(upiPayLink)}`
     : '';
