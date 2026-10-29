@@ -1,9 +1,11 @@
 const TENDER_COCONUT_IMAGE = '/products/tender-coconuts-4k.jpg';
 
 /** Maps SKU patterns to local 4K product images. Falls back to stored image if no match. */
-export function getProductImageUrl(sku: string, storedImageUrl: string): string {
+export function getProductImageUrl(sku: string, storedImageUrl?: string): string {
   if (sku === 'COC-TND-BLK-LOT') return TENDER_COCONUT_IMAGE;
-  // Return the stored image (which is now local 4K path from catalog)
+  if (!storedImageUrl || storedImageUrl.startsWith('http') || storedImageUrl.includes('unsplash')) {
+    return resolveProductImageBySku(sku);
+  }
   return storedImageUrl;
 }
 
