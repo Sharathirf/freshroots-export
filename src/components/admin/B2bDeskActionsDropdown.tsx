@@ -132,6 +132,20 @@ export default function B2bDeskActionsDropdown({
         </button>
       )}
 
+      {/* Direct WhatsApp Quick Action Button */}
+      {rfq.contact_phone && (
+        <a
+          href={`https://wa.me/${rfq.contact_phone.replace(/\D/g, '')}?text=Hello%20${encodeURIComponent(rfq.contact_person || 'Buyer')},%20regarding%20your%20FreshRoots%20Export%20quotation%20${rfq.quote_number}%20for%20${encodeURIComponent(rfq.product_title || 'agricultural commodities')}.`}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Chat directly on WhatsApp"
+          className="border border-stone-300 hover:bg-stone-100 text-stone-700 text-[11px] font-medium px-2.5 py-1.5 rounded-xl inline-flex items-center gap-1 transition shadow-2xs whitespace-nowrap"
+        >
+          <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+          <span>WhatsApp</span>
+        </a>
+      )}
+
       {/* Quick View Button */}
       <button
         onClick={() => onViewDetails(rfq)}
