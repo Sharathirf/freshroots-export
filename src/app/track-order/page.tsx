@@ -338,6 +338,81 @@ function TrackOrderContent() {
                 </div>
               </div>
 
+              {/* Linked Shipments & Multi-Consignment Tracking Events */}
+              {((selectedOrder as any).shipments?.length > 0 || (selectedOrder as any).estimated_delivery_date) && (
+                <div className="p-6 sm:p-8 border-t border-stone-100 bg-stone-50/30">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-stone-500 mb-4 flex items-center gap-2">
+                    <Truck className="w-4 h-4 text-emerald-700" />
+                    Verified Logistics & Consignment Parcels
+                  </h4>
+
+                  <div className="space-y-4">
+                    {((selectedOrder as any).shipments || []).map((shp: any, idx: number) => (
+                      <div key={idx} className="bg-white border border-stone-200 rounded-2xl p-4 shadow-xs">
+                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 pb-3 mb-3">
+                          <div>
+                            <div className="font-bold text-stone-900 text-sm flex items-center gap-2">
+                              <span>{shp.delivery_partner}</span>
+                              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 uppercase font-mono font-bold">
+                                {shp.status.replace('_', ' ')}
+                              </span>
+                            </div>
+                            <div className="text-xs text-stone-500 font-mono mt-0.5">
+                              AWB / Tracking: <strong>{shp.tracking_number}</strong>
+                              {shp.lr_number && <span className="ml-2 text-stone-600">LR: {shp.lr_number}</span>}
+                              {shp.vehicle_number && <span className="ml-2 text-stone-600">Vehicle: {shp.vehicle_number}</span>}
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3 text-xs">
+                            {shp.estimated_delivery_date && (
+                              <div className="text-stone-600 bg-stone-50 px-2.5 py-1 rounded-lg border border-stone-200 font-medium">
+                                Est. Delivery: <strong className="text-stone-900">{new Date(shp.estimated_delivery_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</strong>
+                              </div>
+                            )}
+                            {shp.tracking_url && (
+                              <a
+                                href={shp.tracking_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 px-3 py-1 bg-stone-900 text-white rounded-lg hover:bg-stone-800 transition font-semibold"
+                              >
+                                Live Carrier Tracking ↗
+                              </a>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Milestone events */}
+                        {shp.events && shp.events.length > 0 && (
+                          <div className="space-y-2 mt-2">
+                            <div className="text-[11px] font-bold uppercase tracking-wider text-stone-400">Tracking Milestones</div>
+                            <div className="divide-y divide-stone-100 text-xs">
+                              {shp.events.map((ev: any, evIdx: number) => (
+                                <div key={evIdx} className="py-1.5 flex items-start justify-between gap-4">
+                                  <div>
+                                    <span className="font-semibold text-stone-800">{ev.description}</span>
+                                    {ev.location && <span className="text-stone-500 ml-1">({ev.location})</span>}
+                                  </div>
+                                  <div className="text-[11px] text-stone-400 font-mono shrink-0">
+                                    {new Date(ev.event_timestamp).toLocaleDateString('en-IN', {
+                                      day: '2-digit',
+                                      month: 'short',
+                                      hour: '2-digit',
+                                      minute: '2-digit'
+                                    })}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Order Quick Actions: Reorder, Help, Exit */}
               <div className="bg-stone-50 border-t border-stone-200/90 p-4 sm:p-6 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2">

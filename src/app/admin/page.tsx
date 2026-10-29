@@ -17,7 +17,8 @@ import {
   Trash2,
   Lock,
   LogOut,
-  Search
+  Search,
+  Plus
 } from 'lucide-react';
 import { WholesaleQuotation, Order, InventoryBatch } from '@/types';
 import B2bRfqDetailModal from '@/components/admin/B2bRfqDetailModal';
@@ -29,6 +30,15 @@ import B2bHandoverModal from '@/components/admin/B2bHandoverModal';
 import B2bFulfilmentModal from '@/components/admin/B2bFulfilmentModal';
 import B2bPaymentModal from '@/components/admin/B2bPaymentModal';
 import B2bDeskActionsDropdown from '@/components/admin/B2bDeskActionsDropdown';
+import CrmCustomersTab from '@/components/admin/CrmCustomersTab';
+import CrmRepeatOrdersTab from '@/components/admin/CrmRepeatOrdersTab';
+import CrmShipmentsTab from '@/components/admin/CrmShipmentsTab';
+import CrmCustomerDossierModal from '@/components/admin/CrmCustomerDossierModal';
+import CrmCreateOrderModal from '@/components/admin/CrmCreateOrderModal';
+import CrmCreateShipmentModal from '@/components/admin/CrmCreateShipmentModal';
+import CrmSupportCallModal from '@/components/admin/CrmSupportCallModal';
+import CrmComplaintModal from '@/components/admin/CrmComplaintModal';
+import { Customer } from '@/types';
 
 function ProductAdminRow({
   product,
@@ -222,7 +232,42 @@ export default function AdminPage() {
     }
   };
 
-  const [activeTab, setActiveTab] = useState<'products' | 'rfqs' | 'orders' | 'inventory' | 'reviews' | 'pnl' | 'integrations'>('products');
+  const [activeTab, setActiveTab] = useState<
+    'products' | 'rfqs' | 'orders' | 'crm' | 'repeat' | 'shipments' | 'inventory' | 'reviews' | 'pnl' | 'integrations'
+  >('products');
+
+  // CRM Modals and Actions State
+  const [selectedCustomerIdForDossier, setSelectedCustomerIdForDossier] = useState<string | null>(null);
+  const [customerDossierData, setCustomerDossierData] = useState<any>(null);
+  const [isCustomerDossierOpen, setIsCustomerDossierOpen] = useState(false);
+
+  const [createOrderCustomer, setCreateOrderCustomer] = useState<Customer | null>(null);
+  const [isCreateOrderOpen, setIsCreateOrderOpen] = useState(false);
+
+  const [createShipmentOrder, setCreateShipmentOrder] = useState<Order | null>(null);
+  const [isCreateShipmentOpen, setIsCreateShipmentOpen] = useState(false);
+
+  const [callCustomer, setCallCustomer] = useState<Customer | null>(null);
+  const [isCallModalOpen, setIsCallModalOpen] = useState(false);
+
+  const [complaintCustomer, setComplaintCustomer] = useState<Customer | null>(null);
+  const [isComplaintModalOpen, setIsComplaintModalOpen] = useState(false);
+
+  const [orderChannelFilter, setOrderChannelFilter] = useState<'all' | 'retail' | 'wholesale' | 'phone' | 'whatsapp' | 'admin'>('all');
+
+  const openCustomerDossier = async (customerId: string) => {
+    setSelectedCustomerIdForDossier(customerId);
+    setIsCustomerDossierOpen(true);
+    try {
+      const res = await fetch(`/api/admin/crm/customers/${customerId}`);
+      const json = await res.json();
+      if (json.success) {
+        setCustomerDossierData(json);
+      }
+    } catch (e) {
+      console.error('Error opening customer dossier:', e);
+    }
+  };
   const [metrics, setMetrics] = useState<any>(null);
   const [adminProducts, setAdminProducts] = useState<any[]>([]);
   const [rfqs, setRfqs] = useState<WholesaleQuotation[]>([]);
@@ -764,7 +809,10 @@ export default function AdminPage() {
           {[
             { id: 'products', label: 'Commodities, Pricing & Stock', count: adminProducts.length },
             { id: 'rfqs', label: 'Wholesale RFQs & Quotations', count: rfqs.length },
-            { id: 'orders', label: 'Retail Orders & Fulfillment', count: orders.length },
+            { id: 'orders', label: 'Retail Orders & Multi-Channel', count: orders.length },
+            { id: 'crm', label: 'Customer CRM & Accounts', count: null },
+            { id: 'repeat', label: 'Repeat Sales & Retention', count: null },
+            { id: 'shipments', label: 'Shipments & Logistics', count: null },
             { id: 'inventory', label: 'Inventory Batches & Intake', count: inventory.length },
             { id: 'reviews', label: 'Buyer Ratings & Reviews', count: allReviews.length },
             { id: 'pnl', label: 'Commercial Unit Economics & P&L', count: null },
@@ -1080,21 +1128,61 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* TAB 2: RETAIL ORDERS */}
+        {/* TAB 2: RETAIL & MULTI-CHANNEL ORDERS */}
         {activeTab === 'orders' && (
           <div className="bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm">
-            <div className="p-5 border-b border-stone-100">
-              <h3 className="font-extrabold text-stone-900 text-lg">Retail Consumer Orders (B2C)</h3>
-              <p className="text-xs text-stone-500 mt-0.5">
-                Execute valid order lifecycle transitions with automatic inventory allocation and delivery tracking reference logging.
-              </p>
+            <div className="p-5 border-b border-stone-100 flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h3 className="font-extrabold text-stone-900 text-lg">Orders & Multi-Channel Sales (Retail & Wholesale)</h3>
+                <p className="text-xs text-stone-500 mt-0.5">
+                  Execute order lifecycle transitions, connect courier/transporter tracking, and manage offline phone & WhatsApp sales.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setCreateOrderCustomer(null);
+                    setIsCreateOrderOpen(true);
+                  }}
+                  className="px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  + Create Order (Phone / WhatsApp)
+                </button>
+              </div>
+            </div>
+
+            {/* Channel Filters */}
+            <div className="px-5 py-3 bg-stone-50 border-b border-stone-200/80 flex flex-wrap items-center gap-2 text-xs">
+              <span className="font-bold text-stone-600 mr-1">Filter Channel:</span>
+              {[
+                { id: 'all', label: 'All Channels' },
+                { id: 'retail', label: 'Retail (B2C)' },
+                { id: 'wholesale', label: 'Bulk Wholesale (B2B)' },
+                { id: 'phone', label: 'Phone Orders' },
+                { id: 'whatsapp', label: 'WhatsApp Orders' },
+                { id: 'admin', label: 'Admin Created' },
+              ].map((pill) => (
+                <button
+                  key={pill.id}
+                  onClick={() => setOrderChannelFilter(pill.id as any)}
+                  className={`px-3 py-1 rounded-full text-[11px] font-bold transition ${
+                    orderChannelFilter === pill.id
+                      ? 'bg-stone-900 text-white shadow-xs'
+                      : 'bg-white border border-stone-300 text-stone-600 hover:bg-stone-100'
+                  }`}
+                >
+                  {pill.label}
+                </button>
+              ))}
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead className="bg-stone-50 text-stone-600 uppercase font-semibold border-b">
                   <tr>
-                    <th className="p-4">Order ID</th>
+                    <th className="p-4">Order ID & Source</th>
                     <th className="p-4">Customer & Address</th>
                     <th className="p-4">Purchased Items</th>
                     <th className="p-4">Amount</th>
@@ -1103,30 +1191,43 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-100">
-                  {orders.map((o) => {
+                  {orders
+                    .filter((o) => {
+                      if (orderChannelFilter === 'retail') return (o as any).order_channel === 'retail' || o.order_type === 'retail';
+                      if (orderChannelFilter === 'wholesale') return (o as any).order_channel === 'wholesale' || o.order_type === 'wholesale';
+                      if (orderChannelFilter === 'phone') return (o as any).order_source === 'phone';
+                      if (orderChannelFilter === 'whatsapp') return (o as any).order_source === 'whatsapp';
+                      if (orderChannelFilter === 'admin') return (o as any).order_source === 'admin' || Boolean((o as any).created_by_admin_name);
+                      return true;
+                    })
+                    .map((o) => {
                     const items = Array.isArray(o.items) ? o.items : JSON.parse((o.items as any) || '[]');
                     return (
                       <tr key={o.id} className="hover:bg-stone-50/80 transition">
                         <td className="p-4">
                           <div className="font-mono font-bold text-stone-900">{o.order_number}</div>
-                          <div className="text-[11px] text-stone-500 mt-0.5">
-                            {new Date(o.created_at).toLocaleDateString('en-IN', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
+                          <div className="flex items-center gap-1.5 mt-1">
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-stone-100 text-stone-700 border border-stone-200">
+                              {(o as any).order_source || 'website'}
+                            </span>
+                            <span className="text-[10px] text-stone-400 font-mono">
+                              {new Date(o.created_at).toLocaleDateString('en-IN', {
+                                day: '2-digit',
+                                month: 'short',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </span>
                           </div>
                           {o.tracking_reference && (
-                            <div className="text-[10px] font-mono text-emerald-800 font-semibold mt-0.5">
+                            <div className="text-[10px] font-mono text-emerald-800 font-semibold mt-1">
                               Ref: {o.tracking_reference}
                             </div>
                           )}
                         </td>
                         <td className="p-4">
                           <div className="font-bold text-stone-900">{o.customer_name}</div>
-                          <div className="text-[11px] text-stone-500">{o.customer_phone}</div>
+                          <div className="text-[11px] text-stone-500 font-mono">+91 {o.customer_phone}</div>
                           <div className="text-[11px] text-stone-600 truncate max-w-xs">{o.shipping_address} ({o.destination_pincode})</div>
                         </td>
                         <td className="p-4">
@@ -1174,12 +1275,15 @@ export default function AdminPage() {
                               Mark Packed
                             </button>
                           )}
-                          {o.status === 'packed' && (
+                          {(o.status === 'packed' || o.status === 'allocated') && (
                             <button
-                              onClick={() => handleUpdateOrderStatus(o.id, 'dispatched')}
+                              onClick={() => {
+                                setCreateShipmentOrder(o);
+                                setIsCreateShipmentOpen(true);
+                              }}
                               className="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-[11px] px-3 py-1.5 rounded-lg transition"
                             >
-                              Dispatch 3PL
+                              Create Shipment / LR
                             </button>
                           )}
                           {o.status === 'dispatched' && (
@@ -1198,6 +1302,46 @@ export default function AdminPage() {
               </table>
             </div>
           </div>
+        )}
+
+        {/* TAB: CUSTOMER CRM */}
+        {activeTab === 'crm' && (
+          <CrmCustomersTab
+            onSelectCustomer={openCustomerDossier}
+            onOpenCreateOrder={(c) => {
+              setCreateOrderCustomer(c);
+              setIsCreateOrderOpen(true);
+            }}
+            onOpenLogCall={(c) => {
+              setCallCustomer(c);
+              setIsCallModalOpen(true);
+            }}
+          />
+        )}
+
+        {/* TAB: REPEAT SALES & RETENTION */}
+        {activeTab === 'repeat' && (
+          <CrmRepeatOrdersTab
+            onSelectCustomer={openCustomerDossier}
+            onOpenCreateOrder={(c) => {
+              setCreateOrderCustomer(c);
+              setIsCreateOrderOpen(true);
+            }}
+            onOpenLogCall={(c) => {
+              setCallCustomer(c);
+              setIsCallModalOpen(true);
+            }}
+          />
+        )}
+
+        {/* TAB: SHIPMENTS & LOGISTICS */}
+        {activeTab === 'shipments' && (
+          <CrmShipmentsTab
+            onOpenCreateShipment={(o) => {
+              setCreateShipmentOrder(o);
+              setIsCreateShipmentOpen(true);
+            }}
+          />
         )}
 
         {/* TAB 3: INVENTORY BATCHES */}
@@ -1624,6 +1768,88 @@ export default function AdminPage() {
           onClose={() => setSelectedRfqForPayment(null)}
           rfq={selectedRfqForPayment}
           onRecordPayment={handleRecordPayment}
+        />
+
+        {/* CUSTOMER CRM, ADMIN ORDERS & SHIPMENT MODALS */}
+        <CrmCustomerDossierModal
+          isOpen={isCustomerDossierOpen}
+          onClose={() => {
+            setIsCustomerDossierOpen(false);
+            setSelectedCustomerIdForDossier(null);
+            setCustomerDossierData(null);
+          }}
+          customer={customerDossierData?.customer || null}
+          summary={customerDossierData?.summary || null}
+          orders={customerDossierData?.orders || []}
+          quotes={customerDossierData?.quotes || []}
+          calls={customerDossierData?.calls || []}
+          feedback={customerDossierData?.feedback || []}
+          complaints={customerDossierData?.complaints || []}
+          shipments={customerDossierData?.shipments || []}
+          onOpenCreateOrder={(c) => {
+            setIsCustomerDossierOpen(false);
+            setCreateOrderCustomer(c);
+            setIsCreateOrderOpen(true);
+          }}
+          onOpenLogCall={(c) => {
+            setCallCustomer(c);
+            setIsCallModalOpen(true);
+          }}
+          onOpenLogComplaint={(c) => {
+            setComplaintCustomer(c);
+            setIsComplaintModalOpen(true);
+          }}
+          onRefreshDossier={() => {
+            if (selectedCustomerIdForDossier) openCustomerDossier(selectedCustomerIdForDossier);
+          }}
+        />
+
+        <CrmCreateOrderModal
+          isOpen={isCreateOrderOpen}
+          onClose={() => {
+            setIsCreateOrderOpen(false);
+            setCreateOrderCustomer(null);
+          }}
+          selectedCustomer={createOrderCustomer}
+          onOrderCreated={() => {
+            fetchData();
+          }}
+        />
+
+        <CrmCreateShipmentModal
+          isOpen={isCreateShipmentOpen}
+          onClose={() => {
+            setIsCreateShipmentOpen(false);
+            setCreateShipmentOrder(null);
+          }}
+          order={createShipmentOrder}
+          onShipmentCreated={() => {
+            fetchData();
+          }}
+        />
+
+        <CrmSupportCallModal
+          isOpen={isCallModalOpen}
+          onClose={() => {
+            setIsCallModalOpen(false);
+            setCallCustomer(null);
+          }}
+          customer={callCustomer}
+          onCallLogged={() => {
+            if (selectedCustomerIdForDossier) openCustomerDossier(selectedCustomerIdForDossier);
+          }}
+        />
+
+        <CrmComplaintModal
+          isOpen={isComplaintModalOpen}
+          onClose={() => {
+            setIsComplaintModalOpen(false);
+            setComplaintCustomer(null);
+          }}
+          customer={complaintCustomer}
+          onComplaintLogged={() => {
+            if (selectedCustomerIdForDossier) openCustomerDossier(selectedCustomerIdForDossier);
+          }}
         />
       </main>
     </div>

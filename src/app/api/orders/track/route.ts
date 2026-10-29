@@ -37,10 +37,45 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    // Attach shipments and tracking events
+    const orderIds = orders.map((o: any) => o.id);
+    const shipments = await query(
+      `SELECT * FROM shipments WHERE order_id = ANY($1) ORDER BY created_at DESC`,
+      [orderIds]
+    );
+
+    const shipmentIds = shipments.map((s: any) => s.id);
+    let eventsMap: Record<string, any[]> = {};
+    if (shipmentIds.length > 0) {
+      const events = await query(
+        `SELECT * FROM shipment_tracking_events WHERE shipment_id = ANY($1) ORDER BY event_timestamp DESC`,
+        [shipmentIds]
+      );
+      eventsMap = events.reduce((acc: any, e: any) => {
+        if (!acc[e.shipment_id]) acc[e.shipment_id] = [];
+        acc[e.shipment_id].push(e);
+        return acc;
+      }, {});
+    }
+
+    const shipmentsMap: Record<string, any[]> = {};
+    for (const shp of shipments) {
+      if (!shipmentsMap[shp.order_id]) shipmentsMap[shp.order_id] = [];
+      shipmentsMap[shp.order_id].push({
+        ...shp,
+        events: eventsMap[shp.id] || [],
+      });
+    }
+
+    const populatedOrders = orders.map((o: any) => ({
+      ...o,
+      shipments: shipmentsMap[o.id] || [],
+    }));
+
     return NextResponse.json({
       success: true,
-      count: orders.length,
-      orders
+      count: populatedOrders.length,
+      orders: populatedOrders
     });
   } catch (error: any) {
     console.error('API Error in /api/orders/track:', error);

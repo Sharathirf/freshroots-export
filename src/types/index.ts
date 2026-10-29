@@ -400,3 +400,219 @@ export interface ProductReview {
   created_at: string;
   updated_at?: string;
 }
+
+// ============================================================================
+// Customer CRM, Order Management, Shipments & Notifications
+// ============================================================================
+
+export type CustomerType = 'retail' | 'wholesale' | 'export' | 'business';
+export type OrderSource = 'website' | 'phone' | 'whatsapp' | 'email' | 'in_person' | 'admin';
+export type OrderChannel = 'retail' | 'wholesale' | 'export';
+export type CustomerAccountStatus = 'active' | 'dormant' | 'blocked';
+
+export interface Customer {
+  id: string;
+  customer_code: string;
+  customer_type: CustomerType;
+  name: string;
+  company_name?: string;
+  contact_person?: string;
+  phone: string;
+  email?: string;
+  billing_address?: string;
+  shipping_address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  country?: string;
+  acquisition_source: string;
+  account_status: CustomerAccountStatus;
+  assigned_rep?: string;
+  communication_prefs: {
+    email: boolean;
+    whatsapp: boolean;
+    sms: boolean;
+    push: boolean;
+  };
+  marketing_consent: boolean;
+  internal_notes?: string;
+  user_id?: string;
+  merged_into?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CustomerPurchaseSummary {
+  total_orders: number;
+  successful_orders: number;
+  cancelled_orders: number;
+  returned_orders: number;
+  total_sales_value: number;
+  collected_revenue: number;
+  outstanding_balance: number;
+  average_order_value: number;
+  last_order_date?: string;
+  previous_order_date?: string;
+  frequent_products: { title: string; count: number; total_qty: number }[];
+  repeat_purchase_frequency_days?: number;
+  segment: string;
+  segment_reason: string;
+  reorder_status: 'due' | 'overdue' | 'ok' | 'inactive';
+  recommended_reorder_days: number;
+  days_since_last_order?: number;
+}
+
+export type CallType = 'feedback' | 'repeat_order' | 'callback' | 'complaint' | 'support' | 'telephone_order';
+export type CallOutcome =
+  | 'contacted'
+  | 'interested'
+  | 'order_taken'
+  | 'callback_requested'
+  | 'no_answer'
+  | 'busy'
+  | 'wrong_number'
+  | 'not_interested'
+  | 'complaint_raised'
+  | 'escalated';
+
+export interface CustomerCall {
+  id: string;
+  customer_id: string;
+  order_id?: string;
+  call_type: CallType;
+  call_outcome: CallOutcome;
+  summary: string;
+  rep_name: string;
+  call_date: string;
+  reorder_interest: boolean;
+  requested_products?: any[];
+  next_action?: string;
+  next_action_due?: string;
+  internal_notes?: string;
+  created_at: string;
+}
+
+export interface CustomerFeedback {
+  id: string;
+  customer_id: string;
+  order_id?: string;
+  product_quality_rating?: number;
+  quantity_accuracy_rating?: number;
+  packaging_rating?: number;
+  delivery_rating?: number;
+  pricing_satisfaction_rating?: number;
+  overall_rating?: number;
+  feedback_text?: string;
+  source: 'phone_call' | 'whatsapp' | 'website_review';
+  created_at: string;
+}
+
+export type ComplaintSeverity = 'low' | 'medium' | 'high' | 'critical';
+export type ComplaintCategory =
+  | 'damaged_produce'
+  | 'delayed_delivery'
+  | 'short_delivery'
+  | 'quality_mismatch'
+  | 'pricing_dispute'
+  | 'support_issue';
+export type ComplaintStatus = 'open' | 'investigating' | 'resolved' | 'escalated' | 'closed';
+
+export interface CustomerComplaint {
+  id: string;
+  complaint_number: string;
+  customer_id: string;
+  order_id?: string;
+  severity: ComplaintSeverity;
+  category: ComplaintCategory;
+  description: string;
+  assigned_to?: string;
+  deadline?: string;
+  status: ComplaintStatus;
+  resolution_notes?: string;
+  customer_acknowledgment?: string;
+  resolved_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export type ShipmentStatus =
+  | 'created'
+  | 'awaiting_pickup'
+  | 'picked_up'
+  | 'in_transit'
+  | 'out_for_delivery'
+  | 'delivered'
+  | 'delayed'
+  | 'failed_attempt'
+  | 'returned'
+  | 'cancelled';
+
+export interface Shipment {
+  id: string;
+  shipment_number: string;
+  order_id: string;
+  customer_id?: string;
+  delivery_partner: string;
+  shipment_type: 'courier' | 'truckload' | 'part_truckload' | 'air_cargo' | 'sea_container';
+  tracking_number: string;
+  tracking_url?: string;
+  status: ShipmentStatus;
+  origin?: string;
+  destination?: string;
+  destination_pincode?: string;
+  package_count: number;
+  dispatched_quantity_kg?: number;
+  vehicle_number?: string;
+  driver_name?: string;
+  driver_phone?: string;
+  consignment_note_number?: string;
+  lr_number?: string;
+  dispatch_date: string;
+  estimated_delivery_date?: string;
+  actual_delivery_date?: string;
+  delivered_to_name?: string;
+  pod_reference?: string;
+  exception_reason?: string;
+  created_by_name?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ShipmentTrackingEvent {
+  id: string;
+  shipment_id: string;
+  status: ShipmentStatus;
+  location?: string;
+  event_timestamp: string;
+  description: string;
+  source: 'manual' | 'carrier_webhook' | 'carrier_api';
+  created_by_name?: string;
+  created_at: string;
+}
+
+export type NotificationChannel = 'in_app' | 'push' | 'whatsapp' | 'email' | 'sms';
+export type NotificationEventType =
+  | 'order_confirmed'
+  | 'order_dispatched'
+  | 'shipment_update'
+  | 'order_delivered'
+  | 'complaint_received'
+  | 'reorder_reminder';
+
+export interface CustomerNotification {
+  id: string;
+  customer_id?: string;
+  order_id?: string;
+  shipment_id?: string;
+  channel: NotificationChannel;
+  event_type: NotificationEventType;
+  recipient: string;
+  title?: string;
+  message: string;
+  status: 'queued' | 'sent' | 'delivered' | 'failed' | 'bounced';
+  provider?: string;
+  provider_response?: any;
+  idempotency_key?: string;
+  sent_at?: string;
+  created_at: string;
+}
