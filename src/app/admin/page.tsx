@@ -764,7 +764,25 @@ export default function AdminPage() {
                 <tbody className="divide-y divide-stone-100">
                   {rfqs.map((q) => (
                     <tr key={q.id} className="hover:bg-stone-50/80 transition">
-                      <td className="p-4 font-mono font-bold text-stone-900">{q.quote_number}</td>
+                      <td className="p-4">
+                        <div className="font-mono font-bold text-stone-900">{q.quote_number}</div>
+                        <div className="text-[11px] text-stone-500 mt-0.5">
+                          {q.created_at
+                            ? new Date(q.created_at).toLocaleDateString('en-IN', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })
+                            : 'Recent'}
+                        </div>
+                        {q.valid_until && (
+                          <div className="text-[10px] text-amber-700 font-medium">
+                            Valid: {new Date(q.valid_until).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                          </div>
+                        )}
+                      </td>
                       <td className="p-4">
                         <div className="font-bold text-stone-900">{q.company_name}</div>
                         <div className="text-[11px] text-stone-500">
@@ -878,9 +896,20 @@ export default function AdminPage() {
                       <tr key={o.id} className="hover:bg-stone-50/80 transition">
                         <td className="p-4">
                           <div className="font-mono font-bold text-stone-900">{o.order_number}</div>
-                          <div className="text-[10px] text-stone-400">
-                            {new Date(o.created_at).toLocaleDateString('en-IN')}
+                          <div className="text-[11px] text-stone-500 mt-0.5">
+                            {new Date(o.created_at).toLocaleDateString('en-IN', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
                           </div>
+                          {o.tracking_reference && (
+                            <div className="text-[10px] font-mono text-emerald-800 font-semibold mt-0.5">
+                              Ref: {o.tracking_reference}
+                            </div>
+                          )}
                         </td>
                         <td className="p-4">
                           <div className="font-bold text-stone-900">{o.customer_name}</div>
@@ -1059,7 +1088,7 @@ export default function AdminPage() {
                 <table className="w-full text-left text-xs">
                   <thead className="bg-stone-50 text-stone-600 uppercase font-semibold border-b">
                     <tr>
-                      <th className="p-4">Batch Number</th>
+                      <th className="p-4">Batch & Intake Date</th>
                       <th className="p-4">Agricultural SKU</th>
                       <th className="p-4">Origin Mandi</th>
                       <th className="p-4">Available</th>
@@ -1071,7 +1100,18 @@ export default function AdminPage() {
                   <tbody className="divide-y divide-stone-100">
                     {inventory.map((b) => (
                       <tr key={b.id}>
-                        <td className="p-4 font-mono font-bold text-stone-900">{b.batch_number}</td>
+                        <td className="p-4">
+                          <div className="font-mono font-bold text-stone-900">{b.batch_number}</div>
+                          <div className="text-[11px] text-stone-500 mt-0.5">
+                            {b.intake_date
+                              ? new Date(b.intake_date).toLocaleDateString('en-IN', {
+                                  day: '2-digit',
+                                  month: 'short',
+                                  year: 'numeric',
+                                })
+                              : 'Harvest lot'}
+                          </div>
+                        </td>
                         <td className="p-4 font-semibold text-stone-800">{b.product_title}</td>
                         <td className="p-4 text-stone-600">{b.origin_mandi}</td>
                         <td className="p-4 font-mono font-bold text-emerald-800">{b.available_quantity}</td>
