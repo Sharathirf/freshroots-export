@@ -18,7 +18,6 @@ import {
   Truck,
   LogOut,
   Pencil,
-  FileQuestion,
   RotateCcw,
   HelpCircle
 } from 'lucide-react';
@@ -52,7 +51,7 @@ const FALLBACK_ARECANUT_RATE: ArecanutMandiRate = {
 
 export default function Navbar({
   onOpenRFQ,
-  onOpenEnquiry
+  onOpenEnquiry: _onOpenEnquiry
 }: {
   onOpenRFQ?: () => void;
   onOpenEnquiry?: () => void;
@@ -363,12 +362,12 @@ export default function Navbar({
         </div>
 
         {/* Actions Strip */}
-        <div className="flex items-center gap-1 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           {/* Language Switcher Pill (Bilingual Kannada / English) */}
           <button
             type="button"
             onClick={() => setLang(lang === 'kn' ? 'en' : 'kn')}
-            className="flex items-center gap-0.5 text-[10px] sm:text-xs font-black bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-300 px-1.5 sm:px-2.5 py-1 sm:py-2 rounded-lg sm:rounded-xl transition shadow-xs"
+            className="h-10 flex items-center gap-0.5 text-xs font-black bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-200 px-2.5 rounded-xl whitespace-nowrap transition shadow-xs shrink-0"
             title={lang === 'kn' ? 'Switch to English' : 'ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಿ'}
             aria-label="Toggle Language"
           >
@@ -380,40 +379,28 @@ export default function Navbar({
           {/* Export & Guides Direct Links - Desktop */}
           <Link
             href="/export"
-            className="hidden xl:flex items-center gap-1 text-xs font-bold text-stone-700 hover:text-[#3b6d11] px-2.5 py-2 rounded-xl hover:bg-stone-100 transition"
+            className="hidden xl:flex items-center h-10 text-xs font-bold text-stone-700 hover:text-[#3b6d11] px-2.5 rounded-xl hover:bg-stone-100 whitespace-nowrap transition shrink-0"
           >
             <span>Export</span>
           </Link>
 
           <Link
             href="/guides"
-            className="hidden xl:flex items-center gap-1 text-xs font-bold text-stone-700 hover:text-[#3b6d11] px-2.5 py-2 rounded-xl hover:bg-stone-100 transition"
+            className="hidden xl:flex items-center h-10 text-xs font-bold text-stone-700 hover:text-[#3b6d11] px-2.5 rounded-xl hover:bg-stone-100 whitespace-nowrap transition shrink-0"
           >
             <span>Guides</span>
           </Link>
 
-          {/* Enquire Farm Button - Desktop only */}
-          {onOpenEnquiry && (
-            <button
-              type="button"
-              onClick={onOpenEnquiry}
-              aria-label="Enquire about a farm"
-              className="hidden md:flex items-center gap-1.5 text-xs sm:text-sm font-bold bg-emerald-50 hover:bg-emerald-100 text-[#1e824c] border border-emerald-300 px-2 xl:px-3 py-2 rounded-xl transition shadow-sm"
-            >
-              <FileQuestion className="w-4 h-4 text-[#1e824c]" />
-              <span className="hidden xl:inline">Enquire Farm</span>
-            </button>
-          )}
-
-          {/* Wholesale RFQ Button - Desktop only */}
+          {/* Wholesale RFQ Primary B2B Action Button */}
           <button
+            type="button"
             onClick={onOpenRFQ}
             aria-label="Request a wholesale quote"
-            className="hidden md:flex items-center gap-1.5 text-xs sm:text-sm font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 px-2 xl:px-3 py-2 rounded-xl transition shadow-sm"
+            className="hidden md:inline-flex items-center gap-1.5 h-10 px-3 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl text-xs font-bold whitespace-nowrap transition shadow-xs shrink-0"
           >
-            <Building2 className="w-4 h-4 text-amber-700" />
-            <span className="hidden xl:inline">Wholesale RFQ</span>
-            <span className="hidden xl:inline bg-amber-200 text-amber-900 text-[10px] px-1.5 py-0.5 rounded font-extrabold uppercase">
+            <Building2 className="w-4 h-4 text-amber-700 shrink-0" />
+            <span>Wholesale RFQ</span>
+            <span className="bg-amber-200 text-amber-900 text-[10px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider">
               Bulk
             </span>
           </button>
@@ -422,11 +409,11 @@ export default function Navbar({
           <button
             type="button"
             onClick={() => setIsWatchlistOpen(true)}
-            className="relative p-2 sm:p-2.5 text-stone-700 hover:text-red-600 hover:bg-red-50 rounded-xl transition group"
+            className="relative h-10 w-10 flex items-center justify-center text-stone-700 hover:text-red-600 hover:bg-red-50 border border-stone-200 rounded-xl transition group shrink-0"
             title="My Watchlist"
             aria-label="View Watchlist"
           >
-            <Heart className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition" />
+            <Heart className="w-4 h-4 group-hover:scale-110 transition shrink-0" />
             {wishlistCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center border-2 border-white shadow">
                 {wishlistCount}
@@ -435,23 +422,23 @@ export default function Navbar({
           </button>
 
           {/* Customer Sign In / Account Dropdown (Desktop) */}
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center shrink-0">
             {!isLoggedIn ? (
               <button
                 type="button"
                 onClick={() => setIsSignInModalOpen(true)}
-                className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-stone-700 hover:text-[#3b6d11] px-2.5 py-2 rounded-xl hover:bg-stone-100 transition"
+                className="h-10 flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-[#3b6d11] px-3 border border-stone-200 rounded-xl hover:bg-stone-50 whitespace-nowrap transition shrink-0"
                 title="Customer Sign In"
               >
-                <User className="w-4 h-4 text-stone-600" />
-                <span>Sign In</span>
+                <User className="w-4 h-4 text-stone-600 shrink-0" />
+                <span className="whitespace-nowrap">Sign In</span>
               </button>
             ) : (
               <div className="relative group">
                 <button
                   type="button"
                   onClick={() => setIsAccountModalOpen(true)}
-                  className="flex items-center gap-1.5 text-xs font-bold text-[#1c3809] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 py-2 rounded-xl transition shadow-sm"
+                  className="h-10 flex items-center gap-1.5 text-xs font-bold text-[#1c3809] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 rounded-xl whitespace-nowrap transition shadow-xs shrink-0"
                   title="View Your Account"
                 >
                   {customer?.avatar_url ? (
@@ -461,11 +448,11 @@ export default function Navbar({
                       className="w-4 h-4 rounded-full object-cover shrink-0"
                     />
                   ) : (
-                    <div className="w-4 h-4 rounded-full bg-[#3b6d11] text-white flex items-center justify-center text-[9px] font-black">
+                    <div className="w-4 h-4 rounded-full bg-[#3b6d11] text-white flex items-center justify-center text-[9px] font-black shrink-0">
                       ✓
                     </div>
                   )}
-                  <span className="font-bold">
+                  <span className="whitespace-nowrap">
                     {customer?.name ? customer.name.split(' ')[0] : customer?.phone ? `+91 ${customer.phone}` : 'Account'}
                   </span>
                 </button>
@@ -541,17 +528,18 @@ export default function Navbar({
 
           {/* Cart Trigger Button */}
           <button
+            type="button"
             onClick={() => setIsCartOpen(true)}
             aria-label={`Open cart with ${itemCount} ${itemCount === 1 ? 'item' : 'items'}, total ₹${subtotal.toLocaleString('en-IN')}`}
-            className="relative flex items-center gap-1 sm:gap-2 bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-95 text-white px-2 sm:px-4 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl font-bold shadow-sm transition group"
+            className="relative h-10 flex items-center gap-1.5 sm:gap-2 bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-95 text-white px-2.5 sm:px-3.5 rounded-xl font-bold shadow-sm whitespace-nowrap transition group shrink-0"
           >
-            <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-105 transition" />
-            <div className="text-left hidden sm:block">
-              <div className="text-[10px] text-lime-200 uppercase font-semibold leading-none">Cart</div>
-              <div className="text-xs font-bold leading-tight font-mono">₹{subtotal.toLocaleString('en-IN')}</div>
+            <ShoppingBag className="w-4 h-4 sm:w-4.5 sm:h-4.5 group-hover:scale-105 transition shrink-0" />
+            <div className="text-left hidden sm:flex flex-col justify-center leading-none">
+              <div className="text-[9px] text-lime-200 uppercase font-semibold leading-tight">Cart</div>
+              <div className="text-xs font-bold font-mono leading-tight">₹{subtotal.toLocaleString('en-IN')}</div>
             </div>
             {itemCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-stone-950 text-xs font-black w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center border-2 border-white shadow">
+              <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-stone-950 text-xs font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow">
                 {itemCount}
               </span>
             )}
