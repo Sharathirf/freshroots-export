@@ -501,24 +501,24 @@ export default function Navbar({
             )}
           </button>
 
-          {/* Customer Sign In / Account Dropdown (Desktop) */}
-          <div className="hidden md:flex items-center shrink-0">
+          {/* Customer Sign In / Account Dropdown (Desktop & Mobile Header) */}
+          <div className="flex items-center shrink-0">
             {!isLoggedIn ? (
               <button
                 type="button"
                 onClick={() => setIsSignInModalOpen(true)}
-                className="h-10 flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-[#3b6d11] px-3 border border-stone-200 rounded-xl hover:bg-stone-50 whitespace-nowrap transition shrink-0"
-                title="Customer Sign In"
+                className="h-9 sm:h-10 flex items-center gap-1 sm:gap-1.5 text-xs font-bold text-stone-700 hover:text-[#3b6d11] px-2 sm:px-3 border border-stone-200 rounded-xl hover:bg-stone-50 whitespace-nowrap transition shrink-0"
+                title="Customer Sign In & Sign Up"
               >
                 <User className="w-4 h-4 text-stone-600 shrink-0" />
-                <span className="whitespace-nowrap">Sign In</span>
+                <span className="whitespace-nowrap">Sign In / Up</span>
               </button>
             ) : (
               <div className="relative group">
                 <button
                   type="button"
                   onClick={() => setIsAccountModalOpen(true)}
-                  className="h-10 flex items-center gap-1.5 text-xs font-bold text-[#1c3809] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3 rounded-xl whitespace-nowrap transition shadow-xs shrink-0"
+                  className="h-9 sm:h-10 flex items-center gap-1 sm:gap-1.5 text-xs font-bold text-[#1c3809] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2 sm:px-3 rounded-xl whitespace-nowrap transition shadow-xs shrink-0"
                   title="View Your Account"
                 >
                   {customer?.avatar_url ? (

@@ -40,7 +40,7 @@ export default function ProductDetailClient({
   allProducts: initialAllProducts = [],
   slug
 }: ProductDetailClientProps) {
-  const { addToCart, setIsCartOpen, openCheckout } = useCart();
+  const { addToCart, addItemDirectly, setIsCartOpen, openCheckout } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { isLoggedIn, requireAuth } = useAuth();
 
@@ -228,17 +228,32 @@ export default function ProductDetailClient({
 
   const handleBuyNow = () => {
     if (!product) return;
-    if (!isLoggedIn) {
+    let authed = isLoggedIn;
+    if (!authed && typeof window !== 'undefined') {
       try {
-        sessionStorage.setItem('freshroots_post_login_intent', JSON.stringify({ type: 'checkout' }));
+        const saved = localStorage.getItem('tiptur_customer_session');
+        if (saved && JSON.parse(saved)?.phone) {
+          authed = true;
+        }
+      } catch {}
+    }
+
+    if (!authed) {
+      try {
+        sessionStorage.setItem('freshroots_post_login_intent', JSON.stringify({
+          type: 'checkout',
+          product,
+          quantity: retailQty,
+          variant: selectedVariant || undefined
+        }));
       } catch {}
       requireAuth('Sign in to continue to Fast Checkout', () => {
-        addToCart(product, retailQty, selectedVariant || undefined);
+        addItemDirectly(product, retailQty, selectedVariant || undefined);
         openCheckout();
       });
       return;
     }
-    addToCart(product, retailQty, selectedVariant || undefined);
+    addItemDirectly(product, retailQty, selectedVariant || undefined);
     openCheckout();
   };
 

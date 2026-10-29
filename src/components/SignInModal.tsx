@@ -16,8 +16,8 @@ export default function SignInModal() {
     pendingAction,
     setPendingAction
   } = useAuth();
-  const { openCheckout } = useCart();
-  const { setIsWatchlistOpen } = useWishlist();
+  const { openCheckout, setIsCartOpen, addItemDirectly } = useCart();
+  const { setIsWatchlistOpen, toggleWishlist } = useWishlist();
 
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -111,7 +111,7 @@ export default function SignInModal() {
         throw new Error(data.error || 'Invalid verification code');
       }
 
-      let intent: { type?: string } | null = null;
+      let intent: { type?: string; product?: any; quantity?: number; variant?: any } | null = null;
       try {
         const stored = sessionStorage.getItem('freshroots_post_login_intent');
         if (stored) {
@@ -125,29 +125,33 @@ export default function SignInModal() {
 
       handleClose();
 
-      // Seamlessly execute the queued action (e.g. Add to Cart, Add to Watchlist)
-      if (pendingAction) {
-        const action = pendingAction;
-        setPendingAction(null);
-        setTimeout(() => {
+      // Explicit routing based on intent or pending action to guarantee smooth user experience
+      setTimeout(() => {
+        if (intent?.type === 'checkout') {
+          if (intent?.product && addItemDirectly) {
+            addItemDirectly(intent.product, intent.quantity || 1, intent.variant);
+          }
+          openCheckout();
+        } else if (intent?.type === 'cart') {
+          if (intent?.product && addItemDirectly) {
+            addItemDirectly(intent.product, intent.quantity || 1, intent.variant);
+          }
+          setIsCartOpen(true);
+        } else if (intent?.type === 'watchlist') {
+          if (intent?.product && toggleWishlist) {
+            toggleWishlist(intent.product);
+          }
+          setIsWatchlistOpen(true);
+        } else if (pendingAction) {
+          const action = pendingAction;
+          setPendingAction(null);
           try {
             action();
           } catch (e) {
             console.error('Failed to run pending action:', e);
           }
-        }, 100);
-      }
-
-      // Explicit routing based on intent to guarantee navigation
-      if (intent?.type === 'checkout') {
-        setTimeout(() => {
-          openCheckout();
-        }, 150);
-      } else if (intent?.type === 'watchlist') {
-        setTimeout(() => {
-          setIsWatchlistOpen(true);
-        }, 150);
-      }
+        }
+      }, 120);
     } catch (err: any) {
       setErrorMsg(err.message || 'Verification failed. Please check the code.');
     } finally {
@@ -187,10 +191,10 @@ export default function SignInModal() {
             </div>
           )}
           <h3 className="text-2xl font-extrabold text-stone-900 tracking-tight">
-            Customer Sign In
+            Customer Sign In &amp; Sign Up
           </h3>
           <p className="text-xs sm:text-sm text-stone-500 mt-1.5 leading-relaxed">
-            Zero passwords to remember. Instant access to your farm orders, live dispatch tracking, and wholesale pricing.
+            Existing or new customer? Enter your mobile number to sign in or create your account instantly with 1-tap OTP verification.
           </p>
         </div>
 
@@ -258,7 +262,7 @@ export default function SignInModal() {
               disabled={isSending || phoneNumber.length < 10 || !fullName.trim()}
               className="w-full bg-[#3b6d11] hover:bg-[#2d5a0b] disabled:opacity-50 text-white font-bold text-sm py-3 px-6 rounded-xl shadow-md transition flex items-center justify-center gap-2"
             >
-              <span>{isSending ? 'Sending OTP Code...' : 'GET VERIFICATION CODE'}</span>
+              <span>{isSending ? 'Sending OTP Code...' : 'GET OTP (SIGN IN / REGISTER)'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
@@ -300,7 +304,7 @@ export default function SignInModal() {
               disabled={isVerifying || otpCode.trim().length < 4}
               className="w-full bg-[#3b6d11] hover:bg-[#2d5a0b] disabled:opacity-50 text-white font-bold text-sm py-3 px-6 rounded-xl shadow-md transition flex items-center justify-center gap-2"
             >
-              <span>{isVerifying ? 'Verifying...' : 'VERIFY & SIGN IN'}</span>
+              <span>{isVerifying ? 'Verifying...' : 'VERIFY & PROCEED'}</span>
               <CheckCircle2 className="w-4 h-4" />
             </button>
 
@@ -324,8 +328,12 @@ export default function SignInModal() {
           </form>
         )}
 
+        <div className="mt-4 p-2.5 bg-emerald-50/70 rounded-xl text-center text-[11px] text-emerald-900 border border-emerald-200">
+          ✨ <strong>New Customer?</strong> Entering your name &amp; phone will automatically create and register your account.
+        </div>
+
         {/* Security badge at bottom */}
-        <div className="mt-6 pt-4 border-t border-stone-100 flex items-center justify-center gap-1.5 text-[11px] text-stone-400">
+        <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-center gap-1.5 text-[11px] text-stone-400">
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
           <span>Secure passwordless authentication &amp; 100% privacy guarantee</span>
         </div>

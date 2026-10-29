@@ -15,6 +15,7 @@ export interface PackVariantOption {
 interface CartContextType {
   items: OrderItem[];
   addToCart: (product: Product, quantity?: number, variant?: PackVariantOption) => void;
+  addItemDirectly: (product: Product, quantity?: number, variant?: PackVariantOption) => void;
   reorderItems: (newItems: OrderItem[]) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
@@ -217,19 +218,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
   }, [items]);
 
-  const addToCart = (product: Product, quantity = 1, variant?: PackVariantOption) => {
-    // Auth gate: If fresh/unauthenticated user clicks Add to Cart, prompt to sign in and auto-resume
-    if (!isLoggedIn) {
-      try {
-        sessionStorage.setItem('freshroots_post_login_intent', JSON.stringify({ type: 'cart' }));
-      } catch {}
-      requireAuth('Sign in with your mobile number to add items to your cart & check 1st-order discount eligibility', () => {
-        addToCart(product, quantity, variant);
-        setIsCartOpen(true);
-      });
-      return;
-    }
-
+  const addItemToCartInternal = (product: Product, quantity = 1, variant?: PackVariantOption) => {
+    if (!product) return;
     const isBulk = Boolean(
       product.sku?.includes('BLK') ||
       product.sku?.includes('TND') ||
@@ -291,6 +281,38 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }
       ];
     });
+  };
+
+  const addToCart = (product: Product, quantity = 1, variant?: PackVariantOption) => {
+    // Check both React auth state and persistent session storage to prevent stale closure lock
+    let authed = isLoggedIn;
+    if (!authed && typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('tiptur_customer_session');
+        if (saved && JSON.parse(saved)?.phone) {
+          authed = true;
+        }
+      } catch {}
+    }
+
+    // Auth gate: If fresh/unauthenticated user clicks Add to Cart, prompt to sign in and auto-resume
+    if (!authed) {
+      try {
+        sessionStorage.setItem('freshroots_post_login_intent', JSON.stringify({
+          type: 'cart',
+          product,
+          quantity,
+          variant
+        }));
+      } catch {}
+      requireAuth('Sign in with your mobile number to add items to your cart & check 1st-order discount eligibility', () => {
+        addItemToCartInternal(product, quantity, variant);
+        setIsCartOpen(true);
+      });
+      return;
+    }
+
+    addItemToCartInternal(product, quantity, variant);
     setIsCartOpen(true);
   };
 
@@ -394,6 +416,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       value={{
         items,
         addToCart,
+        addItemDirectly: addItemToCartInternal,
         reorderItems,
         removeFromCart,
         updateQuantity,

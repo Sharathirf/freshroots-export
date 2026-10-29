@@ -116,6 +116,16 @@ export default function CartDrawer() {
   const [couponError, setCouponError] = useState<string | null>(null);
   const [couponSuccess, setCouponSuccess] = useState<string | null>(null);
   const [showCustomCoupon, setShowCustomCoupon] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsMobileDevice(
+        /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+        (window.matchMedia && window.matchMedia('(max-width: 768px)').matches)
+      );
+    }
+  }, []);
 
   // Detect whether current customer is placing their 1st order
   useEffect(() => {
@@ -277,12 +287,34 @@ export default function CartDrawer() {
 
   // Re-verify coupon eligibility if cart subtotal changes
   useEffect(() => {
+    if (items.length === 0) {
+      setAppliedCoupon(null);
+      setCouponSuccess(null);
+      setCouponError(null);
+      return;
+    }
+
     if (appliedCoupon && subtotal < appliedCoupon.minOrderAmount) {
       setAppliedCoupon(null);
       setCouponSuccess(null);
       setCouponError(`Cart value dropped below ₹${appliedCoupon.minOrderAmount}. ${appliedCoupon.code} removed.`);
+    } else if (couponError && couponError.includes('more to unlock')) {
+      // User increased cart quantity to reach the required minimum amount (e.g. ₹400 for FIRST100)
+      if (subtotal >= 400) {
+        setCouponError(null);
+        // Automatically unlock and apply the coupon
+        const res = validateCoupon('FIRST100', subtotal, isFirstOrder);
+        if (res.valid && res.coupon) {
+          setAppliedCoupon(res.coupon);
+          setCouponSuccess(res.message);
+        }
+      } else {
+        // Dynamically update the remaining difference
+        const remaining = 400 - subtotal;
+        setCouponError(`Add items worth ₹${remaining} more to unlock FIRST100!`);
+      }
     }
-  }, [subtotal, appliedCoupon]);
+  }, [subtotal, items.length, appliedCoupon, couponError, isFirstOrder]);
 
   const handleToggleCoupon = (coupon: FarmCoupon) => {
     setCouponError(null);
@@ -1407,14 +1439,16 @@ export default function CartDrawer() {
                             </span>
                           </div>
 
-                          {/* Active Launch Button */}
-                          <a
-                            href={upiPayLink}
-                            className="inline-flex w-full items-center justify-center gap-1.5 bg-stone-900 hover:bg-stone-800 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-xs active:scale-98"
-                          >
-                            <Smartphone className="w-3.5 h-3.5 text-emerald-400" />
-                            <span>{isKannada ? 'UPI ಆ್ಯಪ್ ತೆರೆಯಿರಿ (GPay / PhonePe / Paytm)' : 'Tap to Launch UPI App (GPay / PhonePe / Paytm)'}</span>
-                          </a>
+                          {/* Mobile Only: 1-Tap UPI Launch Button (Never prompted on Desktop Web) */}
+                          {isMobileDevice && (
+                            <a
+                              href={upiPayLink}
+                              className="md:hidden inline-flex w-full items-center justify-center gap-1.5 bg-stone-900 hover:bg-stone-800 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-xs active:scale-98"
+                            >
+                              <Smartphone className="w-3.5 h-3.5 text-emerald-400" />
+                              <span>{isKannada ? 'UPI ಆ್ಯಪ್ ತೆರೆಯಿರಿ (GPay / PhonePe / Paytm)' : 'Tap to Launch UPI App (GPay / PhonePe / Paytm)'}</span>
+                            </a>
+                          )}
 
                           {/* Dynamic Scannable QR Code */}
                           <div className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-emerald-300 shadow-xs">
@@ -1425,7 +1459,7 @@ export default function CartDrawer() {
                             />
                             <div className="text-[11px] text-stone-700 leading-snug space-y-1">
                               <p className="font-semibold text-stone-900">
-                                Scan with any camera or UPI app:
+                                {isMobileDevice ? 'Or scan with any camera or UPI app:' : 'Scan with any UPI app on your mobile phone:'}
                               </p>
                               <div className="flex items-center gap-1 flex-wrap font-bold text-emerald-950 text-[10px]">
                                 <span className="bg-stone-100 px-1.5 py-0.5 rounded border border-stone-200">GPay</span>

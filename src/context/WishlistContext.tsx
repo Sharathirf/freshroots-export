@@ -46,18 +46,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     return wishlist.some((item) => item.id === productId);
   };
 
-  const toggleWishlist = (product: Product) => {
-    if (!isLoggedIn) {
-      try {
-        sessionStorage.setItem('freshroots_post_login_intent', JSON.stringify({ type: 'watchlist' }));
-      } catch {}
-      requireAuth('Sign in with your mobile number to save items to your personal harvest watchlist', () => {
-        toggleWishlist(product);
-        setIsWatchlistOpen(true);
-      });
-      return;
-    }
-
+  const toggleWishlistInternal = (product: Product) => {
     setWishlist((prev) => {
       let updated: Product[];
       if (prev.some((p) => p.id === product.id)) {
@@ -68,6 +57,32 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
       saveToStorage(updated);
       return updated;
     });
+    setIsWatchlistOpen(true);
+  };
+
+  const toggleWishlist = (product: Product) => {
+    let authed = isLoggedIn;
+    if (!authed && typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('tiptur_customer_session');
+        if (saved && JSON.parse(saved)?.phone) authed = true;
+      } catch {}
+    }
+
+    if (!authed) {
+      try {
+        sessionStorage.setItem('freshroots_post_login_intent', JSON.stringify({
+          type: 'watchlist',
+          product
+        }));
+      } catch {}
+      requireAuth('Sign in with your mobile number to save items to your personal harvest watchlist', () => {
+        toggleWishlistInternal(product);
+      });
+      return;
+    }
+
+    toggleWishlistInternal(product);
   };
 
   const removeFromWishlist = (productId: string) => {
