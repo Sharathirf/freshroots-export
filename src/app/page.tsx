@@ -16,12 +16,15 @@ import {
   Truck,
   ShieldCheck,
   CheckCircle2,
-  MessageCircle
+  MessageCircle,
+  LayoutGrid,
+  Grid2X2
 } from 'lucide-react';
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>(() => getAllCatalogProducts());
   const [filteredCategory, setFilteredCategory] = useState<string>('all');
+  const [gridDensity, setGridDensity] = useState<'compact' | 'spacious'>('compact');
   const [loading, setLoading] = useState(false);
   const [isRFQOpen, setIsRFQOpen] = useState(false);
   const [selectedProductForRFQ, setSelectedProductForRFQ] = useState<Product | null>(null);
@@ -72,17 +75,51 @@ export default function HomePage() {
         <ActiveOrderBanner />
 
         {/* 2. Clean Catalog Section ("Select produce & order") */}
-        <section id="catalog" className="pt-6 sm:pt-8 pb-14 sm:pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-4 lg:grid-cols-[minmax(16rem,0.8fr)_minmax(0,2fr)] lg:items-center mb-6 sm:mb-8">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
-                {lang === 'kn' ? 'ನಿಮ್ಮ ಫಾರ್ಮ್ ಉತ್ಪನ್ನಗಳನ್ನು ಆರಿಸಿ' : 'Select Your Produce'}
-              </h2>
-              <p className="text-stone-500 text-xs sm:text-sm mt-0.5">
-                {lang === 'kn'
-                  ? 'ಕರ್ನಾಟಕದ ತೋಟಗಳಿಂದ ನೇರ ರವಾನೆ • 100% ಉಚಿತ ಮನೆ ಬಾಗಿಲು ಡೆಲಿವರಿ.'
-                  : 'Authentic, lab-graded lots with direct farm dispatch in 24 hours.'}
-              </p>
+        <section id="catalog" className="pt-4 sm:pt-6 pb-12 sm:pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-3 lg:grid-cols-[minmax(16rem,0.8fr)_minmax(0,2fr)] lg:items-center mb-4 sm:mb-6">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h2 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
+                  {lang === 'kn' ? 'ನಿಮ್ಮ ಫಾರ್ಮ್ ಉತ್ಪನ್ನಗಳನ್ನು ಆರಿಸಿ' : 'Select Your Produce'}
+                </h2>
+                <p className="text-stone-500 text-xs sm:text-sm mt-0.5">
+                  {lang === 'kn'
+                    ? 'ಕರ್ನಾಟಕದ ತೋಟಗಳಿಂದ ನೇರ ರವಾನೆ • 100% ಉಚಿತ ಮನೆ ಬಾಗಿಲು ಡೆಲಿವರಿ.'
+                    : 'Authentic, lab-graded lots with direct farm dispatch in 24 hours.'}
+                </p>
+              </div>
+
+              {/* Grid Density View Switcher (6-8 items on screen) */}
+              <div className="inline-flex items-center gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200 text-xs" role="group" aria-label="Catalog layout density">
+                <button
+                  type="button"
+                  onClick={() => setGridDensity('compact')}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-bold transition ${
+                    gridDensity === 'compact'
+                      ? 'bg-stone-900 text-white shadow-2xs'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                  title="Compact View: 8 items visible per screen"
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">8 / Screen</span>
+                  <span className="sm:hidden">8</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGridDensity('spacious')}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-bold transition ${
+                    gridDensity === 'spacious'
+                      ? 'bg-stone-900 text-white shadow-2xs'
+                      : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                  title="Comfort View: 6 items visible per screen"
+                >
+                  <Grid2X2 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">6 / Screen</span>
+                  <span className="sm:hidden">6</span>
+                </button>
+              </div>
             </div>
 
             {/* Category Filter Tabs */}
@@ -115,16 +152,24 @@ export default function HomePage() {
 
           {/* Product Grid */}
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-6">
-              {[1, 2, 3, 4].map((n) => (
+            <div className={`grid gap-3 sm:gap-4 lg:gap-5 py-4 ${
+              gridDensity === 'compact'
+                ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'
+                : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+            }`}>
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
                 <div
                   key={n}
-                  className="bg-white rounded-3xl h-96 animate-pulse border border-stone-200"
+                  className="bg-white rounded-2xl h-72 animate-pulse border border-stone-200"
                 />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+            <div className={`grid gap-3 sm:gap-4 lg:gap-5 ${
+              gridDensity === 'compact'
+                ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'
+                : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+            }`}>
               {displayedProducts.map((product) => (
                 <ProductCard
                   key={product.id}

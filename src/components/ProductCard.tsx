@@ -190,11 +190,11 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
   return (
     <article
       ref={cardRef}
-      className="h-full bg-white rounded-2xl border border-stone-200/90 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col group select-text"
+      className="h-full bg-white rounded-xl border border-stone-200 hover:border-emerald-700/50 overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col group select-text"
     >
       <div className="flex flex-col flex-1">
         {/* 1. Sale/Grade Badge & Wishlist Action, 2. Product Image */}
-        <div className="relative aspect-square w-full overflow-hidden bg-stone-50/70 p-4 flex items-center justify-center select-none">
+        <div className="relative h-36 sm:h-40 md:h-44 w-full overflow-hidden bg-stone-50/80 p-2 sm:p-2.5 flex items-center justify-center select-none border-b border-stone-100/80">
           <Link href={`/products/${product.slug}`} className="block relative w-full h-full flex items-center justify-center">
             <img
               src={displayImageUrl}
@@ -206,20 +206,20 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
 
             {/* Sale / Grade badge */}
             {!isBulkOnly ? (
-              <div className="absolute top-3 left-3 z-10 bg-emerald-800 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm select-none">
+              <div className="absolute top-2 left-2 z-10 bg-emerald-800 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs select-none">
                 Sale • 15% OFF
               </div>
             ) : product.grade ? (
-              <div className="absolute top-3 left-3 z-10 bg-white/95 backdrop-blur-sm text-stone-800 text-[10px] font-bold px-2 py-0.5 rounded-md border border-stone-200 shadow-sm select-none">
+              <div className="absolute top-2 left-2 z-10 bg-white/95 backdrop-blur-xs text-stone-800 text-[9px] font-bold px-1.5 py-0.5 rounded border border-stone-200 shadow-xs select-none">
                 {product.grade}
               </div>
             ) : null}
 
-            <div className="absolute bottom-2.5 left-2.5 text-lg sm:text-xl bg-white/95 px-2 py-0.5 rounded-xl shadow-xs border border-stone-200 pointer-events-none select-none">
+            <div className="absolute bottom-1.5 left-1.5 text-sm sm:text-base bg-white/90 px-1.5 py-0.5 rounded-md shadow-2xs border border-stone-200 pointer-events-none select-none">
               {displayEmoji}
             </div>
 
-            <div className="absolute bottom-2.5 right-2.5 bg-emerald-950/90 text-white text-[10px] font-medium px-2 py-0.5 rounded shadow-sm select-none">
+            <div className="absolute bottom-1.5 right-1.5 bg-emerald-950/90 text-white text-[9px] font-medium px-1.5 py-0.5 rounded shadow-2xs select-none">
               ✓ Farm Direct
             </div>
           </Link>
@@ -228,12 +228,12 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
           <button
             type="button"
             onClick={() => toggleWishlist(product)}
-            className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-stone-600 hover:text-red-500 flex items-center justify-center shadow-md transition group/heart focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3b6d11] select-none"
+            className="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-stone-600 hover:text-red-500 flex items-center justify-center shadow-xs transition group/heart focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3b6d11] select-none"
             title={isWishlisted ? 'Remove from Watchlist' : 'Add to Watchlist'}
             aria-label={isWishlisted ? `Remove ${product.title} from wishlist` : `Add ${product.title} to wishlist`}
           >
             <Heart
-              className={`w-4 h-4 transition ${
+              className={`w-3.5 h-3.5 transition ${
                 isWishlisted
                   ? 'fill-red-500 text-red-500 scale-110'
                   : 'text-stone-400 group-hover/heart:text-red-500'
@@ -243,45 +243,45 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
         </div>
 
         {/* 3. Category & Supporting Metadata, 4. Title, 5. Ratings, 6. Pricing */}
-        <div className="p-4 sm:p-5 flex flex-col flex-1">
+        <div className="p-3 sm:p-3.5 flex flex-col flex-1">
           {/* Category & Unit Subtitle */}
-          <div className="flex items-center justify-between gap-2 text-[11px] font-medium min-h-[1.25rem]">
-            <span className="text-[#3b6d11] font-semibold uppercase tracking-wider text-[10px] select-none bg-transparent">
+          <div className="flex items-center justify-between gap-1.5 text-[10px] font-medium">
+            <span className="text-[#3b6d11] font-bold uppercase tracking-wider text-[9px] select-none">
               {product.category.replace(/_/g, ' ')}
             </span>
-            <span className="text-stone-500 text-right leading-snug truncate max-w-[55%] bg-transparent">
+            <span className="text-stone-400 text-right leading-snug truncate max-w-[55%]">
               {lang === 'kn' && meta?.subtitleKn ? meta.subtitleKn : unitSubtitle}
             </span>
           </div>
 
           {/* Product Title */}
-          <Link href={`/products/${product.slug}`} className="mt-1 block">
-            <h3 className="font-bold text-stone-900 text-sm sm:text-base leading-snug group-hover:text-[#3b6d11] transition line-clamp-2 min-h-[2.8rem] bg-transparent">
+          <Link href={`/products/${product.slug}`} className="mt-0.5 block">
+            <h3 className="font-bold text-stone-900 text-xs sm:text-sm leading-snug group-hover:text-[#3b6d11] transition line-clamp-2 min-h-[2rem] sm:min-h-[2.4rem]">
               {lang === 'kn' && meta?.titleKn ? meta.titleKn : product.title}
             </h3>
           </Link>
 
           {/* Star Rating Row */}
-          <div className="flex items-center justify-between min-h-[1.75rem] mt-1">
+          <div className="flex items-center justify-between mt-1">
             <Link
               href={`/products/${product.slug}#reviews`}
-              className="inline-flex items-center gap-1.5 group/stars hover:opacity-80 transition select-none"
+              className="inline-flex items-center gap-1 group/stars hover:opacity-80 transition select-none"
               title={reviewCount ? `Read ${reviewCount} customer reviews for ${product.title}` : `Read reviews for ${product.title}`}
             >
               <div className="flex text-amber-400 text-xs" aria-hidden="true">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className={`w-3.5 h-3.5 ${i < Math.round(averageRating || 5) ? 'fill-current' : ''}`} />
+                  <Star key={i} className={`w-3 h-3 ${i < Math.round(averageRating || 5) ? 'fill-current' : ''}`} />
                 ))}
               </div>
-              <span className="text-xs font-bold text-stone-700 font-mono bg-transparent">{(averageRating || 4.8).toFixed(1)}</span>
-              <span className="text-[11px] text-stone-400 group-hover/stars:text-[#3b6d11] bg-transparent">
-                ({reviewCount || 12} {reviewCount === 1 ? 'Review' : 'Reviews'})
+              <span className="text-[11px] font-bold text-stone-700 font-mono">{(averageRating || 4.8).toFixed(1)}</span>
+              <span className="text-[10px] text-stone-400 group-hover/stars:text-[#3b6d11]">
+                ({reviewCount || 12})
               </span>
             </Link>
 
             <Link
               href={`/products/${product.slug}#reviews`}
-              className="text-[10px] font-bold text-emerald-800 hover:text-emerald-950 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2 py-0.5 rounded transition select-none"
+              className="text-[9px] font-bold text-emerald-800 hover:text-emerald-950 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-1.5 py-0.2 rounded transition select-none"
             >
               + Review
             </Link>
@@ -289,11 +289,8 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
 
           {/* Packaging / Variant Selection pills if available */}
           {variants && variants.length > 0 && !isBulkOnly ? (
-            <div className="mt-2.5 pt-2 border-t border-stone-100 min-h-[3rem]">
-              <span className="text-[10px] uppercase font-bold text-stone-400 block mb-1 select-none">
-                Select Packaging Size:
-              </span>
-              <div className="flex flex-wrap gap-1.5">
+            <div className="mt-1.5 pt-1.5 border-t border-stone-100">
+              <div className="flex flex-wrap gap-1">
                 {variants.map((v) => {
                   const isSelected = selectedVariant?.packSize === v.packSize;
                   return (
@@ -305,10 +302,10 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
                         e.stopPropagation();
                         setSelectedVariant(v);
                       }}
-                      className={`text-[11px] font-bold px-2 py-1 rounded-lg border transition select-none ${
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded transition select-none ${
                         isSelected
-                          ? 'bg-emerald-50 text-emerald-950 border-emerald-600 ring-1 ring-emerald-600 shadow-xs'
-                          : 'bg-stone-50 text-stone-600 border-stone-200 hover:bg-stone-100 hover:border-stone-300'
+                          ? 'bg-emerald-50 text-emerald-950 border border-emerald-600 ring-1 ring-emerald-600'
+                          : 'bg-stone-50 text-stone-600 border border-stone-200 hover:bg-stone-100'
                       }`}
                     >
                       {v.label}
@@ -317,62 +314,60 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
                 })}
               </div>
             </div>
-          ) : (
-            <div className="min-h-[0.5rem]" />
-          )}
+          ) : null}
 
           {/* Pricing Section (Price, original price, discount, and supporting information) */}
-          <div className="mt-3 pt-3 border-t border-stone-100 min-h-[4.25rem] flex flex-col justify-center">
+          <div className="mt-2 pt-2 border-t border-stone-100">
             {product.category === 'arecanut' && isBulkOnly ? (
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm sm:text-base font-extrabold text-stone-900 font-mono tracking-tight bg-transparent">
-                    Mandi maximum: ₹{arecanutMandiRate.pricePerQuintal.toLocaleString('en-IN')} / quintal
+              <div className="flex flex-col gap-0.5">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-xs sm:text-sm font-extrabold text-stone-900 font-mono tracking-tight">
+                    Mandi: ₹{arecanutMandiRate.pricePerQuintal.toLocaleString('en-IN')}/qtl
                   </span>
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-800 bg-amber-100 border border-amber-300 px-1.5 py-0.5 rounded-md select-none">
-                    Bulk Orders Only
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-amber-800 bg-amber-100 border border-amber-200 px-1 py-0.2 rounded select-none">
+                    Bulk
                   </span>
                 </div>
-                <div className="flex items-center gap-1.5 text-[11px] text-stone-500 truncate bg-transparent">
-                  <span>Minimum bulk lot: 100 kg</span>
-                  <span>•</span>
-                  <span>₹{arecanutMandiRate.pricePerKg.toFixed(2)} / kg</span>
-                  <span>•</span>
-                  <span>Reported {arecanutMandiRate.reportedAt}</span>
+                <div className="text-[10px] text-stone-500 truncate">
+                  Min 100 kg • ₹{arecanutMandiRate.pricePerKg.toFixed(2)}/kg
                 </div>
               </div>
             ) : isBulkOnly ? (
-              <div className="flex flex-col gap-1">
-                <div className="flex items-baseline gap-2 flex-wrap">
-                  <span className="text-xl sm:text-2xl font-black text-stone-900 font-mono tracking-tight bg-transparent">
+              <div className="flex flex-col gap-0.5">
+                <div className="flex items-baseline gap-1.5 flex-wrap">
+                  <span className="text-base sm:text-lg font-black text-stone-900 font-mono tracking-tight">
                     ₹{displayPrice.toLocaleString('en-IN')}
                   </span>
-                  <span className="text-[11px] text-stone-500 font-normal bg-transparent">/ {priceUnit}</span>
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-md select-none">
-                    Bulk Orders Only
+                  <span className="text-[10px] text-stone-400 font-normal">/ {priceUnit}</span>
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-amber-800 bg-amber-100 border border-amber-200 px-1.5 py-0.2 rounded select-none">
+                    Bulk
                   </span>
                 </div>
-                <span className="text-[11px] text-stone-500 truncate bg-transparent">
+                <span className="text-[10px] text-stone-500 truncate">
                   {supportingInfo}
                 </span>
               </div>
             ) : (
-              <div className="flex flex-col gap-1">
-                <div className="flex items-baseline gap-2 flex-wrap">
-                  <span className="text-xl sm:text-2xl font-black text-stone-900 font-mono tracking-tight bg-transparent">
+              <div className="flex flex-col gap-0.5">
+                <div className="flex items-baseline gap-1.5 flex-wrap">
+                  <span className="text-base sm:text-lg font-black text-emerald-900 font-mono tracking-tight">
                     ₹{displayPrice.toLocaleString('en-IN')}
                   </span>
-                  <span className="text-xs text-stone-400 line-through font-mono bg-transparent">
-                    ₹{originalMrp.toLocaleString('en-IN')}
-                  </span>
-                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 select-none">
-                    15% off
-                  </span>
-                  <span className="text-[11px] text-stone-500 font-normal bg-transparent">
+                  {originalMrp > displayPrice && (
+                    <>
+                      <span className="text-[10px] text-stone-400 line-through font-mono">
+                        ₹{originalMrp.toLocaleString('en-IN')}
+                      </span>
+                      <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1 py-0.2 rounded border border-emerald-200 select-none">
+                        15% off
+                      </span>
+                    </>
+                  )}
+                  <span className="text-[10px] text-stone-400 font-normal">
                     / {priceUnit}
                   </span>
                 </div>
-                <span className="text-[11px] text-stone-500 truncate bg-transparent">
+                <span className="text-[10px] text-stone-500 truncate">
                   {supportingInfo}
                 </span>
               </div>
@@ -382,38 +377,38 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
       </div>
 
       {/* 8. Primary Purchase Action & 9. Secondary Wholesale Action */}
-      <div className="p-4 sm:p-5 pt-0 mt-auto min-h-[5.75rem] flex flex-col justify-end space-y-2">
+      <div className="p-3 sm:p-3.5 pt-0 mt-auto flex flex-col gap-1.5">
         {isBulkOnly ? (
           <button
             type="button"
             onClick={() => onSelectForRFQ ? onSelectForRFQ(product) : (window.location.href = `/products/${product.slug}`)}
-            className="w-full bg-amber-600 hover:bg-amber-700 active:scale-[0.98] text-white font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 select-none"
+            className="w-full bg-amber-600 hover:bg-amber-700 active:scale-[0.98] text-white font-bold text-xs py-2 px-3 rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 select-none"
           >
-            <Building2 className="w-4 h-4 text-white" />
-            <span>{lang === 'kn' ? 'ಸಗಟು ವಿಚಾರಣೆ (ಬಲ್ಕ್ ಮಾತ್ರ)' : 'Request Wholesale / Bulk Quote'}</span>
+            <Building2 className="w-3.5 h-3.5 text-white" />
+            <span>{lang === 'kn' ? 'ಸಗಟು ವಿಚಾರಣೆ (ಬಲ್ಕ್)' : 'Wholesale / Bulk Quote'}</span>
           </button>
         ) : (
           <>
             <button
               type="button"
               onClick={() => addToCart(product, 1, selectedVariant || undefined)}
-              className="w-full bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-[0.98] text-white font-bold text-xs sm:text-sm py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 group/btn select-none"
+              className="w-full bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-[0.98] text-white font-bold text-xs py-2 px-3 rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 group/btn select-none"
             >
-              <ShoppingBag className="w-4 h-4" />
+              <ShoppingBag className="w-3.5 h-3.5" />
               <span>
                 {lang === 'kn'
-                  ? 'ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಿ (ಉಚಿತ ಡೆಲಿವರಿ)'
-                  : 'Add to Cart (Free Delivery)'}
+                  ? 'ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಿ'
+                  : 'Add to Cart'}
               </span>
             </button>
 
             <button
               type="button"
               onClick={() => onSelectForRFQ ? onSelectForRFQ(product) : (window.location.href = `/products/${product.slug}`)}
-              className="w-full bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-semibold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 select-none"
+              className="w-full bg-amber-50/80 hover:bg-amber-100 border border-amber-200 text-amber-900 font-semibold text-[10px] py-1 px-2 rounded-lg transition flex items-center justify-center gap-1 select-none"
             >
-              <Building2 className="w-3.5 h-3.5 text-amber-700" />
-              <span>{lang === 'kn' ? 'ಸಗಟು / ಲಾರಿ ಲೋಡ್ ವಿಚಾರಣೆ' : 'Wholesale / Bulk Quote'}</span>
+              <Building2 className="w-3 h-3 text-amber-700" />
+              <span>{lang === 'kn' ? 'ಸಗಟು ಕೋಟ್' : 'Wholesale / Bulk Quote'}</span>
             </button>
           </>
         )}
