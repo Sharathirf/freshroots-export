@@ -454,6 +454,90 @@ export const CATALOG_PRODUCTS: CatalogProductItem[] = [
       'Shivamogga areca nut supplier',
       'commercial supari wholesale India'
     ]
+  },
+  {
+    id: 'prod-012-ragi-flour',
+    sku: 'FLR-RAG-STN-05K',
+    title: 'Stone-Ground Ragi Flour',
+    slug: 'mandya-stone-ground-ragi-flour-5kg',
+    category: 'spices',
+    grade: 'Grade A Fine Stone-Milled Unadulterated Flour',
+    origin: 'Mandya Agricultural Belt, Karnataka',
+    unit_of_measure: '5 kg Bag',
+    estimated_weight_kg: 5.0,
+    moisture_percentage: 10.5,
+    oil_percentage: null,
+    retail_price_inr: 385.00,
+    bulk_min_quantity: 1,
+    wholesale_benchmark_price_inr: 275.00,
+    hsn_code: '110290',
+    tax_rate_percentage: 0.00,
+    description: '100% pure stone-ground native Karnataka Ragi Flour (Finger Millet Flour / Ragi Hittu), freshly milled from destoned, canal-irrigated whole brown ragi grains grown in Mandya. Traditional slow stone-milling retains natural germ nutrition, dietary fiber, and rich calcium (344mg/100g) without heat buildup. Zero preservatives, maida blending, or synthetic bleaching. Ideal for authentic soft ragi mudde, crisp dosas, rotis, and nutritional baby malt porridge.',
+    specifications: {
+      milling_type: 'Traditional slow cold-stone chakki milling',
+      grain_source: '100% native unpolished Mandya finger millet',
+      fiber_content: 'High dietary fiber (>11g/100g)',
+      calcium: '344 mg per 100g naturally retained',
+      packaging: 'Food-grade moisture-barrier poly-woven 5 kg bag (min 5 kg)',
+      shelf_life: '90 days in airtight storage'
+    },
+    image_url: '/products/ragi-flour-4k.jpg',
+    is_active: true,
+    available_stock: 420,
+    average_rating: 4.9,
+    review_count: 19,
+    created_at: '2026-10-29T00:00:00Z',
+    seoTitle: 'Stone-Ground Ragi Flour 5kg Bag | Pure Mandya Finger Millet (Ragi Hittu)',
+    seoDescription: 'Buy pure stone-ground Karnataka Ragi Flour (Ragi Hittu) 5kg bag. 100% whole grain, unpolished, calcium-rich, zero preservatives. Ideal for ragi mudde & dosa. Free doorstep delivery.',
+    keywords: [
+      'stone ground ragi flour 5kg',
+      'buy ragi flour online Bangalore',
+      'Mandya ragi hittu 5kg price',
+      'pure finger millet flour India',
+      'unadulterated ragi flour free shipping'
+    ]
+  },
+  {
+    id: 'prod-013-rice-flour',
+    sku: 'FLR-RIC-STN-05K',
+    title: 'Pure Rice Flour (Akki Hittu)',
+    slug: 'pure-stone-ground-rice-flour-5kg',
+    category: 'spices',
+    grade: 'Grade A Fine-Sifted Cold-Milled Pure White Rice Flour',
+    origin: 'Mandya & Cauvery Basin, Karnataka',
+    unit_of_measure: '5 kg Bag',
+    estimated_weight_kg: 5.0,
+    moisture_percentage: 11.0,
+    oil_percentage: null,
+    retail_price_inr: 365.00,
+    bulk_min_quantity: 1,
+    wholesale_benchmark_price_inr: 250.00,
+    hsn_code: '110290',
+    tax_rate_percentage: 0.00,
+    description: 'Fine stone-ground pure Rice Flour (Akki Hittu) crafted from selected high-grade raw Sona Masoori paddy grown in the Cauvery river basin. Machine-cleaned and finely stone-milled into silky, lump-free flour without chemical starches, talc, or additives. Naturally gluten-free with high binding capacity, making it the perfect staple for traditional Karnataka Akki Rotti, soft Idiyappam (shavige), crisp Murukku, Neer Dosa, and South Indian snacks.',
+    specifications: {
+      milling_type: 'Fine stone-milled & multi-sifted for silk texture',
+      paddy_source: 'Premium single-origin Cauvery Basin raw rice',
+      gluten: 'Naturally 100% Gluten-Free',
+      mesh_fineness: 'Fine mesh (>100 mesh for lump-free kneading)',
+      packaging: 'Food-grade sealed 5 kg airtight moisture-guard bag (min 5 kg)',
+      shelf_life: '90 days in cool dry place'
+    },
+    image_url: '/products/rice-flour-4k.jpg',
+    is_active: true,
+    available_stock: 380,
+    average_rating: 4.9,
+    review_count: 15,
+    created_at: '2026-10-29T00:00:00Z',
+    seoTitle: 'Pure Rice Flour (Akki Hittu) 5kg Bag | Fine Stone-Ground Sona Masoori',
+    seoDescription: 'Buy pure fine stone-ground Rice Flour (Akki Hittu) 5kg bag. 100% gluten-free, Cauvery basin harvest, silky fine texture for Akki Rotti, Idiyappam & Neer Dosa. Free home delivery.',
+    keywords: [
+      'pure rice flour 5kg bag',
+      'buy akki hittu online Karnataka',
+      'rice flour 5kg price Bangalore',
+      'gluten free fine rice flour',
+      'idiyappam rice flour free delivery'
+    ]
   }
 ];
 

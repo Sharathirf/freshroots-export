@@ -93,6 +93,68 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
       title: 'Pure Karnataka Ragi Millet (25 kg Bag)',
       isDefault: false
     }
+  ],
+
+  // Stone-Ground Ragi Flour: 5 kg Bag (Min) @ ₹385, 10 kg Family Pack @ ₹750, 25 kg Sack @ ₹1,750
+  'FLR-RAG-STN-05K': [
+    {
+      packSize: '5 kg Bag',
+      label: '5 kg Bag @ ₹385 (Min)',
+      price: 385,
+      weightKg: 5.0,
+      unitOfMeasure: '5 kg Bag',
+      title: 'Stone-Ground Ragi Flour (5 kg Bag)',
+      isDefault: true
+    },
+    {
+      packSize: '10 kg Family Pack',
+      label: '10 kg Pack @ ₹750',
+      price: 750,
+      weightKg: 10.0,
+      unitOfMeasure: '10 kg Pack',
+      title: 'Stone-Ground Ragi Flour (10 kg Pack)',
+      isDefault: false
+    },
+    {
+      packSize: '25 kg Sack',
+      label: '25 kg Sack @ ₹1,750',
+      price: 1750,
+      weightKg: 25.0,
+      unitOfMeasure: '25 kg Sack',
+      title: 'Stone-Ground Ragi Flour (25 kg Sack)',
+      isDefault: false
+    }
+  ],
+
+  // Pure Rice Flour (Akki Hittu): 5 kg Bag (Min) @ ₹365, 10 kg Family Pack @ ₹710, 25 kg Sack @ ₹1,650
+  'FLR-RIC-STN-05K': [
+    {
+      packSize: '5 kg Bag',
+      label: '5 kg Bag @ ₹365 (Min)',
+      price: 365,
+      weightKg: 5.0,
+      unitOfMeasure: '5 kg Bag',
+      title: 'Pure Rice Flour (Akki Hittu 5 kg Bag)',
+      isDefault: true
+    },
+    {
+      packSize: '10 kg Family Pack',
+      label: '10 kg Pack @ ₹710',
+      price: 710,
+      weightKg: 10.0,
+      unitOfMeasure: '10 kg Pack',
+      title: 'Pure Rice Flour (Akki Hittu 10 kg Pack)',
+      isDefault: false
+    },
+    {
+      packSize: '25 kg Sack',
+      label: '25 kg Sack @ ₹1,650',
+      price: 1650,
+      weightKg: 25.0,
+      unitOfMeasure: '25 kg Sack',
+      title: 'Pure Rice Flour (Akki Hittu 25 kg Sack)',
+      isDefault: false
+    }
   ]
 };
 

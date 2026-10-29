@@ -17,6 +17,8 @@ export function resolveProductImageBySku(sku?: string): string {
   if (s.includes('COP') || s.includes('BAL')) return '/products/ball-copra-4k.jpg';
   if (s.includes('NUR-COC')) return '/products/coconut-saplings-4k.jpg';
   if (s.includes('OIL') || s.includes('GNT') || s.includes('GND')) return '/products/groundnut-oil-4k.jpg';
+  if (s.includes('FLR-RAG') || s.includes('RAG-FLR')) return '/products/ragi-flour-4k.jpg';
+  if (s.includes('FLR-RIC') || s.includes('RIC-FLR')) return '/products/rice-flour-4k.jpg';
   if (s.includes('MIL') || s.includes('RAG')) return '/products/ragi-millet-4k.jpg';
   if (s.includes('GHE') || s.includes('COW') || s.includes('DAI')) return '/products/cow-ghee-4k.jpg';
   if (s.includes('TND')) return '/products/tender-coconuts-4k.jpg';

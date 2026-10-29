@@ -71,6 +71,18 @@ export const BULK_ORDER_ITEMS: BulkOrderItemMeta[] = [
     simpleName: '11. Arecanut (Adike) — Bulk Commodity Lot',
     cleanName: 'Arecanut (Adike) — Bulk Commodity Lot',
     skuMatch: 'ARE-BLK-ADK-01Q'
+  },
+  {
+    order: 12,
+    simpleName: '12. Ragi Flour (Mandya Stone-Ground 5 kg Bag)',
+    cleanName: 'Ragi Flour (Mandya Stone-Ground 5 kg Bag)',
+    skuMatch: 'FLR-RAG-STN-05K'
+  },
+  {
+    order: 13,
+    simpleName: '13. Rice Flour (Pure Stone-Ground 5 kg Bag)',
+    cleanName: 'Rice Flour (Pure Stone-Ground 5 kg Bag)',
+    skuMatch: 'FLR-RIC-STN-05K'
   }
 ];
 
@@ -109,6 +121,26 @@ export function getBulkOrderItemMeta(item?: {
     title.includes('coconut sapling')
   ) {
     return BULK_ORDER_ITEMS[2];
+  }
+  // 12. Ragi Flour
+  if (
+    sku.includes('FLR-RAG') ||
+    sku.includes('RAG-FLR') ||
+    slug.includes('ragi-flour') ||
+    title.includes('ragi flour') ||
+    title.includes('ragi hittu')
+  ) {
+    return BULK_ORDER_ITEMS[11];
+  }
+  // 13. Rice Flour
+  if (
+    sku.includes('FLR-RIC') ||
+    sku.includes('RIC-FLR') ||
+    slug.includes('rice-flour') ||
+    title.includes('rice flour') ||
+    title.includes('akki hittu')
+  ) {
+    return BULK_ORDER_ITEMS[12];
   }
   // 4. Ragi Millet
   if (sku.includes('RAG') || slug.includes('ragi') || title.includes('ragi')) {
