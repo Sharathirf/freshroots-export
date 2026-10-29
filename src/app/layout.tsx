@@ -14,6 +14,7 @@ import HelpModal from '@/components/HelpModal';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import PwaInstallPrompt from '@/components/PwaInstallPrompt';
 import PostHogPageView from '@/components/PostHogPageView';
+import { Analytics } from '@vercel/analytics/react';
 import { getSiteUrl, getRobotsDirectives, generateOrganizationJsonLd, generateWebSiteJsonLd } from '@/lib/seo';
 
 export const viewport: Viewport = {
@@ -119,6 +120,7 @@ export default function RootLayout({
         </AuthProvider>
         <PostHogPageView />
         <PwaInstallPrompt />
+        <Analytics />
         {/* Razorpay Standard Checkout Script */}
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
