@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product } from '@/types';
+import { useAuth } from '@/context/AuthContext';
 
 interface WishlistContextType {
   wishlist: Product[];
@@ -16,6 +17,7 @@ interface WishlistContextType {
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
+  const { isLoggedIn, requireAuth } = useAuth();
   const [wishlist, setWishlist] = useState<Product[]>([]);
   const [isWatchlistOpen, setIsWatchlistOpen] = useState(false);
 
@@ -45,6 +47,13 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   };
 
   const toggleWishlist = (product: Product) => {
+    if (!isLoggedIn) {
+      requireAuth('Sign in with your mobile number to save items to your personal harvest watchlist', () => {
+        toggleWishlist(product);
+      });
+      return;
+    }
+
     setWishlist((prev) => {
       let updated: Product[];
       if (prev.some((p) => p.id === product.id)) {

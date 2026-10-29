@@ -22,7 +22,17 @@ function parseJwt(token: string) {
 }
 
 export default function SignInModal() {
-  const { isSignInModalOpen, setIsSignInModalOpen, signIn, signInWithGoogle, updateProfile } = useAuth();
+  const {
+    isSignInModalOpen,
+    setIsSignInModalOpen,
+    signIn,
+    signInWithGoogle,
+    updateProfile,
+    signInModalReason,
+    setSignInModalReason,
+    pendingAction,
+    setPendingAction
+  } = useAuth();
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
@@ -183,6 +193,11 @@ export default function SignInModal() {
     }
 
     handleClose();
+    if (pendingAction) {
+      const action = pendingAction;
+      setPendingAction(null);
+      setTimeout(() => action(), 100);
+    }
   };
 
   const handleSaveGooglePhone = async (e: React.FormEvent) => {
@@ -216,6 +231,7 @@ export default function SignInModal() {
     setFullName('');
     setPhoneNumber('');
     setEmailAddress('');
+    setSignInModalReason(null);
   };
 
   return (
@@ -255,6 +271,12 @@ export default function SignInModal() {
 
         {/* Title & Description */}
         <div className="text-center mb-6">
+          {signInModalReason && (
+            <div className="mb-3 inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 text-amber-900 rounded-full text-xs font-bold">
+              <span>🌾</span>
+              <span>{signInModalReason}</span>
+            </div>
+          )}
           <h3 className="text-2xl font-extrabold text-stone-900 tracking-tight">
             {step === 'google_phone' ? `Welcome, ${googleUserTemp?.name?.split(' ')[0]}!` : 'Customer Sign In'}
           </h3>

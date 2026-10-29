@@ -25,6 +25,11 @@ interface AuthContextType {
   addresses: CustomerAddress[];
   isSignInModalOpen: boolean;
   setIsSignInModalOpen: (open: boolean) => void;
+  signInModalReason: string | null;
+  setSignInModalReason: (reason: string | null) => void;
+  pendingAction: (() => void) | null;
+  setPendingAction: (action: (() => void) | null) => void;
+  requireAuth: (reason: string, onAuthorized?: () => void) => boolean;
   isAccountModalOpen: boolean;
   setIsAccountModalOpen: (open: boolean) => void;
   isEditProfileModalOpen: boolean;
@@ -90,6 +95,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [customer, setCustomer] = useState<CustomerUser | null>(null);
   const [addresses, setAddresses] = useState<CustomerAddress[]>([]);
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
+  const [signInModalReason, setSignInModalReason] = useState<string | null>(null);
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isManageAddressesOpen, setIsManageAddressesOpen] = useState(false);
@@ -420,6 +427,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const requireAuth = (reason: string, onAuthorized?: () => void): boolean => {
+    if (customer) {
+      if (onAuthorized) onAuthorized();
+      return true;
+    }
+    setSignInModalReason(reason);
+    if (onAuthorized) {
+      setPendingAction(() => onAuthorized);
+    }
+    setIsSignInModalOpen(true);
+    return false;
+  };
+
   const signOut = () => {
     setCustomer(null);
     setAddresses([]);
@@ -441,6 +461,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         addresses,
         isSignInModalOpen,
         setIsSignInModalOpen,
+        signInModalReason,
+        setSignInModalReason,
+        pendingAction,
+        setPendingAction,
+        requireAuth,
         isAccountModalOpen,
         setIsAccountModalOpen,
         isEditProfileModalOpen,

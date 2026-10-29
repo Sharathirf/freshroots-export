@@ -36,7 +36,7 @@ import GstInvoiceModal from '@/components/GstInvoiceModal';
 import { track } from '@/lib/analytics';
 
 export default function CartDrawer() {
-  const { customer, addresses, saveAddress, lang } = useAuth();
+  const { customer, addresses, saveAddress, lang, signIn } = useAuth();
   const isKannada = lang === 'kn';
   const {
     items,
@@ -60,6 +60,24 @@ export default function CartDrawer() {
   const [isEnteringCustomAddress, setIsEnteringCustomAddress] = useState(false);
   const [saveNewAddress, setSaveNewAddress] = useState(true);
   const [newAddressTag, setNewAddressTag] = useState('Home');
+
+  // Inline OTP verification state for guest users during checkout
+  const [isPhoneVerified, setIsPhoneVerified] = useState(Boolean(customer?.phone));
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpInput, setOtpInput] = useState('1234');
+  const [otpError, setOtpError] = useState<string | null>(null);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+
+  // Pre-allocated order reservation for dynamic UPI QR tracking
+  const [preallocatedOrder, setPreallocatedOrder] = useState<any | null>(null);
+  const [isPreallocating, setIsPreallocating] = useState(false);
+
+  useEffect(() => {
+    if (customer?.phone) {
+      setIsPhoneVerified(true);
+    }
+  }, [customer?.phone]);
 
   useEffect(() => {
     if (customer) {
@@ -197,12 +215,62 @@ export default function CartDrawer() {
 
   // Live Direct UPI Payment Details
   const farmUpiId = '9591142548@upi';
-  const customerRef = cleanPhone || 'Direct';
-  const upiTransactionNote = `FreshRoots_${customerRef}`;
-  const upiPayLink = `upi://pay?pa=${farmUpiId}&pn=Farmer%20Sharath%20Inorahalli&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(upiTransactionNote)}`;
-  const upiQrCodeUrl = isDeliveryDetailsComplete
-    ? `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiPayLink)}`
+  // If preallocated order exists, embed the order number so banking apps tag the exact transaction note and ref
+  const orderTrackingTag = preallocatedOrder?.order_number
+    ? preallocatedOrder.order_number
+    : (cleanPhone ? `FR_${cleanPhone}` : 'FreshRoots_Direct');
+
+  const upiTransactionNote = `Order_${orderTrackingTag}`;
+  const upiPayLink = `upi://pay?pa=${farmUpiId}&pn=Farmer%20Sharath%20Inorahalli&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(upiTransactionNote)}&tr=${encodeURIComponent(orderTrackingTag)}`;
+  const upiQrCodeUrl = (isDeliveryDetailsComplete && isPhoneVerified)
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(upiPayLink)}`
     : '';
+
+  // Function to pre-create or sync reserved pending order for dynamic UPI tracking
+  const preallocateOrderIntent = async () => {
+    if (!isDeliveryDetailsComplete || !isPhoneVerified || preallocatedOrder || isPreallocating) return;
+    setIsPreallocating(true);
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_name: customerName,
+          customer_phone: customerPhone,
+          customer_email: customerEmail || null,
+          shipping_address: shippingAddress,
+          destination_pincode: destPincode,
+          payment_method: 'upi',
+          coupon_code: appliedCoupon ? appliedCoupon.code : undefined,
+          items: items.map((i) => ({
+            product_id: i.product_id,
+            sku: i.sku,
+            quantity: i.quantity,
+            unit_price_inr: i.unit_price_inr,
+            unit_of_measure: i.unit_of_measure,
+            title: i.title,
+            estimated_weight_kg: i.estimated_weight_kg,
+            item_key: i.item_key
+          }))
+        })
+      });
+      const data = await res.json();
+      if (data.success && data.order) {
+        setPreallocatedOrder(data.order);
+      }
+    } catch (e) {
+      console.warn('Preallocation notice:', e);
+    } finally {
+      setIsPreallocating(false);
+    }
+  };
+
+  // Trigger pre-allocation as soon as delivery details + phone are verified and paymentMethod is UPI
+  useEffect(() => {
+    if (step === 'checkout' && paymentMethod === 'upi' && isDeliveryDetailsComplete && isPhoneVerified && !preallocatedOrder) {
+      preallocateOrderIntent();
+    }
+  }, [step, paymentMethod, isDeliveryDetailsComplete, isPhoneVerified, preallocatedOrder]);
 
   // Re-verify coupon eligibility if cart subtotal changes
   useEffect(() => {
@@ -299,10 +367,38 @@ export default function CartDrawer() {
       return;
     }
 
+    if (!isPhoneVerified) {
+      setOrderError(
+        isKannada
+          ? 'ದಯವಿಟ್ಟು ಮುಂದುವರಿಯುವ ಮೊದಲು ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು OTP ಮೂಲಕ ಪರಿಶೀಲಿಸಿ.'
+          : 'Please verify your mobile number with OTP before finalizing payment.'
+      );
+      return;
+    }
+
     setIsSubmitting(true);
     setOrderError(null);
 
     const createOrderRecord = async (method: 'upi' | 'razorpay') => {
+      // If order intent was already preallocated for UPI QR generation, reuse it
+      if (preallocatedOrder && method === 'upi') {
+        // If customer entered UTR, update the order
+        if (utrNumber.trim()) {
+          try {
+            await fetch('/api/orders', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                order_number: preallocatedOrder.order_number,
+                payment_reference: utrNumber.trim(),
+                payment_method: 'upi'
+              })
+            });
+          } catch {}
+        }
+        return preallocatedOrder;
+      }
+
       const response = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -862,14 +958,29 @@ export default function CartDrawer() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-stone-700 mb-1">Mobile (WhatsApp) *</label>
+                    <label className="block text-xs font-bold text-stone-700 mb-1 flex items-center justify-between">
+                      <span>Mobile (WhatsApp) *</span>
+                      {isPhoneVerified ? (
+                        <span className="text-[10px] text-emerald-700 font-extrabold flex items-center gap-0.5">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-600 inline" /> Verified
+                        </span>
+                      ) : null}
+                    </label>
                     <input
                       type="tel"
                       required
                       value={customerPhone}
-                      onChange={(e) => setCustomerPhone(e.target.value)}
+                      onChange={(e) => {
+                        setCustomerPhone(e.target.value);
+                        if (isPhoneVerified && e.target.value.replace(/\D/g, '').slice(-10) !== customer?.phone) {
+                          setIsPhoneVerified(false);
+                          setOtpSent(false);
+                        }
+                      }}
                       placeholder="e.g. 9845012345"
-                      className="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none font-mono"
+                      className={`w-full px-3 py-2 rounded-lg border text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none font-mono ${
+                        isPhoneVerified ? 'border-emerald-500 bg-emerald-50/30' : 'border-stone-300'
+                      }`}
                     />
                   </div>
                   <div>
@@ -885,6 +996,119 @@ export default function CartDrawer() {
                     />
                   </div>
                 </div>
+
+                {/* Inline OTP Verification Panel for Unverified Phone */}
+                {!isPhoneVerified && cleanPhone.length === 10 && (
+                  <div className="p-3 bg-amber-50/90 border border-amber-300 rounded-xl space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-extrabold text-amber-950 flex items-center gap-1.5">
+                        <ShieldCheck className="w-4 h-4 text-amber-700" />
+                        Verify Mobile to Unlock Fast Checkout &amp; Discounts
+                      </span>
+                    </div>
+
+                    {!otpSent ? (
+                      <div className="flex items-center justify-between gap-2 pt-1">
+                        <p className="text-[11px] text-amber-800">
+                          We will send a 4-digit code to <strong>+91 {cleanPhone}</strong>.
+                        </p>
+                        <button
+                          type="button"
+                          disabled={isSendingOtp}
+                          onClick={async () => {
+                            setIsSendingOtp(true);
+                            setOtpError(null);
+                            try {
+                              const res = await fetch('/api/auth/otp', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ action: 'send', phone: cleanPhone, fullName: customerName })
+                              });
+                              const data = await res.json();
+                              if (data.success) {
+                                setOtpSent(true);
+                                if (data.demoCode) setOtpInput(data.demoCode);
+                              } else {
+                                setOtpError(data.error || 'Failed to send OTP');
+                              }
+                            } catch (e: any) {
+                              setOtpError('Failed to contact OTP service');
+                            } finally {
+                              setIsSendingOtp(false);
+                            }
+                          }}
+                          className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold shrink-0 transition"
+                        >
+                          {isSendingOtp ? 'Sending...' : 'Send OTP'}
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-2 pt-1">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            maxLength={4}
+                            value={otpInput}
+                            onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
+                            placeholder="4-digit OTP"
+                            className="w-28 px-2.5 py-1.5 rounded-lg border border-amber-300 font-mono text-center text-sm font-bold tracking-widest bg-white"
+                          />
+                          <button
+                            type="button"
+                            disabled={isVerifyingOtp || otpInput.length !== 4}
+                            onClick={async () => {
+                              setIsVerifyingOtp(true);
+                              setOtpError(null);
+                              try {
+                                const res = await fetch('/api/auth/otp', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({
+                                    action: 'verify',
+                                    phone: cleanPhone,
+                                    code: otpInput,
+                                    fullName: customerName,
+                                    email: customerEmail
+                                  })
+                                });
+                                const data = await res.json();
+                                if (data.success && data.verified) {
+                                  setIsPhoneVerified(true);
+                                  setIsFirstOrder(data.isFirstOrder !== false);
+                                  // Log user in permanently
+                                  signIn(cleanPhone, customerName, customerEmail);
+                                } else {
+                                  setOtpError(data.error || 'Invalid OTP code');
+                                }
+                              } catch (e) {
+                                setOtpError('Verification failed');
+                              } finally {
+                                setIsVerifyingOtp(false);
+                              }
+                            }}
+                            className="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition disabled:opacity-50"
+                          >
+                            {isVerifyingOtp ? 'Verifying...' : 'Verify OTP'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setOtpSent(false)}
+                            className="text-[11px] text-stone-500 hover:underline"
+                          >
+                            Resend
+                          </button>
+                        </div>
+                        <p className="text-[10px] text-emerald-800">
+                          Demo OTP: <strong>1234</strong> (auto-filled for instant verification)
+                        </p>
+                      </div>
+                    )}
+
+                    {otpError && (
+                      <p className="text-[11px] text-red-600 font-medium">{otpError}</p>
+                    )}
+                  </div>
+                )}
 
                 {/* Live Sapling Shipping Radius Warning */}
                 {hasSaplingInCart && isDistantStatePincode && (
@@ -1104,18 +1328,18 @@ export default function CartDrawer() {
                       </div>
 
                       {/* Locked vs Unlocked UPI QR & App Trigger */}
-                      {!isDeliveryDetailsComplete ? (
+                      {(!isDeliveryDetailsComplete || !isPhoneVerified) ? (
                         <div className="space-y-2.5">
                           {/* Locked Notice */}
                           <div className="bg-amber-50/95 border border-amber-300 rounded-xl p-3 text-xs text-amber-950 space-y-2 shadow-2xs">
                             <div className="flex items-center gap-2 font-bold text-amber-900">
                               <Lock className="w-4 h-4 text-amber-700 shrink-0" />
-                              <span>{isKannada ? 'QR ಕೋಡ್ ಲಾಕ್ ಆಗಿದೆ — ವಿಳಾಸ ಭರ್ತಿ ಮಾಡಿ' : 'UPI QR Code Locked — Enter Address First'}</span>
+                              <span>{isKannada ? 'QR ಕೋಡ್ ಲಾಕ್ ಆಗಿದೆ — ವಿಳಾಸ & OTP ಪರಿಶೀಲನೆ ಅಗತ್ಯ' : 'UPI QR Code Locked — Enter Address & Verify Mobile'}</span>
                             </div>
                             <p className="text-[11px] text-amber-800 leading-relaxed">
                               {isKannada
-                                ? 'ಪಾವತಿ ಮಾಡುವ ಮೊದಲು ದಯವಿಟ್ಟು ಮೇಲೆ ನಿಮ್ಮ ಹೆಸರು, ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಮತ್ತು ವಿಳಾಸವನ್ನು ಭರ್ತಿ ಮಾಡಿ. ನಂತರ UPI QR ಕೋಡ್ ತಕ್ಷಣವೇ ಅನ್‌ಲಾಕ್ ಆಗುತ್ತದೆ.'
-                                : 'Please fill in your Delivery Address, Full Name & 10-digit Phone above to unlock the dynamic UPI QR code. This ensures your payment is automatically mapped to your dispatch slip.'}
+                                ? 'ಪಾವತಿ ಮಾಡುವ ಮೊದಲು ದಯವಿಟ್ಟು ಮೇಲೆ ನಿಮ್ಮ ಹೆಸರು, ಮೊಬೈಲ್ ಸಂಖ್ಯೆ, OTP ಪರಿಶೀಲನೆ ಮತ್ತು ವಿಳಾಸವನ್ನು ಭರ್ತಿ ಮಾಡಿ. ನಂತರ UPI QR ಕೋಡ್ ತಕ್ಷಣವೇ ಅನ್‌ಲಾಕ್ ಆಗುತ್ತದೆ.'
+                                : 'Please fill in your Delivery Address, Full Name, and verify your 10-digit Phone with OTP above to unlock the dynamic UPI QR code. This ensures your payment is automatically mapped to your dispatch slip.'}
                             </p>
                             <div className="pt-0.5 flex flex-wrap gap-1.5">
                               {missingDeliveryFields.map((field) => (
@@ -1127,6 +1351,12 @@ export default function CartDrawer() {
                                   {field} required
                                 </span>
                               ))}
+                              {!isPhoneVerified && cleanPhone.length === 10 && (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white border border-amber-300 text-amber-900 text-[10px] font-bold shadow-2xs">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                                  Mobile OTP verification required
+                                </span>
+                              )}
                             </div>
                           </div>
 
@@ -1135,10 +1365,10 @@ export default function CartDrawer() {
                             type="button"
                             disabled
                             className="inline-flex w-full items-center justify-center gap-2 bg-stone-200 text-stone-500 font-bold py-2.5 rounded-xl text-xs cursor-not-allowed border border-stone-300"
-                            title="Please complete delivery details above to unlock UPI apps"
+                            title="Please complete delivery details and verify mobile with OTP to unlock UPI apps"
                           >
                             <Lock className="w-3.5 h-3.5 text-stone-500" />
-                            <span>{isKannada ? 'ವಿಳಾಸ ಭರ್ತಿ ಮಾಡಿದ ನಂತರ UPI ತೆರೆಯಿರಿ' : 'Fill Address Above to Launch UPI App'}</span>
+                            <span>{isKannada ? 'ವಿಳಾಸ & OTP ಭರ್ತಿ ಮಾಡಿದ ನಂತರ UPI ತೆರೆಯಿರಿ' : 'Fill Address & Verify Mobile to Launch UPI App'}</span>
                           </button>
 
                           {/* Non-scannable Locked QR Placeholder */}
@@ -1149,12 +1379,12 @@ export default function CartDrawer() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="text-xs font-bold text-stone-800">
-                                {isKannada ? 'QR ಕೋಡ್ ಪಡೆಯಲು ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ' : 'Address Required to Generate QR'}
+                                {isKannada ? 'QR ಕೋಡ್ ಪಡೆಯಲು ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ' : 'Address & Verified Mobile Required to Generate QR'}
                               </div>
                               <p className="text-[11px] text-stone-600 mt-1 leading-snug">
                                 {isKannada
-                                  ? 'ವಿಳಾಸ ಭರ್ತಿಯಾದ ತಕ್ಷಣ ₹' + finalTotal.toLocaleString('en-IN') + ' ಮೊತ್ತದ ಸ್ಕ್ಯಾನರ್ ಸಕ್ರಿಯಗೊಳ್ಳುತ್ತದೆ.'
-                                  : `Once address is filled, a secure ₹${finalTotal.toLocaleString('en-IN')} QR code linked to your phone will appear here.`}
+                                  ? 'ವಿವರಗಳು ಮತ್ತು OTP ಪರಿಶೀಲನೆಯಾದ ತಕ್ಷಣ ಆರ್ಡರ್ ಐಡಿಯೊಂದಿಗೆ ಲಿಂಕ್ ಆದ QR ಕೋಡ್ ಪ್ರದರ್ಶನಗೊಳ್ಳುತ್ತದೆ.'
+                                  : `Once address and mobile are verified, a dynamic ₹${finalTotal.toLocaleString('en-IN')} QR code linked to Order #${orderTrackingTag} will appear here.`}
                               </p>
                             </div>
                           </div>
@@ -1203,6 +1433,11 @@ export default function CartDrawer() {
                               <p className="text-[10px] text-stone-500 pt-0.5">
                                 Direct settlement for ₹{finalTotal.toLocaleString('en-IN')}.
                               </p>
+                              {preallocatedOrder?.order_number && (
+                                <p className="text-[10px] font-mono text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                                  Encoded Remark: <strong>Order_{preallocatedOrder.order_number}</strong>
+                                </p>
+                              )}
                             </div>
                           </div>
                         </div>

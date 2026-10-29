@@ -11,6 +11,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
+      order_number: existingOrderNumber,
       customer_name,
       customer_phone,
       customer_email,
@@ -21,6 +22,23 @@ export async function POST(request: NextRequest) {
       items,
       coupon_code
     } = body;
+
+    // Support updating payment reference on existing preallocated order
+    if (existingOrderNumber && payment_reference) {
+      const candidate = payment_reference.trim().replace(/^UTR-/i, '');
+      const cleanRef = `UTR-${candidate}`;
+      const updated: any = await query(
+        `UPDATE orders 
+         SET payment_reference = $1, updated_at = NOW() 
+         WHERE order_number = $2 
+         RETURNING *`,
+        [cleanRef, existingOrderNumber]
+      );
+      const updatedRows = Array.isArray(updated) ? updated : (updated?.rows || []);
+      if (updatedRows.length > 0) {
+        return NextResponse.json({ success: true, order: updatedRows[0], message: 'Payment reference updated' });
+      }
+    }
 
     if (!customer_name || !customer_phone || !shipping_address || !destination_pincode) {
       return NextResponse.json(

@@ -5,12 +5,60 @@ import Link from 'next/link';
 import { X, Heart, ShoppingBag, Trash2, ArrowRight, Building2 } from 'lucide-react';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
 
 export default function WatchlistDrawer() {
   const { wishlist, wishlistCount, removeFromWishlist, isWatchlistOpen, setIsWatchlistOpen } = useWishlist();
   const { addToCart } = useCart();
+  const { isLoggedIn, requireAuth } = useAuth();
 
   if (!isWatchlistOpen) return null;
+
+  if (!isLoggedIn) {
+    return (
+      <div
+        className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm flex justify-end animate-in fade-in"
+        onClick={() => setIsWatchlistOpen(false)}
+      >
+        <div
+          className="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between animate-in slide-in-from-right duration-300 p-6"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex justify-between items-center pb-4 border-b">
+            <h3 className="font-extrabold text-stone-900 text-lg">My Watchlist</h3>
+            <button onClick={() => setIsWatchlistOpen(false)} className="p-1 rounded hover:bg-stone-100">
+              <X className="w-5 h-5 text-stone-500" />
+            </button>
+          </div>
+          <div className="my-auto text-center space-y-4">
+            <div className="w-16 h-16 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200">
+              <Heart className="w-8 h-8 fill-current" />
+            </div>
+            <div>
+              <h4 className="font-bold text-stone-900 text-base">Sign in to View Your Watchlist</h4>
+              <p className="text-xs text-stone-600 mt-1 max-w-xs mx-auto">
+                Keep track of seasonal price drops, harvest stock allocations, and mandi benchmarks.
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                setIsWatchlistOpen(false);
+                requireAuth('Sign in to view and manage your farm produce watchlist', () => {
+                  setIsWatchlistOpen(true);
+                });
+              }}
+              className="px-6 py-2.5 bg-stone-900 hover:bg-stone-800 text-white rounded-xl font-bold text-xs shadow-md transition"
+            >
+              Sign In with Mobile OTP
+            </button>
+          </div>
+          <div className="text-[11px] text-stone-400 text-center">
+            FreshRoots Export • Kikkeri, Mandya
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

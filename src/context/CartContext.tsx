@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, OrderItem } from '@/types';
 import { track } from '@/lib/analytics';
+import { useAuth } from '@/context/AuthContext';
 
 export interface PackVariantOption {
   title?: string;
@@ -35,6 +36,7 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
+  const { isLoggedIn, requireAuth } = useAuth();
   const [items, setItems] = useState<OrderItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [pincode, setPincode] = useState('560001'); // Default to Bengaluru Urban
@@ -201,6 +203,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [items]);
 
   const addToCart = (product: Product, quantity = 1, variant?: PackVariantOption) => {
+    // Auth gate: If fresh/unauthenticated user clicks Add to Cart, prompt to sign in and auto-resume
+    if (!isLoggedIn) {
+      requireAuth('Sign in with your mobile number to add items to your cart & check 1st-order discount eligibility', () => {
+        addToCart(product, quantity, variant);
+        setIsCartOpen(true);
+      });
+      return;
+    }
+
     const isBulk = Boolean(
       product.sku?.includes('BLK') ||
       product.sku?.includes('TND') ||
