@@ -147,11 +147,15 @@ async function runB2BTestSuite() {
 
   // 15 & 16. Payment Calculations & Duplicate Prevention
   await test('15. Payment calculation accurately computes remaining balance due', () => {
-    const totalQuote = 243500;
-    const paidAdvance = 50000;
-    const balance = Math.max(0, totalQuote - paidAdvance);
+    const totalQuote: number = 243500;
+    const paidAdvance: number = 50000;
+    const computePaymentStatus = (quote: number, paid: number): string => {
+      const bal = Math.max(0, quote - paid);
+      return bal === 0 ? 'paid' : paid > 0 ? 'partially_paid' : 'unpaid';
+    };
+    const balance: number = Math.max(0, totalQuote - paidAdvance);
     assert.strictEqual(balance, 193500);
-    const paymentStatus = balance === 0 ? 'paid' : paidAdvance > 0 ? 'partially_paid' : 'unpaid';
+    const paymentStatus = computePaymentStatus(totalQuote, paidAdvance);
     assert.strictEqual(paymentStatus, 'partially_paid');
   });
 
