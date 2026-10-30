@@ -113,7 +113,7 @@ export default function PrivacyPolicyPage() {
               <div><strong>Grievance Officer:</strong> Sharath Inorahalli</div>
               <div><strong>Address:</strong> Karnataka, India - 571423</div>
               <div><strong>Phone:</strong> +91 90084 62568</div>
-              <div><strong>Email:</strong> sharathir198@gmail.com</div>
+              <div><strong>Email:</strong> sales@freshrootsexport.com</div>
             </div>
           </section>
         </div>

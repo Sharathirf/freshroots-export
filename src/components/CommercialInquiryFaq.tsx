@@ -103,7 +103,7 @@ export default function CommercialInquiryFaq() {
         setErrorMsg(data.error || 'Failed to submit inquiry. Please try again.');
       }
     } catch {
-      setErrorMsg('Network error. Please try again or reach our desk directly at +91 90084 62568 or sharathir198@gmail.com.');
+      setErrorMsg('Network error. Please try again or reach our desk directly at +91 90084 62568 or sales@freshrootsexport.com.');
     } finally {
       setIsSubmitting(false);
     }

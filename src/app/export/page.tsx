@@ -419,7 +419,7 @@ export default function ExportPage() {
             </div>
 
             <p className="text-stone-400 text-xs mt-5">
-              Direct Desk: +91 90084 62568 · Email: sharathir198@gmail.com · Kikkeri, Mandya, Karnataka, India
+              Direct Desk: +91 90084 62568 · Email: sales@freshrootsexport.com · Kikkeri, Mandya, Karnataka, India
             </p>
           </div>
         </section>

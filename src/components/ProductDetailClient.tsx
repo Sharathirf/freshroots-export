@@ -219,10 +219,12 @@ export default function ProductDetailClient({
     product.sku?.includes('TND') ||
     product.sku?.includes('GIN') ||
     product.sku?.includes('SHL') ||
+    product.sku?.includes('CHR') ||
     product.category === 'arecanut' ||
     product.slug?.includes('tender') ||
     product.slug?.includes('ginger') ||
     product.slug?.includes('shell') ||
+    product.slug?.includes('charcoal') ||
     product.slug?.includes('arecanut')
   );
 

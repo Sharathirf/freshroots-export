@@ -581,6 +581,50 @@ export const CATALOG_PRODUCTS: CatalogProductItem[] = [
       'Tiptur coconut oil 1 litre free delivery',
       'cold pressed edible coconut oil'
     ]
+  },
+  {
+    id: 'prod-015-coconut-shell-charcoal',
+    sku: 'COI-CHR-BLK-01T',
+    title: 'Coconut Shell Charcoal',
+    slug: 'coconut-shell-charcoal-bulk-ton',
+    category: 'coir_commodities',
+    grade: 'Kiln-Carbonized Industrial Charcoal (>75% Fixed Carbon)',
+    origin: 'Tiptur & Mandya Carbonization Kilns, Karnataka',
+    unit_of_measure: 'Metric Tonne (1,000 kg)',
+    estimated_weight_kg: 1000.0,
+    moisture_percentage: 7.5,
+    oil_percentage: null,
+    retail_price_inr: 110000.00,
+    bulk_min_quantity: 1,
+    wholesale_benchmark_price_inr: 105000.00,
+    hsn_code: '44029010',
+    tax_rate_percentage: 5.00,
+    description: 'Kiln-carbonized natural coconut shell charcoal produced from cured, high-density Tiptur coconut shells. Features high fixed carbon (>75%), ultra-low ash content (<3.5%), uniform fracture, and clean combustion with zero chemical binders. Optimized for activated carbon manufacturing, metallurgy recarburization, hookah/shisha, barbecue fuel, and industrial filtration systems. Available strictly for commercial bulk orders (1 Tonne minimum).',
+    specifications: {
+      fixed_carbon: '75% to 82% (High adsorption activation capacity)',
+      ash_content: '<= 3.5% (Ultra-low ash clean combustion)',
+      moisture: '<= 8.0% kiln-cured',
+      calorific_value: '7,000 to 7,400 kcal/kg',
+      volatile_matter: '12% to 16%',
+      packaging: '50 kg HDPE woven bags or 1,000 kg Jumbo bulk bags on pallets',
+      minimum_order: '1 Metric Tonne (1,000 kg)'
+    },
+    image_url: '/products/coconut-charcoal-4k.jpg',
+    is_active: true,
+    available_stock: 40,
+    average_rating: 4.9,
+    review_count: 16,
+    created_at: '2026-10-30T00:00:00Z',
+    seoTitle: 'Coconut Shell Charcoal Wholesale (1 Metric Tonne) | High Fixed Carbon | FreshRoots Export',
+    seoDescription: 'Premium kiln-carbonized coconut shell charcoal from Tiptur, Karnataka. >75% fixed carbon, <3.5% ash, 7,200 kcal/kg. Strictly bulk wholesale (1 Tonne min) at ₹1.1L/ton.',
+    keywords: [
+      'coconut shell charcoal wholesale',
+      'activated carbon feedstock India',
+      'coconut charcoal price per ton',
+      'buy coconut shell charcoal Karnataka',
+      'bulk industrial charcoal ton',
+      'shisha coconut charcoal bulk'
+    ]
   }
 ];
 

@@ -64,7 +64,7 @@ export function generateOrganizationJsonLd(siteUrl: string) {
     logo: `${siteUrl}/icon.svg`,
     description: 'Farm-direct agricultural commerce platform supplying hand-graded mature coconuts, GI Tiptur ball copra, spices, cold-pressed oils, and nursery saplings from Karnataka, India.',
     telephone: '+919008462568',
-    email: 'sharathir198@gmail.com',
+    email: 'sales@freshrootsexport.com',
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Kikkeri, K.R. Pet Taluk, Mandya District',

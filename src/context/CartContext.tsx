@@ -63,7 +63,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     try {
       const isBulkSku = (sku?: string, title?: string) => {
         const s = `${sku || ''} ${title || ''}`.toLowerCase();
-        return s.includes('tnd') || s.includes('tender') || s.includes('ginger') || s.includes('gin') || s.includes('shl') || s.includes('shell') || s.includes('blk');
+        return s.includes('tnd') || s.includes('tender') || s.includes('ginger') || s.includes('gin') || s.includes('shl') || s.includes('shell') || s.includes('chr') || s.includes('charcoal') || s.includes('blk');
       };
 
       const saved = localStorage.getItem('tiptur_direct_cart');
@@ -225,10 +225,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       product.sku?.includes('TND') ||
       product.sku?.includes('GIN') ||
       product.sku?.includes('SHL') ||
+      product.sku?.includes('CHR') ||
       product.slug?.includes('tender') ||
       product.slug?.includes('ginger') ||
       product.slug?.includes('shell') ||
-      product.title?.toLowerCase().includes('tender')
+      product.slug?.includes('charcoal') ||
+      product.title?.toLowerCase().includes('tender') ||
+      product.title?.toLowerCase().includes('charcoal')
     );
 
     if (isBulk) {

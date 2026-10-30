@@ -108,14 +108,14 @@ export default function HelpModal() {
 
             {/* Email */}
             <a
-              href="mailto:sharathir198@gmail.com"
+              href="mailto:sales@freshrootsexport.com"
               className="bg-stone-50 hover:bg-stone-100 border border-stone-200 p-3.5 rounded-2xl flex flex-col items-center text-center transition group shadow-sm"
             >
               <div className="w-10 h-10 rounded-full bg-stone-700 text-white flex items-center justify-center mb-2 shadow-sm group-hover:scale-105 transition">
                 <Mail className="w-5 h-5" />
               </div>
               <div className="text-xs font-bold text-stone-900">Email Desk</div>
-              <div className="text-[10px] text-stone-600 font-semibold mt-0.5 break-all max-w-[130px] truncate" title="sharathir198@gmail.com">sharathir198@gmail.com</div>
+              <div className="text-[10px] text-stone-600 font-semibold mt-0.5 break-all max-w-[150px] truncate" title="sales@freshrootsexport.com">sales@freshrootsexport.com</div>
               <span className="text-[10px] text-stone-400 mt-1">Official Inquiry</span>
             </a>
           </div>

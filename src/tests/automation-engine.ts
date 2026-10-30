@@ -925,7 +925,7 @@ export async function runAutomationSuite() {
     const res = await httpPost('/api/customer/profile', {
       phone: '9008462568',
       full_name: 'Sharath Inorahalli',
-      email: 'sharathir198@gmail.com',
+      email: 'sales@freshrootsexport.com',
       address: 'Main Bazaar Road, Kikkeri',
       city: 'K.R. Pete, Mandya',
       state: 'Karnataka',
@@ -933,7 +933,7 @@ export async function runAutomationSuite() {
     });
     assert.strictEqual(res.status, 200);
     assert.strictEqual(res.json?.customer?.name, 'Sharath Inorahalli');
-    assert.strictEqual(res.json?.customer?.email, 'sharathir198@gmail.com');
+    assert.strictEqual(res.json?.customer?.email, 'sales@freshrootsexport.com');
     assert.strictEqual(res.json?.customer?.address, 'Main Bazaar Road, Kikkeri');
     assert.strictEqual(res.json?.customer?.city, 'K.R. Pete, Mandya');
     assert.strictEqual(res.json?.customer?.state, 'Karnataka');

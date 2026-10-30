@@ -166,10 +166,12 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
     product.sku.includes('TND') ||
     product.sku.includes('GIN') ||
     product.sku.includes('SHL') ||
+    product.sku.includes('CHR') ||
     product.category === 'arecanut' ||
     product.slug.includes('tender') ||
     product.slug.includes('ginger') ||
     product.slug.includes('shell') ||
+    product.slug.includes('charcoal') ||
     product.slug.includes('arecanut')
   );
 
@@ -188,6 +190,8 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
     supportingInfo = 'Cold-Pressed • Traditional Marachekku';
   } else if (product.category === 'arecanut' || product.sku === 'ARE-BLK-ADK-01Q') {
     supportingInfo = 'Minimum bulk lot: 100 kg';
+  } else if (product.sku === 'COI-CHR-BLK-01T' || product.slug.includes('charcoal')) {
+    supportingInfo = '₹110/kg • Minimum bulk lot: 1 Ton';
   } else if (isBulkOnly) {
     supportingInfo = `Minimum bulk lot: ${product.bulk_min_quantity || 1} ${product.bulk_min_quantity === 1 ? 'unit' : 'units'}`;
   }

@@ -89,6 +89,12 @@ export const BULK_ORDER_ITEMS: BulkOrderItemMeta[] = [
     simpleName: '14. Coconut Oil (Wood-Pressed, Cold-Pressed)',
     cleanName: 'Coconut Oil (Wood-Pressed, Cold-Pressed)',
     skuMatch: 'OIL-COC-WOD-01L'
+  },
+  {
+    order: 15,
+    simpleName: '15. Coconut Shell Charcoal (Kiln-Carbonized, Bulk Metric Ton)',
+    cleanName: 'Coconut Shell Charcoal (Kiln-Carbonized, Bulk Metric Ton)',
+    skuMatch: 'COI-CHR-BLK-01T'
   }
 ];
 
@@ -192,6 +198,14 @@ export function getBulkOrderItemMeta(item?: {
   // 9. Fresh Ginger
   if (sku.includes('GIN') || slug.includes('ginger') || title.includes('ginger')) {
     return BULK_ORDER_ITEMS[8];
+  }
+  // 15. Coconut Shell Charcoal
+  if (
+    sku.includes('CHR') ||
+    slug.includes('charcoal') ||
+    title.includes('charcoal')
+  ) {
+    return BULK_ORDER_ITEMS[14];
   }
   // 10. Coconut Shells
   if (sku.includes('SHL') || slug.includes('shell') || title.includes('shell')) {

@@ -42,7 +42,7 @@ export default function ContactPage() {
       name: 'FreshRoots Export',
       image: `${siteUrl}/icon.svg`,
       telephone: '+919008462568',
-      email: 'sharathir198@gmail.com',
+      email: 'sales@freshrootsexport.com',
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Kikkeri, K.R. Pet Taluk, Mandya District',
@@ -118,8 +118,8 @@ export default function ContactPage() {
                 <Mail className="w-5 h-5 text-[#3b6d11] shrink-0 mt-0.5" />
                 <div>
                   <strong className="block text-stone-900">Official Electronic Mail:</strong>
-                  <a href="mailto:sharathir198@gmail.com" className="font-medium text-emerald-800 hover:underline">
-                    sharathir198@gmail.com
+                  <a href="mailto:sales@freshrootsexport.com" className="font-medium text-emerald-800 hover:underline">
+                    sales@freshrootsexport.com
                   </a>
                 </div>
               </div>

@@ -105,6 +105,21 @@ export function searchMatchesProduct(p: Product, query: string): boolean {
         title.includes('shunti')
       );
     }
+    if (
+      term === 'charcoal' ||
+      term === 'carbon' ||
+      term === 'iddalu' ||
+      term === 'boggulu' ||
+      term === 'coal'
+    ) {
+      return (
+        sku.includes('chr') ||
+        slug.includes('charcoal') ||
+        title.includes('charcoal') ||
+        desc.includes('charcoal') ||
+        desc.includes('carbon')
+      );
+    }
     if (term === 'shell' || term === 'shells' || term === 'chippu') {
       return (
         sku.includes('shl') ||

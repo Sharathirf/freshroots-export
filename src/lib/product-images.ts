@@ -26,6 +26,7 @@ export function resolveProductImageBySku(sku?: string): string {
   if (s.includes('GHE') || s.includes('COW') || s.includes('DAI')) return '/products/cow-ghee-4k.jpg';
   if (s.includes('TND')) return '/products/tender-coconuts-4k.jpg';
   if (s.includes('GIN')) return '/products/ginger-4k.jpg';
+  if (s.includes('CHR') || s.includes('CHARCOAL')) return '/products/coconut-charcoal-4k.jpg';
   if (s.includes('SHL')) return '/products/coconut-shells-4k.jpg';
   return '/products/mature-coconuts-4k.jpg';
 }

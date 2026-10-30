@@ -80,7 +80,7 @@ export default function RefundPolicyPage() {
                 <a href="https://wa.me/919008462568" className="font-mono font-bold text-emerald-800 hover:underline">
                   +91 90084 62568
                 </a>{' '}
-                or email <strong>sharathir198@gmail.com</strong> with your Order Number (e.g. <code>AGR-202610-XXXXX</code>).
+                or email <strong>sales@freshrootsexport.com</strong> with your Order Number (e.g. <code>AGR-202610-XXXXX</code>).
               </li>
               <li>Our team will verify the claim within 4 business hours and dispatch a free replacement parcel or initiate a direct bank/UPI refund.</li>
             </ol>

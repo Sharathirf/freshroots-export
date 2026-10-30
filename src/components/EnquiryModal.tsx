@@ -47,17 +47,17 @@ export default function EnquiryModal({ isOpen, onClose, defaultProduceTitle }: E
     setTimeout(async () => {
       let mockName = 'Sharath Inorahalli';
       let mockPhone = '9008462568';
-      let mockEmail = 'sharathir198@gmail.com';
+      let mockEmail = 'sales@freshrootsexport.com';
 
       if (provider === 'google') {
-        mockEmail = 'sharathir198@gmail.com';
+        mockEmail = 'sales@freshrootsexport.com';
         mockName = 'Sharath Inorahalli (Google)';
       } else if (provider === 'truecaller') {
         mockPhone = '9008462568';
         mockName = 'Sharath I (Truecaller Verified)';
       } else if (provider === 'shop') {
         mockName = 'Sharath Inorahalli (Shop Pay)';
-        mockEmail = 'sharathir198@gmail.com';
+        mockEmail = 'sales@freshrootsexport.com';
       }
 
       setName(mockName);
