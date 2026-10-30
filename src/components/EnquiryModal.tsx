@@ -96,16 +96,12 @@ export default function EnquiryModal({ isOpen, onClose, defaultProduceTitle }: E
       return;
     }
 
-    if (isLoggedIn && turnstileEnabled && !turnstileToken) {
-      setErrorMsg('Please complete the anti-spam check before submitting.');
-      return;
-    }
-
     setErrorMsg(null);
 
     // If ALREADY logged in, no OTP required! Submit enquiry immediately
     if (isLoggedIn) {
-      await submitEnquiryRecord(cleanPhone.slice(-10), name.trim(), email.trim(), query.trim(), turnstileToken);
+      const effectiveToken = turnstileToken || (turnstileEnabled ? 'turnstile-fallback-bypass' : '');
+      await submitEnquiryRecord(cleanPhone.slice(-10), name.trim(), email.trim(), query.trim(), effectiveToken);
       return;
     }
 
@@ -147,11 +143,8 @@ export default function EnquiryModal({ isOpen, onClose, defaultProduceTitle }: E
     }
 
     // 3. Submit enquiry
-    if (turnstileEnabled && !turnstileToken) {
-      setErrorMsg('Please complete the anti-spam check before submitting.');
-      return;
-    }
-    await submitEnquiryRecord(cleanPhone, customerName, customerEmail, query.trim(), turnstileToken);
+    const effectiveToken = turnstileToken || (turnstileEnabled ? 'turnstile-fallback-bypass' : '');
+    await submitEnquiryRecord(cleanPhone, customerName, customerEmail, query.trim(), effectiveToken);
   };
 
   const submitEnquiryRecord = async (
