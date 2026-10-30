@@ -14,6 +14,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Product } from '@/types';
 import { getAllCatalogProducts } from '@/lib/catalog';
 import { searchMatchesProduct } from '@/lib/search-matcher';
+import { generateItemListJsonLd, generateFAQJsonLd } from '@/lib/seo';
 import {
   Truck,
   ShieldCheck,
@@ -133,8 +134,51 @@ export default function HomePage() {
       return 0;
     });
 
+  const siteUrl = 'https://freshrootsexport.com';
+  const homepageItemListJsonLd = generateItemListJsonLd(
+    'Karnataka Agricultural Produce & Wholesale Commodities',
+    products.map((p) => ({
+      name: p.title,
+      url: `/products/${p.slug}`,
+      image: p.image_url,
+      price: Number(p.retail_price_inr),
+    })),
+    siteUrl
+  );
+
+  const homepageFaqJsonLd = generateFAQJsonLd([
+    {
+      question: 'Where does FreshRoots Export source agricultural commodities from?',
+      answer: 'We procure directly from certified grower corridors across Karnataka: GI Tiptur Ball Copra from Tumakuru, mature coconuts from Mandya canal belts, Rashi/Chali arecanut from Shivamogga mandis, and wood-pressed oils from traditional wooden ghanis.'
+    },
+    {
+      question: 'How fast are retail farm-direct orders dispatched?',
+      answer: 'Retail pantry items (Oils, Desi Ghee, Ragi flour, 25-piece coconut bags) are dispatched within 24 hours via express courier with 100% Free Doorstep Delivery across India.'
+    },
+    {
+      question: 'How do commercial wholesale buyers place bulk orders?',
+      answer: 'Commercial buyers can submit a Request for Quotation (RFQ) directly on any product page or via WhatsApp (+91 90084 62568) for mandi spot rates, full truckloads (Canter/FTL), or ocean shipping containers.'
+    },
+    {
+      question: 'What statutory and quality certifications are maintained?',
+      answer: 'We maintain FSSAI License No. 21224195000438 for food safety and DGFT Importer-Exporter Code 0724018925 with APEDA registration for international shipments.'
+    }
+  ]);
+
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans">
+      {/* Search Engine Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageItemListJsonLd) }}
+      />
+      {homepageFaqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageFaqJsonLd) }}
+        />
+      )}
+
       {/* 1. Header Navigation */}
       <Navbar
         onOpenRFQ={() => handleOpenRFQ()}

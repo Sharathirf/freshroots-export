@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
 import ProductDetailClient from '@/components/ProductDetailClient';
 import { getCatalogProductBySlug, getAllCatalogProducts } from '@/lib/catalog';
+import { getCategoryById } from '@/lib/categories';
 import {
   generateProductMetadata,
   generateProductJsonLd,
   generateBreadcrumbJsonLd,
+  generateProductFAQJsonLd,
   getSiteUrl
 } from '@/lib/seo';
 
@@ -40,10 +42,16 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const siteUrl = getSiteUrl();
 
   const productJsonLd = product ? generateProductJsonLd(product, siteUrl) : null;
+  const productFaqJsonLd = product ? generateProductFAQJsonLd(product) : null;
+
+  const categoryDef = product ? getCategoryById(product.category) : null;
+  const categoryTitle = categoryDef ? categoryDef.title : 'Agricultural Produce';
+  const categorySlug = categoryDef ? categoryDef.slug : 'mature-coconut';
+
   const breadcrumbs = product
     ? [
         { name: 'Home', url: '/' },
-        { name: 'Products', url: '/#products' },
+        { name: categoryTitle, url: `/category/${categorySlug}` },
         { name: product.title, url: `/products/${product.slug}` }
       ]
     : null;
@@ -55,6 +63,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+        />
+      )}
+      {productFaqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(productFaqJsonLd) }}
         />
       )}
       {breadcrumbJsonLd && (

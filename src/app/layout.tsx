@@ -45,6 +45,10 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: '/',
+    languages: {
+      'en-IN': '/',
+      'kn-IN': '/?lang=kn',
+    },
   },
   robots: getRobotsDirectives(true),
   keywords: [

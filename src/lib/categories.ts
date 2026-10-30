@@ -14,6 +14,8 @@ export interface CategoryDefinition {
   originRegion: string;
   originDetails: string;
   gstRateText: string;
+  relatedGuideSlug?: string;
+  faqs?: Array<{ question: string; answer: string }>;
 }
 
 export const CATEGORIES: CategoryDefinition[] = [
@@ -38,7 +40,22 @@ export const CATEGORIES: CategoryDefinition[] = [
     dispatchLeadTime: '24 - 48 Hours across South & Central India',
     originRegion: 'Kikkeri, Mandya & Maddur Canal Belts',
     originDetails: 'Harvested from canal-fed groves with >12mm kernel meat. Hand-graded and loaded within 24 hours of harvest.',
-    gstRateText: '0% Nil-Rated (Fresh Produce)'
+    gstRateText: '0% Nil-Rated (Fresh Produce)',
+    relatedGuideSlug: 'indian-coconut-wholesale-sourcing',
+    faqs: [
+      {
+        question: 'What is the average kernel weight of Mandya semi-husked mature coconuts?',
+        answer: 'Each mature coconut is hand-graded to weigh between 550g and 650g with a kernel meat thickness exceeding 12mm and a high coconut water volume.'
+      },
+      {
+        question: 'How are retail and wholesale coconut bags packed for safe transit?',
+        answer: 'Retail orders are dispatched in ventilated 25-piece woven polypropylene mesh bags (~15 kg) that prevent moisture build-up and cracking during courier linehaul.'
+      },
+      {
+        question: 'What is the shelf life of fresh mature coconuts at ambient temperature?',
+        answer: 'When stored in a well-ventilated dry room away from direct sunlight, intact semi-husked coconuts remain fresh for 35 to 45 days.'
+      }
+    ]
   },
   {
     slug: 'copra',
@@ -61,7 +78,22 @@ export const CATEGORIES: CategoryDefinition[] = [
     dispatchLeadTime: '1 - 2 Business Days via Express Road Linehaul',
     originRegion: 'Tiptur & Tumakuru GI Corridors',
     originDetails: 'Sun-cured inside traditional wooden attics over 10-12 months. Moisture strictly <= 5.2%, zero sulfur bleaching.',
-    gstRateText: '5% GST (Full ITC Available)'
+    gstRateText: '5% GST (Full ITC Available)',
+    relatedGuideSlug: 'tiptur-copra-grading-guide',
+    faqs: [
+      {
+        question: 'What makes Geographical Indication (GI) Tiptur Ball Copra superior to milling copra?',
+        answer: 'Tiptur Ball Copra (GI Tagged) is naturally cured inside intact coconut husks over 11-12 months without sulfur or artificial smoke. This yields an unbroken golden spherical kernel with 65-68% natural oil and moisture under 5.2%.'
+      },
+      {
+        question: 'Is Tiptur ball copra treated with sulfur chemicals for bleaching?',
+        answer: 'No. FreshRoots guarantees 100% sulfur-free, unbleached copra. The amber-golden color is the hallmark of natural slow attic curing.'
+      },
+      {
+        question: 'How is ball copra packaged for long distance shipping?',
+        answer: 'It is packed in 5-ply corrugated master cartons lined with aeration barrier film to protect whole kernels against transit compression and humidity.'
+      }
+    ]
   },
   {
     slug: 'oil-and-extracts',
@@ -84,7 +116,22 @@ export const CATEGORIES: CategoryDefinition[] = [
     dispatchLeadTime: '24 - 48 Hours with leak-proof protective packaging',
     originRegion: 'Mandya & Hassan Processing Units',
     originDetails: 'Vaagai wood cold ghani extraction (<40°C) and traditional Vedic Bilona curd-churned cow ghee. Unrefined & chemical-free.',
-    gstRateText: '5% (Oils) / 12% (Cow Ghee)'
+    gstRateText: '5% (Oils) / 12% (Cow Ghee)',
+    relatedGuideSlug: 'wood-pressed-oil-quality-checklist',
+    faqs: [
+      {
+        question: 'What is the extraction temperature for Mara Chekku wood-pressed oils?',
+        answer: 'Our oils are crushed at low RPM using traditional Vaagai wood ghanis where the temperature never exceeds 38°C to 40°C, preserving active vitamins and antioxidants.'
+      },
+      {
+        question: 'How is Vedic Bilona cow ghee prepared?',
+        answer: 'Our cow ghee is made from whole grass-fed cow milk cultured into curd overnight, then hand-churned with wooden bilonas into butter (Makkhan), and slow-simmered over low flame.'
+      },
+      {
+        question: 'Do these oils contain chemical preservatives or artificial flavor enhancers?',
+        answer: 'Zero preservatives, zero mineral oils, zero hexane solvent residues, and zero artificial coloring agents. 100% pure single-origin extract.'
+      }
+    ]
   },
   {
     slug: 'spices',
@@ -107,7 +154,17 @@ export const CATEGORIES: CategoryDefinition[] = [
     dispatchLeadTime: '1 - 2 Business Days via Regional Hubs',
     originRegion: 'Mandya & Hassan Dryland Agricultural Belts',
     originDetails: 'Native destoned finger millet (Ragi) and farm-fresh ginger rhizomes. Cleaned and packed directly from harvesting farmers.',
-    gstRateText: '0% Nil-Rated (Unbranded Farm Produce)'
+    gstRateText: '0% Nil-Rated (Unbranded Farm Produce)',
+    faqs: [
+      {
+        question: 'Is Mandya Ragi millet polished or chemically cleaned?',
+        answer: 'No. Our native brown Ragi is 100% unpolished and mechanical destoned/aspirated to eliminate sand and husk while keeping the nutrient-dense bran intact.'
+      },
+      {
+        question: 'What is the moisture percentage of whole Ragi millet?',
+        answer: 'Our whole Ragi lots are strictly moisture-tested at <= 10.0% to ensure insect resistance and extended pantry shelf life exceeding 12 months.'
+      }
+    ]
   },
   {
     slug: 'nursery-plants',
@@ -130,7 +187,18 @@ export const CATEGORIES: CategoryDefinition[] = [
     dispatchLeadTime: '48 - 72 Hours transit with live root-ball guarantee',
     originRegion: 'Kikkeri & Malnad Horticultural Nurseries',
     originDetails: 'Raised from certified mother palms in nutrient-sterilized polybags. Live root-ball delivery guarantee.',
-    gstRateText: '0% Nil-Rated (Live Plant Material)'
+    gstRateText: '0% Nil-Rated (Live Plant Material)',
+    relatedGuideSlug: 'coconut-sapling-selection-commercial-farming',
+    faqs: [
+      {
+        question: 'What is the survival guarantee for nursery saplings during courier transit?',
+        answer: 'We provide a 100% live root-ball guarantee. Saplings are watered, root-balled with coco peat moisture retention, and boxed in ventilated plant sleeves.'
+      },
+      {
+        question: 'When should nursery saplings be planted in the field after arrival?',
+        answer: 'Keep the plants in partial shade and water moderately for 2-3 days before transplanting into 1m x 1m x 1m pre-manured field pits.'
+      }
+    ]
   },
   {
     slug: 'coir-commodities',
@@ -153,7 +221,17 @@ export const CATEGORIES: CategoryDefinition[] = [
     dispatchLeadTime: '3 - 5 Days for dedicated 10-tonne / 20-tonne truckloads',
     originRegion: 'Tiptur & Mandya Dehusking Clusters',
     originDetails: 'Clean, dense mature coconut shells (>4,500 kcal/kg) and kiln-carbonized charcoal (>75% fixed carbon) for industrial processors.',
-    gstRateText: '5% GST (Industrial Biomass)'
+    gstRateText: '5% GST (Industrial Biomass)',
+    faqs: [
+      {
+        question: 'What is the fixed carbon and calorific value of raw coconut shells?',
+        answer: 'Our mature dry shells deliver a gross calorific value exceeding 4,500 kcal/kg and moisture under 12%, making them ideal for high-surface-area activated carbon.'
+      },
+      {
+        question: 'What is the minimum consignment volume for industrial coconut shells and charcoal?',
+        answer: 'Consignments are fulfilled in 1 Metric Tonne increments up to 25-tonne full truckloads with certified electronic weighbridge receipts.'
+      }
+    ]
   },
   {
     slug: 'arecanut',
@@ -176,7 +254,17 @@ export const CATEGORIES: CategoryDefinition[] = [
     dispatchLeadTime: '2 - 3 Days for commercial consignments',
     originRegion: 'Shivamogga, Sagar & Channagiri APMC Markets',
     originDetails: 'Optically sorted Rashi, Bette, and Gorabal grades direct from Malnad auctions. Moisture verified per mandi rules.',
-    gstRateText: '5% GST (APMC Mandi Sourced)'
+    gstRateText: '5% GST (APMC Mandi Sourced)',
+    faqs: [
+      {
+        question: 'Which arecanut grades are available from Shivamogga auctions?',
+        answer: 'We procure and grade Rashi Idi, Bette, Gorabal, and whole Chali with optical weight and discoloration sortation.'
+      },
+      {
+        question: 'How are arecanut wholesale prices determined?',
+        answer: 'Prices are directly tied to the daily afternoon trading spot index at Shivamogga, Sagar, and Sirsi APMC mandis without intermediary brokerage markup.'
+      }
+    ]
   }
 ];
 

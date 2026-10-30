@@ -11,7 +11,8 @@ import {
   getSiteUrl,
   getRobotsDirectives,
   generateBreadcrumbJsonLd,
-  generateItemListJsonLd
+  generateItemListJsonLd,
+  generateFAQJsonLd
 } from '@/lib/seo';
 import {
   Truck,
@@ -21,7 +22,9 @@ import {
   ArrowLeft,
   ChevronRight,
   TrendingUp,
-  MapPin
+  MapPin,
+  BookOpen,
+  HelpCircle
 } from 'lucide-react';
 
 interface CategoryPageProps {
@@ -102,6 +105,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     siteUrl
   );
 
+  const faqJsonLd = category.faqs && category.faqs.length > 0
+    ? generateFAQJsonLd(category.faqs)
+    : null;
+
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans">
       {/* Structured Data */}
@@ -113,6 +120,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
 
       <Navbar />
       <CartDrawer />
@@ -239,6 +252,70 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             <CategoryProductGrid products={products} />
           )}
         </section>
+
+        {/* Technical Guide Cross-Linking Banner */}
+        {category.relatedGuideSlug && (
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+            <div className="bg-gradient-to-r from-emerald-950 via-stone-900 to-stone-950 text-white rounded-3xl p-6 sm:p-8 border border-emerald-800/40 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-900/60 border border-emerald-500/30 text-lime-300 text-xs font-bold">
+                  <BookOpen className="w-3.5 h-3.5" />
+                  <span>Agronomy Standards &amp; Buyer Manual</span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  Commercial Sourcing &amp; Quality Specifications Guide
+                </h3>
+                <p className="text-stone-300 text-xs sm:text-sm leading-relaxed">
+                  Understand moisture thresholds, AGMARK/APMC grading guidelines, packing protocols, and laboratory test parameters before placing bulk consignments.
+                </p>
+              </div>
+              <Link
+                href={`/guides/${category.relatedGuideSlug}`}
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-lime-400 hover:bg-lime-300 text-stone-950 font-extrabold text-xs sm:text-sm transition shadow shrink-0"
+              >
+                <span>Read Technical Guide</span>
+                <ChevronRight className="w-4 h-4 text-stone-950" />
+              </Link>
+            </div>
+          </section>
+        )}
+
+        {/* Category Educational FAQ Section */}
+        {category.faqs && category.faqs.length > 0 && (
+          <section className="bg-white border-t border-stone-200 py-12">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+              <div className="text-center space-y-1">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-100 text-stone-700 text-xs font-bold">
+                  <HelpCircle className="w-3.5 h-3.5 text-[#3b6d11]" />
+                  <span>Commercial &amp; Quality FAQs</span>
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
+                  Frequently Asked Questions on {category.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-500">
+                  Key answers regarding farm harvest, quality grading, door delivery, and tax compliance.
+                </p>
+              </div>
+
+              <div className="space-y-3 pt-2">
+                {category.faqs.map((faq, idx) => (
+                  <div
+                    key={idx}
+                    className="p-5 rounded-2xl bg-stone-50 border border-stone-200/90 space-y-2 hover:border-emerald-600/40 transition"
+                  >
+                    <h4 className="text-sm sm:text-base font-bold text-stone-900 flex items-start gap-2">
+                      <span className="text-[#3b6d11] font-mono font-bold">Q{idx + 1}.</span>
+                      <span>{faq.question}</span>
+                    </h4>
+                    <p className="text-xs sm:text-sm text-stone-600 leading-relaxed pl-6">
+                      {faq.answer}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Category Navigation Strip */}
         <section className="bg-stone-100 border-t border-stone-200 py-10">

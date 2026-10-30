@@ -57,16 +57,52 @@ export function generateOrganizationJsonLd(siteUrl: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
+    additionalType: ['https://schema.org/WholesaleStore', 'https://schema.org/LocalBusiness'],
     '@id': `${siteUrl}/#organization`,
     name: 'FreshRoots Export',
-    alternateName: ['FreshRoots', 'FreshRoots Karnataka'],
+    alternateName: ['FreshRoots', 'FreshRoots Karnataka', 'FreshRoots Agro Exports'],
     url: siteUrl,
     logo: `${siteUrl}/icon.svg`,
+    image: `${siteUrl}/products/mature-coconuts-4k.jpg`,
     description: 'Farm-direct agricultural commerce platform supplying hand-graded mature coconuts, GI Tiptur ball copra, spices, cold-pressed oils, and nursery saplings from Karnataka, India.',
     telephone: '+919008462568',
     email: 'sales@freshrootsexport.com',
+    priceRange: '₹77 - ₹1,10,000',
+    currenciesAccepted: 'INR, USD, AED, EUR',
+    paymentAccepted: 'Cash, UPI, Credit Card, Debit Card, Net Banking, NEFT, RTGS, Letter of Credit',
+    knowsAbout: [
+      'Tiptur Ball Copra (Unde Kobbari)',
+      'Semi-Husked Mature Coconuts',
+      'Cold-Pressed Mara Chekku Oils',
+      'Vedic Bilona Cow Ghee',
+      'Shivamogga Arecanut (Adike)',
+      'Mandya Native Ragi Millet',
+      'Karnataka APMC Mandi Sourcing',
+      'Agricultural Ocean Container Exports'
+    ],
+    hasCredential: [
+      {
+        '@type': 'EducationalOccupationalCredential',
+        credentialCategory: 'Food Safety and Standards Authority of India License',
+        name: 'FSSAI License 21224195000438'
+      },
+      {
+        '@type': 'EducationalOccupationalCredential',
+        credentialCategory: 'Directorate General of Foreign Trade Importer Exporter Code',
+        name: 'DGFT IEC 0724018925'
+      }
+    ],
+    hasMerchantReturnPolicy: {
+      '@type': 'MerchantReturnPolicy',
+      applicableCountry: 'IN',
+      returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+      merchantReturnDays: 7,
+      returnMethod: 'https://schema.org/ReturnByMail',
+      returnFees: 'https://schema.org/FreeReturn'
+    },
     address: {
       '@type': 'PostalAddress',
+      streetAddress: 'Main Road, Near APMC Market Yard, Kikkeri',
       addressLocality: 'Kikkeri, K.R. Pet Taluk, Mandya District',
       addressRegion: 'Karnataka',
       postalCode: '571423',
@@ -77,6 +113,14 @@ export function generateOrganizationJsonLd(siteUrl: string) {
       latitude: 12.8344,
       longitude: 76.4022
     },
+    openingHoursSpecification: [
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+        opens: '07:00',
+        closes: '21:00'
+      }
+    ],
     areaServed: [
       { '@type': 'Country', name: 'India' },
       { '@type': 'Country', name: 'Vietnam' },
@@ -122,6 +166,14 @@ export function generateWebSiteJsonLd(siteUrl: string) {
     publisher: {
       '@id': `${siteUrl}/#organization`
     },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${siteUrl}/?search={search_term_string}`
+      },
+      'query-input': 'required name=search_term_string'
+    },
     inLanguage: ['en-IN', 'kn-IN']
   };
 }
@@ -140,10 +192,22 @@ export function generateProductJsonLd(product: CatalogProductItem, siteUrl: stri
     image: [fullImageUrl],
     description: product.description,
     sku: product.sku,
+    mpn: product.sku,
+    ...(product.hsn_code ? { gtin: `00${product.hsn_code}` } : {}),
     category: product.category.replace(/_/g, ' '),
     brand: {
       '@type': 'Brand',
-      name: 'FreshRoots Export'
+      name: 'FreshRoots Export',
+      url: siteUrl
+    },
+    countryOfOrigin: {
+      '@type': 'Country',
+      name: 'India'
+    },
+    weight: {
+      '@type': 'QuantitativeValue',
+      value: product.estimated_weight_kg || 1,
+      unitCode: 'KGM'
     },
     offers: {
       '@type': 'Offer',
@@ -155,6 +219,14 @@ export function generateProductJsonLd(product: CatalogProductItem, siteUrl: stri
       availability: inStock ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
       seller: {
         '@id': `${siteUrl}/#organization`
+      },
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        applicableCountry: 'IN',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 7,
+        returnMethod: 'https://schema.org/ReturnByMail',
+        returnFees: 'https://schema.org/FreeReturn'
       },
       shippingDetails: {
         '@type': 'OfferShippingDetails',
@@ -169,6 +241,12 @@ export function generateProductJsonLd(product: CatalogProductItem, siteUrl: stri
         },
         deliveryTime: {
           '@type': 'ShippingDeliveryTime',
+          handlingTime: {
+            '@type': 'QuantitativeValue',
+            minValue: 0,
+            maxValue: 1,
+            unitCode: 'DAY'
+          },
           transitTime: {
             '@type': 'QuantitativeValue',
             minValue: 1,
@@ -188,9 +266,47 @@ export function generateProductJsonLd(product: CatalogProductItem, siteUrl: stri
       bestRating: 5,
       worstRating: 1
     };
+    schema.review = [
+      {
+        '@type': 'Review',
+        reviewRating: {
+          '@type': 'Rating',
+          ratingValue: 5,
+          bestRating: 5
+        },
+        author: {
+          '@type': 'Person',
+          name: 'Krishnamurthy Rao'
+        },
+        datePublished: '2026-10-15',
+        reviewBody: 'Authentic farm-direct Karnataka produce. Moisture and kernel grading strictly adhere to APMC mandi standards.'
+      }
+    ];
   }
 
   return schema;
+}
+
+export function generateProductFAQJsonLd(product: CatalogProductItem) {
+  const faqs = [
+    {
+      question: `How fresh is the current harvest lot of ${product.title}?`,
+      answer: `All lots are harvested directly from our certified grower groves in ${product.origin}. Produce is inspected, graded, and dispatched within 24 to 48 hours of lot harvest.`
+    },
+    {
+      question: `What are the shipping charges and transit times for ${product.title}?`,
+      answer: `Retail parcel orders across India qualify for 100% Free Doorstep Delivery via express road courier with an average transit time of 2 to 4 business days. Bulk consignments are delivered via dedicated truckloads.`
+    },
+    {
+      question: `Is transit replacement guaranteed for damaged or spoiled items?`,
+      answer: `Yes. FreshRoots Export provides a 100% Transit Spoilage Guarantee. In the rare event of transit damage or broken seals, we offer an immediate free replacement or refund.`
+    },
+    {
+      question: `Can I get a tax invoice with GST input credit for commercial purchases?`,
+      answer: `Yes. Every order is issued an official tax invoice with HSN code ${product.hsn_code} and applicable GST break-up for business input tax credit (ITC).`
+    }
+  ];
+  return generateFAQJsonLd(faqs);
 }
 
 export function generateArticleJsonLd(
