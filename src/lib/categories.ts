@@ -11,6 +11,9 @@ export interface CategoryDefinition {
   bannerEmoji: string;
   mandiBenchmarkNote: string;
   dispatchLeadTime: string;
+  originRegion: string;
+  originDetails: string;
+  gstRateText: string;
 }
 
 export const CATEGORIES: CategoryDefinition[] = [
@@ -32,7 +35,10 @@ export const CATEGORIES: CategoryDefinition[] = [
     ],
     bannerEmoji: '🥥',
     mandiBenchmarkNote: 'Mandya & Maddur APMC Benchmark: Hand-graded lot dispatch within 24 hours',
-    dispatchLeadTime: '24 - 48 Hours across South & Central India'
+    dispatchLeadTime: '24 - 48 Hours across South & Central India',
+    originRegion: 'Kikkeri, Mandya & Maddur Canal Belts',
+    originDetails: 'Harvested from canal-fed groves with >12mm kernel meat. Hand-graded and loaded within 24 hours of harvest.',
+    gstRateText: '0% Nil-Rated (Fresh Produce)'
   },
   {
     slug: 'copra',
@@ -52,7 +58,10 @@ export const CATEGORIES: CategoryDefinition[] = [
     ],
     bannerEmoji: '🥥',
     mandiBenchmarkNote: 'Tiptur APMC GI Corridor: Moisture strictly tested at <= 5.2% standard',
-    dispatchLeadTime: '1 - 2 Business Days via Express Road Linehaul'
+    dispatchLeadTime: '1 - 2 Business Days via Express Road Linehaul',
+    originRegion: 'Tiptur & Tumakuru GI Corridors',
+    originDetails: 'Sun-cured inside traditional wooden attics over 10-12 months. Moisture strictly <= 5.2%, zero sulfur bleaching.',
+    gstRateText: '5% GST (Full ITC Available)'
   },
   {
     slug: 'oil-and-extracts',
@@ -72,7 +81,10 @@ export const CATEGORIES: CategoryDefinition[] = [
     ],
     bannerEmoji: '🧈',
     mandiBenchmarkNote: 'Extracted at < 40°C temperature to protect essential fatty acids',
-    dispatchLeadTime: '24 - 48 Hours with leak-proof protective packaging'
+    dispatchLeadTime: '24 - 48 Hours with leak-proof protective packaging',
+    originRegion: 'Mandya & Hassan Processing Units',
+    originDetails: 'Vaagai wood cold ghani extraction (<40°C) and traditional Vedic Bilona curd-churned cow ghee. Unrefined & chemical-free.',
+    gstRateText: '5% (Oils) / 12% (Cow Ghee)'
   },
   {
     slug: 'spices',
@@ -92,7 +104,10 @@ export const CATEGORIES: CategoryDefinition[] = [
     ],
     bannerEmoji: '🌾',
     mandiBenchmarkNote: 'Moisture controlled at <= 10.0% for extended storage life',
-    dispatchLeadTime: '1 - 2 Business Days via Regional Hubs'
+    dispatchLeadTime: '1 - 2 Business Days via Regional Hubs',
+    originRegion: 'Mandya & Hassan Dryland Agricultural Belts',
+    originDetails: 'Native destoned finger millet (Ragi) and farm-fresh ginger rhizomes. Cleaned and packed directly from harvesting farmers.',
+    gstRateText: '0% Nil-Rated (Unbranded Farm Produce)'
   },
   {
     slug: 'nursery-plants',
@@ -111,18 +126,21 @@ export const CATEGORIES: CategoryDefinition[] = [
       'buy coconut plants online India'
     ],
     bannerEmoji: '🌴',
-    mandiBenchmarkNote: 'Moisture-locked polybag dispatch on Mondays & Wednesdays only',
-    dispatchLeadTime: '48 - 72 Hours transit with live root-ball guarantee'
+    mandiBenchmarkNote: 'Moisture-locked polybag dispatch on Mondays & Tuesdays only',
+    dispatchLeadTime: '48 - 72 Hours transit with live root-ball guarantee',
+    originRegion: 'Kikkeri & Malnad Horticultural Nurseries',
+    originDetails: 'Raised from certified mother palms in nutrient-sterilized polybags. Live root-ball delivery guarantee.',
+    gstRateText: '0% Nil-Rated (Live Plant Material)'
   },
   {
     slug: 'coir-commodities',
     id: 'coir_commodities',
-    title: 'Industrial Raw Coconut Shells',
-    kannadaTitle: 'ತೆಂಗಿನ ನೈಸರ್ಗಿಕ ಚಿಪ್ಪು',
-    shortDescription: 'Dry broken mature coconut shells with high calorific value (>4,500 kcal/kg) for industrial uses.',
+    title: 'Industrial Raw Coconut Shells & Charcoal',
+    kannadaTitle: 'ತೆಂಗಿನ ನೈಸರ್ಗಿಕ ಚಿಪ್ಪು & ಇದ್ದಿಲು',
+    shortDescription: 'Dry broken mature coconut shells with high calorific value (>4,500 kcal/kg) and kiln-carbonized charcoal.',
     longDescription: 'Clean, dense mature coconut shells segregated from Tiptur copra cutting and dehusking hubs. Ideal raw material for activated carbon manufacturers, bio-coal briquette plants, and metallurgical fuel applications. Delivered in loose metric tonnes or jumbo bags via dedicated full truckloads (FTL).',
-    seoTitle: 'Raw Coconut Shells Bulk Wholesale | Activated Carbon Grade | FreshRoots Export',
-    seoDescription: 'Industrial-grade dry mature coconut shells from Tiptur & Mandya dehusking clusters. High calorific value > 4,500 kcal/kg, moisture < 12%, metric tonne truckload delivery.',
+    seoTitle: 'Raw Coconut Shells & Charcoal Bulk Wholesale | Activated Carbon Grade | FreshRoots Export',
+    seoDescription: 'Industrial-grade dry mature coconut shells and kiln-carbonized charcoal from Tiptur & Mandya clusters. High calorific value > 4,500 kcal/kg, moisture < 12%, metric tonne truckload delivery.',
     keywords: [
       'coconut shells for activated carbon wholesale',
       'buy coconut shells per ton Karnataka',
@@ -132,7 +150,10 @@ export const CATEGORIES: CategoryDefinition[] = [
     ],
     bannerEmoji: '🥥',
     mandiBenchmarkNote: 'Industrial moisture standard strictly verified at < 12%',
-    dispatchLeadTime: '3 - 5 Days for dedicated 10-tonne / 20-tonne truckloads'
+    dispatchLeadTime: '3 - 5 Days for dedicated 10-tonne / 20-tonne truckloads',
+    originRegion: 'Tiptur & Mandya Dehusking Clusters',
+    originDetails: 'Clean, dense mature coconut shells (>4,500 kcal/kg) and kiln-carbonized charcoal (>75% fixed carbon) for industrial processors.',
+    gstRateText: '5% GST (Industrial Biomass)'
   },
   {
     slug: 'arecanut',
@@ -150,9 +171,12 @@ export const CATEGORIES: CategoryDefinition[] = [
       'areca nut mandi supplier India',
       'commercial supari wholesale lot'
     ],
-    bannerEmoji: '🪴',
+    bannerEmoji: '🌰',
     mandiBenchmarkNote: 'Priced strictly against Shivamogga & Sagar daily spot mandi indices',
-    dispatchLeadTime: '2 - 3 Days for commercial consignments'
+    dispatchLeadTime: '2 - 3 Days for commercial consignments',
+    originRegion: 'Shivamogga, Sagar & Channagiri APMC Markets',
+    originDetails: 'Optically sorted Rashi, Bette, and Gorabal grades direct from Malnad auctions. Moisture verified per mandi rules.',
+    gstRateText: '5% GST (APMC Mandi Sourced)'
   }
 ];
 

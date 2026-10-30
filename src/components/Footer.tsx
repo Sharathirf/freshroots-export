@@ -129,7 +129,6 @@ export default function Footer() {
               <li><Link href="/contact" className="hover:text-white transition">Contact Farm-Gate Desk</Link></li>
               <li><Link href="/#catalog" className="hover:text-white transition">Direct Farm Catalog</Link></li>
               <li><Link href="/track-order" className="hover:text-white transition">Track Consignment</Link></li>
-              <li><Link href="/admin" className="hover:text-white transition">Operations Dashboard</Link></li>
             </ul>
           </div>
 
@@ -164,30 +163,36 @@ export default function Footer() {
             {EXPORT_COUNTRIES.map((country, idx) => (
               <React.Fragment key={country.code}>
                 {idx > 0 && <span className="text-stone-600" aria-hidden="true">•</span>}
-                <a
-                  href={country.wikiUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/export"
                   className="hover:text-lime-300 hover:underline transition-colors inline-flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-lime-400 rounded-sm"
-                  title={`View ${country.name} on Wikipedia (opens in new tab)`}
+                  title={`Request 20ft/40ft export quotation for ${country.name} (${country.majorPort})`}
                 >
                   <span role="img" aria-label={country.name}>{country.flag}</span>
                   <span>{country.name}</span>
-                </a>
+                </Link>
               </React.Fragment>
             ))}
           </div>
         </div>
 
-        {/* Statutory Compliance: FSSAI & Legal Metrology */}
+        {/* Statutory Compliance: FSSAI, APEDA, IEC & Legal Metrology */}
         <div className="py-4 border-t border-stone-800/80 text-[11px] text-stone-400 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2.5">
             <span className="px-2.5 py-1 rounded-lg bg-lime-950 text-lime-300 font-mono font-bold border border-lime-800 text-[11px] flex items-center gap-1.5">
               <span className="text-white font-extrabold tracking-wide">fssai</span>
               <span>Lic. No. 21224195000438</span>
             </span>
-            <span className="text-stone-300">
-              Food Safety & Standards Authority of India Certified • Full Legal Compliance for <strong>Pure Cow Ghee, Cold-Pressed Oils, Ball Copra &amp; Ragi Millets</strong>
+            <span className="px-2.5 py-1 rounded-lg bg-stone-900 text-stone-300 font-mono font-bold border border-stone-700 text-[10px] flex items-center gap-1">
+              <span>DGFT IEC:</span>
+              <span className="text-lime-300">0724018925</span>
+            </span>
+            <span className="px-2.5 py-1 rounded-lg bg-stone-900 text-stone-300 font-mono font-bold border border-stone-700 text-[10px] flex items-center gap-1">
+              <span>APEDA:</span>
+              <span className="text-emerald-300">RCMC-AGR-2026</span>
+            </span>
+            <span className="text-stone-300 text-[11px]">
+              Govt Certified • Full Legal Compliance for <strong>Pure Cow Ghee, Cold-Pressed Oils, Ball Copra &amp; Ragi Millets</strong>
             </span>
           </div>
           <div className="flex items-center gap-3 text-stone-400 text-[11px]">

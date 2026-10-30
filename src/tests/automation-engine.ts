@@ -299,7 +299,7 @@ export async function runAutomationSuite() {
 
   // --------------------------------------------------------------------------
   // CYCLE 5: Shiprocket Shipping Rate Calculator & Transportation Extra Policy
-  // Modeled after coconutseller.in/transportation and apidocs.shiprocket.in
+  // Modeled after APMC mandi standards and apidocs.shiprocket.in
   // --------------------------------------------------------------------------
   console.log('▶ Running Cycle 5: Shiprocket Shipping Rate Calculator & Freight Policy...');
   const c5Start = Date.now();

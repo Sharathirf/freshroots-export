@@ -160,15 +160,15 @@ async function runSeed() {
       estimated_weight_kg: 0.92,
       moisture_percentage: 0.1,
       oil_percentage: 99.9,
-      retail_price_inr: 663.00, // ₹663 / litre (incl. 2% payment platform charge & Free Delivery)
+      retail_price_inr: 469.00, // ₹469 / litre (incl. 2% payment platform charge & Free Delivery)
       bulk_min_quantity: 1,
       wholesale_benchmark_price_inr: 480.00,
       hsn_code: '1508',
       tax_rate_percentage: 5.00,
-      description: 'Traditional wood-pressed (Marachekku) pure groundnut oil extracted at room temperature without chemical solvents, bleaching, or heating. Preserves genuine nutty aroma, natural vitamin E, and high mono-unsaturated fats (MUFA). ₹663/litre with 100% FREE Doorstep Delivery. Minimum order: 1 quantity.',
+      description: 'Traditional wood-pressed (Marachekku) pure groundnut oil extracted at room temperature without chemical solvents, bleaching, or heating. Preserves genuine nutty aroma, natural vitamin E, and high mono-unsaturated fats (MUFA). ₹469/litre with 100% FREE Doorstep Delivery. Minimum order: 1 quantity.',
       specifications: {
         volume: '1 Litre Food-Grade Bottle',
-        rate: '₹663 / Litre (Free Delivery)',
+        rate: '₹469 / Litre (Free Delivery)',
         delivery: '100% FREE Doorstep Delivery on ALL Orders',
         extraction: 'Traditional Vaagai Wood Cold Ghani (Marachekku)',
         purity: '100% Pure Unrefined Single-Origin Groundnut Oil',

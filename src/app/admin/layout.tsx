@@ -13,6 +13,9 @@ export const metadata: Metadata = {
       noimageindex: true,
     },
   },
+  alternates: {
+    canonical: null,
+  },
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

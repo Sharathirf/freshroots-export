@@ -202,16 +202,64 @@ export default function ProductDetailClient({
 
   // Commodity Emoji for badge
   const getCommodityEmoji = (cat: string) => {
+    const sku = product.sku || '';
+    const title = product.title?.toLowerCase() || '';
+    if (sku.includes('GHE') || title.includes('ghee')) return '🧈';
+    if (title.includes('coconut oil')) return '🥥';
+    if (title.includes('groundnut') || sku.includes('GND')) return '🥜';
+    if (title.includes('arecanut') || cat === 'arecanut' || sku.includes('ADK')) return '🌰';
+    if (title.includes('charcoal')) return '🪵';
+    if (title.includes('shell')) return '🥥';
+    if (title.includes('flour') || title.includes('ragi') || sku.includes('RAG') || sku.includes('RIC')) return '🌾';
     switch (cat) {
       case 'mature_coconut': return '🥥';
       case 'copra': return '🥥';
-      case 'oil_and_extracts': return '🥜';
+      case 'oil_and_extracts': return '🧈';
       case 'spices': return '🌾';
       case 'value_added': return '🌴';
       case 'coir_commodities': return '🥥';
-      case 'arecanut': return '🥜';
+      case 'arecanut': return '🌰';
       default: return '🌿';
     }
+  };
+
+  const { categoryHubLink, categoryHubLabel } = (() => {
+    const sku = product.sku || '';
+    const cat = product.category || '';
+    if (sku.includes('NUR') || cat === 'value_added') {
+      return { categoryHubLink: '/category/nursery-plants', categoryHubLabel: 'Nursery Saplings' };
+    }
+    if (cat === 'copra') {
+      return { categoryHubLink: '/category/copra', categoryHubLabel: 'GI Ball Copra' };
+    }
+    if (cat === 'oil_and_extracts') {
+      return { categoryHubLink: '/category/oil-and-extracts', categoryHubLabel: 'Oils & Ghee' };
+    }
+    if (cat === 'arecanut') {
+      return { categoryHubLink: '/category/arecanut', categoryHubLabel: 'Shivamogga Arecanut' };
+    }
+    if (cat === 'coir_commodities') {
+      return { categoryHubLink: '/category/coir-commodities', categoryHubLabel: 'Biomass & Shells' };
+    }
+    if (cat === 'spices') {
+      if (product.slug?.includes('ragi') || product.slug?.includes('rice')) {
+        return { categoryHubLink: '/category/spices', categoryHubLabel: 'Millets & Flours' };
+      }
+      return { categoryHubLink: '/category/spices', categoryHubLabel: 'Millets & Spices' };
+    }
+    return { categoryHubLink: '/category/mature-coconut', categoryHubLabel: 'Fresh Coconuts' };
+  })();
+
+  const getRelatedCategoryLabel = (p: Product) => {
+    if (p.sku?.startsWith('NUR') || p.slug?.includes('sapling')) return 'Nursery Saplings';
+    if (p.slug?.includes('ragi') || p.slug?.includes('rice') || p.title?.toLowerCase().includes('flour') || p.title?.toLowerCase().includes('millet')) return 'Millets & Flours';
+    if (p.slug?.includes('ghee') || p.title?.toLowerCase().includes('ghee')) return 'Desi Ghee';
+    if (p.category === 'copra') return 'GI Ball Copra';
+    if (p.category === 'arecanut') return 'Shivamogga Arecanut';
+    if (p.category === 'coir_commodities') return 'Biomass & Shells';
+    if (p.category === 'oil_and_extracts') return 'Wood-Pressed Oils';
+    if (p.category === 'spices') return 'Farm Spices';
+    return 'Fresh Coconuts';
   };
 
   const isBulkOnly = Boolean(
@@ -226,6 +274,13 @@ export default function ProductDetailClient({
     product.slug?.includes('shell') ||
     product.slug?.includes('charcoal') ||
     product.slug?.includes('arecanut')
+  );
+
+  const isEdible = Boolean(
+    !product.sku?.startsWith('NUR') &&
+    !product.sku?.includes('SHL') &&
+    !product.sku?.includes('CHR') &&
+    product.category !== 'arecanut'
   );
 
   const handleBuyNow = () => {
@@ -269,8 +324,8 @@ export default function ProductDetailClient({
         <nav aria-label="Breadcrumb" className="text-xs text-stone-500 flex items-center gap-1.5 flex-wrap">
           <Link href="/" className="hover:text-emerald-700 transition">Home</Link>
           <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
-          <Link href="/#catalog" className="hover:text-emerald-700 transition capitalize">
-            {product.category.replace(/_/g, ' ')}
+          <Link href={categoryHubLink} className="hover:text-emerald-700 transition capitalize">
+            {categoryHubLabel}
           </Link>
           <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
           <span className="text-stone-900 font-medium truncate max-w-xs">{product.title}</span>
@@ -338,9 +393,12 @@ export default function ProductDetailClient({
             {/* Header info */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#3b6d11] bg-lime-100 border border-lime-300 px-2.5 py-0.5 rounded-md">
-                  {product.category.replace(/_/g, ' ')}
-                </span>
+                <Link
+                  href={categoryHubLink}
+                  className="text-[11px] font-extrabold uppercase tracking-widest text-[#3b6d11] bg-lime-100 hover:bg-lime-200 border border-lime-300 px-2.5 py-0.5 rounded-md transition"
+                >
+                  {categoryHubLabel}
+                </Link>
                 <span className="text-xs text-stone-500 font-mono">
                   HSN: {product.hsn_code}
                 </span>
@@ -348,6 +406,21 @@ export default function ProductDetailClient({
                 <span className="text-xs text-stone-500">
                   GST: {product.tax_rate_percentage}%
                 </span>
+                {isEdible ? (
+                  <>
+                    <span className="text-xs text-stone-400">&bull;</span>
+                    <span className="text-[11px] text-emerald-800 font-mono font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      FSSAI Lic. 21224195000438
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-xs text-stone-400">&bull;</span>
+                    <span className="text-[11px] text-stone-700 font-mono font-semibold bg-stone-100 px-2 py-0.5 rounded border border-stone-200">
+                      DGFT IEC: 0724018925
+                    </span>
+                  </>
+                )}
               </div>
 
               <h1 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight leading-tight">
@@ -557,15 +630,23 @@ export default function ProductDetailClient({
                     <span className="text-2xl font-black font-mono text-lime-300">
                       ~₹{wholesaleBenchmark.toLocaleString('en-IN')}
                     </span>
-                    <span className="text-[10px] text-emerald-300 block">
-                      Save ~{wholesaleSavingsPct}% vs retail
-                    </span>
+                    {wholesaleSavingsPct > 0 ? (
+                      <span className="text-[10px] text-emerald-300 block">
+                        Save ~{wholesaleSavingsPct}% vs retail
+                      </span>
+                    ) : (
+                      <span className="text-[10px] text-emerald-300 block">
+                        Direct APMC Mandi Spot Rate
+                      </span>
+                    )}
                   </div>
                 </div>
 
                 <div className="text-xs text-stone-300 space-y-2 leading-relaxed bg-black/20 p-4 rounded-2xl border border-white/10">
                   <p>
-                    Procure commercial volume ({product.bulk_min_quantity} {product.unit_of_measure} to multi-tonne consignments) directly from our Mandya and Tiptur farm grading hubs.
+                    {product.sku?.startsWith('NUR')
+                      ? 'Procure commercial nursery consignments (50+ saplings to full truckloads) directly from our certified nursery grading hubs.'
+                      : `Procure commercial volume (${product.bulk_min_quantity} ${product.unit_of_measure} to multi-tonne consignments) directly from our Mandya and Tiptur farm grading hubs.`}
                   </p>
                   <div className="grid grid-cols-2 gap-2 text-[11px] pt-1">
                     <div>&bull; Standardized weight sorting</div>
@@ -631,7 +712,11 @@ export default function ProductDetailClient({
                 </div>
                 <div className="space-y-1">
                   <strong className="block text-stone-900 text-xs font-bold uppercase">Estimated Weight:</strong>
-                  <p className="text-xs text-stone-600">{product.estimated_weight_kg} kg per {product.unit_of_measure}</p>
+                  <p className="text-xs text-stone-600">
+                    {product.unit_of_measure?.toLowerCase() === 'kg'
+                      ? 'Standard commercial weight (per kg)'
+                      : `${product.estimated_weight_kg} kg per ${product.unit_of_measure}`}
+                  </p>
                 </div>
                 <div className="space-y-1">
                   <strong className="block text-stone-900 text-xs font-bold uppercase">HSN Code / GST:</strong>
@@ -670,6 +755,23 @@ export default function ProductDetailClient({
                     <span className="font-bold text-stone-900">{product.oil_percentage}%</span>
                   </div>
                 )}
+              </div>
+
+              <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-xs">
+                <div>
+                  <strong className="text-emerald-950 font-bold block text-sm">Certified Lot Quality &amp; Lab Parameters</strong>
+                  <span className="text-xs text-emerald-800">
+                    {isEdible
+                      ? 'FSSAI Food Safety Compliance • Heavy Metals & Chemical Adulteration Negative'
+                      : 'DGFT / APEDA Export Standard • Moisture, Ash & Particle Grading Certificate'}
+                  </span>
+                </div>
+                <Link
+                  href="/contact#rfq"
+                  className="inline-flex items-center justify-center px-4 py-2 bg-[#3b6d11] hover:bg-[#2d5a0b] text-white font-bold text-xs rounded-xl shadow-xs transition shrink-0"
+                >
+                  Request Lab Certificate &rarr;
+                </Link>
               </div>
             </div>
           )}
@@ -765,11 +867,13 @@ export default function ProductDetailClient({
                       <img
                         src={p.image_url}
                         alt={p.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                       />
                     </div>
                     <span className="text-[10px] uppercase font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-                      {p.category.replace(/_/g, ' ')}
+                      {getRelatedCategoryLabel(p)}
                     </span>
                     <h4 className="font-bold text-stone-900 text-sm mt-1 line-clamp-1 group-hover:text-emerald-800 transition">
                       {p.title}

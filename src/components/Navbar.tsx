@@ -741,26 +741,26 @@ export default function Navbar({
             <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
               All Commodities ({allProducts.length || 11})
             </Link>
-            <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
+            <Link href="/category/mature-coconut" className="hover:text-[#3b6d11] whitespace-nowrap transition">
               Fresh Coconuts
             </Link>
-            <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
+            <Link href="/category/copra" className="hover:text-[#3b6d11] whitespace-nowrap transition">
               GI Ball Copra
             </Link>
-            <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
+            <Link href="/category/arecanut" className="hover:text-[#3b6d11] whitespace-nowrap transition">
               Arecanut Bulk Lots
             </Link>
-            <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
+            <Link href="/category/oil-and-extracts" className="hover:text-[#3b6d11] whitespace-nowrap transition">
               Wood-Pressed Oils & Ghee
             </Link>
-            <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
-              Ragi Millet & Ginger
+            <Link href="/category/spices" className="hover:text-[#3b6d11] whitespace-nowrap transition">
+              Millets & Flours
             </Link>
-            <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
+            <Link href="/category/nursery-plants" className="hover:text-[#3b6d11] whitespace-nowrap transition">
               Nursery Plants (Coconut & Areca)
             </Link>
-            <Link href="/#catalog" className="hover:text-[#3b6d11] whitespace-nowrap transition">
-              Raw Coconut Shells
+            <Link href="/category/coir-commodities" className="hover:text-[#3b6d11] whitespace-nowrap transition">
+              Biomass & Shells
             </Link>
           </div>
           <div className="flex items-center gap-4 text-[#3b6d11] font-bold shrink-0">

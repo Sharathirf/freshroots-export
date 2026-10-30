@@ -113,7 +113,7 @@ export default function ShippingRateCalculator({
             Live Transportation Rate Engine
           </h3>
           <p className="text-stone-500 text-xs mt-0.5">
-            Transportation charged extra on actual weight & destination (Modeled after coconutseller.in logistics)
+            Transparent freight calculation on actual weight &amp; destination across Pan-India corridors
           </p>
         </div>
 
@@ -302,7 +302,7 @@ export default function ShippingRateCalculator({
             })}
           </div>
 
-          {/* Heavy Truckload Note (coconutseller.in standard) */}
+          {/* Heavy Truckload Note (APMC mandi standard) */}
           {weight >= 100 && (
             <div className="bg-amber-50/80 border border-amber-200 rounded-xl p-3.5 text-xs text-amber-950 flex items-start gap-2.5 mt-2">
               <Package className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />

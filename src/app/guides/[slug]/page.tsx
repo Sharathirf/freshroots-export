@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: GuidePageProps): Promise<Meta
   const canonicalUrl = `${siteUrl}/guides/${guide.slug}`;
 
   return {
-    title: `${guide.seoTitle} | FreshRoots Export`,
+    title: guide.seoTitle,
     description: guide.metaDescription,
     keywords: guide.keywords,
     alternates: {

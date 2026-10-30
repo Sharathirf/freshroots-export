@@ -63,7 +63,7 @@ export default function TermsPage() {
             </p>
             <ul className="list-disc pl-5 space-y-1.5">
               <li><strong>Coconuts &amp; Copra:</strong> Graded according to size, moisture, and weight standards. Minor natural variation in nut dimension or husk texture is inherent to farm produce.</li>
-              <li><strong>Minimum Order Quantities (MOQs):</strong> Strictly enforced where specified (e.g. 50 plants for coconut saplings, 200 plants for arecanut saplings) to maintain nursery viability and specialized transport safety.</li>
+              <li><strong>Retail vs Commercial Consignments:</strong> Retail consumer orders and sample nursery orders have <strong>no minimum quantity requirement</strong> (1+ plant, bottle, or pack) with 100% Free Doorstep Delivery. Commercial orchard consignments (e.g. 50+ coconut saplings, 100+ arecanut plants, or full truckload lots) are dispatched via dedicated nursery transport with commercial volume pricing.</li>
               <li><strong>Wholesale Consignments:</strong> Tender coconuts, bulk industrial shells, and 50 kg ginger lots are offered strictly through Request for Quotation (RFQ) based on daily mandi spot rates.</li>
             </ul>
           </section>

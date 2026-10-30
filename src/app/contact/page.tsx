@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
+import CommercialInquiryFaq from '@/components/CommercialInquiryFaq';
 import { MapPin, Phone, Mail, Clock, ShieldCheck, Truck, MessageCircle } from 'lucide-react';
 import { getSiteUrl, getRobotsDirectives } from '@/lib/seo';
 
@@ -185,6 +186,11 @@ export default function ContactPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* 3. Written Commercial RFQ & Inquiry Section */}
+        <div id="rfq" className="mt-12 pt-8 border-t border-stone-200">
+          <CommercialInquiryFaq />
         </div>
       </main>
 

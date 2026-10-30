@@ -68,7 +68,7 @@ const commodityMetadata: Record<string, { emoji: string; titleKn: string; subtit
     subtitleKn: '1 ರಿಂದ 1.5 ಅಡಿ ಸಸಿ • ಕನಿಷ್ಠ ಮಿತಿ ಇಲ್ಲ'
   },
   'ARE-BLK-ADK-01Q': {
-    emoji: '🥜',
+    emoji: '🌰',
     titleKn: 'ಶಿವಮೊಗ್ಗ ಅಡಿಕೆ (ಬಲ್ಕ್ ಕಮಾಡಿಟಿ)',
     subtitleKn: 'ಕನಿಷ್ಠ 100 ಕೆ.ಜಿ (1 ಕ್ವಿಂಟಾಲ್) • ಮಂಡಿ ದರ'
   }
@@ -175,26 +175,75 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
     product.slug.includes('arecanut')
   );
 
+  const isHeroSale = (
+    product.sku === 'COP-BAL-BOX-15K' ||
+    product.sku === 'DAI-GHE-BIL-01L' ||
+    product.sku === 'MIL-RAG-ORG-05K' ||
+    product.sku === 'FLR-RAG-ORG-05K'
+  );
+
+  const isEdible = Boolean(
+    !isBulkOnly &&
+    !product.sku?.startsWith('NUR') &&
+    !product.sku?.includes('SHL') &&
+    !product.sku?.includes('CHR') &&
+    product.category !== 'arecanut'
+  );
+
   const unitSubtitle = selectedVariant ? selectedVariant.packSize : product.unit_of_measure;
   const priceUnit = selectedVariant?.unitOfMeasure || product.unit_of_measure;
   const reviewCount = Number(product.review_count || 0);
   const averageRating = Number(product.average_rating || 0);
   const displayImageUrl = getProductImageUrl(product.sku, product.image_url);
 
-  let supportingInfo = 'No Minimum • Free Doorstep Delivery';
+  let supportingInfo = 'Free Doorstep Delivery • Pan-India Courier';
   if (product.sku === 'NUR-ARE-PLT-01Y') {
-    supportingInfo = '(₹75 / plant • No Minimum)';
+    supportingInfo = '₹77 / plant • Field-Ready 1-Year Saplings';
   } else if (product.sku === 'NUR-COC-PLT-01Y') {
-    supportingInfo = 'No Minimum • Field-Ready 1-Year Saplings';
+    supportingInfo = '₹286 / plant • Field-Ready 1-Year Saplings';
   } else if (product.sku === 'OIL-GND-WOD-01L') {
     supportingInfo = 'Cold-Pressed • Traditional Marachekku';
+  } else if (product.sku === 'OIL-COC-WOD-01L') {
+    supportingInfo = 'Cold-Pressed • Traditional Marachekku';
+  } else if (product.sku === 'DAI-GHE-BIL-01L') {
+    supportingInfo = 'Bilona Churned • 100% Pure Desi Ghee';
+  } else if (product.sku === 'MIL-RAG-ORG-05K') {
+    supportingInfo = 'Mandya Native Grains • Unpolished';
+  } else if (product.sku?.includes('FLR') || product.slug?.includes('flour')) {
+    supportingInfo = 'Slow Stone-Ground • 100% Pure Grain';
+  } else if (product.sku === 'COC-SEMI-25P-15K') {
+    supportingInfo = '15 kg Mesh Bag • Free Doorstep Delivery';
+  } else if (product.sku === 'COP-BAL-BOX-15K') {
+    supportingInfo = '15 kg Master Box • Free Doorstep Delivery';
   } else if (product.category === 'arecanut' || product.sku === 'ARE-BLK-ADK-01Q') {
-    supportingInfo = 'Minimum bulk lot: 100 kg';
+    supportingInfo = 'Minimum bulk lot: 100 kg (1 Quintal)';
+  } else if (product.sku === 'COC-TND-BLK-LOT' || product.slug.includes('tender')) {
+    supportingInfo = 'Minimum order: 100 Nuts (Commercial Lot) / Mandi Truckload';
+  } else if (product.sku === 'SPI-GIN-BLK-50K' || product.slug.includes('ginger')) {
+    supportingInfo = 'Minimum bulk lot: 50 kg Bag';
+  } else if (product.sku === 'COI-SHL-BLK-01T' || product.slug.includes('shell')) {
+    supportingInfo = 'Minimum bulk lot: 1 Metric Tonne';
   } else if (product.sku === 'COI-CHR-BLK-01T' || product.slug.includes('charcoal')) {
     supportingInfo = '₹110/kg • Minimum bulk lot: 1 Ton';
   } else if (isBulkOnly) {
     supportingInfo = `Minimum bulk lot: ${product.bulk_min_quantity || 1} ${product.bulk_min_quantity === 1 ? 'unit' : 'units'}`;
   }
+
+  const displayCategory = (() => {
+    const sku = product.sku || '';
+    const cat = product.category || '';
+    if (sku.includes('GHE')) return 'Desi Ghee';
+    if (sku.includes('RAG') || sku.includes('RIC') || sku.includes('FLR') || sku.includes('MIL')) return 'Millets & Flours';
+    if (sku.includes('NUR')) return 'Farm Nursery';
+    if (sku.includes('OIL')) return 'Wood-Pressed Oils';
+    if (sku.includes('CHR') || sku.includes('SHL')) return 'Biomass & Industrial';
+    if (cat === 'oil_and_extracts') return 'Oils & Ghee';
+    if (cat === 'mature_coconut') return 'Fresh Coconuts';
+    if (cat === 'copra') return 'GI Ball Copra';
+    if (cat === 'arecanut') return 'Arecanut Lots';
+    if (cat === 'spices') return 'Farm Produce';
+    return cat.replace(/_/g, ' ');
+  })();
 
   return (
     <article
@@ -214,22 +263,30 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
             />
 
             {/* Sale / Grade badge */}
-            {!isBulkOnly ? (
+            {isHeroSale ? (
               <div className="absolute top-2 left-2 z-10 bg-emerald-800 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs select-none">
                 Sale • 15% OFF
+              </div>
+            ) : isBulkOnly ? (
+              <div className="absolute top-2 left-2 z-10 bg-amber-800 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs select-none">
+                Mandi Benchmark
               </div>
             ) : product.grade ? (
               <div className="absolute top-2 left-2 z-10 bg-white/95 backdrop-blur-xs text-stone-800 text-[9px] font-bold px-1.5 py-0.5 rounded border border-stone-200 shadow-xs select-none">
                 {product.grade}
               </div>
-            ) : null}
+            ) : (
+              <div className="absolute top-2 left-2 z-10 bg-stone-900/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs select-none">
+                Farm-Direct Price
+              </div>
+            )}
 
             <div className="absolute bottom-1.5 left-1.5 text-sm sm:text-base bg-white/90 px-1.5 py-0.5 rounded-md shadow-2xs border border-stone-200 pointer-events-none select-none">
               {displayEmoji}
             </div>
 
             <div className="absolute bottom-1.5 right-1.5 bg-emerald-950/90 text-white text-[9px] font-medium px-1.5 py-0.5 rounded shadow-2xs select-none">
-              ✓ Farm Direct
+              {isEdible ? '✓ FSSAI Lic.' : '✓ Farm Direct'}
             </div>
           </Link>
 
@@ -256,7 +313,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
           {/* Category & Unit Subtitle */}
           <div className="flex items-center justify-between gap-1.5 text-[10px] font-medium">
             <span className="text-[#3b6d11] font-bold uppercase tracking-wider text-[9px] select-none">
-              {product.category.replace(/_/g, ' ')}
+              {displayCategory}
             </span>
             <span className="text-stone-400 text-right leading-snug truncate max-w-[55%]">
               {lang === 'kn' && meta?.subtitleKn ? meta.subtitleKn : unitSubtitle}
@@ -362,7 +419,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
                   <span className="text-base sm:text-lg font-black text-emerald-900 font-mono tracking-tight">
                     ₹{displayPrice.toLocaleString('en-IN')}
                   </span>
-                  {originalMrp > displayPrice && (
+                  {isHeroSale && originalMrp > displayPrice && (
                     <>
                       <span className="text-[10px] text-stone-400 line-through font-mono">
                         ₹{originalMrp.toLocaleString('en-IN')}

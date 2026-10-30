@@ -176,10 +176,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                   Geographic Sourcing
                 </h3>
                 <p className="text-xs font-bold text-stone-900">
-                  Kikkeri, Mandya & Tiptur Corridors
+                  {category.originRegion}
                 </p>
                 <p className="text-[11px] text-stone-500 mt-1 leading-normal">
-                  Harvested from Cauvery canal-fed groves and dried in traditional attic stores. Lab-tested quality, zero intermediate brokers.
+                  {category.originDetails}
                 </p>
                 <div className="mt-4 pt-3 border-t border-stone-200 text-[11px] space-y-1 text-stone-600">
                   <div className="flex justify-between">
@@ -188,7 +188,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                   </div>
                   <div className="flex justify-between">
                     <span>GST Rate:</span>
-                    <span className="font-semibold text-stone-800">0% Fresh / 5% Copra</span>
+                    <span className="font-semibold text-stone-800">{category.gstRateText}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Assurance:</span>

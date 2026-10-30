@@ -120,16 +120,16 @@ export default function TransportationPage() {
               </p>
             </div>
 
-            {/* Core Industry Policy Alert & Threshold Free Shipping Banner */}
+            {/* Transparent Logistics Policy: B2B Wholesale vs Retail Doorstep */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl">
               <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 sm:p-5 text-xs sm:text-sm text-stone-200 flex items-start gap-3.5 shadow-lg">
-                <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                <Truck className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                 <div className="space-y-1">
                   <strong className="text-white block font-bold">
-                    Agricultural Freight Transparency Policy (Transportation Charged Extra):
+                    Commercial &amp; Bulk Consignments (Truckloads / Mandi Lots):
                   </strong>
                   <p className="text-stone-300 leading-relaxed text-xs">
-                    In strict adherence to agricultural mandi standards (such as <em>coconutseller.in/transportation</em>), <strong>transportation is charged extra at 100% actuals</strong>. Heavy agricultural produce is never marked up with hidden shipping margins; buyers pay only genuine transporter freight rates.
+                    In strict accordance with agricultural mandi transport norms, <strong>wholesale bulk freight (Canter, 10-Tonne, 25-Tonne FTL) is billed at 100% actuals</strong> with zero hidden markups. Genuine weighbridge slips and direct VRL/lorry LR receipts are provided.
                   </p>
                 </div>
               </div>
@@ -138,10 +138,10 @@ export default function TransportationPage() {
                 <ShieldCheck className="w-5 h-5 text-lime-400 shrink-0 mt-0.5" />
                 <div className="space-y-1">
                   <strong className="text-lime-300 block font-bold">
-                    100% Free Doorstep Delivery on ALL Orders:
+                    Retail Orders &amp; Family Packs (100% Free Doorstep Delivery):
                   </strong>
                   <p className="text-emerald-200/90 leading-relaxed text-xs">
-                    Enjoy <strong>100% FREE Farm-Gate Delivery</strong> across all 19,000+ Indian postal PIN codes! There is <strong>no minimum quantity</strong> requirement. All shipping and logistics expenses are absorbed directly into our competitive, farm-direct selling prices.
+                    Enjoy <strong>100% FREE Doorstep Courier Delivery</strong> across all 19,000+ Indian postal PIN codes for all retail pantry orders (Oils, Ghee, Flours, and 25-Nut bags). Standard courier packaging and doorstep tracking are fully absorbed.
                   </p>
                 </div>
               </div>

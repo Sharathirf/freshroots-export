@@ -105,12 +105,8 @@ function TrackOrderContent() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans">
-      <Navbar />
-      <CartDrawer />
-
-      <main className="flex-1 py-8 sm:py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="py-8 sm:py-16">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           {/* Top Quick Exit / Return to Shop Button */}
           <div className="flex items-center justify-between">
             <Link
@@ -507,17 +503,26 @@ function TrackOrderContent() {
             </div>
           </div>
         </div>
-      </main>
-
-      <Footer />
-    </div>
+      </div>
   );
 }
 
 export default function TrackOrderPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-stone-50 flex items-center justify-center">Loading tracker...</div>}>
-      <TrackOrderContent />
-    </Suspense>
+    <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans">
+      <Navbar />
+      <CartDrawer />
+      <main className="flex-1">
+        <Suspense fallback={
+          <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-4">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-700" />
+            <p className="text-stone-600 font-semibold text-sm">Loading Consignment Tracking Console...</p>
+          </div>
+        }>
+          <TrackOrderContent />
+        </Suspense>
+      </main>
+      <Footer />
+    </div>
   );
 }

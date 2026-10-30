@@ -101,16 +101,14 @@ export default function GlobalExportCorridors({ onOpenRFQ }: GlobalExportCorrido
                       {c.flag}
                     </span>
                     <div>
-                      <a
-                        href={c.wikiUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-extrabold text-white text-base leading-snug hover:text-lime-300 hover:underline transition inline-flex items-center gap-1.5"
-                        title={`Read more about ${c.name} on Wikipedia`}
+                      <button
+                        type="button"
+                        onClick={() => onOpenRFQ ? onOpenRFQ(c.name) : (window.location.href = `/contact?destination=${encodeURIComponent(c.name)}#rfq`)}
+                        className="font-extrabold text-white text-base leading-snug hover:text-lime-300 transition text-left"
+                        title={`Open container quote for ${c.name}`}
                       >
-                        <span>{c.name}</span>
-                        <ExternalLink className="w-3.5 h-3.5 text-stone-400 hover:text-lime-300 transition" />
-                      </a>
+                        {c.name}
+                      </button>
                       <span className="text-[11px] text-emerald-400 font-semibold block">
                         {c.region}
                       </span>

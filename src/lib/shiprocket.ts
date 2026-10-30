@@ -4,7 +4,7 @@
  * Endpoint: https://apiv2.shiprocket.in/v1/external/courier/serviceability/
  * 
  * Origin: Kikkeri, K.R. Pete, Mandya, Karnataka - 571423 (SHARATH INORAHALLI)
- * Policy: "Transportation Charged Extra" (Modeled after coconutseller.in/transportation)
+ * Policy: "Transportation Charged Extra" (Standard Mandi Freight Logistics)
  */
 
 export interface CourierOption {

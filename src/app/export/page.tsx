@@ -311,16 +311,9 @@ export default function ExportPage() {
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-2xl">{country.flag}</span>
-                    <a
-                      href={country.wikiUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-bold text-xs text-stone-900 hover:text-emerald-700 hover:underline inline-flex items-center gap-1 transition"
-                      title={`Learn more about ${country.name} on Wikipedia`}
-                    >
+                    <span className="font-bold text-xs text-stone-900 inline-flex items-center gap-1">
                       <span>{country.name}</span>
-                      <ExternalLink className="w-3 h-3 text-stone-400 hover:text-emerald-700" />
-                    </a>
+                    </span>
                   </div>
                   <div className="text-[11px] text-stone-500">
                     <span className="font-semibold text-stone-700">Port:</span> {country.majorPort}
@@ -328,6 +321,12 @@ export default function ExportPage() {
                   <div className="text-[11px] text-stone-500 mt-1 line-clamp-1">
                     <span className="font-semibold text-stone-700">Demand:</span> {country.popularCommodities}
                   </div>
+                  <Link
+                    href={`/contact?destination=${encodeURIComponent(country.name)}`}
+                    className="text-[10px] text-emerald-800 font-bold hover:underline mt-2 inline-block"
+                  >
+                    Request Port Quote →
+                  </Link>
                 </div>
               ))}
             </div>
@@ -410,7 +409,7 @@ export default function ExportPage() {
               </a>
 
               <Link
-                href="/contact"
+                href="/contact#rfq"
                 className="w-full sm:w-auto px-8 py-3.5 bg-white hover:bg-stone-100 text-stone-900 font-bold text-sm rounded-xl transition flex items-center justify-center gap-2"
               >
                 Submit Written RFQ Form

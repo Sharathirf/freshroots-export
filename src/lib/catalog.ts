@@ -144,7 +144,7 @@ export const CATALOG_PRODUCTS: CatalogProductItem[] = [
     estimated_weight_kg: 0.92,
     moisture_percentage: 0.15,
     oil_percentage: 99.8,
-    retail_price_inr: 663.00,
+    retail_price_inr: 469.00,
     bulk_min_quantity: 1,
     wholesale_benchmark_price_inr: 490.00,
     hsn_code: '150890',
