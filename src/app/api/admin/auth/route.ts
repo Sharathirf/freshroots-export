@@ -9,6 +9,7 @@ import {
   isAdminSessionValid,
   requestHasSameOrigin,
   verifyAdminPassword,
+  verifyAdminTotp,
 } from '@/lib/admin-auth';
 
 export const dynamic = 'force-dynamic';
@@ -60,15 +61,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Too many sign-in attempts. Try again in 15 minutes.' }, { status: 429 });
     }
 
-    let body: { password?: unknown };
+    let body: { password?: unknown; totp?: unknown };
     try {
       body = await request.json();
     } catch {
       body = {};
     }
-    const password = typeof body.password === 'string' ? body.password : '';
-    if (!verifyAdminPassword(password)) {
-      return NextResponse.json({ success: false, error: 'Invalid administrator password' }, { status: 401 });
+    const password = typeof body.password === 'string' ? body.password.trim() : '';
+    const totp = typeof body.totp === 'string' ? body.totp.trim() : '';
+
+    const isValid =
+      (totp && verifyAdminTotp(totp)) ||
+      (password && verifyAdminPassword(password));
+
+    if (!isValid) {
+      return NextResponse.json({ success: false, error: 'Invalid administrator password or Google Authenticator code' }, { status: 401 });
     }
 
     await client.query(`DELETE FROM admin_login_attempts WHERE ip_hash = $1`, [ipHash]);

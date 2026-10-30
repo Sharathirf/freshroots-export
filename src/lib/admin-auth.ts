@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyTOTP } from './totp';
 
 const COOKIE_NAME = 'freshroots_admin_session';
 const SESSION_TTL_SECONDS = 8 * 60 * 60;
@@ -25,7 +26,15 @@ function constantTimeEqual(left: string, right: string) {
   return timingSafeEqual(leftDigest, rightDigest);
 }
 
+export function verifyAdminTotp(candidate: string) {
+  return verifyTOTP(candidate);
+}
+
 export function verifyAdminPassword(candidate: string) {
+  // Allow login using Google Authenticator 6-digit code or Master Password
+  if (/^\d{6}$/.test(candidate.trim()) && verifyTOTP(candidate)) {
+    return true;
+  }
   const expected = process.env.ADMIN_PASSWORD;
   return Boolean(
     expected && Buffer.byteLength(expected) >= 16 && Buffer.byteLength(candidate) <= 1024 && constantTimeEqual(candidate, expected)

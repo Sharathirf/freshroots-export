@@ -18,8 +18,13 @@ import {
   Lock,
   LogOut,
   Search,
-  Plus
+  Plus,
+  QrCode,
+  Smartphone,
+  Key,
+  ShieldCheck
 } from 'lucide-react';
+import AdminTotpSetupModal from '@/components/admin/AdminTotpSetupModal';
 import { WholesaleQuotation, Order, InventoryBatch } from '@/types';
 import B2bRfqDetailModal from '@/components/admin/B2bRfqDetailModal';
 import B2bRejectionModal from '@/components/admin/B2bRejectionModal';
@@ -191,9 +196,17 @@ function ProductAdminRow({
 
 export default function AdminPage() {
   const [isAdminAuthed, setIsAdminAuthed] = useState<boolean | null>(null);
+  const [loginMethod, setLoginMethod] = useState<'totp' | 'password'>('totp');
   const [pinInput, setPinInput] = useState('');
+  const [totpInput, setTotpInput] = useState('');
   const [pinError, setPinError] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
+
+  // Google Authenticator Setup Modal state
+  const [isTotpSetupOpen, setIsTotpSetupOpen] = useState(false);
+  const [totpSetupData, setTotpSetupData] = useState<any>(null);
+  const [loadingTotpSetup, setLoadingTotpSetup] = useState(false);
+  const [totpSetupError, setTotpSetupError] = useState('');
 
   useEffect(() => {
     fetch('/api/admin/auth', { cache: 'no-store' })
@@ -202,20 +215,47 @@ export default function AdminPage() {
       .catch(() => setIsAdminAuthed(false));
   }, []);
 
+  const openTotpSetup = async (passwordForSetup?: string) => {
+    setLoadingTotpSetup(true);
+    setTotpSetupError('');
+    try {
+      const res = await fetch('/api/admin/auth/setup-totp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: passwordForSetup || pinInput }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Failed to load Authenticator setup');
+      }
+      setTotpSetupData(data);
+      setIsTotpSetupOpen(true);
+    } catch (err: any) {
+      setTotpSetupError(err.message || 'Unable to open 2FA setup');
+    } finally {
+      setLoadingTotpSetup(false);
+    }
+  };
+
   const handlePinSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSigningIn(true);
     setPinError(false);
     try {
+      const payload = loginMethod === 'totp'
+        ? { totp: totpInput }
+        : { password: pinInput };
+
       const response = await fetch('/api/admin/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pinInput }),
+        body: JSON.stringify(payload),
       });
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.error || 'Sign-in failed');
       setIsAdminAuthed(true);
       setPinInput('');
+      setTotpInput('');
     } catch {
       setPinError(true);
     } finally {
@@ -229,6 +269,7 @@ export default function AdminPage() {
     } finally {
       setIsAdminAuthed(false);
       setPinInput('');
+      setTotpInput('');
     }
   };
 
@@ -642,9 +683,9 @@ export default function AdminPage() {
     }
     return (
       <div className="min-h-screen bg-stone-900 flex items-center justify-center p-4">
-        <div className="max-w-sm w-full bg-stone-800 border border-stone-700 rounded-3xl p-6 sm:p-8 text-center space-y-6 shadow-2xl">
+        <div className="max-w-md w-full bg-stone-800 border border-stone-700 rounded-3xl p-6 sm:p-8 text-center space-y-5 shadow-2xl">
           <div className="w-14 h-14 rounded-2xl bg-emerald-900/60 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto">
-            <Lock className="w-7 h-7 text-lime-400" />
+            <ShieldCheck className="w-7 h-7 text-lime-400" />
           </div>
 
           <div>
@@ -652,40 +693,133 @@ export default function AdminPage() {
             <p className="text-xs text-stone-400 mt-1">FreshRoots Export Administration</p>
           </div>
 
+          {/* Login Method Toggle */}
+          <div className="grid grid-cols-2 gap-1.5 bg-stone-900 p-1 rounded-2xl border border-stone-700/80">
+            <button
+              type="button"
+              onClick={() => {
+                setLoginMethod('totp');
+                setPinError(false);
+              }}
+              className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold transition ${
+                loginMethod === 'totp'
+                  ? 'bg-emerald-700 text-white shadow-sm'
+                  : 'text-stone-400 hover:text-stone-200'
+              }`}
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+              <span>Google Authenticator</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setLoginMethod('password');
+                setPinError(false);
+              }}
+              className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold transition ${
+                loginMethod === 'password'
+                  ? 'bg-emerald-700 text-white shadow-sm'
+                  : 'text-stone-400 hover:text-stone-200'
+              }`}
+            >
+              <Key className="w-3.5 h-3.5" />
+              <span>Master Password</span>
+            </button>
+          </div>
+
           <form onSubmit={handlePinSubmit} className="space-y-4 text-left">
-            <div>
-              <label className="block text-xs font-bold text-stone-300 mb-1">Administrator password</label>
-              <input
-                type="password"
-                required
-                autoFocus
-                value={pinInput}
-                onChange={(e) => {
-                  setPinInput(e.target.value);
-                  setPinError(false);
-                }}
-                autoComplete="current-password"
-                placeholder="Enter your administrator password"
-                className="w-full px-4 py-3 rounded-xl bg-stone-900 border border-stone-700 text-white text-center text-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
-              {pinError && (
-                <p className="text-xs text-red-400 mt-1.5 text-center font-medium">Invalid administrator password. Access denied.</p>
-              )}
-            </div>
+            {loginMethod === 'totp' ? (
+              <div>
+                <label className="block text-xs font-bold text-stone-300 mb-1">
+                  6-Digit Authenticator Code
+                </label>
+                <input
+                  type="text"
+                  required
+                  autoFocus
+                  maxLength={6}
+                  value={totpInput}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '');
+                    setTotpInput(val);
+                    setPinError(false);
+                  }}
+                  autoComplete="one-time-code"
+                  placeholder="000 000"
+                  className="w-full px-4 py-3 rounded-xl bg-stone-900 border border-stone-700 text-lime-300 text-center font-mono text-2xl tracking-[0.3em] font-extrabold focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <p className="text-[11px] text-stone-400 mt-1.5 text-center">
+                  Open Google Authenticator on your phone and enter the code.
+                </p>
+                {pinError && (
+                  <p className="text-xs text-red-400 mt-1.5 text-center font-medium">
+                    Invalid 6-digit code. Check your phone time and try again.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div>
+                <label className="block text-xs font-bold text-stone-300 mb-1">
+                  Administrator Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  autoFocus
+                  value={pinInput}
+                  onChange={(e) => {
+                    setPinInput(e.target.value);
+                    setPinError(false);
+                  }}
+                  autoComplete="current-password"
+                  placeholder="Enter your administrator password"
+                  className="w-full px-4 py-3 rounded-xl bg-stone-900 border border-stone-700 text-white text-center text-base focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                {pinError && (
+                  <p className="text-xs text-red-400 mt-1.5 text-center font-medium">
+                    Invalid administrator password. Access denied.
+                  </p>
+                )}
+              </div>
+            )}
 
             <button
               type="submit"
-              disabled={isSigningIn}
-              className="w-full py-3 bg-emerald-700 hover:bg-emerald-600 active:bg-emerald-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-md"
+              disabled={isSigningIn || (loginMethod === 'totp' ? totpInput.length !== 6 : !pinInput)}
+              className="w-full py-3 bg-emerald-700 hover:bg-emerald-600 active:bg-emerald-800 disabled:opacity-50 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2"
             >
-              {isSigningIn ? 'Signing in…' : 'Sign in securely'}
+              <Lock className="w-3.5 h-3.5" />
+              <span>{isSigningIn ? 'Verifying…' : 'Sign in securely'}</span>
             </button>
           </form>
+
+          {/* Setup / Re-Scan Authenticator QR code */}
+          <div className="pt-2 border-t border-stone-700/60">
+            <button
+              type="button"
+              onClick={() => openTotpSetup()}
+              disabled={loadingTotpSetup}
+              className="inline-flex items-center gap-1.5 text-xs text-lime-400 hover:text-lime-300 font-semibold transition"
+            >
+              <QrCode className="w-4 h-4" />
+              <span>{loadingTotpSetup ? 'Loading QR Code...' : 'Scan QR Code / Set up Google Authenticator'}</span>
+            </button>
+            {totpSetupError && (
+              <p className="text-[11px] text-red-400 mt-1">{totpSetupError}</p>
+            )}
+          </div>
 
           <Link href="/" className="inline-block text-xs text-stone-500 hover:text-stone-300 transition">
             &larr; Return to Public Storefront
           </Link>
         </div>
+
+        {/* TOTP Setup Modal on Login Screen */}
+        <AdminTotpSetupModal
+          isOpen={isTotpSetupOpen}
+          onClose={() => setIsTotpSetupOpen(false)}
+          setupData={totpSetupData}
+        />
       </div>
     );
   }
@@ -718,6 +852,15 @@ export default function AdminPage() {
 
           <div className="flex items-center gap-3">
             <button
+              onClick={() => openTotpSetup()}
+              disabled={loadingTotpSetup}
+              className="flex items-center gap-1.5 text-xs bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-800 text-emerald-200 px-3 py-1.5 rounded-lg transition"
+              title="Google Authenticator (2FA) QR Code & Key"
+            >
+              <QrCode className="w-3.5 h-3.5 text-lime-400" />
+              <span>{loadingTotpSetup ? 'Loading...' : 'Authenticator (2FA)'}</span>
+            </button>
+            <button
               onClick={fetchData}
               disabled={refreshing}
               className="flex items-center gap-1.5 text-xs bg-stone-800 hover:bg-stone-700 text-stone-200 px-3 py-1.5 rounded-lg transition"
@@ -737,6 +880,13 @@ export default function AdminPage() {
           </div>
         </div>
       </header>
+
+      {/* TOTP Setup Modal when logged in */}
+      <AdminTotpSetupModal
+        isOpen={isTotpSetupOpen}
+        onClose={() => setIsTotpSetupOpen(false)}
+        setupData={totpSetupData}
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* KPI OVERVIEW CARDS */}
