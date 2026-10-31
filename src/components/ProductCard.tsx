@@ -152,7 +152,6 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
   }, [product.category]);
 
   const meta = commodityMetadata[product.sku];
-  const displayEmoji = meta?.emoji || '🌿';
 
   const rawActivePrice = defaultVariant ? defaultVariant.price : Number(product.retail_price_inr);
   const displayPrice = product.sku === 'COC-TND-BLK-LOT' ? 95 : rawActivePrice;
@@ -177,14 +176,6 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
     product.sku === 'DAI-GHE-BIL-01L' ||
     product.sku === 'MIL-RAG-ORG-05K' ||
     product.sku === 'FLR-RAG-ORG-05K'
-  );
-
-  const isEdible = Boolean(
-    !isBulkOnly &&
-    !product.sku?.startsWith('NUR') &&
-    !product.sku?.includes('SHL') &&
-    !product.sku?.includes('CHR') &&
-    product.category !== 'arecanut'
   );
 
   const unitSubtitle = defaultVariant ? defaultVariant.packSize : product.unit_of_measure;
@@ -259,32 +250,12 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
               decoding="async"
             />
 
-            {/* Sale / Grade badge */}
-            {isHeroSale ? (
+            {/* Optional minimal sale badge */}
+            {isHeroSale && (
               <div className="absolute top-2 left-2 z-10 bg-emerald-800 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs select-none">
-                Sale • 15% OFF
-              </div>
-            ) : isBulkOnly ? (
-              <div className="absolute top-2 left-2 z-10 bg-amber-800 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs select-none">
-                Mandi Benchmark
-              </div>
-            ) : product.grade ? (
-              <div className="absolute top-2 left-2 z-10 bg-white/95 backdrop-blur-xs text-stone-800 text-[9px] font-bold px-1.5 py-0.5 rounded border border-stone-200 shadow-xs select-none">
-                {product.grade}
-              </div>
-            ) : (
-              <div className="absolute top-2 left-2 z-10 bg-stone-900/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs select-none">
-                Farm-Direct Price
+                Sale
               </div>
             )}
-
-            <div className="absolute bottom-1.5 left-1.5 text-sm sm:text-base bg-white/90 px-1.5 py-0.5 rounded-md shadow-2xs border border-stone-200 pointer-events-none select-none">
-              {displayEmoji}
-            </div>
-
-            <div className="absolute bottom-1.5 right-1.5 bg-emerald-950/90 text-white text-[9px] font-medium px-1.5 py-0.5 rounded shadow-2xs select-none">
-              {isEdible ? '✓ FSSAI Lic.' : '✓ Farm Direct'}
-            </div>
           </Link>
 
           {/* Wishlist action button */}
