@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Users, Eye, BarChart3, Globe, Smartphone, Laptop, RefreshCw, Activity, ArrowUpRight } from 'lucide-react';
+import { Users, Eye, BarChart3, Globe, Smartphone, Laptop, RefreshCw, Activity, ArrowUpRight, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface TimeframeStats {
@@ -42,24 +42,17 @@ interface AnalyticsData {
 
 const DEFAULT_DATA: AnalyticsData = {
   timeframe: {
-    day: { visits: 38, uniqueUsers: 24 },
-    week: { visits: 246, uniqueUsers: 142 },
-    month: { visits: 980, uniqueUsers: 512 },
-    year: { visits: 3840, uniqueUsers: 1980 }
+    day: { visits: 0, uniqueUsers: 0 },
+    week: { visits: 0, uniqueUsers: 0 },
+    month: { visits: 0, uniqueUsers: 0 },
+    year: { visits: 0, uniqueUsers: 0 }
   },
   devices: {
-    mobile: 710,
-    desktop: 270
+    mobile: 0,
+    desktop: 0
   },
-  topPages: [
-    { path: '/', totalViews: 420, uniqueUsers: 310 },
-    { path: '/products/fresh-semi-husked-mature-coconuts-25-piece', totalViews: 185, uniqueUsers: 120 },
-    { path: '/products/tiptur-ball-copra-boxes-15kg', totalViews: 142, uniqueUsers: 95 },
-    { path: '/track-order', totalViews: 110, uniqueUsers: 78 },
-    { path: '/products/shivamogga-arecanut-bulk-lot', totalViews: 92, uniqueUsers: 64 },
-    { path: '/transportation', totalViews: 68, uniqueUsers: 45 }
-  ],
-  activeNow: 7
+  topPages: [],
+  activeNow: 0
 };
 
 export default function SiteVisitorCounter() {
@@ -102,6 +95,27 @@ export default function SiteVisitorCounter() {
       }
     } catch (e) {
       console.warn('Analytics fetch note:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetAnalytics = async () => {
+    if (!confirm('Are you sure you want to reset all visitor analytics history? This will clear all recorded visits so you start with fresh genuine data.')) {
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/analytics/reset', { method: 'POST' });
+      const json = await res.json();
+      if (json.success) {
+        await loadStats();
+        alert(json.message || 'Visitor analytics reset successfully.');
+      } else {
+        alert(json.error || 'Failed to reset analytics. Please ensure you are logged in as Admin.');
+      }
+    } catch {
+      alert('Network error while resetting analytics.');
     } finally {
       setLoading(false);
     }
@@ -167,6 +181,17 @@ export default function SiteVisitorCounter() {
             >
               <RefreshCw className={`w-3.5 h-3.5 text-stone-400 ${loading ? 'animate-spin text-emerald-400' : ''}`} />
               <span className="hidden sm:inline">Updated {lastUpdated}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleResetAnalytics}
+              disabled={loading}
+              title="Reset visitor analytics to zero"
+              className="inline-flex items-center gap-1.5 bg-red-950/60 hover:bg-red-900/80 border border-red-800/60 px-3 py-1.5 rounded-xl text-xs font-semibold text-red-300 transition active:scale-95"
+            >
+              <Trash2 className="w-3.5 h-3.5 text-red-400" />
+              <span className="hidden sm:inline">Reset</span>
             </button>
           </div>
         </div>

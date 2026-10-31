@@ -11,6 +11,7 @@ export async function GET() {
         SELECT
           COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '24 hours') as day_visits,
           COUNT(DISTINCT visitor_id) FILTER (WHERE created_at >= NOW() - INTERVAL '24 hours') as day_uniques,
+          COUNT(DISTINCT visitor_id) FILTER (WHERE created_at >= NOW() - INTERVAL '5 minutes') as active_now,
           COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '7 days') as week_visits,
           COUNT(DISTINCT visitor_id) FILTER (WHERE created_at >= NOW() - INTERVAL '7 days') as week_uniques,
           COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '30 days') as month_visits,
@@ -89,7 +90,7 @@ export async function GET() {
       },
       topPages: pages,
       recentVisitors,
-      activeNow: Math.max(3, (parseInt(row.day_uniques, 10) % 7) + 5)
+      activeNow: parseInt(row.active_now, 10) || 0
     });
   } catch (error: any) {
     console.error('Analytics stats error:', error);
