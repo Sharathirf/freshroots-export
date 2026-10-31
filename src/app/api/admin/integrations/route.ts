@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'node:fs';
-import path from 'node:path';
 import { requireAdmin } from '@/lib/admin-auth';
 import { query } from '@/lib/db';
+import { loadIntegrationSettings, saveIntegrationSetting } from '@/lib/integration-settings';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,6 +19,9 @@ function getMaskedValue(key: string, value: string | undefined): string {
 export async function GET(request: NextRequest) {
   const auth = requireAdmin(request);
   if (auth) return auth;
+
+  // Synchronize settings from Neon PostgreSQL into process.env & cache
+  await loadIntegrationSettings();
 
   let pushTableReady = false;
   try {
@@ -163,15 +165,12 @@ export async function POST(request: NextRequest) {
   const { serviceId, action, keys = {} } = body;
 
   // ---------------------------------------------------------------------------
-  // ACTION 1: SAVE CREDENTIALS TO .env.local AND IN-MEMORY process.env
+  // ACTION 1: PERSIST CREDENTIALS TO NEON POSTGRESQL & PROCESS.ENV
   // ---------------------------------------------------------------------------
   if (action === 'save') {
     if (!keys || Object.keys(keys).length === 0) {
       return NextResponse.json({ success: false, error: 'No keys provided to save' }, { status: 400 });
     }
-
-    const envPath = path.join(process.cwd(), '.env.local');
-    let envContent = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
 
     const savedKeys: string[] = [];
 
@@ -180,35 +179,21 @@ export async function POST(request: NextRequest) {
       const cleanVal = rawVal.trim();
       if (!cleanVal || cleanVal.includes('••••')) continue; // Skip masked placeholder values
 
-      process.env[key] = cleanVal;
-      savedKeys.push(key);
-
-      // If updating Sentry DSN, also sync SENTRY_DSN
-      if (key === 'NEXT_PUBLIC_SENTRY_DSN') {
-        process.env.SENTRY_DSN = cleanVal;
+      try {
+        await saveIntegrationSetting(key, cleanVal, serviceId);
+        savedKeys.push(key);
+      } catch (err: any) {
+        console.error(`Error saving setting ${key}:`, err);
+        return NextResponse.json(
+          { success: false, error: `Failed to save ${key} to persistent storage: ${err.message}` },
+          { status: 500 }
+        );
       }
-
-      // Escape quotes for env file storage
-      const escapedVal = cleanVal.replace(/"/g, '\\"');
-      const regex = new RegExp(`^${key}=.*$`, 'm');
-
-      if (regex.test(envContent)) {
-        envContent = envContent.replace(regex, `${key}="${escapedVal}"`);
-      } else {
-        envContent += `\n${key}="${escapedVal}"`;
-      }
-    }
-
-    try {
-      fs.writeFileSync(envPath, envContent.trim() + '\n', 'utf8');
-    } catch (err: any) {
-      console.error('Failed to write .env.local:', err);
-      return NextResponse.json({ success: false, error: 'Failed to write environment file to disk' }, { status: 500 });
     }
 
     return NextResponse.json({
       success: true,
-      message: `Successfully saved ${savedKeys.length} settings for ${serviceId}`,
+      message: `Successfully saved ${savedKeys.length} settings for ${serviceId} to persistent database`,
       savedKeys,
     });
   }

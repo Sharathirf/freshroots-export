@@ -38,6 +38,23 @@ async function run() {
   assert(ids.includes('firebase'), 'Must include firebase');
   console.log('  ✅ PASS: All 6 integration services retrieved with correct schema');
 
+  // 1b. Test Saving Integration Credentials to Database
+  const saveRes = await fetch('http://localhost:3000/api/admin/integrations', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', cookie },
+    body: JSON.stringify({
+      serviceId: 'cloudflare-analytics',
+      action: 'save',
+      keys: {
+        NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN: '0729f41f44f546f8aca4a6417ae60925',
+      },
+    }),
+  });
+  assert.strictEqual(saveRes.status, 200, 'POST save must return 200');
+  const saveData = await saveRes.json();
+  assert.strictEqual(saveData.success, true, 'Save must succeed');
+  console.log('  ✅ PASS: Cloudflare Analytics Token saved to persistent storage without file errors');
+
   // 2. Test Connection on PostHog
   const testRes = await fetch('http://localhost:3000/api/admin/integrations', {
     method: 'POST',
