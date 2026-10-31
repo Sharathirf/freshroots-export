@@ -255,7 +255,7 @@ export default function Navbar({
               </Link>
             </span>
           </div>
-          <div className="flex items-center gap-2.5 sm:gap-4 text-emerald-100 font-medium shrink-0 text-[10px] sm:text-[11px]">
+          <div className="hidden sm:flex items-center gap-2.5 sm:gap-4 text-emerald-100 font-medium shrink-0 text-[10px] sm:text-[11px]">
             <Link
               href="/export"
               className="hover:text-white flex items-center gap-1 transition text-lime-200 hover:text-white font-semibold hidden md:flex"
