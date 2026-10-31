@@ -145,7 +145,7 @@ export async function PATCH(request: NextRequest) {
       rejection_notes,
       reopen_reason,
       actor_name = 'Admin / Commercial Desk',
-      actor_role = 'sales',
+      actor_role = 'admin',
       visibility = 'internal_note'
     } = body;
 

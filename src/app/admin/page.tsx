@@ -487,7 +487,9 @@ export default function AdminPage() {
         body: JSON.stringify({
           id,
           status: targetStatus,
-          reopen_reason: reason
+          reopen_reason: reason,
+          actor_role: 'admin',
+          actor_name: 'Admin Desk Officer'
         })
       });
       const data = await res.json();
@@ -529,7 +531,9 @@ export default function AdminPage() {
       body: JSON.stringify({
         id: data.id,
         status: 'under_review',
-        reopen_reason: data.reopen_reason
+        reopen_reason: data.reopen_reason,
+        actor_role: 'admin',
+        actor_name: 'Admin Desk Officer'
       })
     });
     const json = await res.json();
