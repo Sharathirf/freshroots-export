@@ -22,9 +22,18 @@ import {
   QrCode,
   Smartphone,
   Key,
-  ShieldCheck
+  ShieldCheck,
+  Settings,
+  ChevronRight,
+  Sliders,
+  Globe,
+  TrendingUp,
+  Mail,
+  ShieldAlert,
+  Bell
 } from 'lucide-react';
 import AdminTotpSetupModal from '@/components/admin/AdminTotpSetupModal';
+import IntegrationSetupModal from '@/components/admin/IntegrationSetupModal';
 import { WholesaleQuotation, Order, InventoryBatch } from '@/types';
 import B2bRfqDetailModal from '@/components/admin/B2bRfqDetailModal';
 import B2bRejectionModal from '@/components/admin/B2bRejectionModal';
@@ -44,6 +53,25 @@ import CrmCreateShipmentModal from '@/components/admin/CrmCreateShipmentModal';
 import CrmSupportCallModal from '@/components/admin/CrmSupportCallModal';
 import CrmComplaintModal from '@/components/admin/CrmComplaintModal';
 import { Customer } from '@/types';
+
+function getIntegrationIcon(id: string) {
+  switch (id) {
+    case 'cloudflare-analytics':
+      return Globe;
+    case 'posthog':
+      return TrendingUp;
+    case 'turnstile':
+      return ShieldCheck;
+    case 'resend':
+      return Mail;
+    case 'sentry':
+      return ShieldAlert;
+    case 'firebase':
+      return Bell;
+    default:
+      return Settings;
+  }
+}
 
 function ProductAdminRow({
   product,
@@ -213,6 +241,20 @@ export default function AdminPage() {
       .then((response) => response.json())
       .then((data) => setIsAdminAuthed(Boolean(data.authenticated)))
       .catch(() => setIsAdminAuthed(false));
+
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab');
+      const setupParam = params.get('setup');
+      if (tabParam && ['products', 'rfqs', 'orders', 'crm', 'repeat', 'shipments', 'inventory', 'reviews', 'pnl', 'integrations'].includes(tabParam)) {
+        setActiveTab(tabParam as any);
+      }
+      if (setupParam) {
+        setActiveTab('integrations');
+        setSelectedIntegrationForSetup(setupParam);
+        setIsIntegrationSetupOpen(true);
+      }
+    }
   }, []);
 
   const openTotpSetup = async (passwordForSetup?: string) => {
@@ -321,6 +363,8 @@ export default function AdminPage() {
   const [productSuccessMsg, setProductSuccessMsg] = useState<string | null>(null);
   const [integrationStatuses, setIntegrationStatuses] = useState<any[]>([]);
   const [integrationsCheckedAt, setIntegrationsCheckedAt] = useState<string | null>(null);
+  const [selectedIntegrationForSetup, setSelectedIntegrationForSetup] = useState<string | null>(null);
+  const [isIntegrationSetupOpen, setIsIntegrationSetupOpen] = useState(false);
 
   // B2B RFQ Modals & Operations State
   const [selectedRfqForDetail, setSelectedRfqForDetail] = useState<string | null>(null);
@@ -970,29 +1014,219 @@ export default function AdminPage() {
         </div>
 
         {activeTab === 'integrations' && (
-          <section className="space-y-4">
-            <div>
-              <h2 className="text-xl font-extrabold text-stone-900">Third-party service readiness</h2>
-              <p className="text-sm text-stone-600 mt-1">
-                Settings are checked without exposing secrets. A configured status means keys exist; complete a provider-side delivery check before launch.
-                {integrationsCheckedAt && ` Checked ${new Date(integrationsCheckedAt).toLocaleString()}.`}
-              </p>
+          <section className="space-y-6">
+            {/* Header + Actions */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-stone-200 shadow-sm">
+              <div>
+                <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md mb-2">
+                  <Settings className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>Production Services & API Integrations</span>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-black text-stone-900 tracking-tight">Third-party service readiness</h2>
+                <p className="text-xs sm:text-sm text-stone-600 mt-1 max-w-2xl">
+                  Settings are checked without exposing secrets. A configured status means keys exist; complete a provider-side delivery check before launch.
+                  {integrationsCheckedAt && ` Checked ${new Date(integrationsCheckedAt).toLocaleString()}.`}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2.5 self-start sm:self-auto shrink-0">
+                <button
+                  onClick={fetchData}
+                  disabled={refreshing}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-stone-700 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 border border-stone-200 rounded-xl transition"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+                  <span>Refresh Status</span>
+                </button>
+                <button
+                  onClick={() => {
+                    const firstUnconfigured = integrationStatuses.find((i) => !i.configured);
+                    setSelectedIntegrationForSetup(firstUnconfigured ? firstUnconfigured.id : 'cloudflare-analytics');
+                    setIsIntegrationSetupOpen(true);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-extrabold text-white bg-emerald-800 hover:bg-emerald-900 shadow-sm rounded-xl transition"
+                >
+                  <Sliders className="w-3.5 h-3.5" />
+                  <span>Open Setup Wizard</span>
+                </button>
+              </div>
             </div>
+
+            {/* Status KPI Overview */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-2xs">
+                <span className="text-[11px] font-bold uppercase text-stone-500">Total Services</span>
+                <p className="text-2xl font-black text-stone-900 mt-1">{integrationStatuses.length}</p>
+                <span className="text-[11px] text-stone-500">Web Analytics, Funnel, Email, Sentry, Push</span>
+              </div>
+              <div className="bg-white p-4 rounded-2xl border border-emerald-200 shadow-2xs">
+                <span className="text-[11px] font-bold uppercase text-emerald-800">Configured</span>
+                <p className="text-2xl font-black text-emerald-700 mt-1">
+                  {integrationStatuses.filter((i) => i.configured).length}
+                </p>
+                <span className="text-[11px] text-emerald-600 flex items-center gap-1 mt-0.5 font-medium">
+                  <CheckCircle2 className="w-3 h-3" /> Active & ready
+                </span>
+              </div>
+              <div className="bg-white p-4 rounded-2xl border border-amber-200 shadow-2xs">
+                <span className="text-[11px] font-bold uppercase text-amber-800">Needs Setup</span>
+                <p className="text-2xl font-black text-amber-700 mt-1">
+                  {integrationStatuses.filter((i) => !i.configured).length}
+                </p>
+                <span className="text-[11px] text-amber-600 flex items-center gap-1 mt-0.5 font-medium">
+                  <AlertTriangle className="w-3 h-3" /> Awaiting API keys
+                </span>
+              </div>
+              <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-2xs">
+                <span className="text-[11px] font-bold uppercase text-stone-500">Push DB Migration</span>
+                <p className="text-sm font-bold text-emerald-700 mt-2 flex items-center gap-1">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" /> public.push_subscriptions
+                </p>
+                <span className="text-[11px] text-stone-500">PostgreSQL ready</span>
+              </div>
+            </div>
+
+            {/* Service Cards Grid */}
             <div className="grid gap-4 md:grid-cols-2">
-              {integrationStatuses.map((integration) => (
-                <article key={integration.id} className="bg-white rounded-2xl border border-stone-200 p-5 shadow-sm">
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="font-bold text-stone-900">{integration.name}</h3>
-                    <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${integration.configured ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}`}>
-                      {integration.configured ? 'Configured' : 'Needs setup'}
-                    </span>
-                  </div>
-                  <p className="text-xs text-stone-600 mt-2">{integration.connectionCheck}</p>
-                  <p className="text-[11px] text-stone-500 mt-3">
-                    Required: {integration.required.join(', ')}
-                  </p>
-                </article>
-              ))}
+              {integrationStatuses.map((integration) => {
+                const Icon = getIntegrationIcon(integration.id);
+                return (
+                  <article
+                    key={integration.id}
+                    className={`bg-white rounded-3xl border transition shadow-sm p-5 sm:p-6 flex flex-col justify-between ${
+                      integration.configured
+                        ? 'border-emerald-200 hover:border-emerald-300'
+                        : 'border-amber-200 hover:border-amber-300'
+                    }`}
+                  >
+                    <div className="space-y-4">
+                      {/* Top Header */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 ${
+                              integration.configured
+                                ? 'bg-emerald-100 text-emerald-800'
+                                : 'bg-amber-100 text-amber-800'
+                            }`}
+                          >
+                            <Icon className="w-5 h-5 text-current" />
+                          </div>
+                          <div>
+                            <h3 className="font-extrabold text-stone-900 text-base leading-snug">
+                              {integration.name}
+                            </h3>
+                            <span className="text-[11px] font-mono text-stone-500">{integration.id}</span>
+                          </div>
+                        </div>
+
+                        <span
+                          className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider flex items-center gap-1 ${
+                            integration.configured
+                              ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                              : 'bg-amber-100 text-amber-900 border border-amber-300'
+                          }`}
+                        >
+                          {integration.configured ? (
+                            <>
+                              <CheckCircle2 className="w-3 h-3" />
+                              <span>Configured</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse" />
+                              <span>Needs Setup</span>
+                            </>
+                          )}
+                        </span>
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-xs text-stone-600 leading-relaxed">
+                        {integration.description || integration.connectionCheck}
+                      </p>
+
+                      {/* Connection Diagnostic Note */}
+                      <div className="bg-stone-50 rounded-xl p-3 border border-stone-200/80 text-[11px] text-stone-600 space-y-1">
+                        <div className="font-bold text-stone-800 flex items-center gap-1.5">
+                          <span className="text-stone-400">Status Check:</span>
+                          <span className="font-normal text-stone-600">{integration.connectionCheck}</span>
+                        </div>
+                      </div>
+
+                      {/* Required Keys List */}
+                      <div className="space-y-1.5">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-stone-400">
+                          Environment Variables & Secrets
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {integration.required.map((reqKey: string) => {
+                            const hasVal = integration.keys && Boolean(integration.keys[reqKey]);
+                            return (
+                              <span
+                                key={reqKey}
+                                className={`text-[11px] font-mono px-2 py-0.5 rounded-md border flex items-center gap-1 ${
+                                  hasVal
+                                    ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                                    : 'bg-amber-50 text-amber-800 border-amber-200'
+                                }`}
+                              >
+                                {hasVal ? (
+                                  <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600 shrink-0" />
+                                ) : (
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                                )}
+                                <span>{reqKey}</span>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Card Action Buttons */}
+                    <div className="pt-5 mt-5 border-t border-stone-100 flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          setSelectedIntegrationForSetup(integration.id);
+                          setIsIntegrationSetupOpen(true);
+                        }}
+                        className={`flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold shadow-xs transition ${
+                          integration.configured
+                            ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200'
+                            : 'bg-amber-600 hover:bg-amber-700 text-white'
+                        }`}
+                      >
+                        {integration.configured ? (
+                          <>
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            <span>Manage Keys & Test</span>
+                          </>
+                        ) : (
+                          <>
+                            <Settings className="w-3.5 h-3.5" />
+                            <span>Set Up Service</span>
+                          </>
+                        )}
+                        <ChevronRight className="w-3.5 h-3.5 ml-auto" />
+                      </button>
+
+                      {integration.portalUrl && (
+                        <a
+                          href={integration.portalUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 px-3 py-2.5 rounded-xl text-xs font-bold bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-200 transition shrink-0"
+                          title={`Open ${integration.name} Console`}
+                        >
+                          <span>Console</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           </section>
         )}
@@ -1982,6 +2216,13 @@ export default function AdminPage() {
           onComplaintLogged={() => {
             if (selectedCustomerIdForDossier) openCustomerDossier(selectedCustomerIdForDossier);
           }}
+        />
+
+        <IntegrationSetupModal
+          isOpen={isIntegrationSetupOpen}
+          onClose={() => setIsIntegrationSetupOpen(false)}
+          serviceId={selectedIntegrationForSetup || 'cloudflare-analytics'}
+          onSaved={fetchData}
         />
       </main>
     </div>
