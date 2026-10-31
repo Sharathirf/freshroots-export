@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { isExcludedVisitor } from '@/lib/analytics-exclusions';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -55,6 +56,11 @@ export async function POST(req: Request) {
     const ipAddress = rawIp ? rawIp.slice(0, 64) : null;
 
     const visitorId = clientVisitorId || `vis_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+    // Silently ignore visits from excluded internal team/owner devices
+    if (isExcludedVisitor(visitorId)) {
+      return NextResponse.json({ success: true, ignored: true, visitor_id: visitorId });
+    }
 
     await pool.query(
       `INSERT INTO site_visits (visitor_id, path, referrer, user_agent, device_type, device_name, city, region, country, ip_address, created_at)

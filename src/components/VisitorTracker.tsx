@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import { isExcludedVisitor } from '@/lib/analytics-exclusions';
 
 export default function VisitorTracker() {
   const pathname = usePathname();
@@ -12,6 +13,10 @@ export default function VisitorTracker() {
       if (!visitorId) {
         visitorId = `vis_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
         localStorage.setItem('freshroots_visitor_id', visitorId);
+      }
+
+      if (isExcludedVisitor(visitorId)) {
+        return;
       }
 
       fetch('/api/analytics/track', {

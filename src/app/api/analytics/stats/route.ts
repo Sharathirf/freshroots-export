@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { EXCLUDED_VISITOR_SQL } from '@/lib/analytics-exclusions';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -21,6 +22,7 @@ export async function GET() {
           COUNT(*) FILTER (WHERE device_type = 'mobile') as mobile_visits,
           COUNT(*) FILTER (WHERE device_type = 'desktop') as desktop_visits
         FROM site_visits
+        WHERE visitor_id NOT IN (${EXCLUDED_VISITOR_SQL})
       `),
       pool.query(`
         SELECT
@@ -28,6 +30,7 @@ export async function GET() {
           COUNT(*) as total_views,
           COUNT(DISTINCT visitor_id) as unique_users
         FROM site_visits
+        WHERE visitor_id NOT IN (${EXCLUDED_VISITOR_SQL})
         GROUP BY path
         ORDER BY total_views DESC
         LIMIT 8
@@ -43,6 +46,7 @@ export async function GET() {
           path,
           created_at
         FROM site_visits
+        WHERE visitor_id NOT IN (${EXCLUDED_VISITOR_SQL})
         ORDER BY created_at DESC
         LIMIT 25
       `)

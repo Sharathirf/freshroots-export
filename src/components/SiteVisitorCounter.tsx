@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Users, Eye, BarChart3, Globe, Smartphone, Laptop, RefreshCw, Activity, ArrowUpRight, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { isExcludedVisitor } from '@/lib/analytics-exclusions';
 
 interface TimeframeStats {
   visits: number;
@@ -68,6 +69,10 @@ export default function SiteVisitorCounter() {
       if (!visitorId) {
         visitorId = `vis_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
         localStorage.setItem('freshroots_visitor_id', visitorId);
+      }
+
+      if (isExcludedVisitor(visitorId)) {
+        return;
       }
 
       fetch('/api/analytics/track', {
