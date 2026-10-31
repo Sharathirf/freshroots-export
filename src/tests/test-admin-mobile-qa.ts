@@ -81,6 +81,15 @@ async function runMobileAudit() {
         await page.screenshot({ path: shotPw, fullPage: true });
       }
 
+      // Security check: Verify unauthenticated login screen does NOT expose QR setup / reset entry
+      const qrButton = page.locator('button:has-text("Scan QR Code / Set up Google Authenticator")');
+      const hasQrSetupOnLogin = await qrButton.count() > 0;
+      if (hasQrSetupOnLogin) {
+        throw new Error('Security Violation: Public login screen must not expose QR setup / reset entry');
+      } else {
+        console.log(`  [Security Check] Setup / QR entry correctly hidden on unauthenticated login screen ✅`);
+      }
+
       auditResults.push({
         device: device.name,
         view: 'Login Screen (Dual Auth)',

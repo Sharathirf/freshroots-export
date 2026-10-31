@@ -793,33 +793,12 @@ export default function AdminPage() {
             </button>
           </form>
 
-          {/* Setup / Re-Scan Authenticator QR code */}
           <div className="pt-2 border-t border-stone-700/60">
-            <button
-              type="button"
-              onClick={() => openTotpSetup()}
-              disabled={loadingTotpSetup}
-              className="inline-flex items-center gap-1.5 text-xs text-lime-400 hover:text-lime-300 font-semibold transition"
-            >
-              <QrCode className="w-4 h-4" />
-              <span>{loadingTotpSetup ? 'Loading QR Code...' : 'Scan QR Code / Set up Google Authenticator'}</span>
-            </button>
-            {totpSetupError && (
-              <p className="text-[11px] text-red-400 mt-1">{totpSetupError}</p>
-            )}
+            <Link href="/" className="inline-block text-xs text-stone-500 hover:text-stone-300 transition">
+              &larr; Return to Public Storefront
+            </Link>
           </div>
-
-          <Link href="/" className="inline-block text-xs text-stone-500 hover:text-stone-300 transition">
-            &larr; Return to Public Storefront
-          </Link>
         </div>
-
-        {/* TOTP Setup Modal on Login Screen */}
-        <AdminTotpSetupModal
-          isOpen={isTotpSetupOpen}
-          onClose={() => setIsTotpSetupOpen(false)}
-          setupData={totpSetupData}
-        />
       </div>
     );
   }
