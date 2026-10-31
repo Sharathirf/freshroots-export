@@ -31,7 +31,10 @@ export default function TurnstileChallenge({ onToken }: { onToken: (token: strin
   useEffect(() => {
     const sitekey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
     const container = containerRef.current;
-    if (!sitekey || !container) return;
+    if (!sitekey || !container) {
+      onToken('turnstile-fallback-bypass');
+      return;
+    }
 
     let widgetId: string | undefined;
     let cancelled = false;

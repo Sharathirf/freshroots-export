@@ -52,6 +52,7 @@ import CrmCreateOrderModal from '@/components/admin/CrmCreateOrderModal';
 import CrmCreateShipmentModal from '@/components/admin/CrmCreateShipmentModal';
 import CrmSupportCallModal from '@/components/admin/CrmSupportCallModal';
 import CrmComplaintModal from '@/components/admin/CrmComplaintModal';
+import SiteVisitorCounter from '@/components/SiteVisitorCounter';
 import { Customer } from '@/types';
 
 function getIntegrationIcon(id: string) {
@@ -246,7 +247,7 @@ export default function AdminPage() {
       const params = new URLSearchParams(window.location.search);
       const tabParam = params.get('tab');
       const setupParam = params.get('setup');
-      if (tabParam && ['products', 'rfqs', 'orders', 'crm', 'repeat', 'shipments', 'inventory', 'reviews', 'pnl', 'integrations'].includes(tabParam)) {
+      if (tabParam && ['products', 'rfqs', 'orders', 'crm', 'repeat', 'shipments', 'inventory', 'reviews', 'pnl', 'analytics', 'integrations'].includes(tabParam)) {
         setActiveTab(tabParam as any);
       }
       if (setupParam) {
@@ -316,7 +317,7 @@ export default function AdminPage() {
   };
 
   const [activeTab, setActiveTab] = useState<
-    'products' | 'rfqs' | 'orders' | 'crm' | 'repeat' | 'shipments' | 'inventory' | 'reviews' | 'pnl' | 'integrations'
+    'products' | 'rfqs' | 'orders' | 'crm' | 'repeat' | 'shipments' | 'inventory' | 'reviews' | 'pnl' | 'analytics' | 'integrations'
   >('products');
 
   // CRM Modals and Actions State
@@ -992,6 +993,7 @@ export default function AdminPage() {
             { id: 'inventory', label: 'Inventory Batches & Intake', count: inventory.length },
             { id: 'reviews', label: 'Buyer Ratings & Reviews', count: allReviews.length },
             { id: 'pnl', label: 'Commercial Unit Economics & P&L', count: null },
+            { id: 'analytics', label: 'Portal Visitor Analytics', count: null },
             { id: 'integrations', label: 'Service Integrations', count: integrationStatuses.filter((item) => item.configured).length }
           ].map((tab) => (
             <button
@@ -2069,6 +2071,15 @@ export default function AdminPage() {
                   </tbody>
                 </table>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* 11. FreshRoots Portal Visitor Analytics */}
+        {activeTab === 'analytics' && (
+          <div className="space-y-6 animate-in fade-in">
+            <div className="rounded-3xl overflow-hidden shadow-xl border border-stone-800">
+              <SiteVisitorCounter />
             </div>
           </div>
         )}

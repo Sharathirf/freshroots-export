@@ -9,7 +9,6 @@ import EnquiryModal from '@/components/EnquiryModal';
 import Footer from '@/components/Footer';
 import ActiveOrderBanner from '@/components/ActiveOrderBanner';
 import GlobalExportCorridors from '@/components/GlobalExportCorridors';
-import SiteVisitorCounter from '@/components/SiteVisitorCounter';
 import { useAuth } from '@/context/AuthContext';
 import { Product } from '@/types';
 import { getAllCatalogProducts } from '@/lib/catalog';
@@ -416,10 +415,7 @@ export default function HomePage() {
         </section>
       </main>
 
-      {/* 6. Live App Traffic & Public Site Visitor Counter */}
-      <SiteVisitorCounter />
-
-      {/* 7. Minimalist Legal & Contact Footer */}
+      {/* Footer */}
       <Footer />
 
       {/* 7. On-demand Wholesale RFQ Modal */}

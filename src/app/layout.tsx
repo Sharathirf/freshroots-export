@@ -14,6 +14,7 @@ import HelpModal from '@/components/HelpModal';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import PwaInstallPrompt from '@/components/PwaInstallPrompt';
 import PostHogPageView from '@/components/PostHogPageView';
+import VisitorTracker from '@/components/VisitorTracker';
 import { Analytics } from '@vercel/analytics/react';
 import { getSiteUrl, getRobotsDirectives, generateOrganizationJsonLd, generateWebSiteJsonLd } from '@/lib/seo';
 
@@ -123,6 +124,7 @@ export default function RootLayout({
           </WishlistProvider>
         </AuthProvider>
         <PostHogPageView />
+        <VisitorTracker />
         <PwaInstallPrompt />
         <Analytics />
         {/* Razorpay Standard Checkout Script */}
