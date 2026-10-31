@@ -44,6 +44,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.95,
     },
     {
+      url: `${baseUrl}/rfq`,
+      lastModified: CATALOG_LAST_MODIFIED,
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
       url: `${baseUrl}/guides`,
       lastModified: CATALOG_LAST_MODIFIED,
       changeFrequency: 'weekly',

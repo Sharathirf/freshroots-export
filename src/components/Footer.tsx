@@ -126,6 +126,7 @@ export default function Footer() {
               <li><Link href="/export" className="text-lime-300 font-semibold hover:text-white transition">Global Agri-Export Desk</Link></li>
               <li><Link href="/export/ball-copra-india" className="text-lime-300 font-semibold hover:text-white transition">Tiptur Ball Copra Export (FCL)</Link></li>
               <li><Link href="/wholesale/mandi-rates" className="text-lime-300 font-semibold hover:text-white transition">Live Mandi Rates Hub</Link></li>
+              <li><Link href="/rfq" className="text-amber-300 font-semibold hover:text-white transition">Request Wholesale RFQ</Link></li>
               <li><Link href="/guides" className="hover:text-white transition">Guides &amp; Quality Standards</Link></li>
               <li><Link href="/transportation" className="hover:text-white transition">Pan-India Freight Logistics</Link></li>
               <li><Link href="/contact" className="hover:text-white transition">Contact Farm-Gate Desk</Link></li>
