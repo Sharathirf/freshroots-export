@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin-auth';
 import { query } from '@/lib/db';
 import { loadIntegrationSettings, saveIntegrationSetting } from '@/lib/integration-settings';
+import { parseServiceAccountJson } from '@/lib/push';
 
 export const dynamic = 'force-dynamic';
 
@@ -348,7 +349,7 @@ export async function POST(request: NextRequest) {
 
         if (serviceAccountRaw) {
           try {
-            const parsed = JSON.parse(serviceAccountRaw);
+            const parsed = parseServiceAccountJson(serviceAccountRaw);
             if (!parsed.project_id || !parsed.private_key || !parsed.client_email) {
               throw new Error('Missing required fields: project_id, private_key, or client_email');
             }

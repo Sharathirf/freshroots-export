@@ -2,13 +2,35 @@ import { cert, getApps, initializeApp, type ServiceAccount } from 'firebase-admi
 import { getMessaging, type MulticastMessage } from 'firebase-admin/messaging';
 import { query } from '@/lib/db';
 
+export function parseServiceAccountJson(raw: string): Record<string, unknown> {
+  let cleaned = raw.trim();
+  try {
+    return JSON.parse(cleaned);
+  } catch {}
+
+  if (cleaned.includes('\\"')) {
+    cleaned = cleaned.replace(/\\"/g, '"');
+  }
+
+  try {
+    return JSON.parse(cleaned);
+  } catch {}
+
+  try {
+    cleaned = cleaned.replace(/\r?\n/g, '\\n');
+    return JSON.parse(cleaned);
+  } catch {}
+
+  return JSON.parse(raw);
+}
+
 function getAdminMessaging() {
   const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
   if (!serviceAccountJson) return null;
 
   let serviceAccount: ServiceAccount;
   try {
-    const raw = JSON.parse(serviceAccountJson) as Record<string, unknown>;
+    const raw = parseServiceAccountJson(serviceAccountJson);
     serviceAccount = {
       projectId: String(raw.projectId || raw.project_id || ''),
       clientEmail: String(raw.clientEmail || raw.client_email || ''),

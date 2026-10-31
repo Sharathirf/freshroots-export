@@ -116,13 +116,19 @@ function tryPersistToEnvLocal(key: string, value: string) {
     const envPath = path.join(process.cwd(), '.env.local');
     let envContent = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
 
-    const escapedVal = value.replace(/"/g, '\\"');
+    let formattedVal = value;
+    if (value.startsWith('{') || value.includes('\n')) {
+      formattedVal = `'${value.replace(/'/g, "\\'")}'`;
+    } else {
+      formattedVal = `"${value.replace(/"/g, '\\"')}"`;
+    }
+
     const regex = new RegExp(`^${key}=.*$`, 'm');
 
     if (regex.test(envContent)) {
-      envContent = envContent.replace(regex, `${key}="${escapedVal}"`);
+      envContent = envContent.replace(regex, `${key}=${formattedVal}`);
     } else {
-      envContent += `\n${key}="${escapedVal}"`;
+      envContent += `\n${key}=${formattedVal}`;
     }
 
     fs.writeFileSync(envPath, envContent.trim() + '\n', 'utf8');
