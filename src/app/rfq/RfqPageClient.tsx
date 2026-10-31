@@ -118,7 +118,31 @@ export default function RfqPageClient({ products }: RfqPageClientProps) {
   const [isExportEnquiry, setIsExportEnquiry] = useState<boolean>(() => {
     return Boolean(paramCountry && paramCountry !== 'India');
   });
-  const [destinationCountry, setDestinationCountry] = useState<string>(paramCountry || 'India');
+  const [destinationCountry, setDestinationCountry] = useState<string>(() => {
+    if (paramCountry && paramCountry !== 'India') {
+      return paramCountry;
+    }
+    return 'United Arab Emirates (UAE)';
+  });
+
+  const handleToggleExportEnquiry = (checked: boolean) => {
+    setIsExportEnquiry(checked);
+    if (checked) {
+      const targetCountry =
+        destinationCountry && destinationCountry !== 'India'
+          ? destinationCountry
+          : paramCountry && paramCountry !== 'India'
+          ? paramCountry
+          : 'United Arab Emirates (UAE)';
+      setDestinationCountry(targetCountry);
+      if (COUNTRY_DIALING_CODES[targetCountry]) {
+        setPhoneCountryCode(COUNTRY_DIALING_CODES[targetCountry]);
+      }
+    } else {
+      setDestinationCountry('India');
+      setPhoneCountryCode('91');
+    }
+  };
 
   // Form State
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -462,7 +486,7 @@ export default function RfqPageClient({ products }: RfqPageClientProps) {
                     <input
                       type="checkbox"
                       checked={isExportEnquiry}
-                      onChange={(e) => setIsExportEnquiry(e.target.checked)}
+                      onChange={(e) => handleToggleExportEnquiry(e.target.checked)}
                       className="rounded text-amber-600 focus:ring-amber-500 h-4 w-4"
                     />
                     <span className="flex items-center gap-1.5">
@@ -487,7 +511,6 @@ export default function RfqPageClient({ products }: RfqPageClientProps) {
                         }}
                         className="w-full bg-white border border-stone-300 rounded-xl px-3 py-2 text-stone-900 text-xs font-semibold focus:ring-2 focus:ring-amber-500 focus:outline-none transition shadow-sm"
                       >
-                        <option value="India">🇮🇳 India (Domestic Mandi)</option>
                         {EXPORT_COUNTRIES.map((c) => (
                           <option key={c.code} value={c.name}>
                             {c.flag} {c.name} — {c.majorPort}
