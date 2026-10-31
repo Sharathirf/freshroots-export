@@ -247,7 +247,7 @@ export default function TransportationPage() {
                 <div className="w-10 h-10 rounded-xl bg-lime-400/20 text-lime-300 flex items-center justify-center">
                   <Scale className="w-5 h-5" />
                 </div>
-                <h4 className="font-bold text-white text-sm">Computer Weighbridge Slip</h4>
+                <h3 className="font-bold text-white text-sm">Computer Weighbridge Slip</h3>
                 <p className="text-stone-300 text-xs leading-relaxed">
                   Gross and tare vehicle weight verified at licensed computer weighbridges before departure.
                 </p>
@@ -257,7 +257,7 @@ export default function TransportationPage() {
                 <div className="w-10 h-10 rounded-xl bg-lime-400/20 text-lime-300 flex items-center justify-center">
                   <FileText className="w-5 h-5" />
                 </div>
-                <h4 className="font-bold text-white text-sm">Lorry Receipt (LR) &amp; e-Way Bill</h4>
+                <h3 className="font-bold text-white text-sm">Lorry Receipt (LR) &amp; e-Way Bill</h3>
                 <p className="text-stone-300 text-xs leading-relaxed">
                   Official transporter Bilty/LR issued along with valid GST e-Way bills compliant with inter-state transport rules.
                 </p>
@@ -267,7 +267,7 @@ export default function TransportationPage() {
                 <div className="w-10 h-10 rounded-xl bg-lime-400/20 text-lime-300 flex items-center justify-center">
                   <Phone className="w-5 h-5" />
                 </div>
-                <h4 className="font-bold text-white text-sm">Direct Driver Contact &amp; GPS</h4>
+                <h3 className="font-bold text-white text-sm">Direct Driver Contact &amp; GPS</h3>
                 <p className="text-stone-300 text-xs leading-relaxed">
                   Driver name, mobile number, vehicle number, and live tracking location sent directly to the buyer via WhatsApp.
                 </p>
@@ -277,7 +277,7 @@ export default function TransportationPage() {
                 <div className="w-10 h-10 rounded-xl bg-lime-400/20 text-lime-300 flex items-center justify-center">
                   <Package className="w-5 h-5" />
                 </div>
-                <h4 className="font-bold text-white text-sm">Transit Damage Protection</h4>
+                <h3 className="font-bold text-white text-sm">Transit Damage Protection</h3>
                 <p className="text-stone-300 text-xs leading-relaxed">
                   Ventilated export bags, heavy corrugated master boxes for copra, and wet root-ball potting for living nursery plants.
                 </p>

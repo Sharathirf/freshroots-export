@@ -279,7 +279,7 @@ export default function Navbar({
             <span className="text-emerald-300/60 hidden sm:inline">•</span>
             <Link
               href="/track-order"
-              className="hover:text-white flex items-center gap-1 transition text-lime-200 hover:text-white font-semibold"
+              className="hover:text-white inline-flex items-center gap-1 transition text-lime-200 hover:text-white font-semibold min-h-[28px] py-1 px-0.5"
             >
               <Truck className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-lime-300" />
               <span>{lang === 'kn' ? 'ಟ್ರ್ಯಾಕ್' : 'Track'}</span>
@@ -288,7 +288,7 @@ export default function Navbar({
             <button
               type="button"
               onClick={() => setIsOrderHistoryOpen(true)}
-              className="hover:text-white flex items-center gap-1 transition text-lime-200 hover:text-white font-semibold hidden sm:flex"
+              className="hover:text-white inline-flex items-center gap-1 transition text-lime-200 hover:text-white font-semibold hidden sm:inline-flex min-h-[28px] py-1 px-0.5"
             >
               <RotateCcw className="w-3.5 h-3.5 text-lime-300" />
               <span>{lang === 'kn' ? 'ಮರು ಆರ್ಡರ್' : 'Orders'}</span>
@@ -297,7 +297,7 @@ export default function Navbar({
             <button
               type="button"
               onClick={() => setIsHelpOpen(true)}
-              className="hover:text-white flex items-center gap-1 transition text-lime-200 hover:text-white font-semibold"
+              className="hover:text-white inline-flex items-center gap-1 transition text-lime-200 hover:text-white font-semibold min-h-[28px] py-1 px-0.5"
             >
               <HelpCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-lime-300" />
               <span>{lang === 'kn' ? 'ಸಹಾಯ' : 'Help'}</span>
@@ -454,11 +454,11 @@ export default function Navbar({
             onClick={() => setLang(lang === 'kn' ? 'en' : 'kn')}
             className="h-10 flex items-center gap-0.5 text-xs font-black bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-200 px-2.5 rounded-xl whitespace-nowrap transition shadow-xs shrink-0"
             title={lang === 'kn' ? 'Switch to English' : 'ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಿ'}
-            aria-label="Toggle Language"
+            aria-label="Toggle Language - ಕನ್ನಡ / EN"
           >
-            <span className={lang === 'kn' ? 'text-emerald-700 font-extrabold' : 'text-stone-400 font-normal'}>ಕನ್ನಡ</span>
-            <span className="text-stone-300 font-normal">/</span>
-            <span className={lang === 'en' ? 'text-emerald-700 font-extrabold' : 'text-stone-400 font-normal'}>EN</span>
+            <span className={lang === 'kn' ? 'text-emerald-800 font-extrabold' : 'text-stone-600 font-medium'}>ಕನ್ನಡ</span>
+            <span className="text-stone-400 font-normal">/</span>
+            <span className={lang === 'en' ? 'text-emerald-800 font-extrabold' : 'text-stone-600 font-medium'}>EN</span>
           </button>
 
           {/* Export & Guides Direct Links - Desktop */}
@@ -638,7 +638,7 @@ export default function Navbar({
           <button
             type="submit"
             aria-label="Search produce"
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-[#3b6d11] transition"
+            className="absolute left-1 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-stone-500 hover:text-[#3b6d11] transition"
           >
             <Search className="w-4 h-4" />
           </button>
@@ -657,11 +657,12 @@ export default function Navbar({
           {searchQuery && (
             <button
               type="button"
+              aria-label="Clear search"
               onClick={() => {
                 setSearchQuery('');
                 if (onSearchChange) onSearchChange('');
               }}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 p-1"
+              className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-stone-400 hover:text-stone-700 transition"
             >
               <X className="w-3.5 h-3.5" />
             </button>

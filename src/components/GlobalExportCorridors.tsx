@@ -165,7 +165,7 @@ export default function GlobalExportCorridors({ onOpenRFQ }: GlobalExportCorrido
               <Ship className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-white text-sm">20ft / 40ft FCL Lots</h4>
+              <h3 className="font-bold text-white text-sm">20ft / 40ft FCL Lots</h3>
               <p className="text-xs text-stone-400 mt-0.5">Full container loads with optimal palletized cargo stuffing.</p>
             </div>
           </div>
@@ -175,7 +175,7 @@ export default function GlobalExportCorridors({ onOpenRFQ }: GlobalExportCorrido
               <FileCheck className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-white text-sm">Phytosanitary &amp; COO</h4>
+              <h3 className="font-bold text-white text-sm">Phytosanitary &amp; COO</h3>
               <p className="text-xs text-stone-400 mt-0.5">Official quarantine clearance, Certificate of Origin &amp; lab reports.</p>
             </div>
           </div>
@@ -185,7 +185,7 @@ export default function GlobalExportCorridors({ onOpenRFQ }: GlobalExportCorrido
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-white text-sm">Methyl Bromide Fumigation</h4>
+              <h3 className="font-bold text-white text-sm">Methyl Bromide Fumigation</h3>
               <p className="text-xs text-stone-400 mt-0.5">ISPM-15 compliant wooden pallets &amp; container fumigation slips.</p>
             </div>
           </div>
@@ -195,7 +195,7 @@ export default function GlobalExportCorridors({ onOpenRFQ }: GlobalExportCorrido
               <CheckCircle2 className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-white text-sm">Direct Port Dispatch</h4>
+              <h3 className="font-bold text-white text-sm">Direct Port Dispatch</h3>
               <p className="text-xs text-stone-400 mt-0.5">Smooth haulage to JNPT Mumbai, Chennai, and New Mangalore ports.</p>
             </div>
           </div>

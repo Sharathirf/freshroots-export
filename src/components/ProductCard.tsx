@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
@@ -250,12 +251,13 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
         {/* 1. Sale/Grade Badge & Wishlist Action, 2. Product Image */}
         <div className="relative h-28 sm:h-32 md:h-36 w-full overflow-hidden bg-stone-50/80 p-2 sm:p-2.5 flex items-center justify-center select-none border-b border-stone-100/80">
           <Link href={`/products/${product.slug}`} className="block relative w-full h-full flex items-center justify-center">
-            <img
+            <Image
               src={displayImageUrl}
               alt={product.title}
-              className="max-h-full max-w-full w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-300"
+              fill
+              sizes="(max-width: 640px) 160px, (max-width: 1024px) 240px, 280px"
+              className="object-contain p-1 group-hover:scale-105 transition-transform duration-300"
               loading="lazy"
-              decoding="async"
             />
 
             {/* Optional minimal sale badge */}
@@ -291,7 +293,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
             <span className="text-[#3b6d11] font-bold uppercase tracking-wider text-[9px] select-none">
               {displayCategory}
             </span>
-            <span className="text-stone-400 text-right leading-snug truncate max-w-[55%]">
+            <span className="text-stone-600 text-right leading-snug truncate max-w-[55%]">
               {lang === 'kn' && meta?.subtitleKn ? meta.subtitleKn : unitSubtitle}
             </span>
           </div>
@@ -316,7 +318,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
                 ))}
               </div>
               <span className="text-[11px] font-bold text-stone-700 font-mono">{(averageRating || 4.8).toFixed(1)}</span>
-              <span className="text-[10px] text-stone-400 group-hover/stars:text-[#3b6d11]">
+              <span className="text-[10px] text-stone-600 group-hover/stars:text-[#3b6d11]">
                 ({reviewCount || 12})
               </span>
             </Link>
@@ -351,7 +353,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
                   <span className="text-base sm:text-lg font-black text-stone-900 font-mono tracking-tight">
                     ₹{displayPrice.toLocaleString('en-IN')}
                   </span>
-                  <span className="text-[10px] text-stone-400 font-normal">/ {priceUnit}</span>
+                  <span className="text-[10px] text-stone-600 font-normal">/ {priceUnit}</span>
                   <span className="text-[9px] font-bold uppercase tracking-wider text-amber-800 bg-amber-100 border border-amber-200 px-1.5 py-0.2 rounded select-none">
                     Bulk
                   </span>
@@ -368,7 +370,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
                   </span>
                   {isHeroSale && originalMrp > displayPrice && (
                     <>
-                      <span className="text-[10px] text-stone-400 line-through font-mono">
+                      <span className="text-[10px] text-stone-500 line-through font-mono">
                         ₹{originalMrp.toLocaleString('en-IN')}
                       </span>
                       <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1 py-0.2 rounded border border-emerald-200 select-none">
@@ -376,7 +378,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
                       </span>
                     </>
                   )}
-                  <span className="text-[10px] text-stone-400 font-normal">
+                  <span className="text-[10px] text-stone-600 font-normal">
                     / {priceUnit}
                   </span>
                 </div>
@@ -395,7 +397,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
           <button
             type="button"
             onClick={() => onSelectForRFQ ? onSelectForRFQ(product) : (window.location.href = `/products/${product.slug}`)}
-            className="w-full bg-amber-600 hover:bg-amber-700 active:scale-[0.98] text-white font-bold text-xs py-2 px-3 rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 select-none"
+            className="w-full bg-[#b45309] hover:bg-[#92400e] active:scale-[0.98] text-white font-bold text-xs py-2 px-3 rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 select-none"
           >
             <Building2 className="w-3.5 h-3.5 text-white" />
             <span>{lang === 'kn' ? 'ಸಗಟು ವಿಚಾರಣೆ (ಬಲ್ಕ್)' : 'Wholesale / Bulk Quote'}</span>

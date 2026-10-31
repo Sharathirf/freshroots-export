@@ -16,9 +16,17 @@ export async function GET() {
         reportedAt: rate.reportedAt,
       }).catch((error) => console.error('Could not send copra mandi push alert:', error)));
     }
-    return NextResponse.json(publicRate);
+    return NextResponse.json(publicRate, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=86400',
+      },
+    });
   } catch (error) {
     console.error('Failed to read the Tiptur copra mandi cache:', error);
-    return NextResponse.json(fallbackRate('copra'));
+    return NextResponse.json(fallbackRate('copra'), {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+      },
+    });
   }
 }

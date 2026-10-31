@@ -162,13 +162,13 @@ export default function Footer() {
               Full Phytosanitary &amp; Certificate of Origin via JNPT, Chennai &amp; Mangalore Ports
             </span>
           </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-stone-300 font-medium">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-stone-300 font-medium">
             {EXPORT_COUNTRIES.map((country, idx) => (
               <React.Fragment key={country.code}>
-                {idx > 0 && <span className="text-stone-600" aria-hidden="true">•</span>}
+                {idx > 0 && <span className="text-stone-600 hidden sm:inline" aria-hidden="true">•</span>}
                 <Link
                   href={`/export/corridors/${getCountrySlug(country.name)}`}
-                  className="hover:text-lime-300 hover:underline transition-colors inline-flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-lime-400 rounded-sm"
+                  className="hover:text-lime-300 hover:underline transition-colors inline-flex items-center gap-1.5 py-1.5 px-1 min-h-[28px] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-lime-400 rounded-sm"
                   title={`Request 20ft/40ft export quotation for ${country.name} (${country.majorPort})`}
                 >
                   <span role="img" aria-label={country.name}>{country.flag}</span>

@@ -35,6 +35,27 @@ import { AVAILABLE_COUPONS, FarmCoupon, validateCoupon } from '@/lib/coupons';
 import GstInvoiceModal from '@/components/GstInvoiceModal';
 import { track } from '@/lib/analytics';
 
+const loadRazorpayCheckoutScript = (): Promise<boolean> => {
+  return new Promise((resolve) => {
+    if (typeof (window as any).Razorpay !== 'undefined') {
+      resolve(true);
+      return;
+    }
+    const existing = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
+    if (existing) {
+      existing.addEventListener('load', () => resolve(true));
+      existing.addEventListener('error', () => resolve(false));
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
+
 export default function CartDrawer() {
   const { customer, addresses, saveAddress, lang, signIn, isLoggedIn, requireAuth } = useAuth();
   const isKannada = lang === 'kn';
@@ -580,9 +601,12 @@ export default function CartDrawer() {
         }
 
         if (typeof (window as any).Razorpay === 'undefined') {
-          setOrderError('Razorpay checkout script is still loading. Please retry in a few seconds or switch to UPI / QR Code.');
-          setIsSubmitting(false);
-          return;
+          const loaded = await loadRazorpayCheckoutScript();
+          if (!loaded || typeof (window as any).Razorpay === 'undefined') {
+            setOrderError('Razorpay checkout script failed to load. Please retry in a few seconds or switch to UPI / QR Code.');
+            setIsSubmitting(false);
+            return;
+          }
         }
 
         const options = {
@@ -1308,7 +1332,10 @@ export default function CartDrawer() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setPaymentMethod('card')}
+                      onClick={() => {
+                        setPaymentMethod('card');
+                        loadRazorpayCheckoutScript();
+                      }}
                       className={`p-3 rounded-xl border text-center transition flex flex-col items-center gap-1.5 relative ${
                         paymentMethod === 'card'
                           ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-bold shadow-xs ring-2 ring-emerald-600'
