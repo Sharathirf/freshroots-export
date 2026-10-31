@@ -155,6 +155,8 @@ CREATE TABLE IF NOT EXISTS orders (
     payment_reference VARCHAR(100),
     payment_expires_at TIMESTAMPTZ,
     tracking_reference VARCHAR(100),
+    discount_inr NUMERIC(10, 2) DEFAULT 0.00,
+    coupon_code VARCHAR(40),
     items JSONB NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
