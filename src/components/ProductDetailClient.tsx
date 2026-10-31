@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -57,6 +57,9 @@ export default function ProductDetailClient({
     return null;
   });
 
+  // Cocopeat 2-category EC grade state: 'low_ec' (default) | 'high_ec'
+  const [cocopeatEcGrade, setCocopeatEcGrade] = useState<'low_ec' | 'high_ec'>('low_ec');
+
   // Purchasing mode toggle: 'retail' | 'bulk'
   const [purchasingMode, setPurchasingMode] = useState<'retail' | 'bulk'>(() => {
     if (initialProduct) {
@@ -82,6 +85,42 @@ export default function ProductDetailClient({
 
   // Active detail tab below the fold
   const [activeTab, setActiveTab] = useState<'overview' | 'specifications' | 'quality' | 'delivery' | 'reviews' | 'faq'>('overview');
+
+  const isCocopeat = Boolean(
+    product?.sku === 'COI-COP-05K' ||
+    product?.slug?.includes('cocopeat') ||
+    initialProduct?.sku === 'COI-COP-05K' ||
+    initialProduct?.slug?.includes('cocopeat')
+  );
+
+  const rawVariants = useMemo(() => {
+    const sku = product?.sku || initialProduct?.sku;
+    return sku ? getProductVariants(sku) : null;
+  }, [product?.sku, initialProduct?.sku]);
+
+  const variants = useMemo(() => {
+    if (!rawVariants) return null;
+    if (!isCocopeat) return rawVariants;
+    if (cocopeatEcGrade === 'low_ec') {
+      return rawVariants.filter((v) => v.packSize.includes('Low EC') || v.label.includes('Low EC'));
+    } else {
+      return rawVariants.filter((v) => v.packSize.includes('High EC') || v.label.includes('High EC'));
+    }
+  }, [rawVariants, isCocopeat, cocopeatEcGrade]);
+
+  const handleEcGradeChange = (grade: 'low_ec' | 'high_ec') => {
+    setCocopeatEcGrade(grade);
+    if (rawVariants) {
+      const target = rawVariants.find((v) =>
+        grade === 'low_ec'
+          ? (v.packSize.includes('Low EC') && v.isDefault)
+          : (v.packSize.includes('High EC') && v.packSize.includes('5 kg'))
+      );
+      if (target) {
+        setSelectedVariant(target);
+      }
+    }
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -185,7 +224,6 @@ export default function ProductDetailClient({
   }
 
   const isWishlisted = isInWishlist(product.id);
-  const variants = getProductVariants(product.sku);
 
   // Active retail price based on variant selection or product base price
   const price = selectedVariant ? selectedVariant.price : Number(product.retail_price_inr);
@@ -209,6 +247,7 @@ export default function ProductDetailClient({
     if (title.includes('groundnut') || sku.includes('GND')) return '🥜';
     if (title.includes('arecanut') || cat === 'arecanut' || sku.includes('ADK')) return '🌰';
     if (title.includes('charcoal')) return '🪵';
+    if (title.includes('cocopeat') || sku.includes('COP')) return '🌱';
     if (title.includes('shell')) return '🥥';
     if (title.includes('flour') || title.includes('ragi') || sku.includes('RAG') || sku.includes('RIC')) return '🌾';
     switch (cat) {
@@ -280,6 +319,7 @@ export default function ProductDetailClient({
     !product.sku?.startsWith('NUR') &&
     !product.sku?.includes('SHL') &&
     !product.sku?.includes('CHR') &&
+    !product.sku?.includes('COI-COP') &&
     product.category !== 'arecanut'
   );
 
@@ -515,6 +555,84 @@ export default function ProductDetailClient({
                     Inclusive of all taxes &bull; <strong className="text-emerald-700">100% Free Doorstep Delivery</strong> across Karnataka
                   </div>
                 </div>
+
+                {/* 2-Category EC Grade Selector for Cocopeat */}
+                {isCocopeat && (
+                  <div className="space-y-3 pt-3 border-t border-stone-100">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold uppercase tracking-wider text-stone-700 block flex items-center gap-1.5">
+                        <span>⚡ Select EC Grade Category:</span>
+                      </label>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                        cocopeatEcGrade === 'low_ec'
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                          : 'bg-amber-50 text-amber-800 border-amber-300'
+                      }`}>
+                        {cocopeatEcGrade === 'low_ec' ? 'Hydroponic & Nursery Grade' : 'Animal Bedding & Soil Amendment'}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {/* Low EC Category */}
+                      <button
+                        type="button"
+                        onClick={() => handleEcGradeChange('low_ec')}
+                        className={`p-3.5 rounded-2xl border text-left transition flex flex-col justify-between relative cursor-pointer ${
+                          cocopeatEcGrade === 'low_ec'
+                            ? 'bg-emerald-50/90 border-emerald-600 ring-2 ring-emerald-600 shadow-xs'
+                            : 'bg-stone-50 border-stone-200 hover:bg-stone-100 hover:border-stone-300'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-extrabold text-stone-900 flex items-center gap-1.5">
+                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>
+                            Low EC (Washed &amp; Desalinated)
+                          </span>
+                          <span className="text-[9px] font-bold text-emerald-800 bg-white border border-emerald-200 px-1.5 py-0.5 rounded">
+                            Default
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-stone-600 mt-1.5 leading-relaxed">
+                          <strong>EC &lt; 0.5 mS/cm • pH 5.5–6.5</strong><br />
+                          Triple-washed with fresh water. Zero excess sodium. Ready for hydroponics, seed germination, microgreens &amp; greenhouses.
+                        </p>
+                        <div className="mt-2.5 pt-2 border-t border-emerald-200/60 flex items-center justify-between text-[11px]">
+                          <span className="text-stone-500 font-medium">Expands to 75L+ / 5kg</span>
+                          <span className="font-mono font-bold text-emerald-800">₹299 (5 kg Block)</span>
+                        </div>
+                      </button>
+
+                      {/* High EC Category */}
+                      <button
+                        type="button"
+                        onClick={() => handleEcGradeChange('high_ec')}
+                        className={`p-3.5 rounded-2xl border text-left transition flex flex-col justify-between relative cursor-pointer ${
+                          cocopeatEcGrade === 'high_ec'
+                            ? 'bg-amber-50/90 border-amber-600 ring-2 ring-amber-600 shadow-xs'
+                            : 'bg-stone-50 border-stone-200 hover:bg-stone-100 hover:border-stone-300'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-extrabold text-stone-900 flex items-center gap-1.5">
+                            <span className="w-2.5 h-2.5 rounded-full bg-amber-600 inline-block"></span>
+                            High EC (Raw / Unwashed)
+                          </span>
+                          <span className="text-[9px] font-bold text-amber-800 bg-white border border-amber-200 px-1.5 py-0.5 rounded">
+                            Economical
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-stone-600 mt-1.5 leading-relaxed">
+                          <strong>EC &gt; 1.5–3.0 mS/cm • pH 5.8–6.8</strong><br />
+                          Raw mineral coir pith. High liquid/ammonia absorption. Ideal for animal bedding (poultry/horses), oil spill absorption &amp; clay soil loosening.
+                        </p>
+                        <div className="mt-2.5 pt-2 border-t border-amber-200/60 flex items-center justify-between text-[11px]">
+                          <span className="text-stone-500 font-medium">Expands to 68L+ / 5kg</span>
+                          <span className="font-mono font-bold text-amber-800">₹229 (5 kg Block)</span>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 {/* Packaging Size / Variant Selection pills if available */}
                 {variants && variants.length > 0 && (
@@ -756,6 +874,55 @@ export default function ProductDetailClient({
                   </div>
                 )}
               </div>
+
+              {isCocopeat && (
+                <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-black uppercase tracking-wider text-stone-900 flex items-center gap-1.5">
+                      <span>⚡ Technical Comparison: Low EC vs High EC 5 kg Blocks</span>
+                    </h4>
+                    <span className="text-[10px] text-stone-500 font-mono font-medium">South India Export Processing Standard</span>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-[11px] text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-stone-200 text-stone-600 bg-stone-100/60">
+                          <th className="py-2 px-3 font-bold">Parameter</th>
+                          <th className="py-2 px-3 font-extrabold text-emerald-800">Low EC (Washed - Default)</th>
+                          <th className="py-2 px-3 font-extrabold text-amber-800">High EC (Unwashed / Mineral)</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-stone-200/60 text-stone-700">
+                        <tr>
+                          <td className="py-2 px-3 font-semibold text-stone-900">Electrical Conductivity (EC)</td>
+                          <td className="py-2 px-3 font-mono font-bold text-emerald-700">&lt; 0.5 mS/cm (1:1.5 extraction)</td>
+                          <td className="py-2 px-3 font-mono font-bold text-amber-700">&gt; 1.5 – 3.0 mS/cm</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 px-3 font-semibold text-stone-900">pH Level</td>
+                          <td className="py-2 px-3 font-mono font-bold text-emerald-700">5.5 – 6.5 (Optimal Bioavailability)</td>
+                          <td className="py-2 px-3 font-mono font-bold text-amber-700">5.8 – 6.8</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 px-3 font-semibold text-stone-900">Washing &amp; Desalination</td>
+                          <td className="py-2 px-3 text-emerald-800">Triple freshwater washed (Low Sodium &amp; Chloride)</td>
+                          <td className="py-2 px-3 text-amber-800">Raw sun-dried unwashed coir pith</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 px-3 font-semibold text-stone-900">Expansion Volume (5 kg)</td>
+                          <td className="py-2 px-3 font-mono font-bold text-emerald-700">70 to 75+ Litres (~25L water)</td>
+                          <td className="py-2 px-3 font-mono font-bold text-amber-700">65 to 70 Litres (~20L water)</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 px-3 font-semibold text-stone-900">Recommended Applications</td>
+                          <td className="py-2 px-3">Hydroponics, Greenhouse Vegetables, Seedling Trays, Microgreens, Terrace Pots</td>
+                          <td className="py-2 px-3">Animal Bedding (Poultry/Horse stables), Oil Spill Absorption, Farm Composting</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
 
               <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-xs">
                 <div>

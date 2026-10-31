@@ -625,6 +625,54 @@ export const CATALOG_PRODUCTS: CatalogProductItem[] = [
       'bulk industrial charcoal ton',
       'shisha coconut charcoal bulk'
     ]
+  },
+  {
+    id: 'prod-016-cocopeat-block',
+    sku: 'COI-COP-05K',
+    title: 'Cocopeat 5 kg Compressed Block (Low EC & High EC)',
+    slug: 'cocopeat-5kg-blocks-low-ec-high-ec',
+    category: 'coir_commodities',
+    grade: 'Low EC (< 0.5 mS/cm) Washed & High EC (> 1.5 mS/cm) Unwashed',
+    origin: 'Pollachi & Tiptur Coconut Processing Corridors, Karnataka & Tamil Nadu',
+    unit_of_measure: '5 kg Block',
+    estimated_weight_kg: 5.0,
+    moisture_percentage: 14.0,
+    oil_percentage: 0.0,
+    retail_price_inr: 299.00,
+    bulk_min_quantity: 1,
+    wholesale_benchmark_price_inr: 110.00,
+    hsn_code: '53050040',
+    tax_rate_percentage: 0.00,
+    description: '100% natural, premium compressed coconut coir pith blocks produced from aged coconut husks. Available in two specialized categories: Low EC (< 0.5 mS/cm, multi-stage freshwater washed and desalinated for hydroponics, seed germination, greenhouses, and organic container gardening) and High EC (> 1.5 mS/cm, raw unwashed mineral coir for equestrian/poultry animal bedding, odor control, and agricultural soil conditioning). Expands to over 70-75 litres of rich, aerated growing medium per 5 kg block with excellent 800% water-holding capacity and balanced 5.5-6.5 pH. Minimum 5 kg per unit, available for retail doorstep delivery and bulk commercial consignments.',
+    specifications: {
+      block_weight: '5 kg (± 200g)',
+      compression_ratio: '5:1 high-density block compression',
+      expansion_volume: 'Low EC: 70–75+ Litres | High EC: 65–70 Litres per 5 kg block',
+      electrical_conductivity: 'Low EC: < 0.5 mS/cm (Washed) | High EC: > 1.5 mS/cm (Unwashed)',
+      ph_level: 'Low EC: 5.5 – 6.5 (Optimal Root Nutrient Uptake) | High EC: 5.8 – 6.8',
+      moisture_content: '< 15% in dry compressed block state',
+      sieve_mesh: '6 mm fine sieved (sand and foreign particle free, < 2% short fiber)',
+      organic_matter: '95% to 98% pure coconut husk pith (100% biodegradable peat moss alternative)',
+      water_holding_capacity: '800% to 900% (holds 8 to 9 times its weight in water)',
+      packaging: 'Individually shrink-wrapped 5 kg blocks, 25 kg sacks, or export pallets',
+      rehydration_time: '20 to 30 minutes with ~25 litres of water'
+    },
+    image_url: '/products/cocopeat-block-5kg.jpg',
+    is_active: true,
+    available_stock: 500,
+    average_rating: 4.95,
+    review_count: 32,
+    created_at: '2026-10-31T00:00:00Z',
+    seoTitle: 'Cocopeat 5 kg Blocks (Low EC & High EC) Wholesale & Retail | FreshRoots Export',
+    seoDescription: 'Direct manufacturer 5 kg compressed cocopeat blocks. Low EC (<0.5 mS/cm washed for hydroponics/seedlings) and High EC (unwashed for animal bedding/soil amendment). Expands to 75L+. 100% Free Doorstep Delivery & bulk container export.',
+    keywords: [
+      'cocopeat 5kg block low ec',
+      'cocopeat block high ec animal bedding',
+      'buy cocopeat 5kg block online India',
+      'washed coir pith block wholesale',
+      'hydroponic cocopeat supplier Karnataka',
+      'cocopeat 5kg price per ton'
+    ]
   }
 ];
 

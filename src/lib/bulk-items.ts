@@ -95,6 +95,12 @@ export const BULK_ORDER_ITEMS: BulkOrderItemMeta[] = [
     simpleName: '15. Coconut Shell Charcoal (Kiln-Carbonized, Bulk Metric Ton)',
     cleanName: 'Coconut Shell Charcoal (Kiln-Carbonized, Bulk Metric Ton)',
     skuMatch: 'COI-CHR-BLK-01T'
+  },
+  {
+    order: 16,
+    simpleName: '16. Cocopeat 5 kg Blocks (Low EC & High EC Pallets / Containers)',
+    cleanName: 'Cocopeat 5 kg Blocks (Low EC & High EC Pallets / Containers)',
+    skuMatch: 'COI-COP-05K'
   }
 ];
 
@@ -206,6 +212,16 @@ export function getBulkOrderItemMeta(item?: {
     title.includes('charcoal')
   ) {
     return BULK_ORDER_ITEMS[14];
+  }
+  // 16. Cocopeat Blocks
+  if (
+    sku.includes('COI-COP') ||
+    sku.includes('COCOPEAT') ||
+    slug.includes('cocopeat') ||
+    title.includes('cocopeat') ||
+    title.includes('coir pith')
+  ) {
+    return BULK_ORDER_ITEMS[15];
   }
   // 10. Coconut Shells
   if (sku.includes('SHL') || slug.includes('shell') || title.includes('shell')) {

@@ -71,6 +71,11 @@ const commodityMetadata: Record<string, { emoji: string; titleKn: string; subtit
     emoji: '🌰',
     titleKn: 'ಶಿವಮೊಗ್ಗ ಅಡಿಕೆ (ಬಲ್ಕ್ ಕಮಾಡಿಟಿ)',
     subtitleKn: 'ಕನಿಷ್ಠ 100 ಕೆ.ಜಿ (1 ಕ್ವಿಂಟಾಲ್) • ಮಂಡಿ ದರ'
+  },
+  'COI-COP-05K': {
+    emoji: '🌱',
+    titleKn: 'ತೆಂಗಿನ ನಾರು ಕೊಕೊಪೀಟ್ 5 ಕೆ.ಜಿ ಬ್ಲಾಕ್ (ಕಡಿಮೆ EC & ಹೆಚ್ಚು EC)',
+    subtitleKn: 'ಕಡಿಮೆ EC (ತೊಳೆದದ್ದು) & ಹೆಚ್ಚು EC • 5kg ಬ್ಲಾಕ್ • ಉಚಿತ ಡೆಲಿವರಿ'
   }
 };
 
@@ -213,6 +218,8 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
     supportingInfo = 'Minimum bulk lot: 1 Metric Tonne';
   } else if (product.sku === 'COI-CHR-BLK-01T' || product.slug.includes('charcoal')) {
     supportingInfo = '₹110/kg • Minimum bulk lot: 1 Ton';
+  } else if (product.sku === 'COI-COP-05K' || product.slug.includes('cocopeat')) {
+    supportingInfo = 'Low EC Washed & High EC • Expands to 75L+';
   } else if (isBulkOnly) {
     supportingInfo = `Minimum bulk lot: ${product.bulk_min_quantity || 1} ${product.bulk_min_quantity === 1 ? 'unit' : 'units'}`;
   }
@@ -224,6 +231,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
     if (sku.includes('RAG') || sku.includes('RIC') || sku.includes('FLR') || sku.includes('MIL')) return 'Millets & Flours';
     if (sku.includes('NUR')) return 'Farm Nursery';
     if (sku.includes('OIL')) return 'Wood-Pressed Oils';
+    if (sku.includes('COP-BLK') || sku.includes('COCOPEAT') || sku.includes('COI-COP')) return 'Coir Substrates';
     if (sku.includes('CHR') || sku.includes('SHL')) return 'Biomass & Industrial';
     if (cat === 'oil_and_extracts') return 'Oils & Ghee';
     if (cat === 'mature_coconut') return 'Fresh Coconuts';

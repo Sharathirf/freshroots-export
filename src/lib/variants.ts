@@ -217,6 +217,66 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
       title: 'Wood-Pressed Groundnut Oil (5 Litre Master Can)',
       isDefault: false
     }
+  ],
+
+  // Cocopeat 5 kg Compressed Block:
+  // Low EC (Washed): 5 kg Block @ ₹299 (Default), 15 kg Pack (3x 5kg) @ ₹799, 25 kg Sack (5x 5kg) @ ₹1,299
+  // High EC (Unwashed): 5 kg Block @ ₹229, 15 kg Pack (3x 5kg) @ ₹599, 25 kg Sack (5x 5kg) @ ₹949
+  'COI-COP-05K': [
+    {
+      packSize: '5 kg Block (Low EC Washed)',
+      label: '5 kg Block @ ₹299 (Low EC)',
+      price: 299,
+      weightKg: 5.0,
+      unitOfMeasure: '5 kg Block',
+      title: 'Cocopeat 5 kg Block (Low EC Washed - Hydroponic Grade)',
+      isDefault: true
+    },
+    {
+      packSize: '15 kg Pack (3x 5kg Blocks - Low EC)',
+      label: '15 kg Pack @ ₹799 (Low EC)',
+      price: 799,
+      weightKg: 15.0,
+      unitOfMeasure: '15 kg Pack (3x 5kg)',
+      title: 'Cocopeat 15 kg Pack (3x 5kg Blocks - Low EC Washed)',
+      isDefault: false
+    },
+    {
+      packSize: '25 kg Sack (5x 5kg Blocks - Low EC)',
+      label: '25 kg Sack @ ₹1,299 (Low EC)',
+      price: 1299,
+      weightKg: 25.0,
+      unitOfMeasure: '25 kg Sack (5x 5kg)',
+      title: 'Cocopeat 25 kg Master Sack (5x 5kg Blocks - Low EC Washed)',
+      isDefault: false
+    },
+    {
+      packSize: '5 kg Block (High EC Unwashed)',
+      label: '5 kg Block @ ₹229 (High EC)',
+      price: 229,
+      weightKg: 5.0,
+      unitOfMeasure: '5 kg Block',
+      title: 'Cocopeat 5 kg Block (High EC Unwashed - Animal Bedding)',
+      isDefault: false
+    },
+    {
+      packSize: '15 kg Pack (3x 5kg Blocks - High EC)',
+      label: '15 kg Pack @ ₹599 (High EC)',
+      price: 599,
+      weightKg: 15.0,
+      unitOfMeasure: '15 kg Pack (3x 5kg)',
+      title: 'Cocopeat 15 kg Pack (3x 5kg Blocks - High EC Unwashed)',
+      isDefault: false
+    },
+    {
+      packSize: '25 kg Sack (5x 5kg Blocks - High EC)',
+      label: '25 kg Sack @ ₹949 (High EC)',
+      price: 949,
+      weightKg: 25.0,
+      unitOfMeasure: '25 kg Sack (5x 5kg)',
+      title: 'Cocopeat 25 kg Master Sack (5x 5kg Blocks - High EC Unwashed)',
+      isDefault: false
+    }
   ]
 };
 
@@ -227,7 +287,9 @@ export function getProductVariants(sku: string): ProductVariant[] | null {
 export function getDefaultVariant(sku: string): ProductVariant | null {
   const variants = PRODUCT_VARIANTS[sku];
   if (!variants || variants.length === 0) return null;
-  // Always return the lowest price variant by default
+  // If a variant is explicitly marked isDefault, use it; otherwise lowest price
+  const explicit = variants.find((v) => v.isDefault);
+  if (explicit) return explicit;
   return [...variants].sort((a, b) => a.price - b.price)[0];
 }
 

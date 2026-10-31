@@ -447,8 +447,8 @@ import {
   sortProductsByBulkOrder
 } from '../lib/bulk-items';
 
-it('Bulk order item selection defines exactly 15 simple items in designated 1-15 sequence', () => {
-  assert.strictEqual(BULK_ORDER_ITEMS.length, 15);
+it('Bulk order item selection defines exactly 16 simple items in designated 1-16 sequence', () => {
+  assert.strictEqual(BULK_ORDER_ITEMS.length, 16);
   assert.strictEqual(BULK_ORDER_ITEMS[0].simpleName, '1. Tender Coconut (Bulk Order Lot)');
   assert.strictEqual(BULK_ORDER_ITEMS[1].simpleName, '2. Arecanut Plants (1–1.5 Feet Height)');
   assert.strictEqual(BULK_ORDER_ITEMS[2].simpleName, '3. Coconut Plants (1 Year Old, 2 Feet Height)');
@@ -464,6 +464,7 @@ it('Bulk order item selection defines exactly 15 simple items in designated 1-15
   assert.strictEqual(BULK_ORDER_ITEMS[12].simpleName, '13. Rice Flour (Pure Stone-Ground 5 kg Bag)');
   assert.strictEqual(BULK_ORDER_ITEMS[13].simpleName, '14. Coconut Oil (Wood-Pressed, Cold-Pressed)');
   assert.strictEqual(BULK_ORDER_ITEMS[14].simpleName, '15. Coconut Shell Charcoal (Kiln-Carbonized, Bulk Metric Ton)');
+  assert.strictEqual(BULK_ORDER_ITEMS[15].simpleName, '16. Cocopeat 5 kg Blocks (Low EC & High EC Pallets / Containers)');
 });
 
 it('getBulkOrderDisplayName correctly resolves catalog products by SKU or title', () => {
