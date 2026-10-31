@@ -299,10 +299,11 @@ export async function POST(request: NextRequest) {
             headers: { Authorization: `Bearer ${apiKey.trim()}` },
           });
           const data = await res.json();
-          if (res.ok) {
+          // Both Full Access keys (res.ok) and Sending Access keys ('restricted to only send emails') are valid
+          if (res.ok || (data.message && data.message.includes('restricted to only send emails'))) {
             return NextResponse.json({
               success: true,
-              message: `Resend API Key is valid and authorized for sender: ${fromEmail || '(Sender not set yet)'}`,
+              message: `Resend API Key is valid and authorized for sending transactional emails! Sender: ${fromEmail || '(Sender not set yet)'}`,
             });
           }
           return NextResponse.json({ success: false, error: data.message || 'Resend API key authorization failed' }, { status: 401 });
