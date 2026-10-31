@@ -22,14 +22,16 @@ declare global {
   }
 }
 
-export const turnstileEnabled = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
+// Active Cloudflare Turnstile Site Key for FreshRoots Export
+const DEFAULT_TURNSTILE_SITE_KEY = '0x4AAAAAAFqyZErjw9I3tdHV';
+export const turnstileEnabled = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || DEFAULT_TURNSTILE_SITE_KEY);
 
 export default function TurnstileChallenge({ onToken }: { onToken: (token: string) => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isFallback, setIsFallback] = useState(false);
 
   useEffect(() => {
-    const sitekey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+    const sitekey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || DEFAULT_TURNSTILE_SITE_KEY;
     const container = containerRef.current;
     if (!sitekey || !container) {
       onToken('turnstile-fallback-bypass');

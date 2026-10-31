@@ -314,6 +314,7 @@ export default function AdminPage() {
       setIsAdminAuthed(false);
       setPinInput('');
       setTotpInput('');
+      window.location.href = '/admin/login';
     }
   };
 

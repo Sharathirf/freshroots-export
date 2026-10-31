@@ -179,7 +179,7 @@ export default function RfqPageClient({ products }: RfqPageClientProps) {
 
   // Read URL query params if user clicked from a product or export country
   const paramProduct = searchParams.get('product') || searchParams.get('sku') || '';
-  const paramCountry = searchParams.get('country') || '';
+  const paramCountry = searchParams.get('country') || searchParams.get('destination') || '';
 
   const initialProd =
     sortedProducts.find(

@@ -34,6 +34,17 @@ export default function BulkInquiryForm({ product, onSuccess }: BulkInquiryFormP
   const [preferredDate, setPreferredDate] = useState('');
   const [additionalNotes, setAdditionalNotes] = useState('');
 
+  // Prefill destination if passed via URL query param (e.g. from export corridors)
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const queryDest = params.get('destination') || params.get('country') || '';
+      if (queryDest) {
+        setDestinationCity(queryDest);
+      }
+    }
+  }, []);
+
   // UI status
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);

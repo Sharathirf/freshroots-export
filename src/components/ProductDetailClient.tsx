@@ -819,9 +819,11 @@ export default function ProductDetailClient({
                 <div className="space-y-1">
                   <strong className="block text-stone-900 text-xs font-bold uppercase">Estimated Weight:</strong>
                   <p className="text-xs text-stone-600">
-                    {product.unit_of_measure?.toLowerCase() === 'kg'
-                      ? 'Standard commercial weight (per kg)'
-                      : `${product.estimated_weight_kg} kg per ${product.unit_of_measure}`}
+                    {selectedVariant?.weightKg
+                      ? `${selectedVariant.weightKg} kg (${selectedVariant.packSize})`
+                      : product.unit_of_measure?.toLowerCase() === 'kg'
+                        ? 'Standard commercial weight (per kg)'
+                        : `${product.estimated_weight_kg} kg per ${product.unit_of_measure}`}
                   </p>
                 </div>
                 <div className="space-y-1">
@@ -1011,38 +1013,45 @@ export default function ProductDetailClient({
               Other Farm Commodities from Karnataka
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {allProducts.filter((p) => p.id !== product.id).slice(0, 4).map((p) => (
-                <Link
-                  key={p.id}
-                  href={`/products/${p.slug}`}
-                  className="bg-white p-4 rounded-2xl border border-stone-200 hover:shadow-md transition flex flex-col justify-between group"
-                >
-                  <div>
-                    <div className="aspect-square rounded-xl overflow-hidden bg-stone-100 mb-3">
-                      <img
-                        src={p.image_url}
-                        alt={p.title}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                      />
+              {allProducts.filter((p) => p.id !== product.id).slice(0, 4).map((p) => {
+                const activeVar = getDefaultVariant(p.sku);
+                const cardPrice = activeVar ? activeVar.price : Number(p.retail_price_inr);
+                const cardUnit = activeVar ? activeVar.packSize : p.unit_of_measure;
+
+                return (
+                  <Link
+                    key={p.id}
+                    href={`/products/${p.slug}`}
+                    className="bg-white p-4 rounded-2xl border border-stone-200 hover:shadow-md transition flex flex-col justify-between group"
+                  >
+                    <div>
+                      <div className="aspect-square rounded-xl overflow-hidden bg-stone-100 mb-3">
+                        <img
+                          src={p.image_url}
+                          alt={p.title}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                        />
+                      </div>
+                      <span className="text-[10px] uppercase font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                        {getRelatedCategoryLabel(p)}
+                      </span>
+                      <h4 className="font-bold text-stone-900 text-sm mt-1 line-clamp-1 group-hover:text-emerald-800 transition">
+                        {p.title}
+                      </h4>
+                      <div className="mt-2 text-base font-extrabold text-stone-900 font-mono">
+                        ₹{cardPrice.toLocaleString('en-IN')}
+                        <span className="text-[11px] font-normal text-stone-500 ml-1">/ {cardUnit}</span>
+                      </div>
                     </div>
-                    <span className="text-[10px] uppercase font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-                      {getRelatedCategoryLabel(p)}
-                    </span>
-                    <h4 className="font-bold text-stone-900 text-sm mt-1 line-clamp-1 group-hover:text-emerald-800 transition">
-                      {p.title}
-                    </h4>
-                    <div className="mt-2 text-base font-extrabold text-stone-900 font-mono">
-                      ₹{Number(p.retail_price_inr).toLocaleString('en-IN')}
+                    <div className="mt-3 text-xs font-semibold text-emerald-700 flex items-center gap-1">
+                      <span>View Specifications</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
                     </div>
-                  </div>
-                  <div className="mt-3 text-xs font-semibold text-emerald-700 flex items-center gap-1">
-                    <span>View Specifications</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}

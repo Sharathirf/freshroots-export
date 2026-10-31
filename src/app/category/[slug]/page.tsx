@@ -109,6 +109,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     ? generateFAQJsonLd(category.faqs)
     : null;
 
+  const isBulkCategory = category.slug === 'coir-commodities' || category.id === 'coir_commodities';
+
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans">
       {/* Structured Data */}
@@ -197,7 +199,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 <div className="mt-4 pt-3 border-t border-stone-200 text-[11px] space-y-1 text-stone-600">
                   <div className="flex justify-between">
                     <span>Delivery:</span>
-                    <span className="font-bold text-emerald-800">100% Free All India</span>
+                    <span className="font-bold text-emerald-800">
+                      {isBulkCategory ? 'Actual Mandi Lorry Freight' : '100% Free All India'}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span>GST Rate:</span>
@@ -362,8 +366,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                   <Truck className="w-5 h-5 text-[#3b6d11]" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-stone-900">100% Free Delivery</div>
-                  <div className="text-[11px] text-stone-500">Doorstep delivery across India</div>
+                  <div className="text-xs font-bold text-stone-900">
+                    {isBulkCategory ? 'Actual Mandi Lorry Freight' : '100% Free Delivery'}
+                  </div>
+                  <div className="text-[11px] text-stone-500">
+                    {isBulkCategory ? 'FTL / Weighbridge dispatch across India' : 'Doorstep delivery across India'}
+                  </div>
                 </div>
               </div>
 

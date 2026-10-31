@@ -648,18 +648,98 @@ function TrackOrderContent() {
   );
 }
 
+function TrackOrderFallback() {
+  return (
+    <div className="py-8 sm:py-16">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-xs font-bold text-stone-600 hover:text-[#3b6d11] bg-white hover:bg-stone-100 border border-stone-200 px-3.5 py-2 rounded-xl transition shadow-sm"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>← Exit to Shop</span>
+          </Link>
+          <span className="text-[11px] text-stone-400 font-medium hidden sm:inline">
+            Track live courier movement
+          </span>
+        </div>
+
+        <div className="text-center space-y-3">
+          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#3b6d11] bg-[#edf7e1] px-4 py-1.5 rounded-full border border-emerald-200">
+            Shiprocket &amp; VRL Surface Courier Tracker
+          </span>
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-stone-900 tracking-tight">
+            Track Your Farm-Gate Shipment
+          </h1>
+          <p className="text-xs sm:text-sm text-stone-500 max-w-xl mx-auto leading-relaxed">
+            Enter your Order ID (e.g. <strong>AGR-20261021-2117</strong>) or 10-digit mobile number to track dispatch status in real time.
+          </p>
+
+          <div className="max-w-2xl mx-auto mt-6 flex flex-col sm:flex-row gap-2">
+            <div className="relative flex-1">
+              <Package className="w-5 h-5 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                readOnly
+                placeholder="Enter Order ID or 10-digit Phone"
+                className="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-stone-300 text-sm sm:text-base font-semibold bg-white cursor-pointer"
+              />
+            </div>
+            <button
+              type="button"
+              className="bg-[#3b6d11] text-white font-bold text-sm sm:text-base px-7 py-3.5 rounded-2xl shadow-md flex items-center justify-center gap-2"
+            >
+              Track Shipment
+            </button>
+          </div>
+        </div>
+
+        <div className="pt-10 border-t border-stone-200/80">
+          <div className="bg-stone-900 text-stone-100 rounded-3xl p-6 sm:p-8 grid grid-cols-1 md:grid-cols-3 gap-6 shadow-xl">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-lime-400 flex items-center justify-center shrink-0">
+                <Sprout className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-xs uppercase tracking-wider text-white">Farm Lab Tested</h4>
+                <p className="text-[11px] text-stone-400 mt-0.5">100% moisture verified &amp; weight graded.</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-lime-400 flex items-center justify-center shrink-0">
+                <Truck className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-xs uppercase tracking-wider text-white">Pan-India Surface Freight</h4>
+                <p className="text-[11px] text-stone-400 mt-0.5">Fast delivery with road &amp; air courier transport.</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-lime-400 flex items-center justify-center shrink-0">
+                <Phone className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-xs uppercase tracking-wider text-white">Agri Desk Support</h4>
+                <p className="text-[11px] text-stone-400 mt-0.5">WhatsApp consultation Mon–Sat (+91 90084 62568).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function TrackOrderPage() {
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans">
       <Navbar />
       <CartDrawer />
       <main className="flex-1">
-        <Suspense fallback={
-          <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-4">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-700" />
-            <p className="text-stone-600 font-semibold text-sm">Loading Consignment Tracking Console...</p>
-          </div>
-        }>
+        <Suspense fallback={<TrackOrderFallback />}>
           <TrackOrderContent />
         </Suspense>
       </main>

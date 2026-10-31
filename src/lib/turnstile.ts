@@ -13,8 +13,8 @@ export async function verifyTurnstile(token: unknown, _request?: Request) {
     await loadIntegrationSettings();
   } catch {}
 
-  const secret = process.env.TURNSTILE_SECRET_KEY;
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const secret = process.env.TURNSTILE_SECRET_KEY || '0x4AAAAAAFtrKfbo8pgeU0omO3pIGmz8jr0';
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '0x4AAAAAAFqyZErjw9I3tdHV';
 
   // If Turnstile is not configured, fail-open to never block real customer inquiries
   if (!secret || !siteKey) {

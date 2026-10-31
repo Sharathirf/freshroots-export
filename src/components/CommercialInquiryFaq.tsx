@@ -54,6 +54,18 @@ export default function CommercialInquiryFaq() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState('');
 
+  // Prefill destination and customer type if passed via URL query param
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const queryDest = params.get('destination') || params.get('country') || '';
+      if (queryDest) {
+        setMessage((prev) => (prev ? prev : `Delivery / Destination Port: ${queryDest}`));
+        setCustomerType('Exporter / Trade House');
+      }
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
