@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -23,6 +23,17 @@ export default function RfqSuccessContent() {
   const whatsappMessage = encodeURIComponent(
     `Hello Sharath, I have submitted an official quotation request (Quote: ${quoteNumber}) on freshrootsexport.com for ${company}. Please expedite our pricing docket.`
   );
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'generate_lead', {
+        event_category: 'RFQ',
+        event_label: quoteNumber,
+        value: 1.0,
+        currency: 'INR',
+      });
+    }
+  }, [quoteNumber]);
 
   return (
     <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-stone-200 w-full text-center space-y-8">
