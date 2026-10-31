@@ -53,8 +53,8 @@ export default function AdminTotpSetupModal({ isOpen, onClose, setupData }: Admi
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-      <div className="bg-stone-900 border border-stone-700 rounded-3xl max-w-md w-full p-6 text-white shadow-2xl relative space-y-5">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-sm animate-fade-in overflow-y-auto">
+      <div className="bg-stone-900 border border-stone-700 rounded-3xl max-w-md w-full p-5 sm:p-6 text-white shadow-2xl relative space-y-4 sm:space-y-5 max-h-[92vh] overflow-y-auto my-auto">
         <button
           type="button"
           onClick={onClose}

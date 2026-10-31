@@ -18,8 +18,8 @@ export default function MobileBottomNav() {
     setIsAccountModalOpen
   } = useAuth();
 
-  // On individual product detail pages, yield bottom space to the high-converting PDP Buy/Cart Action Bar
-  if (pathname && pathname.startsWith('/products/')) {
+  // On individual product detail pages and internal admin operations desk, yield bottom space
+  if (pathname && (pathname.startsWith('/products/') || pathname.startsWith('/admin'))) {
     return null;
   }
 

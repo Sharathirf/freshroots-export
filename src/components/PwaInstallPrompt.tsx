@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Download, Share, X } from 'lucide-react';
 import Image from 'next/image';
 
@@ -37,6 +38,7 @@ function wasRecentlyDismissed() {
 }
 
 export default function PwaInstallPrompt() {
+  const pathname = usePathname();
   const [mode, setMode] = useState<InstallMode>(null);
   const [instructionsOpen, setInstructionsOpen] = useState(false);
   const [installEvent, setInstallEvent] = useState<InstallPromptEvent | null>(null);
@@ -116,6 +118,11 @@ export default function PwaInstallPrompt() {
       dismiss();
     }
   }, [dismiss, installEvent]);
+
+  // Suppress consumer storefront install prompt on internal operations desk
+  if (pathname && pathname.startsWith('/admin')) {
+    return null;
+  }
 
   if (!mode) return null;
 

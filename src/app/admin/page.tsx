@@ -828,55 +828,58 @@ export default function AdminPage() {
     <div className="min-h-screen bg-stone-100 text-stone-900 font-sans">
       {/* Admin Top Navigation */}
       <header className="bg-stone-900 text-white border-b border-stone-800 sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <Link
               href="/"
-              className="p-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 transition"
+              className="p-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 transition shrink-0"
               title="Return to Storefront"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-emerald-700 flex items-center justify-center font-bold">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-emerald-700 flex items-center justify-center font-bold shrink-0">
                 <Sprout className="w-5 h-5 text-emerald-200" />
               </div>
-              <div>
-                <span className="font-extrabold text-sm sm:text-base tracking-tight">FreshRoots Export Ops</span>
-                <span className="text-[10px] text-emerald-400 font-mono ml-2 uppercase bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-800">
-                  Operations & Commercial Desk
+              <div className="min-w-0">
+                <div className="font-extrabold text-xs sm:text-base tracking-tight truncate">
+                  <span>FreshRoots Ops</span>
+                </div>
+                <span className="hidden md:inline-block text-[10px] text-emerald-400 font-mono uppercase bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-800">
+                  Operations &amp; Commercial Desk
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <button
               onClick={() => openTotpSetup()}
               disabled={loadingTotpSetup}
-              className="flex items-center gap-1.5 text-xs bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-800 text-emerald-200 px-3 py-1.5 rounded-lg transition"
+              className="flex items-center gap-1.5 text-xs bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-800 text-emerald-200 px-2.5 sm:px-3 py-1.5 rounded-lg transition"
               title="Google Authenticator (2FA) QR Code & Key"
             >
-              <QrCode className="w-3.5 h-3.5 text-lime-400" />
-              <span>{loadingTotpSetup ? 'Loading...' : 'Authenticator (2FA)'}</span>
+              <QrCode className="w-4 h-4 text-lime-400 shrink-0" />
+              <span className="hidden sm:inline">{loadingTotpSetup ? 'Loading...' : 'Authenticator (2FA)'}</span>
             </button>
             <button
               onClick={fetchData}
               disabled={refreshing}
-              className="flex items-center gap-1.5 text-xs bg-stone-800 hover:bg-stone-700 text-stone-200 px-3 py-1.5 rounded-lg transition"
+              className="flex items-center gap-1.5 text-xs bg-stone-800 hover:bg-stone-700 text-stone-200 px-2.5 sm:px-3 py-1.5 rounded-lg transition"
+              title="Sync Data"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-              <span>{refreshing ? 'Syncing...' : 'Sync Data'}</span>
+              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''} shrink-0`} />
+              <span className="hidden sm:inline">{refreshing ? 'Syncing...' : 'Sync Data'}</span>
             </button>
             <button
               onClick={handleAdminLogout}
-              className="flex items-center gap-1.5 text-xs bg-red-950/70 hover:bg-red-900 border border-red-800/70 text-red-200 px-3 py-1.5 rounded-lg transition"
+              className="flex items-center gap-1.5 text-xs bg-red-950/70 hover:bg-red-900 border border-red-800/70 text-red-200 px-2.5 sm:px-3 py-1.5 rounded-lg transition"
               title="Lock Admin Session"
             >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Lock Admin</span>
+              <LogOut className="w-4 h-4 shrink-0" />
+              <span className="hidden sm:inline">Lock Admin</span>
             </button>
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Connected to PostgreSQL" />
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" title="Connected to PostgreSQL" />
           </div>
         </div>
       </header>
