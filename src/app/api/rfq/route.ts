@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
 import { query } from '@/lib/db';
 import { verifyTurnstile } from '@/lib/turnstile';
+import { getAllCatalogProducts } from '@/lib/catalog';
 import { deliverTransactionalEmail, emailIsConfigured } from '@/lib/email';
 import { requireAdmin } from '@/lib/admin-auth';
 
@@ -79,20 +80,47 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Lookup product in database
+    // 2. Lookup product in database safely without throwing UUID parsing exceptions
     let prod: any = null;
-    if (product_id) {
-      const dbProd = await query(
-        `SELECT id, title, wholesale_benchmark_price_inr FROM products WHERE id = $1`,
-        [product_id]
-      );
-      if (dbProd.length > 0) prod = dbProd[0];
+    const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    if (product_id && typeof product_id === 'string') {
+      const trimmedId = product_id.trim();
+      if (UUID_REGEX.test(trimmedId)) {
+        const dbProd = await query(
+          `SELECT id, title, wholesale_benchmark_price_inr FROM products WHERE id = $1`,
+          [trimmedId]
+        );
+        if (dbProd.length > 0) prod = dbProd[0];
+      } else {
+        // Look up by SKU or slug
+        const dbProd = await query(
+          `SELECT id, title, wholesale_benchmark_price_inr FROM products WHERE sku = $1 OR slug = $1 LIMIT 1`,
+          [trimmedId]
+        );
+        if (dbProd.length > 0) {
+          prod = dbProd[0];
+        } else {
+          // Check static catalog mapping to find the corresponding SKU
+          const catalogItem = getAllCatalogProducts().find(
+            (p) => p.id === trimmedId || p.sku === trimmedId || p.slug === trimmedId
+          );
+          if (catalogItem) {
+            const dbBySku = await query(
+              `SELECT id, title, wholesale_benchmark_price_inr FROM products WHERE sku = $1 LIMIT 1`,
+              [catalogItem.sku]
+            );
+            if (dbBySku.length > 0) prod = dbBySku[0];
+          }
+        }
+      }
     }
 
-    if (!prod && product_title) {
+    if (!prod && product_title && typeof product_title === 'string') {
+      const cleanTitle = product_title.replace(/^\d+\.\s*/, '').trim();
       const dbProd = await query(
-        `SELECT id, title, wholesale_benchmark_price_inr FROM products WHERE title ILIKE $1 LIMIT 1`,
-        [`%${product_title}%`]
+        `SELECT id, title, wholesale_benchmark_price_inr FROM products WHERE title ILIKE $1 OR title ILIKE $2 LIMIT 1`,
+        [`%${cleanTitle}%`, `%${product_title.trim()}%`]
       );
       if (dbProd.length > 0) prod = dbProd[0];
     }
