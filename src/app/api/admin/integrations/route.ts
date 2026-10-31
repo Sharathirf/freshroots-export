@@ -22,7 +22,8 @@ export async function GET(request: NextRequest) {
   if (auth) return auth;
 
   // Synchronize settings from Neon PostgreSQL into process.env & cache
-  await loadIntegrationSettings();
+  const settings = await loadIntegrationSettings();
+  const getVal = (key: string): string => settings.get(key) || process.env[key] || '';
 
   let pushTableReady = false;
   try {
@@ -30,6 +31,18 @@ export async function GET(request: NextRequest) {
       `SELECT to_regclass('public.push_subscriptions')::text AS table_name`
     );
     pushTableReady = Boolean(result[0]?.table_name);
+    if (!pushTableReady) {
+      await query(`
+        CREATE TABLE IF NOT EXISTS push_subscriptions (
+          id SERIAL PRIMARY KEY,
+          fcm_token TEXT NOT NULL UNIQUE,
+          user_agent TEXT,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      pushTableReady = true;
+    }
   } catch {
     pushTableReady = false;
   }
@@ -41,10 +54,10 @@ export async function GET(request: NextRequest) {
       description: 'Privacy-first, cookieless traffic metrics directly at Cloudflare global edge.',
       portalUrl: 'https://dash.cloudflare.com',
       required: ['NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN'],
-      configured: Boolean(process.env.NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN),
+      configured: Boolean(getVal('NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN')),
       connectionCheck: 'Browser beacon is wired in the root layout; provider receipt is not remotely probed.',
       keys: {
-        NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN: getMaskedValue('NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN', process.env.NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN),
+        NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN: getMaskedValue('NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN', getVal('NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN')),
       },
     },
     {
@@ -53,11 +66,11 @@ export async function GET(request: NextRequest) {
       description: 'Complete e-commerce conversion tracking (product views, cart additions, checkout drop-off).',
       portalUrl: 'https://us.i.posthog.com',
       required: ['NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN'],
-      configured: Boolean(process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN),
+      configured: Boolean(getVal('NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN')),
       connectionCheck: 'Custom page and funnel events are wired; no test event is sent by this status check.',
       keys: {
-        NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: getMaskedValue('NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN', process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN),
-        NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+        NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: getMaskedValue('NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN', getVal('NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN')),
+        NEXT_PUBLIC_POSTHOG_HOST: getVal('NEXT_PUBLIC_POSTHOG_HOST') || 'https://us.i.posthog.com',
       },
     },
     {
@@ -66,11 +79,11 @@ export async function GET(request: NextRequest) {
       description: 'Native bot protection challenge for written B2B RFQs and commercial inquiries.',
       portalUrl: 'https://dash.cloudflare.com',
       required: ['NEXT_PUBLIC_TURNSTILE_SITE_KEY', 'TURNSTILE_SECRET_KEY'],
-      configured: Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && process.env.TURNSTILE_SECRET_KEY),
+      configured: Boolean(getVal('NEXT_PUBLIC_TURNSTILE_SITE_KEY') && getVal('TURNSTILE_SECRET_KEY')),
       connectionCheck: 'RFQ submissions use Siteverify; a valid user challenge is needed for an end-to-end check.',
       keys: {
-        NEXT_PUBLIC_TURNSTILE_SITE_KEY: getMaskedValue('NEXT_PUBLIC_TURNSTILE_SITE_KEY', process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY),
-        TURNSTILE_SECRET_KEY: getMaskedValue('TURNSTILE_SECRET_KEY', process.env.TURNSTILE_SECRET_KEY),
+        NEXT_PUBLIC_TURNSTILE_SITE_KEY: getMaskedValue('NEXT_PUBLIC_TURNSTILE_SITE_KEY', getVal('NEXT_PUBLIC_TURNSTILE_SITE_KEY')),
+        TURNSTILE_SECRET_KEY: getMaskedValue('TURNSTILE_SECRET_KEY', getVal('TURNSTILE_SECRET_KEY')),
       },
     },
     {
@@ -79,12 +92,12 @@ export async function GET(request: NextRequest) {
       description: 'Automated order invoices, wholesale quotation PDFs, and consignment alerts.',
       portalUrl: 'https://resend.com/api-keys',
       required: ['RESEND_API_KEY', 'RESEND_FROM_EMAIL'],
-      configured: Boolean(process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL),
+      configured: Boolean(getVal('RESEND_API_KEY') && getVal('RESEND_FROM_EMAIL')),
       connectionCheck: 'Order and RFQ email dispatch is wired; sending a test email requires a verified sender.',
       keys: {
-        RESEND_API_KEY: getMaskedValue('RESEND_API_KEY', process.env.RESEND_API_KEY),
-        RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL || '',
-        ADMIN_NOTIFICATION_EMAIL: process.env.ADMIN_NOTIFICATION_EMAIL || '',
+        RESEND_API_KEY: getMaskedValue('RESEND_API_KEY', getVal('RESEND_API_KEY')),
+        RESEND_FROM_EMAIL: getVal('RESEND_FROM_EMAIL'),
+        ADMIN_NOTIFICATION_EMAIL: getVal('ADMIN_NOTIFICATION_EMAIL'),
       },
     },
     {
@@ -93,19 +106,19 @@ export async function GET(request: NextRequest) {
       description: 'Real-time production exception tracking with PII scrubbing across client and edge runtimes.',
       portalUrl: 'https://sentry.io',
       required: ['NEXT_PUBLIC_SENTRY_DSN or SENTRY_DSN'],
-      configured: Boolean(process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN),
+      configured: Boolean(getVal('NEXT_PUBLIC_SENTRY_DSN') || getVal('SENTRY_DSN')),
       connectionCheck: 'Client, server, and edge SDKs are wired; this check does not emit a test event.',
       keys: {
-        NEXT_PUBLIC_SENTRY_DSN: getMaskedValue('NEXT_PUBLIC_SENTRY_DSN', process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN),
-        SENTRY_AUTH_TOKEN: getMaskedValue('SENTRY_AUTH_TOKEN', process.env.SENTRY_AUTH_TOKEN),
+        NEXT_PUBLIC_SENTRY_DSN: getMaskedValue('NEXT_PUBLIC_SENTRY_DSN', getVal('NEXT_PUBLIC_SENTRY_DSN') || getVal('SENTRY_DSN')),
+        SENTRY_AUTH_TOKEN: getMaskedValue('SENTRY_AUTH_TOKEN', getVal('SENTRY_AUTH_TOKEN')),
       },
     },
     {
       id: 'firebase',
       name: 'Firebase Cloud Messaging',
       description: 'Browser web push notifications for live mandi rates, order dispatches, and inventory intake.',
-      portalUrl: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
-        ? `https://console.firebase.google.com/project/${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}`
+      portalUrl: getVal('NEXT_PUBLIC_FIREBASE_PROJECT_ID')
+        ? `https://console.firebase.google.com/project/${getVal('NEXT_PUBLIC_FIREBASE_PROJECT_ID')}`
         : 'https://console.firebase.google.com',
       required: [
         'NEXT_PUBLIC_FIREBASE_API_KEY',
@@ -117,17 +130,17 @@ export async function GET(request: NextRequest) {
         'push_subscriptions migration',
       ],
       configured: Boolean(
-        process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
-        process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID &&
-        process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID &&
-        process.env.NEXT_PUBLIC_FIREBASE_APP_ID &&
-        process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY &&
-        process.env.FIREBASE_SERVICE_ACCOUNT_JSON &&
+        getVal('NEXT_PUBLIC_FIREBASE_API_KEY') &&
+        getVal('NEXT_PUBLIC_FIREBASE_PROJECT_ID') &&
+        getVal('NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID') &&
+        getVal('NEXT_PUBLIC_FIREBASE_APP_ID') &&
+        getVal('NEXT_PUBLIC_FIREBASE_VAPID_KEY') &&
+        getVal('FIREBASE_SERVICE_ACCOUNT_JSON') &&
         pushTableReady
       ),
-      connectionCheck: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
-        ? `Web App config connected (project: ${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}). ${
-            process.env.FIREBASE_SERVICE_ACCOUNT_JSON && process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY
+      connectionCheck: getVal('NEXT_PUBLIC_FIREBASE_PROJECT_ID')
+        ? `Web App config connected (project: ${getVal('NEXT_PUBLIC_FIREBASE_PROJECT_ID')}). ${
+            getVal('FIREBASE_SERVICE_ACCOUNT_JSON') && getVal('NEXT_PUBLIC_FIREBASE_VAPID_KEY')
               ? 'Web Push VAPID and Service Account are active.'
               : 'Add Web Push VAPID key and Service Account JSON to activate automated dispatch.'
           }`
@@ -135,12 +148,13 @@ export async function GET(request: NextRequest) {
         ? 'Opt-in API and database table are present; a browser opt-in and FCM send are needed for an end-to-end check.'
         : 'Push database migration is missing or unavailable.',
       keys: {
-        NEXT_PUBLIC_FIREBASE_API_KEY: getMaskedValue('NEXT_PUBLIC_FIREBASE_API_KEY', process.env.NEXT_PUBLIC_FIREBASE_API_KEY),
-        NEXT_PUBLIC_FIREBASE_PROJECT_ID: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || '',
-        NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '',
-        NEXT_PUBLIC_FIREBASE_APP_ID: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '',
-        NEXT_PUBLIC_FIREBASE_VAPID_KEY: getMaskedValue('NEXT_PUBLIC_FIREBASE_VAPID_KEY', process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY),
-        FIREBASE_SERVICE_ACCOUNT_JSON: process.env.FIREBASE_SERVICE_ACCOUNT_JSON ? '•••••••• (Configured JSON)' : '',
+        NEXT_PUBLIC_FIREBASE_API_KEY: getMaskedValue('NEXT_PUBLIC_FIREBASE_API_KEY', getVal('NEXT_PUBLIC_FIREBASE_API_KEY')),
+        NEXT_PUBLIC_FIREBASE_PROJECT_ID: getVal('NEXT_PUBLIC_FIREBASE_PROJECT_ID'),
+        NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: getVal('NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID'),
+        NEXT_PUBLIC_FIREBASE_APP_ID: getVal('NEXT_PUBLIC_FIREBASE_APP_ID'),
+        NEXT_PUBLIC_FIREBASE_VAPID_KEY: getMaskedValue('NEXT_PUBLIC_FIREBASE_VAPID_KEY', getVal('NEXT_PUBLIC_FIREBASE_VAPID_KEY')),
+        FIREBASE_SERVICE_ACCOUNT_JSON: getVal('FIREBASE_SERVICE_ACCOUNT_JSON') ? '•••••••• (Configured JSON)' : '',
+        'push_subscriptions migration': pushTableReady ? 'Active' : '',
       },
     },
   ].map((item) => ({ ...item, status: item.configured ? 'configured' : 'needs_setup' }));

@@ -1161,7 +1161,9 @@ export default function AdminPage() {
                         </span>
                         <div className="flex flex-wrap gap-1.5">
                           {integration.required.map((reqKey: string) => {
-                            const hasVal = integration.keys && Boolean(integration.keys[reqKey]);
+                            const hasVal = reqKey === 'push_subscriptions migration'
+                              ? Boolean(integration.keys && integration.keys['push_subscriptions migration']) || integration.configured
+                              : integration.keys && Boolean(integration.keys[reqKey]);
                             return (
                               <span
                                 key={reqKey}
