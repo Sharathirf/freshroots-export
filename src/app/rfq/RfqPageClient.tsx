@@ -7,13 +7,17 @@ import {
   Building2,
   ShieldCheck,
   Clock,
-  ArrowRight,
   FileCheck2,
-  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Globe
 } from 'lucide-react';
 import {
   getBulkOrderDisplayName,
+  getBulkOrderCleanName,
   sortProductsByBulkOrder,
+  getBulkOrderVolumeOptions,
+  VolumeOption
 } from '@/lib/bulk-items';
 import { EXPORT_COUNTRIES } from '@/lib/export-countries';
 import TurnstileChallenge, { turnstileEnabled } from '@/components/TurnstileChallenge';
@@ -21,154 +25,6 @@ import { track } from '@/lib/analytics';
 
 interface RfqPageClientProps {
   products: Product[];
-}
-
-interface VolumeOption {
-  value: string;
-  label: string;
-  unitLabel: string;
-}
-
-function getVolumeOptions(product?: Product): VolumeOption[] {
-  if (!product) {
-    return [
-      { value: '500', label: '500 Units', unitLabel: 'Units' },
-      { value: '1000', label: '1,000 Units', unitLabel: 'Units' },
-      { value: '5000', label: '5,000 Units', unitLabel: 'Units' },
-    ];
-  }
-
-  const sku = (product.sku || '').toUpperCase();
-  const title = (product.title || '').toLowerCase();
-
-  // 1. Tender Coconut
-  if (sku.includes('TND') || title.includes('tender')) {
-    return [
-      { value: '500', label: '500 Tender Nuts (Tempo Lot)', unitLabel: 'Tender Nuts' },
-      { value: '1000', label: '1,000 Tender Nuts (Mini Canter)', unitLabel: 'Tender Nuts' },
-      { value: '2500', label: '2,500 Tender Nuts (Canter Truckload)', unitLabel: 'Tender Nuts' },
-      { value: '5000', label: '5,000 Tender Nuts (Full Truckload)', unitLabel: 'Tender Nuts' },
-      { value: '10000', label: '10,000 Tender Nuts (Lorry Consignment)', unitLabel: 'Tender Nuts' },
-    ];
-  }
-
-  // 2. Bulk arecanut commodity
-  if (product.category === 'arecanut') {
-    return [
-      { value: '100', label: '100 kg (1 Quintal)', unitLabel: 'kg' },
-      { value: '250', label: '250 kg (2.5 Quintals)', unitLabel: 'kg' },
-      { value: '500', label: '500 kg (5 Quintals)', unitLabel: 'kg' },
-      { value: '1000', label: '1,000 kg (1 Metric Tonne)', unitLabel: 'kg' },
-      { value: '5000', label: '5,000 kg (5 MT Truckload)', unitLabel: 'kg' },
-    ];
-  }
-
-  // 3. Arecanut Plants
-  if ((sku.includes('ARE') || title.includes('arecanut')) && (sku.includes('PLT') || title.includes('plant') || title.includes('sapling'))) {
-    return [
-      { value: '100', label: '100 Plants (1–1.5 Ft)', unitLabel: 'Plants' },
-      { value: '250', label: '250 Plants (Farm Acre Lot)', unitLabel: 'Plants' },
-      { value: '500', label: '500 Plants (Plantation Lot)', unitLabel: 'Plants' },
-      { value: '1000', label: '1,000 Plants (Orchard Consignment)', unitLabel: 'Plants' },
-      { value: '2500', label: '2,500 Plants (Full Nursery Truck)', unitLabel: 'Plants' },
-    ];
-  }
-
-  // 4. Coconut Plants
-  if (sku.includes('PLT') || title.includes('coconut plant') || title.includes('sapling')) {
-    return [
-      { value: '50', label: '50 Plants (1 Yr Old, 2 Ft)', unitLabel: 'Plants' },
-      { value: '100', label: '100 Plants (Orchard Starter)', unitLabel: 'Plants' },
-      { value: '200', label: '200 Plants (Estate Block)', unitLabel: 'Plants' },
-      { value: '500', label: '500 Plants (Canter Load)', unitLabel: 'Plants' },
-      { value: '1000', label: '1,000 Plants (10-Wheeler Truckload)', unitLabel: 'Plants' },
-    ];
-  }
-
-  // 5. Ragi Millet
-  if (sku.includes('RAG') || title.includes('ragi')) {
-    return [
-      { value: '100', label: '100 kg (4 Bags of 25kg)', unitLabel: 'kg' },
-      { value: '250', label: '250 kg (10 Bags of 25kg)', unitLabel: 'kg' },
-      { value: '500', label: '500 kg (5 Quintals)', unitLabel: 'kg' },
-      { value: '1000', label: '1,000 kg (1 Metric Tonne)', unitLabel: 'kg' },
-      { value: '5000', label: '5,000 kg (5 MT Truckload)', unitLabel: 'kg' },
-    ];
-  }
-
-  // 6. Groundnut Oil
-  if (sku.includes('GND') || title.includes('groundnut')) {
-    return [
-      { value: '25', label: '25 Litres (Commercial Cans)', unitLabel: 'Litres' },
-      { value: '50', label: '50 Litres (Wholesale Batch)', unitLabel: 'Litres' },
-      { value: '100', label: '100 Litres (4 Cans of 25L)', unitLabel: 'Litres' },
-      { value: '200', label: '200 Litres (Drum Lot)', unitLabel: 'Litres' },
-      { value: '500', label: '500 Litres (Commercial Consignment)', unitLabel: 'Litres' },
-    ];
-  }
-
-  // 7. Coconut Oil
-  if (sku.includes('COIL') || title.includes('coconut oil')) {
-    return [
-      { value: '25', label: '25 Litres (Commercial Cans)', unitLabel: 'Litres' },
-      { value: '50', label: '50 Litres (Wholesale Batch)', unitLabel: 'Litres' },
-      { value: '100', label: '100 Litres (4 Cans of 25L)', unitLabel: 'Litres' },
-      { value: '200', label: '200 Litres (Drum Lot)', unitLabel: 'Litres' },
-      { value: '500', label: '500 Litres (Commercial Consignment)', unitLabel: 'Litres' },
-    ];
-  }
-
-  // 8. Ball Copra / Unde Kobbari
-  if (sku.includes('COP') || title.includes('copra') || title.includes('kobbari')) {
-    return [
-      { value: '150', label: '150 kg (10 Boxes of 15kg)', unitLabel: 'kg' },
-      { value: '300', label: '300 kg (20 Boxes of 15kg)', unitLabel: 'kg' },
-      { value: '750', label: '750 kg (50 Boxes of 15kg)', unitLabel: 'kg' },
-      { value: '1500', label: '1,500 kg (100 Boxes of 15kg)', unitLabel: 'kg' },
-      { value: '5000', label: '5,000 kg (5 MT Truckload / Partial FCL)', unitLabel: 'kg' },
-      { value: '11000', label: '11,000 kg (11 MT - 20ft FCL Container)', unitLabel: 'kg' },
-      { value: '23500', label: '23,500 kg (23.5 MT - 40ft HC Container)', unitLabel: 'kg' },
-    ];
-  }
-
-  // 9. Fresh Mature Coconuts
-  if (sku.includes('COC') || title.includes('mature coconut')) {
-    return [
-      { value: '500', label: '500 Nuts (20 Bags of 25 Nuts)', unitLabel: 'Nuts' },
-      { value: '1000', label: '1,000 Nuts (Mini Canter Load)', unitLabel: 'Nuts' },
-      { value: '2500', label: '2,500 Nuts (Canter Truckload)', unitLabel: 'Nuts' },
-      { value: '5000', label: '5,000 Nuts (10-Wheeler Truckload)', unitLabel: 'Nuts' },
-      { value: '10000', label: '10,000 Nuts (Multi-Axle Lorry)', unitLabel: 'Nuts' },
-      { value: '25000', label: '25,000 Nuts (40ft High Cube Container)', unitLabel: 'Nuts' },
-    ];
-  }
-
-  // 10. Cocopeat
-  if (sku.includes('PEAT') || title.includes('cocopeat')) {
-    return [
-      { value: '100', label: '100 kg (20 Blocks of 5kg)', unitLabel: 'kg' },
-      { value: '500', label: '500 kg (100 Blocks of 5kg)', unitLabel: 'kg' },
-      { value: '1000', label: '1,000 kg (1 Tonne Pallet)', unitLabel: 'kg' },
-      { value: '5000', label: '5,000 kg (5 Tonnes Siding)', unitLabel: 'kg' },
-      { value: '24000', label: '24,000 kg (24 MT - 40ft HC Container)', unitLabel: 'kg' },
-    ];
-  }
-
-  // 11. Coconut Shells
-  if (sku.includes('SHL') || title.includes('shell')) {
-    return [
-      { value: '1', label: '1 Metric Tonne (1,000 kg)', unitLabel: 'Tonne' },
-      { value: '5', label: '5 Metric Tonnes', unitLabel: 'Tonnes' },
-      { value: '10', label: '10 Metric Tonnes (Full Lorry)', unitLabel: 'Tonnes' },
-      { value: '25', label: '25 Metric Tonnes (Export Container)', unitLabel: 'Tonnes' },
-    ];
-  }
-
-  return [
-    { value: '500', label: '500 Units', unitLabel: 'Units' },
-    { value: '1000', label: '1,000 Units', unitLabel: 'Units' },
-    { value: '5000', label: '5,000 Units', unitLabel: 'Units' },
-  ];
 }
 
 export default function RfqPageClient({ products }: RfqPageClientProps) {
@@ -189,127 +45,147 @@ export default function RfqPageClient({ products }: RfqPageClientProps) {
         p.sku.toLowerCase() === paramProduct.toLowerCase()
     ) || sortedProducts[0];
 
+  // 1. Mandatory Field: Product
   const [productId, setProductId] = useState<string>(initialProd?.id || '');
+
+  const currentProd =
+    products.find((p) => p.id === productId || p.sku === productId) ||
+    initialProd ||
+    products[0];
+
+  const volumeOptions: VolumeOption[] = getBulkOrderVolumeOptions(currentProd);
+
+  // 2. Mandatory Field: Required Quantity
+  const [requestedVolume, setRequestedVolume] = useState<string>(() => {
+    return volumeOptions[0]?.value || '1000';
+  });
+  const [customQtyInput, setCustomQtyInput] = useState<string>('1500');
+
+  // 3. Mandatory Field: Merged Delivery Location
+  const [deliveryLocation, setDeliveryLocation] = useState<string>(() => {
+    if (paramCountry && paramCountry !== 'India') {
+      const match = EXPORT_COUNTRIES.find((c) => c.name.toLowerCase().includes(paramCountry.toLowerCase()));
+      return match ? `${match.majorPort.split('/')[0].trim()} Port (${paramCountry})` : paramCountry;
+    }
+    return 'Bengaluru, Karnataka 560001';
+  });
+
+  // 4. Mandatory Field: Firm / Company Name
   const [companyName, setCompanyName] = useState('');
+
+  // 5. Mandatory Field: Contact Person Name
   const [contactPerson, setContactPerson] = useState('');
+
+  // 6. Mandatory Field: WhatsApp Mobile
   const [contactPhone, setContactPhone] = useState('');
+
+  // Expandable Optional Section State
+  const [showOptionalDetails, setShowOptionalDetails] = useState<boolean>(() => {
+    return Boolean(paramCountry && paramCountry !== 'India');
+  });
+
+  // Optional Fields
   const [contactEmail, setContactEmail] = useState('');
   const [gstin, setGstin] = useState('');
+  const [unloadingNotes, setUnloadingNotes] = useState('');
+  const [isExportEnquiry, setIsExportEnquiry] = useState<boolean>(() => {
+    return Boolean(paramCountry && paramCountry !== 'India');
+  });
   const [destinationCountry, setDestinationCountry] = useState<string>(paramCountry || 'India');
-  const [destinationCity, setDestinationCity] = useState(
-    paramCountry && paramCountry !== 'India'
-      ? EXPORT_COUNTRIES.find((c) => c.name.toLowerCase().includes(paramCountry.toLowerCase()))
-          ?.majorPort.split('/')[0].trim() || 'Discharge Port'
-      : 'Bengaluru'
-  );
-  const [destinationPincode, setDestinationPincode] = useState(
-    paramCountry && paramCountry !== 'India' ? 'EXPORT' : '560001'
-  );
-  const [notes, setNotes] = useState('');
+
+  // Form State
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState('');
-
-  const currentProd = products.find((p) => p.id === productId) || products[0];
-  const volumeOptions = getVolumeOptions(currentProd);
-  const [requestedQuantity, setRequestedQuantity] = useState<string>(
-    volumeOptions.length > 1 ? volumeOptions[1].value : volumeOptions[0]?.value || '1000'
-  );
 
   useEffect(() => {
     track('rfq_started', { source: 'rfq_standalone_page' });
   }, []);
 
-  const currentOption = volumeOptions.find((o) => o.value === requestedQuantity) || volumeOptions[0];
-  const qty = parseInt(requestedQuantity, 10) || 0;
+  const currentOption = volumeOptions.find((o) => o.value === requestedVolume) || volumeOptions[0];
+  const unitLabel = currentOption?.unitLabel || 'Units';
 
   const handleProductChange = (newProductId: string) => {
     setProductId(newProductId);
-    const nextProd = products.find((p) => p.id === newProductId);
-    const nextOptions = getVolumeOptions(nextProd);
-    if (nextOptions.length > 1) {
-      setRequestedQuantity(nextOptions[1].value);
-    } else if (nextOptions.length > 0) {
-      setRequestedQuantity(nextOptions[0].value);
-    }
-  };
-
-  const handleCountryChange = (countryName: string) => {
-    setDestinationCountry(countryName);
-    if (countryName === 'India') {
-      setDestinationCity('Bengaluru');
-      setDestinationPincode('560001');
-    } else {
-      const found = EXPORT_COUNTRIES.find((c) => c.name === countryName);
-      if (found) {
-        setDestinationCity(found.majorPort.split('/')[0].trim());
-        setDestinationPincode('EXPORT');
-      } else {
-        setDestinationCity('Discharge Port');
-        setDestinationPincode('EXPORT');
-      }
+    const nextProd = products.find((p) => p.id === newProductId || p.sku === newProductId);
+    const nextOptions = getBulkOrderVolumeOptions(nextProd);
+    if (nextOptions.length > 0) {
+      setRequestedVolume(nextOptions[0].value);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!contactPhone.trim() && !contactEmail.trim()) {
-      setErrorMsg('Please provide either a WhatsApp mobile number or an email address.');
+    if (!contactPerson.trim()) {
+      setErrorMsg('Please enter the contact person name.');
+      return;
+    }
+    if (!companyName.trim()) {
+      setErrorMsg('Please enter your firm or company name.');
+      return;
+    }
+    if (!contactPhone.trim()) {
+      setErrorMsg('Please provide your WhatsApp mobile number.');
+      return;
+    }
+    if (!deliveryLocation.trim()) {
+      setErrorMsg('Please enter your delivery location (City, State, PIN).');
       return;
     }
 
-    if (qty <= 0) {
-      setErrorMsg('Please select a valid order volume.');
-      return;
+    let finalQty = parseInt(requestedVolume, 10);
+    if (requestedVolume === 'custom') {
+      finalQty = parseInt(customQtyInput, 10);
+      if (isNaN(finalQty) || finalQty <= 0) {
+        setErrorMsg('Please enter a valid custom quantity greater than 0.');
+        return;
+      }
     }
-
-    const effectiveToken = turnstileToken || (turnstileEnabled ? 'turnstile-fallback-bypass' : '');
 
     setIsSubmitting(true);
     setErrorMsg(null);
 
+    const pinMatch = deliveryLocation.match(/\b\d{6}\b/);
+    const extractedPincode = pinMatch ? pinMatch[0] : (isExportEnquiry ? 'EXPORT' : '560001');
+
+    const effectiveToken = turnstileToken || (turnstileEnabled ? 'turnstile-fallback-bypass' : '');
+
     try {
+      const notesArray = [
+        unloadingNotes ? `Unloading/Siding: ${unloadingNotes.trim()}` : '',
+        isExportEnquiry && destinationCountry !== 'India' ? `[EXPORT ENQUIRY: ${destinationCountry}]` : ''
+      ].filter(Boolean);
+
       const res = await fetch('/api/rfq', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          company_name: companyName,
-          contact_person: contactPerson,
-          contact_phone: contactPhone,
-          contact_email: contactEmail,
-          gstin: gstin,
-          product_id: productId,
-          product_title: getBulkOrderDisplayName(currentProd),
-          requested_quantity: qty,
-          unit: currentOption?.unitLabel || 'Units',
-          destination_city:
-            destinationCountry === 'India'
-              ? destinationCity
-              : `${destinationCity}, ${destinationCountry}`,
-          destination_pincode: destinationCountry === 'India' ? destinationPincode : 'EXPORT',
-          notes:
-            destinationCountry === 'India'
-              ? notes
-              : `[EXPORT DESTINATION: ${destinationCountry} | Port: ${destinationCity}] ${notes}`.trim(),
-          turnstileToken: effectiveToken,
-        }),
+          customer_name: contactPerson.trim(),
+          contact_person: contactPerson.trim(),
+          contact_phone: contactPhone.trim(),
+          contact_email: contactEmail.trim() || null,
+          company_name: companyName.trim(),
+          gstin: gstin.trim() || null,
+          product_id: currentProd?.id || productId,
+          product_title: getBulkOrderCleanName(currentProd),
+          requested_quantity: finalQty,
+          unit: unitLabel,
+          destination_city: deliveryLocation.trim(),
+          destination_pincode: extractedPincode,
+          delivery_address: deliveryLocation.trim(),
+          notes: notesArray.join(' | ') || null,
+          turnstileToken: effectiveToken
+        })
       });
 
       const data = await res.json();
       if (data.success) {
-        track('rfq_submitted', {
-          source: 'rfq_standalone_page',
-          unit: currentOption?.unitLabel || 'Units',
-        });
-        const quoteNum = data.quotation?.quote_number || 'SUBMITTED';
-        const isExp = destinationCountry !== 'India' ? 'true' : 'false';
+        track('rfq_submitted', { source: 'rfq_standalone_page', unit: unitLabel });
         router.push(
-          `/rfq-success?quote=${encodeURIComponent(quoteNum)}&company=${encodeURIComponent(
-            companyName || contactPerson || ''
-          )}&export=${isExp}`
+          `/rfq-success?quote=${encodeURIComponent(data.quotation.quote_number)}&company=${encodeURIComponent(companyName || contactPerson)}&export=${isExportEnquiry ? 'true' : 'false'}`
         );
       } else {
-        setErrorMsg(data.error || 'Failed to submit quotation request.');
+        setErrorMsg(data.error || 'Failed to submit quotation request. Please check inputs.');
       }
     } catch {
       setErrorMsg('Network error while submitting RFQ. Please retry or contact WhatsApp desk.');
@@ -323,7 +199,7 @@ export default function RfqPageClient({ products }: RfqPageClientProps) {
       {/* Form Card */}
       <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-stone-200">
         <div className="mb-8">
-          <div className="flex items-center gap-2 text-amber-800 font-extrabold text-xs uppercase tracking-wider mb-2">
+          <div className="flex items-center gap-2 text-amber-700 font-extrabold text-xs uppercase tracking-wider mb-2">
             <Building2 className="w-4 h-4" />
             <span>B2B Commercial Procurement Desk</span>
           </div>
@@ -341,16 +217,16 @@ export default function RfqPageClient({ products }: RfqPageClientProps) {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Commodity Selection */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Field 1: Commodity Selection (Mandatory) */}
           <div>
-            <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-              Select Bulk Order Item *
+            <label className="block text-xs font-bold text-stone-700 mb-1">
+              Select Bulk Order Item <span className="text-amber-600">*</span>
             </label>
             <select
               value={productId}
               onChange={(e) => handleProductChange(e.target.value)}
-              className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-3 text-stone-900 font-medium text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none transition shadow-sm"
+              className="w-full bg-white border border-stone-300 rounded-xl px-3.5 py-3 text-stone-900 font-semibold text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none transition shadow-sm"
               required
             >
               {sortedProducts.map((p, idx) => (
@@ -361,38 +237,16 @@ export default function RfqPageClient({ products }: RfqPageClientProps) {
             </select>
           </div>
 
-          {/* Market / Country Selection */}
+          {/* Field 2: Order Volume / Quantity (Mandatory) */}
           <div>
-            <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-              Destination Market / Country *
+            <label className="block text-xs font-bold text-stone-700 mb-1">
+              Order Volume / Required Quantity <span className="text-amber-600">*</span>
             </label>
-            <select
-              value={destinationCountry}
-              onChange={(e) => handleCountryChange(e.target.value)}
-              className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-3 text-stone-900 font-medium text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none transition shadow-sm"
-              required
-            >
-              <option value="India">🇮🇳 India (Domestic Truckload / Commercial Mandi)</option>
-              <optgroup label="International Container Export Markets (FCL)">
-                {EXPORT_COUNTRIES.map((c) => (
-                  <option key={c.code} value={c.name}>
-                    {c.flag} {c.name} ({c.majorPort})
-                  </option>
-                ))}
-              </optgroup>
-            </select>
-          </div>
-
-          {/* Volume and Destination Details */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                Order Volume *
-              </label>
+            <div className="space-y-2">
               <select
-                value={requestedQuantity}
-                onChange={(e) => setRequestedQuantity(e.target.value)}
-                className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2.5 text-stone-900 font-medium text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none transition shadow-sm"
+                value={requestedVolume}
+                onChange={(e) => setRequestedVolume(e.target.value)}
+                className="w-full bg-white border border-stone-300 rounded-xl px-3.5 py-3 text-stone-900 font-semibold text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none transition shadow-sm"
                 required
               >
                 {volumeOptions.map((opt) => (
@@ -401,191 +255,252 @@ export default function RfqPageClient({ products }: RfqPageClientProps) {
                   </option>
                 ))}
               </select>
-            </div>
 
-            <div>
-              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                {destinationCountry === 'India' ? 'Destination City *' : 'Discharge Port *'}
-              </label>
-              <input
-                type="text"
-                value={destinationCity}
-                onChange={(e) => setDestinationCity(e.target.value)}
-                placeholder={destinationCountry === 'India' ? 'e.g. Bengaluru, Hubli' : 'e.g. Jebel Ali, Cat Lai'}
-                className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2.5 text-stone-900 text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none transition shadow-sm"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                {destinationCountry === 'India' ? 'Destination PIN *' : 'Incoterm *'}
-              </label>
-              <input
-                type="text"
-                value={destinationPincode}
-                onChange={(e) => setDestinationPincode(e.target.value)}
-                placeholder={destinationCountry === 'India' ? '560001' : 'FOB / CIF'}
-                className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3 py-2.5 text-stone-900 text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none transition shadow-sm"
-                required
-              />
+              {/* Inline Custom Quantity Input */}
+              {requestedVolume === 'custom' && (
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-50/70 border border-amber-200">
+                  <span className="text-xs font-bold text-amber-900 whitespace-nowrap">Enter Custom Quantity:</span>
+                  <input
+                    type="number"
+                    min="1"
+                    required
+                    value={customQtyInput}
+                    onChange={(e) => setCustomQtyInput(e.target.value)}
+                    placeholder="e.g. 3500"
+                    className="w-full px-3 py-1.5 rounded-lg border border-amber-300 text-xs sm:text-sm font-bold font-mono focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white"
+                  />
+                  <span className="text-xs font-bold text-stone-600 uppercase font-mono px-1">{unitLabel}</span>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Firm & Contact Person */}
+          {/* Field 3: Merged Delivery Location (Mandatory) */}
+          <div>
+            <label className="block text-xs font-bold text-stone-700 mb-1">
+              Delivery Location (City, State, PIN Code) <span className="text-amber-600">*</span>
+            </label>
+            <input
+              type="text"
+              value={deliveryLocation}
+              onChange={(e) => setDeliveryLocation(e.target.value)}
+              placeholder="e.g. Bengaluru, Karnataka 560001 or APMC Mandi, Pune 411037"
+              className="w-full bg-white border border-stone-300 rounded-xl px-3.5 py-3 text-stone-900 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none transition shadow-sm"
+              required
+            />
+          </div>
+
+          {/* Fields 4 & 5: Firm / Company Name & Contact Person (Mandatory) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                Firm / Company Name *
+              <label className="block text-xs font-bold text-stone-700 mb-1">
+                Firm / Company Name <span className="text-amber-600">*</span>
               </label>
               <input
                 type="text"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
                 placeholder="e.g. Kaveri Agro Products Pvt Ltd"
-                className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-900 text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none transition shadow-sm"
+                className="w-full bg-white border border-stone-300 rounded-xl px-3.5 py-3 text-stone-900 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none transition shadow-sm"
                 required
               />
             </div>
-
             <div>
-              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                Contact Person Name *
+              <label className="block text-xs font-bold text-stone-700 mb-1">
+                Contact Person Name <span className="text-amber-600">*</span>
               </label>
               <input
                 type="text"
                 value={contactPerson}
                 onChange={(e) => setContactPerson(e.target.value)}
                 placeholder="e.g. Mr. K. Murthy"
-                className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-900 text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none transition shadow-sm"
+                className="w-full bg-white border border-stone-300 rounded-xl px-3.5 py-3 text-stone-900 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none transition shadow-sm"
                 required
               />
             </div>
           </div>
 
-          {/* Phone & Email */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                WhatsApp Mobile *
-              </label>
+          {/* Field 6: WhatsApp Mobile (Mandatory) */}
+          <div>
+            <label className="block text-xs font-bold text-stone-700 mb-1 flex items-center justify-between">
+              <span>WhatsApp Mobile <span className="text-amber-600">*</span></span>
+              <span className="text-[10px] text-stone-500 font-normal">Primary quote communication channel</span>
+            </label>
+            <div className="relative">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-stone-500 font-mono">
+                +91
+              </span>
               <input
                 type="tel"
                 value={contactPhone}
-                onChange={(e) => setContactPhone(e.target.value)}
-                placeholder="e.g. 9845012345"
-                className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-900 text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none transition shadow-sm font-mono"
+                onChange={(e) => setContactPhone(e.target.value.replace(/[^0-9]/g, ''))}
+                placeholder="9845012345"
+                maxLength={14}
+                className="w-full pl-12 pr-3.5 py-3 bg-white border border-stone-300 rounded-xl text-stone-900 font-mono text-sm font-semibold focus:ring-2 focus:ring-amber-500 focus:outline-none transition shadow-sm"
                 required
               />
             </div>
-
-            <div>
-              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                Business Email (Optional)
-              </label>
-              <input
-                type="email"
-                value={contactEmail}
-                onChange={(e) => setContactEmail(e.target.value)}
-                placeholder="procurement@firm.com"
-                className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-900 text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none transition shadow-sm"
-              />
-            </div>
           </div>
 
-          {/* GSTIN & Unloading Notes */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                GSTIN (Optional for quote)
-              </label>
-              <input
-                type="text"
-                value={gstin}
-                onChange={(e) => setGstin(e.target.value.toUpperCase())}
-                placeholder="29AAAAA0000A1Z5"
-                maxLength={15}
-                className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-900 text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none transition shadow-sm font-mono"
-              />
-            </div>
+          {/* Expandable Optional Business Details */}
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={() => setShowOptionalDetails((prev) => !prev)}
+              className="inline-flex items-center gap-1.5 text-xs font-extrabold text-amber-700 hover:text-amber-800 transition py-1"
+            >
+              {showOptionalDetails ? (
+                <>
+                  <ChevronUp className="w-3.5 h-3.5" />
+                  <span>- Hide additional business details</span>
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-3.5 h-3.5" />
+                  <span>+ Add business details (Optional)</span>
+                </>
+              )}
+            </button>
 
-            <div>
-              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-                Unloading Notes / Siding
-              </label>
-              <input
-                type="text"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="e.g. Canter truck dock available, need early morning delivery"
-                className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-stone-900 text-sm focus:ring-2 focus:ring-emerald-600 focus:outline-none transition shadow-sm"
-              />
-            </div>
+            {showOptionalDetails && (
+              <div className="mt-3 p-4 rounded-2xl bg-stone-50 border border-stone-200/90 space-y-3 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-stone-600 mb-1">
+                      Business Email <span className="text-stone-400 font-normal">(Optional)</span>
+                    </label>
+                    <input
+                      type="email"
+                      value={contactEmail}
+                      onChange={(e) => setContactEmail(e.target.value)}
+                      placeholder="procurement@firm.com"
+                      className="w-full bg-white border border-stone-300 rounded-xl px-3 py-2 text-stone-900 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none transition shadow-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-stone-600 mb-1">
+                      GSTIN <span className="text-stone-400 font-normal">(Optional for quote)</span>
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={15}
+                      value={gstin}
+                      onChange={(e) => setGstin(e.target.value.toUpperCase())}
+                      placeholder="29AAAAA0000A1Z5"
+                      className="w-full bg-white border border-stone-300 rounded-xl px-3 py-2 text-stone-900 font-mono text-xs uppercase focus:ring-2 focus:ring-amber-500 focus:outline-none transition shadow-sm"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-stone-600 mb-1">
+                    Unloading Notes / Siding Instructions <span className="text-stone-400 font-normal">(Optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={unloadingNotes}
+                    onChange={(e) => setUnloadingNotes(e.target.value)}
+                    placeholder="e.g. Canter truck dock available, unload after 6 PM"
+                    className="w-full bg-white border border-stone-300 rounded-xl px-3 py-2 text-stone-900 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none transition shadow-sm"
+                  />
+                </div>
+
+                {/* Export Enquiry Toggle */}
+                <div className="pt-1 border-t border-stone-200">
+                  <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-stone-700">
+                    <input
+                      type="checkbox"
+                      checked={isExportEnquiry}
+                      onChange={(e) => setIsExportEnquiry(e.target.checked)}
+                      className="rounded text-amber-600 focus:ring-amber-500 h-4 w-4"
+                    />
+                    <span className="flex items-center gap-1.5">
+                      <Globe className="w-3.5 h-3.5 text-stone-500" />
+                      <span>This is an International / Export Container Enquiry (FOB / CIF)</span>
+                    </span>
+                  </label>
+
+                  {isExportEnquiry && (
+                    <div className="mt-2.5">
+                      <label className="block text-[11px] font-bold text-stone-600 mb-1">
+                        Destination Export Country / Discharge Port
+                      </label>
+                      <select
+                        value={destinationCountry}
+                        onChange={(e) => setDestinationCountry(e.target.value)}
+                        className="w-full bg-white border border-stone-300 rounded-xl px-3 py-2 text-stone-900 text-xs font-semibold focus:ring-2 focus:ring-amber-500 focus:outline-none transition shadow-sm"
+                      >
+                        <option value="India">🇮🇳 India (Domestic Mandi)</option>
+                        {EXPORT_COUNTRIES.map((c) => (
+                          <option key={c.code} value={c.name}>
+                            {c.flag} {c.name} — {c.majorPort}
+                          </option>
+                        ))}
+                        <option value="Other International">🌐 Other International Destination Port</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Turnstile Bot Protection */}
+          {/* Turnstile Security Challenge */}
           <div className="pt-1">
             <TurnstileChallenge onToken={setTurnstileToken} />
           </div>
 
-          {/* Action Row */}
-          <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-stone-200">
-            <div className="flex items-center gap-2 text-stone-600 text-xs">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-              <span>GST compliant e-invoice &amp; certified weighbridge slip provided.</span>
-            </div>
-
+          {/* Vibrant Orange CTA Button */}
+          <div className="space-y-2 pt-2">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#d97706] hover:bg-[#b45309] text-white font-bold text-sm px-8 py-3.5 rounded-xl shadow-lg transition disabled:opacity-50 cursor-pointer"
+              className="w-full bg-linear-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 active:scale-[0.99] text-white font-extrabold text-sm sm:text-base py-3.5 px-6 rounded-2xl shadow-lg shadow-orange-950/20 transition flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-60"
             >
-              {isSubmitting ? (
-                <>
-                  <Clock className="w-4 h-4 animate-spin" />
-                  <span>Submitting Quotation...</span>
-                </>
-              ) : (
-                <>
-                  <span>Submit Wholesale RFQ</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
+              <span>{isSubmitting ? 'Submitting Quotation Request…' : 'Submit Wholesale RFQ →'}</span>
             </button>
+
+            <p className="text-[11px] text-stone-500 text-center flex items-center justify-center gap-1.5 font-medium">
+              <span className="text-emerald-700 font-bold">✓ GST-compliant e-invoice</span>
+              <span>&bull;</span>
+              <span>Weighbridge slip provided</span>
+              <span>&bull;</span>
+              <span>Spot mandi rate in 90 mins</span>
+            </p>
           </div>
         </form>
       </div>
 
-      {/* Trust & Guarantee Callouts */}
+      {/* Assurance Badges Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-2">
-          <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center">
-            <Clock className="w-5 h-5" />
+        <div className="bg-white border border-stone-200 rounded-2xl p-4 flex items-center gap-3 shadow-sm">
+          <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center shrink-0">
+            <Clock className="w-4 h-4" />
           </div>
-          <h4 className="font-bold text-stone-900 text-sm">90-Minute Response</h4>
-          <p className="text-stone-500 text-xs leading-relaxed">
-            Direct pricing docket calculated based on live Tiptur and APMC Mandi market arrivals.
-          </p>
+          <div>
+            <h4 className="text-xs font-bold text-stone-900">48-Hour Rate Lock</h4>
+            <p className="text-[11px] text-stone-500">Protection against Mandi spot spikes</p>
+          </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-2">
-          <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
-            <ShieldCheck className="w-5 h-5" />
+        <div className="bg-white border border-stone-200 rounded-2xl p-4 flex items-center gap-3 shadow-sm">
+          <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center shrink-0">
+            <FileCheck2 className="w-4 h-4" />
           </div>
-          <h4 className="font-bold text-stone-900 text-sm">48-Hour Price Lock</h4>
-          <p className="text-stone-500 text-xs leading-relaxed">
-            Hedge against daily spot rate volatility with guaranteed fixed quote validity.
-          </p>
+          <div>
+            <h4 className="text-xs font-bold text-stone-900">GST Input Tax Credit</h4>
+            <p className="text-[11px] text-stone-500">Full 100% compliant e-invoicing</p>
+          </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-2">
-          <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center">
-            <FileCheck2 className="w-5 h-5" />
+        <div className="bg-white border border-stone-200 rounded-2xl p-4 flex items-center gap-3 shadow-sm">
+          <div className="w-9 h-9 rounded-xl bg-lime-50 text-[#3b6d11] flex items-center justify-center shrink-0">
+            <ShieldCheck className="w-4 h-4" />
           </div>
-          <h4 className="font-bold text-stone-900 text-sm">Complete Compliance</h4>
-          <p className="text-stone-500 text-xs leading-relaxed">
-            FSSAI Lic. 21224195000438, DGFT IEC 0724018925, and verified e-way bills.
-          </p>
+          <div>
+            <h4 className="text-xs font-bold text-stone-900">Origin Certified</h4>
+            <p className="text-[11px] text-stone-500">Zero broker markups direct from yard</p>
+          </div>
         </div>
       </div>
     </div>

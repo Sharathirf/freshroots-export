@@ -264,3 +264,178 @@ export function sortProductsByBulkOrder<T extends { sku?: string; slug?: string;
     return orderA - orderB;
   });
 }
+
+export interface VolumeOption {
+  value: string;
+  label: string;
+  unitLabel: string;
+}
+
+export function getBulkOrderVolumeOptions(item?: {
+  sku?: string;
+  slug?: string;
+  title?: string;
+}): VolumeOption[] {
+  const meta = getBulkOrderItemMeta(item);
+  const order = meta?.order ?? 0;
+
+  switch (order) {
+    case 1: // 1. Tender Coconut
+      return [
+        { value: '1000', label: '1,000 pieces (Mini Canter)', unitLabel: 'pieces' },
+        { value: '2500', label: '2,500 pieces (Canter Load)', unitLabel: 'pieces' },
+        { value: '5000', label: '5,000 pieces (Full Truckload)', unitLabel: 'pieces' },
+        { value: '10000', label: '10,000 pieces (Lorry Consignment)', unitLabel: 'pieces' },
+        { value: 'custom', label: 'Custom Quantity…', unitLabel: 'pieces' },
+      ];
+
+    case 2: // 2. Arecanut Plants
+      return [
+        { value: '100', label: '100 Plants (Orchard Starter)', unitLabel: 'Plants' },
+        { value: '250', label: '250 Plants (Farm Acre Lot)', unitLabel: 'Plants' },
+        { value: '500', label: '500 Plants (Plantation Lot)', unitLabel: 'Plants' },
+        { value: '1000', label: '1,000 Plants (Commercial Orchard)', unitLabel: 'Plants' },
+        { value: '2500', label: '2,500 Plants (Full Nursery Truck)', unitLabel: 'Plants' },
+        { value: 'custom', label: 'Custom Quantity…', unitLabel: 'Plants' },
+      ];
+
+    case 3: // 3. Coconut Plants
+      return [
+        { value: '50', label: '50 Plants (1 Yr Old, 2 Ft)', unitLabel: 'Plants' },
+        { value: '100', label: '100 Plants (Orchard Starter)', unitLabel: 'Plants' },
+        { value: '250', label: '250 Plants (Estate Block)', unitLabel: 'Plants' },
+        { value: '500', label: '500 Plants (Canter Load)', unitLabel: 'Plants' },
+        { value: '1000', label: '1,000 Plants (10-Wheeler Truckload)', unitLabel: 'Plants' },
+        { value: 'custom', label: 'Custom Quantity…', unitLabel: 'Plants' },
+      ];
+
+    case 4: // 4. Ragi Millet
+      return [
+        { value: '250', label: '250 kg (10 Bags of 25kg)', unitLabel: 'kg' },
+        { value: '500', label: '500 kg (5 Quintals)', unitLabel: 'kg' },
+        { value: '1000', label: '1,000 kg (1 Metric Tonne)', unitLabel: 'kg' },
+        { value: '2500', label: '2,500 kg (2.5 MT Tempo Load)', unitLabel: 'kg' },
+        { value: '5000', label: '5,000 kg (5 MT Full Truckload)', unitLabel: 'kg' },
+        { value: 'custom', label: 'Custom Quantity…', unitLabel: 'kg' },
+      ];
+
+    case 5: // 5. Groundnut Oil
+      return [
+        { value: '50', label: '50 Litres (Commercial Cans)', unitLabel: 'Litres' },
+        { value: '100', label: '100 Litres (Wholesale Batch)', unitLabel: 'Litres' },
+        { value: '250', label: '250 Litres (Half Barrel Lot)', unitLabel: 'Litres' },
+        { value: '500', label: '500 Litres (Commercial Barrel Lot)', unitLabel: 'Litres' },
+        { value: '1000', label: '1,000 Litres (Bulk Tanker / Drum Lot)', unitLabel: 'Litres' },
+        { value: 'custom', label: 'Custom Quantity…', unitLabel: 'Litres' },
+      ];
+
+    case 6: // 6. Cow Ghee
+      return [
+        { value: '25', label: '25 Litres (Commercial Cans)', unitLabel: 'Litres' },
+        { value: '50', label: '50 Litres (Wholesale Batch)', unitLabel: 'Litres' },
+        { value: '100', label: '100 Litres (Commercial Lot)', unitLabel: 'Litres' },
+        { value: '250', label: '250 Litres (Bulk Dispatch)', unitLabel: 'Litres' },
+        { value: 'custom', label: 'Custom Quantity…', unitLabel: 'Litres' },
+      ];
+
+    case 7: // 7. Mature Coconuts
+      return [
+        { value: '500', label: '500 Nuts (10 Bags of 50)', unitLabel: 'Nuts' },
+        { value: '1000', label: '1,000 Nuts (20 Bags of 50)', unitLabel: 'Nuts' },
+        { value: '2500', label: '2,500 Nuts (Tempo Mini Lot)', unitLabel: 'Nuts' },
+        { value: '5000', label: '5,000 Nuts (Canter Truckload)', unitLabel: 'Nuts' },
+        { value: '10000', label: '10,000 Nuts (Full 10-Wheeler Truck)', unitLabel: 'Nuts' },
+        { value: 'custom', label: 'Custom Quantity…', unitLabel: 'Nuts' },
+      ];
+
+    case 8: // 8. Ball Copra
+      return [
+        { value: '500', label: '500 kg (20 Master Boxes of 25kg)', unitLabel: 'kg' },
+        { value: '1000', label: '1,000 kg (1 Metric Tonne)', unitLabel: 'kg' },
+        { value: '2500', label: '2,500 kg (2.5 MT Tempo Load)', unitLabel: 'kg' },
+        { value: '5000', label: '5,000 kg (5 MT Truckload)', unitLabel: 'kg' },
+        { value: '10000', label: '10,000 kg (10 MT Lorry Consignment)', unitLabel: 'kg' },
+        { value: 'custom', label: 'Custom Quantity…', unitLabel: 'kg' },
+      ];
+
+    case 9: // 9. Fresh Ginger
+      return [
+        { value: '250', label: '250 kg (5 Sacks of 50kg)', unitLabel: 'kg' },
+        { value: '500', label: '500 kg (10 Sacks of 50kg)', unitLabel: 'kg' },
+        { value: '1000', label: '1,000 kg (1 Metric Tonne)', unitLabel: 'kg' },
+        { value: '2500', label: '2,500 kg (Tempo Load)', unitLabel: 'kg' },
+        { value: '5000', label: '5,000 kg (5 MT Canter Load)', unitLabel: 'kg' },
+        { value: 'custom', label: 'Custom Quantity…', unitLabel: 'kg' },
+      ];
+
+    case 10: // 10. Coconut Shells
+      return [
+        { value: '1000', label: '1 Metric Tonne (1,000 kg)', unitLabel: 'Tonnes' },
+        { value: '3000', label: '3 Metric Tonnes (Tempo Load)', unitLabel: 'Tonnes' },
+        { value: '5000', label: '5 Metric Tonnes (Canter Truckload)', unitLabel: 'Tonnes' },
+        { value: '10000', label: '10 Metric Tonnes (10-Wheeler Truckload)', unitLabel: 'Tonnes' },
+        { value: '20000', label: '20 Metric Tonnes (Multi-Axle Lorry)', unitLabel: 'Tonnes' },
+        { value: 'custom', label: 'Custom Quantity…', unitLabel: 'Tonnes' },
+      ];
+
+    case 11: // 11. Arecanut (Adike)
+      return [
+        { value: '100', label: '100 kg (1 Quintal)', unitLabel: 'kg' },
+        { value: '250', label: '250 kg (2.5 Quintals)', unitLabel: 'kg' },
+        { value: '500', label: '500 kg (5 Quintals)', unitLabel: 'kg' },
+        { value: '1000', label: '1,000 kg (1 Metric Tonne)', unitLabel: 'kg' },
+        { value: '5000', label: '5,000 kg (5 MT Full Truckload)', unitLabel: 'kg' },
+        { value: 'custom', label: 'Custom Quantity…', unitLabel: 'kg' },
+      ];
+
+    case 12: // 12. Ragi Flour
+    case 13: // 13. Rice Flour
+      return [
+        { value: '250', label: '250 kg (10 Bags of 25kg)', unitLabel: 'kg' },
+        { value: '500', label: '500 kg (5 Quintals)', unitLabel: 'kg' },
+        { value: '1000', label: '1,000 kg (1 Metric Tonne)', unitLabel: 'kg' },
+        { value: '2500', label: '2,500 kg (2.5 MT Tempo Load)', unitLabel: 'kg' },
+        { value: '5000', label: '5,000 kg (5 MT Full Truckload)', unitLabel: 'kg' },
+        { value: 'custom', label: 'Custom Quantity…', unitLabel: 'kg' },
+      ];
+
+    case 14: // 14. Coconut Oil
+      return [
+        { value: '50', label: '50 Litres (Commercial Cans)', unitLabel: 'Litres' },
+        { value: '100', label: '100 Litres (Wholesale Batch)', unitLabel: 'Litres' },
+        { value: '250', label: '250 Litres (Half Barrel Lot)', unitLabel: 'Litres' },
+        { value: '500', label: '500 Litres (Commercial Barrel Lot)', unitLabel: 'Litres' },
+        { value: '1000', label: '1,000 Litres (Bulk Tanker / Drum Lot)', unitLabel: 'Litres' },
+        { value: 'custom', label: 'Custom Quantity…', unitLabel: 'Litres' },
+      ];
+
+    case 15: // 15. Coconut Shell Charcoal
+      return [
+        { value: '1000', label: '1 Metric Tonne (1,000 kg)', unitLabel: 'Tonnes' },
+        { value: '3000', label: '3 Metric Tonnes (Tempo Load)', unitLabel: 'Tonnes' },
+        { value: '5000', label: '5 Metric Tonnes (Canter Truckload)', unitLabel: 'Tonnes' },
+        { value: '10000', label: '10 Metric Tonnes (10-Wheeler Truckload)', unitLabel: 'Tonnes' },
+        { value: '20000', label: '20 Metric Tonnes (Multi-Axle Lorry)', unitLabel: 'Tonnes' },
+        { value: 'custom', label: 'Custom Quantity…', unitLabel: 'Tonnes' },
+      ];
+
+    case 16: // 16. Cocopeat Blocks
+      return [
+        { value: '100', label: '100 Blocks (~500 kg Pallet)', unitLabel: 'Blocks' },
+        { value: '250', label: '250 Blocks (~1.25 Metric Tonnes)', unitLabel: 'Blocks' },
+        { value: '500', label: '500 Blocks (~2.5 MT Mini Canter)', unitLabel: 'Blocks' },
+        { value: '1000', label: '1,000 Blocks (~5 MT Truckload)', unitLabel: 'Blocks' },
+        { value: '2000', label: '2,000 Blocks (~10 MT Lorry Consignment)', unitLabel: 'Blocks' },
+        { value: 'custom', label: 'Custom Quantity…', unitLabel: 'Blocks' },
+      ];
+
+    default:
+      return [
+        { value: '500', label: '500 Units', unitLabel: 'Units' },
+        { value: '1000', label: '1,000 Units', unitLabel: 'Units' },
+        { value: '2500', label: '2,500 Units', unitLabel: 'Units' },
+        { value: '5000', label: '5,000 Units', unitLabel: 'Units' },
+        { value: 'custom', label: 'Custom Quantity…', unitLabel: 'Units' },
+      ];
+  }
+}
