@@ -516,7 +516,7 @@ export default function AdminPage() {
       })
     });
     const json = await res.json();
-    if (!json.success) throw new Error(json.error || 'Failed to reject RFQ');
+    if (!json.success) throw new Error(json.details ? `${json.error} (${json.details})` : json.error || 'Failed to reject RFQ');
     fetchData();
     setProductSuccessMsg(`Quotation rejected: ${data.rejection_category}`);
     setTimeout(() => setProductSuccessMsg(null), 3000);
@@ -533,7 +533,7 @@ export default function AdminPage() {
       })
     });
     const json = await res.json();
-    if (!json.success) throw new Error(json.error || 'Failed to reopen RFQ');
+    if (!json.success) throw new Error(json.details ? `${json.error} (${json.details})` : json.error || 'Failed to reopen RFQ');
     fetchData();
     setProductSuccessMsg('RFQ successfully reopened into Under Review');
     setTimeout(() => setProductSuccessMsg(null), 3000);

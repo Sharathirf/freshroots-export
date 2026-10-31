@@ -191,22 +191,22 @@ export async function PATCH(request: NextRequest) {
     const newFreight = freight_charges_inr !== undefined ? Number(freight_charges_inr) : Number(q.freight_charges_inr);
     const newTotal = (newUnitPrice * q.requested_quantity) + newFreight;
 
-    // 4. Update wholesale_quotations record
+    // 4. Update wholesale_quotations record with explicit type casts to avoid PostgreSQL 42P08 parameter deduction errors
     const updated = await query(
       `UPDATE wholesale_quotations 
        SET proposed_unit_price_inr = $1,
            freight_charges_inr = $2,
            total_quote_inr = $3,
-           status = $4,
+           status = $4::varchar,
            notes = COALESCE($5, notes),
            internal_notes = COALESCE($6, internal_notes),
            sales_owner_name = COALESCE($7, sales_owner_name),
            operations_owner_name = COALESCE($8, operations_owner_name),
-           rejection_category = CASE WHEN $4 = 'rejected' THEN $9 ELSE rejection_category END,
-           rejection_reason = CASE WHEN $4 = 'rejected' THEN $10 ELSE rejection_reason END,
-           rejection_notes = CASE WHEN $4 = 'rejected' THEN $11 ELSE rejection_notes END,
-           rejection_actor = CASE WHEN $4 = 'rejected' THEN $12 ELSE rejection_actor END,
-           rejection_timestamp = CASE WHEN $4 = 'rejected' THEN NOW() ELSE rejection_timestamp END,
+           rejection_category = CASE WHEN $4::text = 'rejected' THEN $9 ELSE rejection_category END,
+           rejection_reason = CASE WHEN $4::text = 'rejected' THEN $10 ELSE rejection_reason END,
+           rejection_notes = CASE WHEN $4::text = 'rejected' THEN $11 ELSE rejection_notes END,
+           rejection_actor = CASE WHEN $4::text = 'rejected' THEN $12 ELSE rejection_actor END,
+           rejection_timestamp = CASE WHEN $4::text = 'rejected' THEN NOW() ELSE rejection_timestamp END,
            reopen_reason = CASE WHEN $13::text IS NOT NULL AND $13::text != '' THEN $13 ELSE reopen_reason END,
            reopened_by = CASE WHEN $13::text IS NOT NULL AND $13::text != '' THEN $12 ELSE reopened_by END,
            reopened_at = CASE WHEN $13::text IS NOT NULL AND $13::text != '' THEN NOW() ELSE reopened_at END,
