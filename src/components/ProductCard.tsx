@@ -7,7 +7,7 @@ import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { ShoppingBag, Star, Building2, Heart } from 'lucide-react';
 import { useWishlist } from '@/context/WishlistContext';
-import { getProductVariants, getDefaultVariant, ProductVariant } from '@/lib/variants';
+import { getDefaultVariant } from '@/lib/variants';
 import { track } from '@/lib/analytics';
 import { getProductImageUrl } from '@/lib/product-images';
 
@@ -100,10 +100,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
   const { lang } = useAuth();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const isWishlisted = isInWishlist(product.id);
-  const variants = getProductVariants(product.sku);
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
-    getDefaultVariant(product.sku)
-  );
+  const defaultVariant = getDefaultVariant(product.sku);
   const [arecanutMandiRate, setArecanutMandiRate] = useState(FALLBACK_ARECANUT_RATE);
   const cardRef = useRef<HTMLElement>(null);
 
@@ -157,7 +154,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
   const meta = commodityMetadata[product.sku];
   const displayEmoji = meta?.emoji || '🌿';
 
-  const rawActivePrice = selectedVariant ? selectedVariant.price : Number(product.retail_price_inr);
+  const rawActivePrice = defaultVariant ? defaultVariant.price : Number(product.retail_price_inr);
   const displayPrice = product.sku === 'COC-TND-BLK-LOT' ? 95 : rawActivePrice;
   const originalMrp = Math.round(displayPrice / 0.85);
 
@@ -190,8 +187,8 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
     product.category !== 'arecanut'
   );
 
-  const unitSubtitle = selectedVariant ? selectedVariant.packSize : product.unit_of_measure;
-  const priceUnit = selectedVariant?.unitOfMeasure || product.unit_of_measure;
+  const unitSubtitle = defaultVariant ? defaultVariant.packSize : product.unit_of_measure;
+  const priceUnit = defaultVariant?.unitOfMeasure || product.unit_of_measure;
   const reviewCount = Number(product.review_count || 0);
   const averageRating = Number(product.average_rating || 0);
   const displayImageUrl = getProductImageUrl(product.sku, product.image_url);
@@ -252,7 +249,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
     >
       <div className="flex flex-col flex-1">
         {/* 1. Sale/Grade Badge & Wishlist Action, 2. Product Image */}
-        <div className="relative h-36 sm:h-40 md:h-44 w-full overflow-hidden bg-stone-50/80 p-2 sm:p-2.5 flex items-center justify-center select-none border-b border-stone-100/80">
+        <div className="relative h-28 sm:h-32 md:h-36 w-full overflow-hidden bg-stone-50/80 p-2 sm:p-2.5 flex items-center justify-center select-none border-b border-stone-100/80">
           <Link href={`/products/${product.slug}`} className="block relative w-full h-full flex items-center justify-center">
             <img
               src={displayImageUrl}
@@ -309,7 +306,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
         </div>
 
         {/* 3. Category & Supporting Metadata, 4. Title, 5. Ratings, 6. Pricing */}
-        <div className="p-3 sm:p-3.5 flex flex-col flex-1">
+        <div className="p-2.5 sm:p-3 flex flex-col flex-1">
           {/* Category & Unit Subtitle */}
           <div className="flex items-center justify-between gap-1.5 text-[10px] font-medium">
             <span className="text-[#3b6d11] font-bold uppercase tracking-wider text-[9px] select-none">
@@ -322,7 +319,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
 
           {/* Product Title */}
           <Link href={`/products/${product.slug}`} className="mt-0.5 block">
-            <h3 className="font-bold text-stone-900 text-xs sm:text-sm leading-snug group-hover:text-[#3b6d11] transition line-clamp-2 min-h-[2rem] sm:min-h-[2.4rem]">
+            <h3 className="font-bold text-stone-900 text-xs sm:text-sm leading-snug group-hover:text-[#3b6d11] transition line-clamp-2 min-h-[1.8rem] sm:min-h-[2.2rem]">
               {lang === 'kn' && meta?.titleKn ? meta.titleKn : product.title}
             </h3>
           </Link>
@@ -353,37 +350,8 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
             </Link>
           </div>
 
-          {/* Packaging / Variant Selection pills if available */}
-          {variants && variants.length > 0 && !isBulkOnly ? (
-            <div className="mt-1.5 pt-1.5 border-t border-stone-100">
-              <div className="flex flex-wrap gap-1">
-                {variants.map((v) => {
-                  const isSelected = selectedVariant?.packSize === v.packSize;
-                  return (
-                    <button
-                      key={v.packSize}
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setSelectedVariant(v);
-                      }}
-                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded transition select-none ${
-                        isSelected
-                          ? 'bg-emerald-50 text-emerald-950 border border-emerald-600 ring-1 ring-emerald-600'
-                          : 'bg-stone-50 text-stone-600 border border-stone-200 hover:bg-stone-100'
-                      }`}
-                    >
-                      {v.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ) : null}
-
           {/* Pricing Section (Price, original price, discount, and supporting information) */}
-          <div className="mt-2 pt-2 border-t border-stone-100">
+          <div className="mt-1.5 pt-1.5 border-t border-stone-100">
             {product.category === 'arecanut' && isBulkOnly ? (
               <div className="flex flex-col gap-0.5">
                 <div className="flex items-center gap-1.5 flex-wrap">
@@ -443,7 +411,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
       </div>
 
       {/* 8. Primary Purchase Action & 9. Secondary Wholesale Action */}
-      <div className="p-3 sm:p-3.5 pt-0 mt-auto flex flex-col gap-1.5">
+      <div className="p-2.5 sm:p-3 pt-0 mt-auto flex flex-col gap-1.5">
         {isBulkOnly ? (
           <button
             type="button"
@@ -457,7 +425,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
           <>
             <button
               type="button"
-              onClick={() => addToCart(product, 1, selectedVariant || undefined)}
+              onClick={() => addToCart(product, 1, defaultVariant || undefined)}
               className="w-full bg-[#3b6d11] hover:bg-[#2d5a0b] active:scale-[0.98] text-white font-bold text-xs py-2 px-3 rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 group/btn select-none"
             >
               <ShoppingBag className="w-3.5 h-3.5" />

@@ -20,7 +20,7 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
       weightKg: 0.5,
       unitOfMeasure: '500 ml Glass Jar',
       title: 'Farm-Fresh Pure Desi Cow Ghee (500 ml Glass Jar)',
-      isDefault: false
+      isDefault: true
     },
     {
       packSize: '1 Litre Glass Jar',
@@ -29,7 +29,7 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
       weightKg: 1.0,
       unitOfMeasure: '1 Litre Glass Jar',
       title: 'Farm-Fresh Pure Desi Cow Ghee (1 Litre Glass Jar)',
-      isDefault: true
+      isDefault: false
     }
   ],
 
@@ -166,7 +166,7 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
       weightKg: 0.46,
       unitOfMeasure: '500 ml Bottle',
       title: 'Wood-Pressed Coconut Oil (500 ml Bottle)',
-      isDefault: false
+      isDefault: true
     },
     {
       packSize: '1 Litre Bottle',
@@ -175,7 +175,7 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
       weightKg: 0.92,
       unitOfMeasure: '1 Litre Bottle',
       title: 'Wood-Pressed Coconut Oil (1 Litre Bottle)',
-      isDefault: true
+      isDefault: false
     },
     {
       packSize: '5 Litre Can',
@@ -197,7 +197,7 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
       weightKg: 0.46,
       unitOfMeasure: '500 ml Bottle',
       title: 'Wood-Pressed Groundnut Oil (500 ml Bottle)',
-      isDefault: false
+      isDefault: true
     },
     {
       packSize: '1 Litre Bottle',
@@ -206,7 +206,7 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
       weightKg: 0.92,
       unitOfMeasure: '1 Litre Bottle',
       title: 'Wood-Pressed Groundnut Oil (1 Litre Bottle)',
-      isDefault: true
+      isDefault: false
     },
     {
       packSize: '5 Litre Can',
@@ -227,7 +227,8 @@ export function getProductVariants(sku: string): ProductVariant[] | null {
 export function getDefaultVariant(sku: string): ProductVariant | null {
   const variants = PRODUCT_VARIANTS[sku];
   if (!variants || variants.length === 0) return null;
-  return variants.find((v) => v.isDefault) || variants[0];
+  // Always return the lowest price variant by default
+  return [...variants].sort((a, b) => a.price - b.price)[0];
 }
 
 export function findMatchingVariant(
