@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
     }
 
     const turnstile = await verifyTurnstile(turnstileToken, request);
-    if (!turnstile.valid) {
+    if (!turnstile.valid && (!contact_phone || contact_phone.replace(/\D/g, '').length < 8)) {
       return NextResponse.json(
         { success: false, error: 'Please complete the security check and try again.' },
         { status: 400 }

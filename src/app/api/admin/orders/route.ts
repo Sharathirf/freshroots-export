@@ -39,7 +39,7 @@ export async function PATCH(request: NextRequest) {
   const client = await pool.connect();
   try {
     const body = await request.json();
-    const { id, next_status, tracking_reference } = body;
+    const { id, next_status, tracking_reference, carrier_name, payment_status, admin_notes } = body;
 
     if (!id || !next_status) {
       return NextResponse.json(
@@ -105,20 +105,29 @@ export async function PATCH(request: NextRequest) {
       }
     }
 
+    const newNotes = admin_notes && typeof admin_notes === 'string' && admin_notes.trim()
+      ? (o.admin_notes ? `${o.admin_notes} | [${new Date().toISOString().slice(0, 16)}] ${admin_notes.trim()}` : admin_notes.trim())
+      : o.admin_notes;
+
+    const newPaymentStatus = payment_status || (next_status === 'paid' ? 'paid' : o.payment_status);
+
     const updated = await client.query(
       `UPDATE orders 
        SET status = $1,
            tracking_reference = COALESCE($2, tracking_reference),
+           carrier_name = COALESCE($3, carrier_name),
+           payment_status = $4,
+           admin_notes = $5,
            updated_at = NOW()
-       WHERE id = $3
+       WHERE id = $6
        RETURNING *`,
-      [next_status, tracking_reference || null, id]
+      [next_status, tracking_reference || null, carrier_name || null, newPaymentStatus, newNotes, id]
     );
 
     await client.query(
       `INSERT INTO audit_logs (action, entity_type, entity_id, details)
        VALUES ('ORDER_STATUS_CHANGED', 'orders', $1, $2)`,
-      [id, JSON.stringify({ from: o.status, to: next_status, order_number: o.order_number })]
+      [id, JSON.stringify({ from: o.status, to: next_status, order_number: o.order_number, comment: admin_notes || null })]
     );
 
     await client.query('COMMIT');

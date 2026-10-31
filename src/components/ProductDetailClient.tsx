@@ -381,12 +381,6 @@ export default function ProductDetailClient({
                 alt={product.title}
               />
 
-              {/* Grade Badge */}
-              <div className="absolute top-4 left-4 z-10 bg-white/95 backdrop-blur-sm text-stone-900 text-xs font-bold px-3 py-1 rounded-lg border border-stone-200 shadow-sm flex items-center gap-1.5">
-                <span>{getCommodityEmoji(product.category)}</span>
-                <span>{product.grade || 'Grade A'}</span>
-              </div>
-
               {/* Wishlist Button */}
               <button
                 type="button"
@@ -400,12 +394,6 @@ export default function ProductDetailClient({
                   }`}
                 />
               </button>
-
-              {/* Verified Origin Badge */}
-              <div className="absolute bottom-4 left-4 z-10 bg-emerald-950/90 text-white text-[11px] font-medium px-3 py-1 rounded-lg shadow-sm flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Verified Mandya Farm Gate</span>
-              </div>
             </div>
 
             {/* Micro USP Banner below image */}

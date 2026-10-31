@@ -15,6 +15,15 @@ interface PageStat {
   uniqueUsers: number;
 }
 
+interface RecentVisitor {
+  visitorId: string;
+  deviceType: string;
+  deviceName: string;
+  location: string;
+  path: string;
+  createdAt: string;
+}
+
 interface AnalyticsData {
   timeframe: {
     day: TimeframeStats;
@@ -27,6 +36,7 @@ interface AnalyticsData {
     desktop: number;
   };
   topPages: PageStat[];
+  recentVisitors?: RecentVisitor[];
   activeNow: number;
 }
 
@@ -357,6 +367,70 @@ export default function SiteVisitorCounter() {
             </p>
           </div>
         </div>
+
+        {/* Live Visitor Sessions: Device Name & User Location Inspection */}
+        {data.recentVisitors && data.recentVisitors.length > 0 && (
+          <div className="bg-stone-800/40 border border-stone-800 rounded-3xl p-5 sm:p-6 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <Globe className="w-4 h-4 text-emerald-400" />
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                  Live User Sessions: Real-Time Location &amp; Device Inspection
+                </h3>
+              </div>
+              <span className="text-[11px] text-emerald-400 font-mono font-medium">
+                Showing latest {data.recentVisitors.length} active sessions
+              </span>
+            </div>
+
+            <div className="divide-y divide-stone-800/80 border border-stone-800/80 rounded-2xl overflow-hidden bg-stone-900/90 text-xs">
+              <div className="grid grid-cols-12 px-4 py-2.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider bg-stone-950/60">
+                <div className="col-span-3 sm:col-span-3">Visitor Device ID</div>
+                <div className="col-span-3 sm:col-span-3">Device &amp; OS</div>
+                <div className="col-span-3 sm:col-span-3">User Location</div>
+                <div className="col-span-3 sm:col-span-3 text-right">Viewed Route &amp; Time</div>
+              </div>
+
+              {data.recentVisitors.map((vis, vIdx) => (
+                <div
+                  key={vIdx}
+                  className="grid grid-cols-12 px-4 py-3 items-center hover:bg-stone-800/40 transition gap-2"
+                >
+                  {/* Visitor ID */}
+                  <div className="col-span-3 sm:col-span-3 font-mono text-[11px] text-emerald-300 truncate flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
+                    <span title={vis.visitorId}>{vis.visitorId}</span>
+                  </div>
+
+                  {/* Device Name */}
+                  <div className="col-span-3 sm:col-span-3 text-stone-200">
+                    <span className="font-semibold block truncate" title={vis.deviceName}>
+                      {vis.deviceName}
+                    </span>
+                    <span className="text-[10px] uppercase font-bold text-stone-500 font-mono">
+                      {vis.deviceType}
+                    </span>
+                  </div>
+
+                  {/* Location */}
+                  <div className="col-span-3 sm:col-span-3 text-stone-300 truncate text-[11px]" title={vis.location}>
+                    <span className="font-medium">{vis.location}</span>
+                  </div>
+
+                  {/* Path & Timestamp */}
+                  <div className="col-span-3 sm:col-span-3 text-right">
+                    <span className="font-mono text-stone-200 text-[11px] truncate block" title={vis.path}>
+                      {vis.path}
+                    </span>
+                    <span className="text-[10px] text-stone-500 font-mono">
+                      {new Date(vis.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

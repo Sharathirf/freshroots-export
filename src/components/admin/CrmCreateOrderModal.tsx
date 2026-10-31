@@ -501,7 +501,13 @@ export default function CrmCreateOrderModal({
             </div>
           </div>
 
-          {/* Action Buttons */}
+          {/* Action Buttons & Bottom Error Alert */}
+          {errorMsg && (
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 font-medium text-xs">
+              ⚠️ {errorMsg}
+            </div>
+          )}
+
           <div className="pt-4 border-t border-stone-200 flex justify-end gap-3">
             <button
               type="button"

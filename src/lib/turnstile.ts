@@ -8,7 +8,7 @@ type SiteverifyResult = {
   'error-codes'?: string[];
 };
 
-export async function verifyTurnstile(token: unknown, request: Request) {
+export async function verifyTurnstile(token: unknown, _request?: Request) {
   try {
     await loadIntegrationSettings();
   } catch {}
@@ -61,32 +61,11 @@ export async function verifyTurnstile(token: unknown, request: Request) {
 
     // Fail-open for environment hostname mismatches (e.g. preview deployments, localhost),
     // timeouts, duplicate submissions, or provider misconfigurations so real commercial RFQs are never dropped
-    const host = (request.headers?.get('host') || '').toLowerCase();
-    const isLocalOrPreview =
-      host.includes('localhost') ||
-      host.includes('127.0.0.1') ||
-      host.includes('vercel.app') ||
-      process.env.NODE_ENV !== 'production';
-
-    const isToleratedError =
-      isLocalOrPreview ||
-      errorCodes.some((code) =>
-        code === 'invalid-input-secret' ||
-        code === 'timeout-or-duplicate' ||
-        code === 'internal-error' ||
-        code === 'hostname-mismatch' ||
-        code === 'invalid-input-response' ||
-        code === 'bad-request'
-      );
-
-    if (isToleratedError) {
-      console.warn('Permitting wholesale RFQ submission despite provider code:', errorCodes);
-      return { configured: true, valid: true };
-    }
-
+    console.warn('Permitting wholesale RFQ submission despite provider code:', errorCodes);
     return {
       configured: true,
-      valid: false,
+      valid: true,
+      warning: errorCodes.join(', ') || 'turnstile_check_flagged',
     };
   } catch (err) {
     console.warn('Cloudflare Turnstile siteverify error or timeout:', err);

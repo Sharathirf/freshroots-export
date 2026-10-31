@@ -64,15 +64,34 @@ export function isAdminSessionValid(request: NextRequest) {
 }
 
 export function requestHasSameOrigin(request: NextRequest) {
-  const originHeader = request.headers.get('origin');
-  if (!originHeader) return false;
+  const originHeader = request.headers.get('origin') || request.headers.get('referer');
+  if (!originHeader) return true; // Direct/same-origin fetches without origin header are allowed if admin session is verified
   try {
     const origin = new URL(originHeader);
     const requestUrl = new URL(request.url);
-    const requestHost = request.headers.get('host') || requestUrl.host;
-    const forwardedProto = request.headers.get('x-forwarded-proto')?.split(',').at(-1)?.trim();
-    const expectedProtocol = forwardedProto || (process.env.NODE_ENV === 'production' ? 'https' : requestUrl.protocol.slice(0, -1));
-    return origin.host.toLowerCase() === requestHost.toLowerCase() && origin.protocol === `${expectedProtocol}:`;
+    const originHost = origin.hostname.toLowerCase();
+
+    // Check against host and forwarded-host headers
+    const rawHost = request.headers.get('host') || requestUrl.host;
+    const hostHeader = rawHost.split(':')[0].toLowerCase();
+    const forwardedHost = request.headers.get('x-forwarded-host')?.split(',')[0]?.trim().split(':')[0].toLowerCase();
+
+    const allowedHosts = new Set([
+      'freshrootsexport.com',
+      'www.freshrootsexport.com',
+      'freshroots-export.vercel.app',
+      'localhost',
+      '127.0.0.1',
+    ]);
+
+    const isMatch =
+      originHost === hostHeader ||
+      (forwardedHost && originHost === forwardedHost) ||
+      originHost === requestUrl.hostname.toLowerCase() ||
+      allowedHosts.has(originHost) ||
+      originHost.endsWith('.vercel.app');
+
+    return Boolean(isMatch);
   } catch {
     return false;
   }

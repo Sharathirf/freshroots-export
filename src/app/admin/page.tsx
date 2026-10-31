@@ -52,6 +52,7 @@ import CrmCreateOrderModal from '@/components/admin/CrmCreateOrderModal';
 import CrmCreateShipmentModal from '@/components/admin/CrmCreateShipmentModal';
 import CrmSupportCallModal from '@/components/admin/CrmSupportCallModal';
 import CrmComplaintModal from '@/components/admin/CrmComplaintModal';
+import AdminOrderUpdateModal from '@/components/admin/AdminOrderUpdateModal';
 import SiteVisitorCounter from '@/components/SiteVisitorCounter';
 import { Customer } from '@/types';
 
@@ -327,9 +328,11 @@ export default function AdminPage() {
 
   const [createOrderCustomer, setCreateOrderCustomer] = useState<Customer | null>(null);
   const [isCreateOrderOpen, setIsCreateOrderOpen] = useState(false);
+  const [crmRefreshTrigger, setCrmRefreshTrigger] = useState(0);
 
   const [createShipmentOrder, setCreateShipmentOrder] = useState<Order | null>(null);
   const [isCreateShipmentOpen, setIsCreateShipmentOpen] = useState(false);
+  const [selectedOrderForUpdate, setSelectedOrderForUpdate] = useState<Order | null>(null);
 
   const [callCustomer, setCallCustomer] = useState<Customer | null>(null);
   const [isCallModalOpen, setIsCallModalOpen] = useState(false);
@@ -605,7 +608,7 @@ export default function AdminPage() {
     setTimeout(() => setProductSuccessMsg(null), 3000);
   };
 
-  const handleUpdateOrderStatus = async (id: string, nextStatus: string) => {
+  const handleUpdateOrderStatus = async (id: string, nextStatus: string, notes?: string) => {
     try {
       const res = await fetch('/api/admin/orders', {
         method: 'PATCH',
@@ -613,12 +616,15 @@ export default function AdminPage() {
         body: JSON.stringify({
           id,
           next_status: nextStatus,
-          tracking_reference: `VRL-BLR-${Math.floor(100000 + Math.random() * 900000)}`
+          payment_status: nextStatus === 'paid' ? 'paid' : undefined,
+          admin_notes: notes,
+          tracking_reference: nextStatus === 'dispatched' ? `VRL-BLR-${Math.floor(100000 + Math.random() * 900000)}` : undefined
         })
       });
       const data = await res.json();
       if (data.success) {
         fetchData();
+        setCrmRefreshTrigger((k) => k + 1);
       } else {
         alert(data.error);
       }
@@ -1628,11 +1634,20 @@ export default function AdminPage() {
                             {o.status}
                           </span>
                         </td>
-                        <td className="p-4 text-right space-x-2">
+                        <td className="p-4 text-right space-x-1.5 whitespace-nowrap">
+                          {(o.status === 'pending_payment' || (o.status as string) === 'pending' || (o as any).payment_status !== 'paid') && (
+                            <button
+                              onClick={() => handleUpdateOrderStatus(o.id, 'paid', 'UPI / Offline payment verified by Admin Desk')}
+                              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] px-2.5 py-1.5 rounded-lg transition shadow-xs"
+                              title="Mark Payment Done & Confirm Order"
+                            >
+                              ✓ Payment Done
+                            </button>
+                          )}
                           {o.status === 'paid' && (
                             <button
                               onClick={() => handleUpdateOrderStatus(o.id, 'allocated')}
-                              className="bg-blue-700 hover:bg-blue-800 text-white font-semibold text-[11px] px-3 py-1.5 rounded-lg transition"
+                              className="bg-blue-700 hover:bg-blue-800 text-white font-semibold text-[11px] px-2.5 py-1.5 rounded-lg transition"
                             >
                               Allocate Stock
                             </button>
@@ -1640,7 +1655,7 @@ export default function AdminPage() {
                           {o.status === 'allocated' && (
                             <button
                               onClick={() => handleUpdateOrderStatus(o.id, 'packed')}
-                              className="bg-purple-700 hover:bg-purple-800 text-white font-semibold text-[11px] px-3 py-1.5 rounded-lg transition"
+                              className="bg-purple-700 hover:bg-purple-800 text-white font-semibold text-[11px] px-2.5 py-1.5 rounded-lg transition"
                             >
                               Mark Packed
                             </button>
@@ -1651,7 +1666,7 @@ export default function AdminPage() {
                                 setCreateShipmentOrder(o);
                                 setIsCreateShipmentOpen(true);
                               }}
-                              className="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-[11px] px-3 py-1.5 rounded-lg transition"
+                              className="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-[11px] px-2.5 py-1.5 rounded-lg transition"
                             >
                               Create Shipment / LR
                             </button>
@@ -1659,11 +1674,18 @@ export default function AdminPage() {
                           {o.status === 'dispatched' && (
                             <button
                               onClick={() => handleUpdateOrderStatus(o.id, 'delivered')}
-                              className="bg-stone-800 hover:bg-stone-900 text-white font-semibold text-[11px] px-3 py-1.5 rounded-lg transition"
+                              className="bg-stone-800 hover:bg-stone-900 text-white font-semibold text-[11px] px-2.5 py-1.5 rounded-lg transition"
                             >
                               Delivered
                             </button>
                           )}
+                          <button
+                            onClick={() => setSelectedOrderForUpdate(o)}
+                            className="bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold text-[11px] px-2.5 py-1.5 rounded-lg border border-stone-300 transition"
+                            title="Update Status, Carrier, Tracking, or Operational Comments"
+                          >
+                            Update &amp; Notes
+                          </button>
                         </td>
                       </tr>
                     );
@@ -1678,6 +1700,7 @@ export default function AdminPage() {
         {activeTab === 'crm' && (
           <CrmCustomersTab
             onSelectCustomer={openCustomerDossier}
+            refreshTrigger={crmRefreshTrigger}
             onOpenCreateOrder={(c) => {
               setCreateOrderCustomer(c);
               setIsCreateOrderOpen(true);
@@ -2192,6 +2215,17 @@ export default function AdminPage() {
           selectedCustomer={createOrderCustomer}
           onOrderCreated={() => {
             fetchData();
+            setCrmRefreshTrigger((k) => k + 1);
+          }}
+        />
+
+        <AdminOrderUpdateModal
+          isOpen={Boolean(selectedOrderForUpdate)}
+          onClose={() => setSelectedOrderForUpdate(null)}
+          order={selectedOrderForUpdate}
+          onOrderUpdated={() => {
+            fetchData();
+            setCrmRefreshTrigger((k) => k + 1);
           }}
         />
 

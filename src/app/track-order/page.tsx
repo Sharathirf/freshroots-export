@@ -37,6 +37,60 @@ function TrackOrderContent() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [reordered, setReordered] = useState(false);
 
+  const [upiUtrInput, setUpiUtrInput] = useState('');
+  const [upiCommentInput, setUpiCommentInput] = useState('');
+  const [upiSubmitting, setUpiSubmitting] = useState(false);
+  const [upiSuccessMsg, setUpiSuccessMsg] = useState<string | null>(null);
+  const [upiErrorMsg, setUpiErrorMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (selectedOrder) {
+      setUpiUtrInput(selectedOrder.payment_reference || '');
+      setUpiCommentInput('');
+      setUpiSuccessMsg(null);
+      setUpiErrorMsg(null);
+    }
+  }, [selectedOrder?.id]);
+
+  const handleConfirmUpiPayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedOrder) return;
+    if (!upiUtrInput.trim()) {
+      setUpiErrorMsg('Please enter your 12-digit UPI UTR / Transaction Reference number.');
+      return;
+    }
+    setUpiSubmitting(true);
+    setUpiErrorMsg(null);
+    setUpiSuccessMsg(null);
+
+    try {
+      const res = await fetch('/api/orders/confirm-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order_number: selectedOrder.order_number,
+          customer_phone: selectedOrder.customer_phone,
+          payment_reference: upiUtrInput.trim(),
+          comment: upiCommentInput.trim(),
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setUpiSuccessMsg(data.message || 'Payment details recorded! Order confirmed.');
+        if (data.order) {
+          setSelectedOrder(data.order);
+        }
+      } else {
+        setUpiErrorMsg(data.error || 'Failed to submit payment confirmation.');
+      }
+    } catch {
+      setUpiErrorMsg('Network error while updating payment status.');
+    } finally {
+      setUpiSubmitting(false);
+    }
+  };
+
   const fetchTracking = async (q: string) => {
     if (!q || !q.trim()) return;
     setLoading(true);
@@ -408,6 +462,93 @@ function TrackOrderContent() {
                   </div>
                 </div>
               )}
+
+              {/* UPI Payment Confirmation & Tracking Comments Card */}
+              <div className="p-6 sm:p-8 border-t border-stone-100 bg-amber-50/40">
+                <div className="max-w-2xl">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-amber-900">
+                      UPI Payment Status & Delivery Instructions
+                    </h4>
+                  </div>
+                  <p className="text-xs text-stone-600 mb-4 leading-relaxed">
+                    If you paid via Google Pay, PhonePe, Paytm, or BHIM UPI, submit your 12-digit UPI UTR number and any delivery instructions below to mark payment done and expedite dispatch.
+                  </p>
+
+                  {upiSuccessMsg && (
+                    <div className="mb-4 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span>{upiSuccessMsg}</span>
+                    </div>
+                  )}
+
+                  {upiErrorMsg && (
+                    <div className="mb-4 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                      <span>{upiErrorMsg}</span>
+                    </div>
+                  )}
+
+                  <form onSubmit={handleConfirmUpiPayment} className="space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[11px] font-bold text-stone-700 block mb-1">
+                          UPI UTR / Transaction Reference *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={upiUtrInput}
+                          onChange={(e) => setUpiUtrInput(e.target.value)}
+                          placeholder="e.g. 430219876543 (12 Digits)"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs font-mono font-semibold bg-white focus:outline-none focus:ring-2 focus:ring-[#3b6d11]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-stone-700 block mb-1">
+                          Official UPI VPA
+                        </label>
+                        <div className="px-3.5 py-2.5 rounded-xl border border-amber-200 bg-amber-100/60 text-xs font-mono font-bold text-amber-900 select-all">
+                          freshroots-export@okhdfcbank
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-bold text-stone-700 block mb-1">
+                        Tracking Comments / Delivery Notes (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={upiCommentInput}
+                        onChange={(e) => setUpiCommentInput(e.target.value)}
+                        placeholder="e.g. Paid ₹1,479 via GPay at 2:05 PM. Please deliver after 4 PM at front gate."
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#3b6d11]"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={upiSubmitting || !upiUtrInput.trim()}
+                      className="px-5 py-2.5 rounded-xl bg-[#3b6d11] hover:bg-[#2d5a0b] disabled:opacity-50 text-white font-bold text-xs transition shadow-sm flex items-center gap-2"
+                    >
+                      <ShieldCheck className="w-4 h-4" />
+                      <span>{upiSubmitting ? 'Verifying...' : 'Update Payment Status & Comments'}</span>
+                    </button>
+                  </form>
+
+                  {/* Previous Order Notes */}
+                  {(selectedOrder as any).admin_notes && (
+                    <div className="mt-4 pt-3 border-t border-amber-200/60 text-[11px] text-stone-600 font-mono">
+                      <span className="font-bold text-stone-700 block mb-1">Recorded Tracking Comments:</span>
+                      <p className="bg-white/80 p-2.5 rounded-xl border border-stone-200 break-words leading-relaxed">
+                        {(selectedOrder as any).admin_notes}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
 
               {/* Order Quick Actions: Reorder, Help, Exit */}
               <div className="bg-stone-50 border-t border-stone-200/90 p-4 sm:p-6 flex flex-wrap items-center justify-between gap-3">

@@ -249,6 +249,7 @@ export async function POST(request: NextRequest) {
     const trackingRef = `VRL-BLR-${Date.now().toString().slice(-4)}${Math.floor(1000 + Math.random() * 9000)}`;
     const orderStatus = 'pending_payment';
     const expiresInHours = paymentMethod === 'razorpay' || !upiReference ? 0.5 : 24;
+    const paymentExpiresAt = new Date(Date.now() + expiresInHours * 3600 * 1000).toISOString();
     const client = await pool.connect();
     let order: any;
     try {
@@ -290,13 +291,36 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      // Resolve or create centralized customer record for CRM
+      const cleanCustomerPhone = customer_phone.replace(/\D/g, '').slice(-10);
+      let linkedCustomerId: string | null = null;
+      if (cleanCustomerPhone.length === 10) {
+        const existingCust = await client.query<{ id: string }>(
+          `SELECT id FROM customers WHERE phone = $1 LIMIT 1`,
+          [cleanCustomerPhone]
+        );
+        if (existingCust.rows.length > 0) {
+          linkedCustomerId = existingCust.rows[0].id;
+        } else {
+          const custCode = `CUST-${Math.floor(100000 + Math.random() * 900000)}`;
+          const createdCust = await client.query<{ id: string }>(
+            `INSERT INTO customers (
+              customer_code, customer_type, name, phone, email, shipping_address, pincode, acquisition_source
+            ) VALUES ($1, 'retail', $2, $3, $4, $5, $6, 'website')
+            RETURNING id`,
+            [custCode, customer_name, cleanCustomerPhone, customer_email || null, shipping_address, destination_pincode]
+          );
+          linkedCustomerId = createdCust.rows[0].id;
+        }
+      }
+
       const insertedOrder = await client.query(
         `INSERT INTO orders (
           order_number, order_type, status, customer_name, customer_phone, customer_email,
           shipping_address, destination_pincode, subtotal_inr, delivery_fee_inr, tax_inr,
           total_amount_inr, payment_method, payment_reference, tracking_reference, items,
-          discount_inr, coupon_code, payment_expires_at
-        ) VALUES ($1, 'retail', $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, NOW() + ($18 * INTERVAL '1 hour'))
+          discount_inr, coupon_code, payment_expires_at, customer_id, order_source, order_channel
+        ) VALUES ($1, 'retail', $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 'website', 'retail')
         RETURNING *`,
         [
           orderNumber,
@@ -316,7 +340,8 @@ export async function POST(request: NextRequest) {
           JSON.stringify(validatedItems),
           discountInr,
           appliedCouponCode,
-          expiresInHours,
+          paymentExpiresAt,
+          linkedCustomerId,
         ]
       );
       order = insertedOrder.rows[0];

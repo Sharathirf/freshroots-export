@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const [totalsRes, pagesRes] = await Promise.all([
+    const [totalsRes, pagesRes, recentRes] = await Promise.all([
       pool.query(`
         SELECT
           COUNT(*) FILTER (WHERE created_at >= NOW() - INTERVAL '24 hours') as day_visits,
@@ -30,6 +30,20 @@ export async function GET() {
         GROUP BY path
         ORDER BY total_views DESC
         LIMIT 8
+      `),
+      pool.query(`
+        SELECT
+          visitor_id,
+          device_type,
+          COALESCE(device_name, CASE WHEN device_type = 'mobile' THEN 'Mobile Device' ELSE 'Desktop Browser' END) as device_name,
+          COALESCE(city, 'Karnataka Region') as city,
+          COALESCE(region, 'KA') as region,
+          COALESCE(country, 'IN') as country,
+          path,
+          created_at
+        FROM site_visits
+        ORDER BY created_at DESC
+        LIMIT 25
       `)
     ]);
 
@@ -38,6 +52,15 @@ export async function GET() {
       path: p.path,
       totalViews: parseInt(p.total_views, 10) || 0,
       uniqueUsers: parseInt(p.unique_users, 10) || 0
+    }));
+
+    const recentVisitors = recentRes.rows.map((r) => ({
+      visitorId: r.visitor_id,
+      deviceType: r.device_type,
+      deviceName: r.device_name,
+      location: `${r.city}, ${r.region} (${r.country})`,
+      path: r.path,
+      createdAt: r.created_at
     }));
 
     return NextResponse.json({
@@ -65,6 +88,7 @@ export async function GET() {
         desktop: parseInt(row.desktop_visits, 10) || 0
       },
       topPages: pages,
+      recentVisitors,
       activeNow: Math.max(3, (parseInt(row.day_uniques, 10) % 7) + 5)
     });
   } catch (error: any) {
