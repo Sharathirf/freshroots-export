@@ -176,6 +176,11 @@ export default function EnquiryModal({ isOpen, onClose, defaultProduceTitle }: E
       }
       setStep('success');
       track('rfq_submitted', { source: 'general_enquiry_modal' });
+      if (typeof window !== 'undefined') {
+        setTimeout(() => {
+          window.location.href = `/rfq-success?quote=${encodeURIComponent(data.quotation?.quote_number || 'ENQ-RECEIVED')}&company=${encodeURIComponent(targetName || '')}`;
+        }, 800);
+      }
     } catch (err: any) {
       setErrorMsg(err.message || 'Failed to submit enquiry. Please try again.');
     } finally {

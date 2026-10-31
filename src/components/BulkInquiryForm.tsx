@@ -150,6 +150,11 @@ export default function BulkInquiryForm({ product, onSuccess }: BulkInquiryFormP
         setSubmittedQuote(data.quotation);
         track('rfq_submitted', { source: 'product_bulk_form', category: product.category, unit });
         if (onSuccess) onSuccess();
+        if (typeof window !== 'undefined') {
+          setTimeout(() => {
+            window.location.href = `/rfq-success?quote=${encodeURIComponent(data.quotation.quote_number)}&company=${encodeURIComponent(companyName || customerName || '')}`;
+          }, 800);
+        }
       } else {
         setErrorMsg(data.error || 'Failed to submit quote inquiry. Please try again.');
       }

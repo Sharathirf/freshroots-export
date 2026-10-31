@@ -297,6 +297,11 @@ export default function WholesaleRFQModal({
       if (data.success) {
         setSubmittedQuote(data.quotation);
         track('rfq_submitted', { source: 'wholesale_rfq_modal', unit: currentOption?.unitLabel || 'Units' });
+        if (typeof window !== 'undefined') {
+          setTimeout(() => {
+            window.location.href = `/rfq-success?quote=${encodeURIComponent(data.quotation.quote_number)}&company=${encodeURIComponent(companyName || contactPerson || '')}&export=${destinationCountry !== 'India' ? 'true' : 'false'}`;
+          }, 800);
+        }
       } else {
         setErrorMsg(data.error || 'Failed to submit quotation request.');
       }
