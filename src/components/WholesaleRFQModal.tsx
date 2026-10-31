@@ -15,6 +15,27 @@ import { EXPORT_COUNTRIES } from '@/lib/export-countries';
 import TurnstileChallenge, { turnstileEnabled } from '@/components/TurnstileChallenge';
 import { track } from '@/lib/analytics';
 
+const COUNTRY_DIALING_CODES: Record<string, string> = {
+  'India': '91',
+  'United Arab Emirates (UAE)': '971',
+  'Vietnam': '84',
+  'United States (USA)': '1',
+  'Saudi Arabia': '966',
+  'United Kingdom (UK)': '44',
+  'Bangladesh': '880',
+  'Nepal': '977',
+  'Malaysia': '60',
+  'Singapore': '65',
+  'Qatar': '974',
+  'Oman': '968',
+  'Kuwait': '965',
+  'Bahrain': '973',
+  'Australia': '61',
+  'Canada': '1',
+  'Germany': '49',
+  'Netherlands': '31'
+};
+
 interface WholesaleRFQModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -61,7 +82,13 @@ export default function WholesaleRFQModal({
   // 5. Mandatory Field: Contact Person Name
   const [contactPerson, setContactPerson] = useState<string>('');
 
-  // 6. Mandatory Field: WhatsApp Mobile Number
+  // 6. Mandatory Field: WhatsApp Mobile Number (Country code defaults to 91, fully editable)
+  const [phoneCountryCode, setPhoneCountryCode] = useState<string>(() => {
+    if (initialCountry && COUNTRY_DIALING_CODES[initialCountry]) {
+      return COUNTRY_DIALING_CODES[initialCountry];
+    }
+    return '91';
+  });
   const [contactPhone, setContactPhone] = useState<string>('');
 
   // Expandable Optional Section State
@@ -164,6 +191,12 @@ export default function WholesaleRFQModal({
 
     const effectiveToken = turnstileToken || (turnstileEnabled ? 'turnstile-fallback-bypass' : '');
 
+    const cleanNumber = contactPhone.trim();
+    const cleanCode = phoneCountryCode.trim().replace(/^\+/, '');
+    const formattedPhone = cleanNumber.startsWith('+')
+      ? cleanNumber
+      : (cleanCode ? `+${cleanCode} ${cleanNumber}` : cleanNumber);
+
     try {
       const notesArray = [
         unloadingNotes ? `Unloading/Siding: ${unloadingNotes.trim()}` : '',
@@ -176,7 +209,8 @@ export default function WholesaleRFQModal({
         body: JSON.stringify({
           customer_name: contactPerson.trim(),
           contact_person: contactPerson.trim(),
-          contact_phone: contactPhone.trim(),
+          contact_phone: formattedPhone,
+          phone: formattedPhone,
           contact_email: contactEmail.trim() || null,
           company_name: companyName.trim(),
           gstin: gstin.trim() || null,
@@ -390,26 +424,43 @@ export default function WholesaleRFQModal({
                 </div>
               </div>
 
-              {/* Field 6: WhatsApp Mobile Number (Mandatory) */}
+              {/* Field 6: WhatsApp Mobile Number (Mandatory - Defaults to 91, fully editable) */}
               <div>
                 <label className="block text-xs font-bold text-stone-700 mb-1 flex items-center justify-between">
                   <span>WhatsApp Mobile <span className="text-amber-600">*</span></span>
                   <span className="text-[10px] text-stone-500 font-normal">Primary quote communication channel</span>
                 </label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-stone-500 font-mono">
-                    +91
-                  </span>
+                <div className="flex rounded-xl border border-stone-300 overflow-hidden focus-within:ring-2 focus-within:ring-amber-500 focus-within:border-amber-500 bg-white shadow-xs transition">
+                  <div
+                    className="flex items-center bg-stone-100 border-r border-stone-300 px-2.5 shrink-0"
+                    title="Country calling code (defaults to 91, click to edit)"
+                  >
+                    <span className="text-stone-500 font-mono text-xs sm:text-sm font-bold mr-0.5 select-none">+</span>
+                    <input
+                      type="text"
+                      value={phoneCountryCode}
+                      onChange={(e) => setPhoneCountryCode(e.target.value.replace(/[^0-9]/g, ''))}
+                      placeholder="91"
+                      maxLength={5}
+                      title="Country calling code (editable, defaults to 91)"
+                      aria-label="Country calling code"
+                      className="w-9 sm:w-11 bg-transparent text-xs sm:text-sm font-mono font-bold text-stone-900 focus:outline-hidden text-center"
+                    />
+                  </div>
                   <input
                     type="tel"
                     required
-                    maxLength={14}
+                    maxLength={15}
                     value={contactPhone}
-                    onChange={(e) => setContactPhone(e.target.value.replace(/[^0-9]/g, ''))}
+                    onChange={(e) => setContactPhone(e.target.value.replace(/[^0-9\s-]/g, ''))}
                     placeholder="9845012345"
-                    className="w-full pl-12 pr-3.5 py-2.5 rounded-xl border border-stone-300 text-xs sm:text-sm font-mono font-semibold focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white text-stone-900"
+                    aria-label="WhatsApp Mobile Number"
+                    className="w-full px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-mono font-semibold text-stone-900 focus:outline-hidden bg-white"
                   />
                 </div>
+                <p className="text-[10px] text-stone-500 mt-1">
+                  Country code defaults to <strong>+91</strong> (India). Click prefix to edit for international numbers (+971, +1, +84, etc.).
+                </p>
               </div>
 
               {/* Expandable Optional Section */}
@@ -497,7 +548,13 @@ export default function WholesaleRFQModal({
                           </label>
                           <select
                             value={destinationCountry}
-                            onChange={(e) => setDestinationCountry(e.target.value)}
+                            onChange={(e) => {
+                              const country = e.target.value;
+                              setDestinationCountry(country);
+                              if (COUNTRY_DIALING_CODES[country]) {
+                                setPhoneCountryCode(COUNTRY_DIALING_CODES[country]);
+                              }
+                            }}
                             className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-semibold focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white text-stone-900"
                           >
                             <option value="India">🇮🇳 India (Domestic Mandi)</option>
