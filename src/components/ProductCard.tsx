@@ -51,7 +51,7 @@ const commodityMetadata: Record<string, { emoji: string; titleKn: string; subtit
   'COC-TND-BLK-LOT': {
     emoji: '🥥',
     titleKn: 'ಮಂಡ್ಯದ ಸಿಹಿ ತಾಜಾ ಎಳನೀರು',
-    subtitleKn: 'ಪ್ರತಿ ಕಾಯಿಗೆ ₹95 • ಕನಿಷ್ಠ ಮಿತಿ ಇಲ್ಲ'
+    subtitleKn: 'ಪ್ರತಿ ಕಾಯಿಗೆ ₹69 • ಕನಿಷ್ಠ ಮಿತಿ ಇಲ್ಲ'
   },
   'SPI-GIN-BLK-50K': {
     emoji: '🫚',
@@ -160,7 +160,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
   const meta = commodityMetadata[product.sku];
 
   const rawActivePrice = defaultVariant ? defaultVariant.price : Number(product.retail_price_inr);
-  const displayPrice = product.sku === 'COC-TND-BLK-LOT' ? 95 : rawActivePrice;
+  const displayPrice = rawActivePrice;
   const originalMrp = Math.round(displayPrice / 0.85);
 
   const isBulkOnly = Boolean(

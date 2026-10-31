@@ -113,12 +113,12 @@ export async function runAutomationSuite() {
     { sku: 'COC-SEMI-25P-15K', price: 1479, unit: '25-Piece Bag (~15 kg)', min: 1 },
     { sku: 'COP-BAL-BOX-15K', price: 5508, unit: '15 kg Box', min: 1 },
     { sku: 'NUR-COC-PLT-01Y', price: 286, unit: 'Plant / Sapling', min: 1 },
-    { sku: 'OIL-GND-WOD-01L', price: 663, unit: '1 Litre Bottle', min: 1 },
-    { sku: 'MIL-RAG-ORG-05K', price: 663, unit: '5 kg Pack', min: 1 },
+    { sku: 'OIL-GND-WOD-01L', price: 469, unit: '1 Litre Bottle', min: 1 },
+    { sku: 'MIL-RAG-ORG-05K', price: 365, unit: '5 kg Pack', min: 1 },
     { sku: 'DAI-GHE-BIL-01L', price: 980, unit: '1 Litre Glass Jar', min: 1 },
-    { sku: 'COC-TND-BLK-LOT', price: 49, unit: 'Piece / Nut', min: 1 },
+    { sku: 'COC-TND-BLK-LOT', price: 69, unit: 'Piece / Nut', min: 1 },
     { sku: 'SPI-GIN-BLK-50K', price: 5999, unit: '50 kg Bag', min: 1 },
-    { sku: 'COI-SHL-BLK-01T', price: 36720, unit: 'Tonne (1,000 kg / MT)', min: 1 },
+    { sku: 'COI-SHL-BLK-01T', price: 24000, unit: 'Tonne (1,000 kg / MT)', min: 1 },
     { sku: 'NUR-ARE-PLT-01Y', price: 77, unit: 'Plant / Sapling', min: 1 }
   ];
 

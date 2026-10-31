@@ -64,12 +64,12 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
     }
   ],
 
-  // Pure Karnataka Ragi Millet: 5 kg @ ₹663, 10 kg @ ₹1,306, 25 kg @ ₹3,213 (incl. 2% payment platform charge, Free Delivery)
+  // Pure Karnataka Ragi Millet: 5 kg @ ₹365, 10 kg @ ₹699, 25 kg @ ₹1,649 (incl. 2% payment platform charge, Free Delivery)
   'MIL-RAG-ORG-05K': [
     {
       packSize: '5 kg Pack',
-      label: '5 kg Pack @ ₹663',
-      price: 663,
+      label: '5 kg Pack @ ₹365',
+      price: 365,
       weightKg: 5.0,
       unitOfMeasure: '5 kg Pack',
       title: 'Pure Karnataka Ragi Millet (5 kg Pack)',
@@ -77,8 +77,8 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
     },
     {
       packSize: '10 kg Pack',
-      label: '10 kg Pack @ ₹1,306',
-      price: 1306,
+      label: '10 kg Pack @ ₹699',
+      price: 699,
       weightKg: 10.0,
       unitOfMeasure: '10 kg Pack',
       title: 'Pure Karnataka Ragi Millet (10 kg Pack)',
@@ -86,8 +86,8 @@ export const PRODUCT_VARIANTS: Record<string, ProductVariant[]> = {
     },
     {
       packSize: '25 kg Bag',
-      label: '25 kg Bag @ ₹3,213',
-      price: 3213,
+      label: '25 kg Bag @ ₹1,649',
+      price: 1649,
       weightKg: 25.0,
       unitOfMeasure: '25 kg Bag',
       title: 'Pure Karnataka Ragi Millet (25 kg Bag)',

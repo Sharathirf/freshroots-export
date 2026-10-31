@@ -95,7 +95,7 @@ const MANDI_COMMODITIES = [
     mandi: 'Maddur / Mandya Canal Belt',
     grade: 'Sweet Water (>400ml water volume)',
     unit: 'Per Nut (Farm Lot)',
-    modalPrice: '₹38 – ₹45 (Farm Gate) / ₹95 Retail',
+    modalPrice: '₹38 – ₹45 (Farm Gate) / ₹69 Retail',
     trend: 'Direct Truckload Siding',
     minWholesaleLot: '1,000 Nuts (Eicher Truckload)',
     sku: 'COC-TND-BLK-LOT',

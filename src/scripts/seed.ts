@@ -162,7 +162,7 @@ async function runSeed() {
       oil_percentage: 99.9,
       retail_price_inr: 469.00, // ₹469 / litre (incl. 2% payment platform charge & Free Delivery)
       bulk_min_quantity: 1,
-      wholesale_benchmark_price_inr: 480.00,
+      wholesale_benchmark_price_inr: 365.00,
       hsn_code: '1508',
       tax_rate_percentage: 5.00,
       description: 'Traditional wood-pressed (Marachekku) pure groundnut oil extracted at room temperature without chemical solvents, bleaching, or heating. Preserves genuine nutty aroma, natural vitamin E, and high mono-unsaturated fats (MUFA). ₹469/litre with 100% FREE Doorstep Delivery. Minimum order: 1 quantity.',
@@ -189,16 +189,16 @@ async function runSeed() {
       estimated_weight_kg: 5.0,
       moisture_percentage: 10.0,
       oil_percentage: null,
-      retail_price_inr: 663.00, // 5 kg Pack at ₹663 (incl. 2% payment platform charge & Free Delivery)
+      retail_price_inr: 365.00, // 5 kg Pack at ₹365 (incl. 2% payment platform charge & Free Delivery)
       bulk_min_quantity: 1,
-      wholesale_benchmark_price_inr: 95.00,
+      wholesale_benchmark_price_inr: 240.00,
       hsn_code: '100829',
       tax_rate_percentage: 0.00,
-      description: 'Nutritious whole brown finger millet (Ragi) sourced directly from dryland farms in Mandya and Hassan. Machine-cleaned and destoned, rich in bioavailable calcium (344mg/100g) and natural dietary fiber. Available in 5 kg (₹663), 10 kg (₹1,306), and 25 kg (₹3,213) bags with 100% FREE Doorstep Delivery. Minimum order: 1 quantity.',
+      description: 'Nutritious whole brown finger millet (Ragi) sourced directly from dryland farms in Mandya and Hassan. Machine-cleaned and destoned, rich in bioavailable calcium (344mg/100g) and natural dietary fiber. Available in 5 kg (₹365), 10 kg (₹699), and 25 kg (₹1,649) bags with 100% FREE Doorstep Delivery. Minimum order: 1 quantity.',
       specifications: {
-        available_pack_sizes: '5 kg (₹663), 10 kg (₹1,306), 25 kg (₹3,213)',
-        rate_per_kg: '₹133 / kg (Free Delivery)',
-        base_5kg_pack_price: '₹663',
+        available_pack_sizes: '5 kg (₹365), 10 kg (₹699), 25 kg (₹1,649)',
+        rate_per_kg: '₹73 / kg (Free Delivery)',
+        base_5kg_pack_price: '₹365',
         delivery: '100% FREE Doorstep Delivery on ALL Orders',
         grain_type: '100% Whole Native Karnataka Finger Millet',
         cleaning: 'Destoned & Air-Cleaned'
@@ -248,14 +248,14 @@ async function runSeed() {
       estimated_weight_kg: 2.2,
       moisture_percentage: 88.0,
       oil_percentage: null,
-      retail_price_inr: 95.00, // ₹95 / piece (Bulk wholesale lot)
+      retail_price_inr: 69.00, // ₹69 / piece (Bulk wholesale lot)
       bulk_min_quantity: 1, // No minimum quantity requirement
-      wholesale_benchmark_price_inr: 80.00,
+      wholesale_benchmark_price_inr: 42.00,
       hsn_code: '080119',
       tax_rate_percentage: 0.00,
-      description: 'Natural mineral-packed sweet tender coconuts (Elaneeru) harvested daily from canal-irrigated plantations in Mandya and Maddur. Yields 350-500ml sweet water with tender malai. Direct farm pricing at ₹95/piece with 100% FREE Doorstep Delivery.',
+      description: 'Natural mineral-packed sweet tender coconuts (Elaneeru) harvested daily from canal-irrigated plantations in Mandya and Maddur. Yields 350-500ml sweet water with tender malai. Direct farm pricing at ₹69/piece with 100% FREE Doorstep Delivery.',
       specifications: {
-        rate: '₹95 / Piece (Farm Direct Wholesale)',
+        rate: '₹69 / Piece (Farm Direct Wholesale)',
         minimum_order_quantity: '1 Nut (No Minimum Quantity)',
         delivery: '100% FREE Doorstep Delivery on ALL Orders',
         water_content: '350 ml to 500 ml sweet coconut water per nut',
@@ -304,14 +304,14 @@ async function runSeed() {
       estimated_weight_kg: 1000.0,
       moisture_percentage: 11.0,
       oil_percentage: null,
-      retail_price_inr: 36720.00, // ₹36,720 / ton (incl. 2% payment platform charge & Free Delivery)
+      retail_price_inr: 24000.00, // ₹24,000 / ton (incl. 2% payment platform charge & Free Delivery)
       bulk_min_quantity: 1,
-      wholesale_benchmark_price_inr: 35000.00,
+      wholesale_benchmark_price_inr: 18000.00,
       hsn_code: '140490',
       tax_rate_percentage: 5.00,
-      description: 'Clean, dense mature coconut shells from Tiptur copra and dehusking clusters. High calorific value (>4,500 kcal/kg) and low ash content (<1.5%). Available in metric tonnes at ₹36,720/ton with 100% FREE Road Transport. Minimum order: 1 tonne.',
+      description: 'Clean, dense mature coconut shells from Tiptur copra and dehusking clusters. High calorific value (>4,500 kcal/kg) and low ash content (<1.5%). Available in metric tonnes at ₹24,000/ton with 100% FREE Road Transport. Minimum order: 1 tonne.',
       specifications: {
-        rate_per_ton: '₹36,720 / Metric Tonne (MT, Free Delivery)',
+        rate_per_ton: '₹24,000 / Metric Tonne (MT, Free Delivery)',
         minimum_order_quantity: '1 Tonne (No Minimum Quantity)',
         delivery: '100% FREE Dedicated Road Linehaul on ALL Orders',
         calorific_value: '> 4,500 kcal/kg',
