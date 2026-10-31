@@ -16,6 +16,7 @@ import {
   ShieldAlert,
   Bell,
   ShieldCheck,
+  Sparkles,
 } from 'lucide-react';
 
 interface IntegrationSetupModalProps {
@@ -237,21 +238,21 @@ const SERVICE_CATALOG: Record<string, ServiceMeta> = {
     id: 'firebase',
     name: 'Firebase Cloud Messaging (FCM)',
     tagline: 'Web push notifications to buyers and traders for Mandi price shifts, dispatch updates, and out-of-stock restocks.',
-    portalUrl: 'https://console.firebase.google.com',
-    portalName: 'Firebase Console',
+    portalUrl: 'https://console.firebase.google.com/project/freshroots-export',
+    portalName: 'Firebase Console (freshroots-export)',
     icon: Bell,
     steps: [
       {
-        title: 'Create Firebase Project & Web App',
-        detail: 'In console.firebase.google.com, create project "FreshRoots Export". Add a Web App and copy the config.',
+        title: 'Web Config Connected',
+        detail: 'apiKey, projectId (freshroots-export), and appId are saved in Neon DB.',
       },
       {
         title: 'Generate Web Push VAPID Key',
-        detail: 'In Project Settings > Cloud Messaging > Web Push certificates, click "Generate key pair".',
+        detail: 'Under Cloud Messaging > Web Push certificates, click "Generate key pair" and paste below.',
       },
       {
         title: 'Download Service Account JSON',
-        detail: 'In Project Settings > Service Accounts, click "Generate new private key". Paste the entire JSON file contents below.',
+        detail: 'Under Service Accounts, click "Generate new private key". Paste JSON below for server push dispatch.',
       },
     ],
     fields: [
@@ -347,6 +348,40 @@ export default function IntegrationSetupModal({
     setFormValues((prev) => ({ ...prev, [key]: value }));
     setSaveSuccessMsg(null);
     setTestResult(null);
+  };
+
+  const handleFirebaseSnippetPaste = (snippet: string) => {
+    if (!snippet.trim()) return;
+    const updates: Record<string, string> = {};
+
+    const apiKeyMatch = snippet.match(/["']?apiKey["']?\s*:\s*["']([^"']+)["']/i);
+    if (apiKeyMatch) updates.NEXT_PUBLIC_FIREBASE_API_KEY = apiKeyMatch[1];
+
+    const projectIdMatch = snippet.match(/["']?projectId["']?\s*:\s*["']([^"']+)["']/i);
+    if (projectIdMatch) updates.NEXT_PUBLIC_FIREBASE_PROJECT_ID = projectIdMatch[1];
+
+    const senderIdMatch = snippet.match(/["']?messagingSenderId["']?\s*:\s*["']([^"']+)["']/i);
+    if (senderIdMatch) updates.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID = senderIdMatch[1];
+
+    const appIdMatch = snippet.match(/["']?appId["']?\s*:\s*["']([^"']+)["']/i);
+    if (appIdMatch) updates.NEXT_PUBLIC_FIREBASE_APP_ID = appIdMatch[1];
+
+    if (snippet.includes('"type"') && snippet.includes('"private_key"')) {
+      try {
+        const parsed = JSON.parse(snippet);
+        if (parsed.type === 'service_account') {
+          updates.FIREBASE_SERVICE_ACCOUNT_JSON = snippet.trim();
+          if (parsed.project_id) {
+            updates.NEXT_PUBLIC_FIREBASE_PROJECT_ID = parsed.project_id;
+          }
+        }
+      } catch {}
+    }
+
+    if (Object.keys(updates).length > 0) {
+      setFormValues((prev) => ({ ...prev, ...updates }));
+      setSaveSuccessMsg(`Auto-populated ${Object.keys(updates).length} fields from snippet! Click "Save Configuration" to persist.`);
+    }
   };
 
   const toggleShowSecret = (key: string) => {
@@ -501,6 +536,45 @@ export default function IntegrationSetupModal({
               ))}
             </div>
           </div>
+
+          {/* Quick Paste for Firebase */}
+          {selectedService === 'firebase' && (
+            <div className="bg-amber-50/70 border border-amber-200 rounded-2xl p-4 space-y-3 text-left">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-amber-950">
+                  <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span>Quick Paste Firebase Web SDK Config</span>
+                </div>
+                <span className="text-[11px] text-amber-700">Auto-populates fields</span>
+              </div>
+              <textarea
+                rows={2}
+                placeholder={'Paste "const firebaseConfig = { ... }" snippet here to auto-fill...'}
+                onChange={(e) => handleFirebaseSnippetPaste(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl border border-amber-300/80 bg-white font-mono text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none placeholder:text-stone-400"
+              />
+              <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                <a
+                  href={`https://console.firebase.google.com/project/${formValues.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'freshroots-export'}/settings/cloudmessaging`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 font-medium transition"
+                >
+                  <span>1. Generate Web Push VAPID Key</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+                <a
+                  href={`https://console.firebase.google.com/project/${formValues.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'freshroots-export'}/settings/serviceaccounts/adminsdk`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 font-medium transition"
+                >
+                  <span>2. Download Service Account Private Key</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+            </div>
+          )}
 
           {/* Form Fields */}
           <form onSubmit={handleSave} className="space-y-4">

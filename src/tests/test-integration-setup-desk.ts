@@ -107,6 +107,26 @@ async function run() {
   assert.strictEqual(turnstileData.success, true);
   console.log('  ✅ PASS: Turnstile test endpoint ping verified with official Cloudflare test keys');
 
+  // 4b. Test Firebase Web App configuration check
+  const firebaseRes = await fetch('http://localhost:3000/api/admin/integrations', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', cookie },
+    body: JSON.stringify({
+      serviceId: 'firebase',
+      action: 'test',
+      keys: {
+        NEXT_PUBLIC_FIREBASE_API_KEY: 'AIzaSyAQBU4Qnzadox22ST60uRWkpV1BW6ikPFg',
+        NEXT_PUBLIC_FIREBASE_PROJECT_ID: 'freshroots-export',
+        NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: '489312986914',
+      },
+    }),
+  });
+  assert.strictEqual(firebaseRes.status, 200);
+  const firebaseData = await firebaseRes.json();
+  assert.strictEqual(firebaseData.success, true);
+  assert(firebaseData.message.includes('freshroots-export'), 'Must verify freshroots-export');
+  console.log('  ✅ PASS: Firebase Web configuration verified successfully');
+
   // 5. Check redirects on /admin/integrations and /admin/integrations/posthog
   const redir1 = await fetch('http://localhost:3000/admin/integrations', {
     redirect: 'manual',

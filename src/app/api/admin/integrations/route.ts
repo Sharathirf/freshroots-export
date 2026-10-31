@@ -103,7 +103,9 @@ export async function GET(request: NextRequest) {
       id: 'firebase',
       name: 'Firebase Cloud Messaging',
       description: 'Browser web push notifications for live mandi rates, order dispatches, and inventory intake.',
-      portalUrl: 'https://console.firebase.google.com',
+      portalUrl: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
+        ? `https://console.firebase.google.com/project/${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}`
+        : 'https://console.firebase.google.com',
       required: [
         'NEXT_PUBLIC_FIREBASE_API_KEY',
         'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
@@ -122,7 +124,13 @@ export async function GET(request: NextRequest) {
         process.env.FIREBASE_SERVICE_ACCOUNT_JSON &&
         pushTableReady
       ),
-      connectionCheck: pushTableReady
+      connectionCheck: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
+        ? `Web App config connected (project: ${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}). ${
+            process.env.FIREBASE_SERVICE_ACCOUNT_JSON && process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY
+              ? 'Web Push VAPID and Service Account are active.'
+              : 'Add Web Push VAPID key and Service Account JSON to activate automated dispatch.'
+          }`
+        : pushTableReady
         ? 'Opt-in API and database table are present; a browser opt-in and FCM send are needed for an end-to-end check.'
         : 'Push database migration is missing or unavailable.',
       keys: {
@@ -335,22 +343,32 @@ export async function POST(request: NextRequest) {
         const serviceAccountRaw = keys.FIREBASE_SERVICE_ACCOUNT_JSON || process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
         const vapidKey = keys.NEXT_PUBLIC_FIREBASE_VAPID_KEY || process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
         const projectId = keys.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+        const apiKey = keys.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+        const messagingSenderId = keys.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID;
 
-        if (!serviceAccountRaw) {
-          return NextResponse.json({ success: false, error: 'Firebase service account JSON is required.' }, { status: 400 });
-        }
-        try {
-          const parsed = JSON.parse(serviceAccountRaw);
-          if (!parsed.project_id || !parsed.private_key || !parsed.client_email) {
-            throw new Error('Missing required fields: project_id, private_key, or client_email');
+        if (serviceAccountRaw) {
+          try {
+            const parsed = JSON.parse(serviceAccountRaw);
+            if (!parsed.project_id || !parsed.private_key || !parsed.client_email) {
+              throw new Error('Missing required fields: project_id, private_key, or client_email');
+            }
+            return NextResponse.json({
+              success: true,
+              message: `Firebase Service Account is valid for project '${parsed.project_id}' (${parsed.client_email}). Web Push VAPID: ${vapidKey ? 'Configured' : 'Missing'}.`,
+            });
+          } catch (err: any) {
+            return NextResponse.json({ success: false, error: `Invalid Firebase Service Account JSON: ${err.message}` }, { status: 400 });
           }
+        }
+
+        if (projectId && apiKey) {
           return NextResponse.json({
             success: true,
-            message: `Firebase Service Account is valid for project '${parsed.project_id}' (${parsed.client_email}). VAPID Key: ${vapidKey ? 'Configured' : 'Missing'}.`,
+            message: `Firebase Web App configuration is valid for project '${projectId}' (Sender ID: ${messagingSenderId || 'Active'}). Web client credentials saved. To enable server push notifications, also add your Web Push VAPID key and Service Account JSON.`,
           });
-        } catch (err: any) {
-          return NextResponse.json({ success: false, error: `Invalid Firebase Service Account JSON: ${err.message}` }, { status: 400 });
         }
+
+        return NextResponse.json({ success: false, error: 'Firebase credentials missing. Please enter your Firebase Web configuration or Service Account JSON.' }, { status: 400 });
       }
 
       default:

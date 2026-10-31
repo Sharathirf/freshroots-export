@@ -1,7 +1,10 @@
+import { loadIntegrationSettings } from '@/lib/integration-settings';
+
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function GET() {
+  await loadIntegrationSettings();
   const config = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || '',
     authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || '',
