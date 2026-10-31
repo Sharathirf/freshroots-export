@@ -15,7 +15,6 @@ export async function verifyTurnstile(token: unknown, request: Request) {
 
   const secret = process.env.TURNSTILE_SECRET_KEY;
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
-  const production = process.env.NODE_ENV === 'production';
 
   // If Turnstile is not configured, fail-open to never block real customer inquiries
   if (!secret || !siteKey) {
