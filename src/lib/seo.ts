@@ -136,6 +136,12 @@ export function generateOrganizationJsonLd(siteUrl: string) {
       { '@type': 'Country', name: 'Iran' },
       { '@type': 'Country', name: 'United Kingdom' }
     ],
+    sameAs: [
+      'https://wa.me/919008462568',
+      'https://www.linkedin.com/company/freshroots-export',
+      'https://www.indiamart.com/freshroots-export/',
+      'https://freshroots-export.tradeindia.com/'
+    ],
     contactPoint: [
       {
         '@type': 'ContactPoint',
@@ -209,6 +215,44 @@ export function generateProductJsonLd(product: CatalogProductItem, siteUrl: stri
       value: product.estimated_weight_kg || 1,
       unitCode: 'KGM'
     },
+    additionalProperty: [
+      {
+        '@type': 'PropertyValue',
+        name: 'Origin State',
+        value: 'Karnataka, India'
+      },
+      ...(product.sku.includes('COP') || product.slug.includes('copra')
+        ? [
+            { '@type': 'PropertyValue', name: 'Moisture Content', value: 'Max 5.0% - 5.5%' },
+            { '@type': 'PropertyValue', name: 'Oil Content (Dry Basis)', value: '65.0% - 68.5%' },
+            { '@type': 'PropertyValue', name: 'Free Fatty Acids (FFA)', value: 'Less than 1.5%' },
+            { '@type': 'PropertyValue', name: 'Geographical Indication', value: 'GI Tiptur Ball Copra' },
+            { '@type': 'PropertyValue', name: 'Container Stuffing 20ft FCL', value: '11.0 Metric Tonnes (~733 master cartons)' },
+            { '@type': 'PropertyValue', name: 'Container Stuffing 40ft HC FCL', value: '23.5 Metric Tonnes (~1,566 master cartons)' }
+          ]
+        : []),
+      ...(product.sku.includes('COC') || product.slug.includes('coconut')
+        ? [
+            { '@type': 'PropertyValue', name: 'Grading Protocol', value: 'Hand-sorted Agmark Grade 1' },
+            { '@type': 'PropertyValue', name: 'Packaging', value: '25-Piece Ventilated PP Mesh Bag' },
+            { '@type': 'PropertyValue', name: 'Port Dispatch Options', value: 'JNPT Mumbai & NMPT Mangalore (FOB / CIF)' }
+          ]
+        : []),
+      ...(product.sku.includes('OIL') || product.slug.includes('oil')
+        ? [
+            { '@type': 'PropertyValue', name: 'Extraction Method', value: 'Traditional Wooden Cold-Press (Marachekku)' },
+            { '@type': 'PropertyValue', name: 'Processing Temperature', value: 'Ambient Cold-Pressed (<40°C, Zero Heat)' },
+            { '@type': 'PropertyValue', name: 'Chemical Additives', value: 'Zero Hexane, Zero Chemical Refining, Unrefined Virgin' }
+          ]
+        : []),
+      ...(product.sku.includes('COP-05K') || product.slug.includes('cocopeat')
+        ? [
+            { '@type': 'PropertyValue', name: 'Electrical Conductivity (EC)', value: 'Low EC Washed (<0.5 mS/cm)' },
+            { '@type': 'PropertyValue', name: 'Compression Ratio', value: '5:1 Hydraulic Compressed' },
+            { '@type': 'PropertyValue', name: 'Expanded Volume', value: '75+ Litres per 5kg Block' }
+          ]
+        : [])
+    ],
     offers: {
       '@type': 'Offer',
       url: productUrl,
@@ -431,6 +475,39 @@ export function generateProductMetadata(product: CatalogProductItem): Metadata {
       title: product.seoTitle,
       description: product.seoDescription,
       images: [product.image_url.startsWith('http') ? product.image_url : `${siteUrl}${product.image_url}`],
+    },
+  };
+}
+
+export function generateExportCorridorJsonLd(
+  countryName: string,
+  portName: string,
+  popularCommodities: string,
+  siteUrl: string
+) {
+  const corridorUrl = `${siteUrl}/export/corridors/${countryName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    '@id': `${corridorUrl}#service`,
+    name: `Agricultural Commodity Ocean Freight Export to ${countryName}`,
+    serviceType: 'Ocean Freight Container Export (FCL & LCL)',
+    provider: {
+      '@id': `${siteUrl}/#organization`,
+    },
+    areaServed: {
+      '@type': 'Country',
+      name: countryName,
+    },
+    description: `Direct farm-origin containerized agricultural exports from Karnataka, India to ${countryName} (${portName}). Supplying ${popularCommodities} with complete statutory export compliance, Phytosanitary, COO, and CDB certifications.`,
+    availableChannel: {
+      '@type': 'ServiceChannel',
+      serviceUrl: corridorUrl,
+      servicePhone: {
+        '@type': 'ContactPoint',
+        telephone: '+919008462568',
+        contactType: 'sales',
+      },
     },
   };
 }

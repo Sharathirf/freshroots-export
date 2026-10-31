@@ -8,6 +8,22 @@ export interface ExportCountry {
   wikiUrl: string;
 }
 
+export function getCountrySlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
+export function findCountryBySlug(slug: string): ExportCountry | undefined {
+  const norm = slug.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  return EXPORT_COUNTRIES.find(
+    (c) =>
+      getCountrySlug(c.name) === norm ||
+      c.code.toLowerCase() === norm ||
+      (norm === 'uae' && c.code === 'AE') ||
+      (norm === 'usa' && c.code === 'US') ||
+      (norm === 'uk' && c.code === 'GB')
+  );
+}
+
 export const EXPORT_COUNTRIES: ExportCountry[] = [
   {
     name: 'Vietnam',

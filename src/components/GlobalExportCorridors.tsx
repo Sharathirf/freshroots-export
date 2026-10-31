@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Globe, Ship, FileCheck, ArrowRight, CheckCircle2, ShieldCheck, Anchor, ExternalLink } from 'lucide-react';
-import { EXPORT_COUNTRIES, ExportCountry } from '@/lib/export-countries';
+import Link from 'next/link';
+import { Globe, Ship, FileCheck, ArrowRight, CheckCircle2, ShieldCheck, Anchor } from 'lucide-react';
+import { EXPORT_COUNTRIES, ExportCountry, getCountrySlug } from '@/lib/export-countries';
 
 interface GlobalExportCorridorsProps {
   onOpenRFQ?: (countryName?: string) => void;
@@ -101,14 +102,13 @@ export default function GlobalExportCorridors({ onOpenRFQ }: GlobalExportCorrido
                       {c.flag}
                     </span>
                     <div>
-                      <button
-                        type="button"
-                        onClick={() => onOpenRFQ ? onOpenRFQ(c.name) : (window.location.href = `/contact?destination=${encodeURIComponent(c.name)}#rfq`)}
-                        className="font-extrabold text-white text-base leading-snug hover:text-lime-300 transition text-left"
-                        title={`Open container quote for ${c.name}`}
+                      <Link
+                        href={`/export/corridors/${getCountrySlug(c.name)}`}
+                        className="font-extrabold text-white text-base leading-snug hover:text-lime-300 transition block"
+                        title={`View export specifications for ${c.name}`}
                       >
                         {c.name}
-                      </button>
+                      </Link>
                       <span className="text-[11px] text-emerald-400 font-semibold block">
                         {c.region}
                       </span>
@@ -138,11 +138,14 @@ export default function GlobalExportCorridors({ onOpenRFQ }: GlobalExportCorrido
                 </div>
               </div>
 
-              {/* Card Footer: Quick Quote Trigger */}
+              {/* Card Footer: Quick Quote Trigger & Specs */}
               <div className="pt-4 mt-4 border-t border-white/10 flex items-center justify-between">
-                <span className="text-[11px] text-lime-400/90 font-medium">
-                  20ft &amp; 40ft FCL
-                </span>
+                <Link
+                  href={`/export/corridors/${getCountrySlug(c.name)}`}
+                  className="text-[11px] text-lime-400/90 font-medium hover:underline"
+                >
+                  Specs &amp; Transit →
+                </Link>
                 <button
                   onClick={() => onOpenRFQ?.(c.name)}
                   className="text-xs font-bold text-white hover:text-lime-300 inline-flex items-center gap-1 transition"

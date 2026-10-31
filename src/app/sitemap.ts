@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next';
 import { CATALOG_PRODUCTS } from '@/lib/catalog';
 import { CATEGORIES } from '@/lib/categories';
 import { EDUCATIONAL_GUIDES } from '@/lib/guides';
+import { EXPORT_COUNTRIES, getCountrySlug } from '@/lib/export-countries';
 import { getSiteUrl, isProductionEnvironment } from '@/lib/seo';
 
 // Verified catalog update timestamp (strictly aligned with live release)
@@ -27,7 +28,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/export`,
       lastModified: CATALOG_LAST_MODIFIED,
       changeFrequency: 'weekly',
-      priority: 0.85,
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/export/ball-copra-india`,
+      lastModified: CATALOG_LAST_MODIFIED,
+      changeFrequency: 'weekly',
+      priority: 0.95,
+      images: [`${baseUrl}/products/ball-copra-4k.jpg`],
+    },
+    {
+      url: `${baseUrl}/wholesale/mandi-rates`,
+      lastModified: CATALOG_LAST_MODIFIED,
+      changeFrequency: 'daily',
+      priority: 0.95,
     },
     {
       url: `${baseUrl}/guides`,
@@ -98,5 +112,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...staticUrls, ...categoryUrls, ...productUrls, ...guideUrls];
+  const corridorUrls: MetadataRoute.Sitemap = EXPORT_COUNTRIES.map((c) => ({
+    url: `${baseUrl}/export/corridors/${getCountrySlug(c.name)}`,
+    lastModified: CATALOG_LAST_MODIFIED,
+    changeFrequency: 'weekly' as const,
+    priority: 0.85,
+  }));
+
+  return [...staticUrls, ...categoryUrls, ...productUrls, ...guideUrls, ...corridorUrls];
 }

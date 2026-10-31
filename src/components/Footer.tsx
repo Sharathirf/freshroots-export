@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Sprout, Phone, Mail, MapPin, ArrowRight, CheckCircle2 } from 'lucide-react';
 import PushNotificationOptIn from '@/components/PushNotificationOptIn';
-import { EXPORT_COUNTRIES } from '@/lib/export-countries';
+import { EXPORT_COUNTRIES, getCountrySlug } from '@/lib/export-countries';
 
 export default function Footer() {
   const [emailInput, setEmailInput] = useState('');
@@ -124,7 +124,9 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-stone-400">
               <li><Link href="/export" className="text-lime-300 font-semibold hover:text-white transition">Global Agri-Export Desk</Link></li>
-              <li><Link href="/guides" className="text-lime-300 font-semibold hover:text-white transition">Guides &amp; Quality Standards</Link></li>
+              <li><Link href="/export/ball-copra-india" className="text-lime-300 font-semibold hover:text-white transition">Tiptur Ball Copra Export (FCL)</Link></li>
+              <li><Link href="/wholesale/mandi-rates" className="text-lime-300 font-semibold hover:text-white transition">Live Mandi Rates Hub</Link></li>
+              <li><Link href="/guides" className="hover:text-white transition">Guides &amp; Quality Standards</Link></li>
               <li><Link href="/transportation" className="hover:text-white transition">Pan-India Freight Logistics</Link></li>
               <li><Link href="/contact" className="hover:text-white transition">Contact Farm-Gate Desk</Link></li>
               <li><Link href="/#catalog" className="hover:text-white transition">Direct Farm Catalog</Link></li>
@@ -164,7 +166,7 @@ export default function Footer() {
               <React.Fragment key={country.code}>
                 {idx > 0 && <span className="text-stone-600" aria-hidden="true">•</span>}
                 <Link
-                  href="/export"
+                  href={`/export/corridors/${getCountrySlug(country.name)}`}
                   className="hover:text-lime-300 hover:underline transition-colors inline-flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-lime-400 rounded-sm"
                   title={`Request 20ft/40ft export quotation for ${country.name} (${country.majorPort})`}
                 >

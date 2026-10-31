@@ -246,32 +246,37 @@ export default function Navbar({
             </span>
             <span className="truncate text-lime-100">
               Coconuts: ₹90/kg •{' '}
-              <a
-                href="https://acrop.app/mandi/karnataka/tumakuru/tiptur/copra"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Tiptur Mandi copra maximum: ₹${copraMandiRate.pricePerQuintal.toLocaleString('en-IN')} per quintal, equivalent to ₹${copraMandiRate.pricePerKg.toFixed(2)} per kg, reported ${copraMandiRate.reportedAt}. Source: ACROP.`}
-                title={`${copraMandiRate.isFallback ? 'Last available ACROP report' : 'ACROP report'}: Tiptur Mandi maximum ₹${copraMandiRate.pricePerQuintal.toLocaleString('en-IN')}/quintal (₹${copraMandiRate.pricePerKg.toFixed(2)}/kg), reported ${copraMandiRate.reportedAt}`}
-                className="underline decoration-dotted underline-offset-2 hover:text-white"
+              <Link
+                href="/wholesale/mandi-rates"
+                className="hover:text-white font-semibold text-lime-100"
+                title="View full Karnataka APMC mandi benchmark rates & live truckload pricing"
               >
-                Copra max: ₹{copraMandiRate.pricePerQuintal.toLocaleString('en-IN')}/quintal
-                <span className="hidden sm:inline"> · {copraMandiRate.reportedAt}</span>
-              </a>
-              {' '}•{' '}
-              <a
-                href="https://acrop.app/mandi/karnataka/shivamogga/shimoga/arecanut"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Shimoga Mandi arecanut maximum: ₹${arecanutMandiRate.pricePerQuintal.toLocaleString('en-IN')} per quintal, equivalent to ₹${arecanutMandiRate.pricePerKg.toFixed(2)} per kg, reported ${arecanutMandiRate.reportedAt}. Source: ACROP.`}
-                title={`${arecanutMandiRate.isFallback ? 'Last available ACROP report' : 'ACROP report'}: Shimoga Mandi arecanut maximum ₹${arecanutMandiRate.pricePerQuintal.toLocaleString('en-IN')}/quintal (₹${arecanutMandiRate.pricePerKg.toFixed(2)}/kg), reported ${arecanutMandiRate.reportedAt}`}
-                className="underline decoration-dotted underline-offset-2 hover:text-white"
-              >
-                Arecanut max: ₹{arecanutMandiRate.pricePerQuintal.toLocaleString('en-IN')}/quintal
-                <span className="hidden sm:inline"> · {arecanutMandiRate.reportedAt}</span>
-              </a>
+                Copra max: ₹{copraMandiRate.pricePerQuintal.toLocaleString('en-IN')}/qtl · Arecanut: ₹{arecanutMandiRate.pricePerQuintal.toLocaleString('en-IN')}/qtl
+              </Link>
             </span>
           </div>
           <div className="flex items-center gap-2.5 sm:gap-4 text-emerald-100 font-medium shrink-0 text-[10px] sm:text-[11px]">
+            <Link
+              href="/export"
+              className="hover:text-white flex items-center gap-1 transition text-lime-200 hover:text-white font-semibold hidden md:flex"
+            >
+              <span>Export Desk</span>
+            </Link>
+            <span className="text-emerald-300/60 hidden md:inline">•</span>
+            <Link
+              href="/export/ball-copra-india"
+              className="hover:text-white flex items-center gap-1 transition text-lime-200 hover:text-white font-semibold hidden lg:flex"
+            >
+              <span>Ball Copra (FCL)</span>
+            </Link>
+            <span className="text-emerald-300/60 hidden lg:inline">•</span>
+            <Link
+              href="/wholesale/mandi-rates"
+              className="hover:text-white flex items-center gap-1 transition text-lime-200 hover:text-white font-semibold hidden sm:flex"
+            >
+              <span>Mandi Rates</span>
+            </Link>
+            <span className="text-emerald-300/60 hidden sm:inline">•</span>
             <Link
               href="/track-order"
               className="hover:text-white flex items-center gap-1 transition text-lime-200 hover:text-white font-semibold"

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import CartDrawer from '@/components/CartDrawer';
 import ProductCard from '@/components/ProductCard';
@@ -366,6 +367,119 @@ export default function HomePage() {
 
         {/* 4. Global Ocean Container Export Corridors */}
         <GlobalExportCorridors onOpenRFQ={(country) => handleOpenRFQ(null, country)} />
+
+        {/* 4.5 Regional Agricultural Authority & Provenance Siding */}
+        <section className="py-12 sm:py-16 bg-white border-t border-stone-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+            <div className="text-center max-w-3xl mx-auto space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-wider">
+                <span>Karnataka Provenance &amp; Farm-Gate Traceability</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
+                Direct Farm-Gate Sourcing Network: Karnataka Agro Corridors
+              </h2>
+              <p className="text-stone-600 text-xs sm:text-sm leading-relaxed">
+                By maintaining direct aggregation sidings in Karnataka&apos;s primary agricultural production clusters, FreshRoots eliminates intermediate commission agents, guaranteeing standardized moisture grading, transparent mandi pricing, and verifiable harvest traceability.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Tiptur Corridor */}
+              <div className="p-6 rounded-2xl bg-stone-50 border border-stone-200/80 hover:border-emerald-600/50 transition-all space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-lg">
+                  🥥
+                </div>
+                <h3 className="text-base font-bold text-stone-900">
+                  Tiptur Corridor: GI Ball Copra &amp; Coconut Commodities
+                </h3>
+                <p className="text-stone-600 text-xs leading-relaxed">
+                  Center of India&apos;s Geographical Indication (GI) Tiptur Ball Copra (Unde Kobbari). Standardized moisture ≤5.5%, oil content 65–68%, and zero chemical drying. Sourced directly from Tumakuru-Tiptur grower groves.
+                </p>
+                <div className="pt-2">
+                  <Link
+                    href="/export/ball-copra-india"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 hover:text-emerald-950 transition"
+                  >
+                    <span>View Export Specifications</span>
+                    <span className="font-mono">→</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Mandya Corridor */}
+              <div className="p-6 rounded-2xl bg-stone-50 border border-stone-200/80 hover:border-emerald-600/50 transition-all space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-lg">
+                  🌾
+                </div>
+                <h3 className="text-base font-bold text-stone-900">
+                  Mandya Canal Belt: Mature Coconuts, Ragi &amp; Vedic Ghee
+                </h3>
+                <p className="text-stone-600 text-xs leading-relaxed">
+                  Kaveri basin canal-fed mature coconuts (25-nut bags, ~15 kg), unpolished native Mandya ragi millet, and authentic wood-pressed Marachekku oils. Calibrated weight sorting and farm-gate aggregation.
+                </p>
+                <div className="pt-2">
+                  <Link
+                    href="/wholesale/mandi-rates"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 hover:text-emerald-950 transition"
+                  >
+                    <span>Track Daily Mandi Benchmarks</span>
+                    <span className="font-mono">→</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Shivamogga Corridor */}
+              <div className="p-6 rounded-2xl bg-stone-50 border border-stone-200/80 hover:border-emerald-600/50 transition-all space-y-3">
+                <div className="w-10 h-10 rounded-xl bg-lime-100 text-lime-900 flex items-center justify-center font-bold text-lg">
+                  🌰
+                </div>
+                <h3 className="text-base font-bold text-stone-900">
+                  Shivamogga &amp; Malnad Belt: Graded Arecanut &amp; Spices
+                </h3>
+                <p className="text-stone-600 text-xs leading-relaxed">
+                  Direct APMC auction bidding and procurement of Rashi and Chali arecanut (Adike / Betel Nut), fresh harvest ginger bags (50kg), and agricultural raw materials for commercial processors and pan-masala blenders.
+                </p>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => handleOpenRFQ()}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 hover:text-emerald-950 transition"
+                  >
+                    <span>Request Wholesale Lot Quote</span>
+                    <span className="font-mono">→</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Statutory Compliance Docket */}
+            <div className="p-6 rounded-2xl bg-gradient-to-r from-stone-900 to-stone-800 text-white flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="space-y-1.5 text-center md:text-left">
+                <div className="text-[11px] font-mono uppercase tracking-widest text-emerald-400 font-bold">
+                  Statutory Export Credentials &amp; Standards
+                </div>
+                <h3 className="text-lg font-bold">
+                  100% Certified Food Safety &amp; Foreign Trade Compliance
+                </h3>
+                <p className="text-xs text-stone-300 max-w-xl">
+                  Every domestic wholesale invoice and international ocean consignment is backed by legal compliance dockets: FSSAI Lic. 21224195000438, DGFT IEC 0724018925, and official Phytosanitary inspection certification.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2.5 shrink-0 justify-center">
+                <div className="px-3.5 py-2 rounded-xl bg-white/10 border border-white/20 text-xs font-mono font-bold text-emerald-300">
+                  FSSAI: 21224195000438
+                </div>
+                <div className="px-3.5 py-2 rounded-xl bg-white/10 border border-white/20 text-xs font-mono font-bold text-lime-300">
+                  DGFT IEC: 0724018925
+                </div>
+                <div className="px-3.5 py-2 rounded-xl bg-white/10 border border-white/20 text-xs font-mono font-bold text-amber-300">
+                  CDB &amp; APEDA Aligned
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* 5. Minimal, Reassuring Trust Strip */}
         <section className="bg-stone-100/80 border-y border-stone-200 py-6 sm:py-8">

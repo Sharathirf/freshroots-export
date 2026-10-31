@@ -169,12 +169,18 @@ async function runSeoTests() {
     const stagingSitemap = sitemap();
     assert.equal(stagingSitemap.length, 0, 'Staging sitemap must be empty array');
 
-    // Simulate production: must return 9 static + 7 categories + 16 products + 5 guides = 37 total entries
+    // Simulate production: must return 9 static + 7 categories + 16 products + 5 guides + 2 SEO hubs + 12 corridors = 51 total entries
     delete process.env.APP_ENV;
     delete process.env.VERCEL_ENV;
     (process.env as any).NODE_ENV = 'production';
     const prodSitemap = sitemap();
-    assert.equal(prodSitemap.length, 37, `Expected 37 sitemap items (9 static + 7 categories + 16 products + 5 guides), got ${prodSitemap.length}`);
+    assert.equal(prodSitemap.length, 51, `Expected 51 sitemap items (9 static + 7 categories + 16 products + 5 guides + 2 SEO hubs + 12 corridors), got ${prodSitemap.length}`);
+
+    // Verify key programmatic SEO corridors are present
+    const sitemapUrls = prodSitemap.map((s) => s.url);
+    assert.ok(sitemapUrls.includes('https://freshrootsexport.com/export/ball-copra-india'), 'Missing /export/ball-copra-india');
+    assert.ok(sitemapUrls.includes('https://freshrootsexport.com/wholesale/mandi-rates'), 'Missing /wholesale/mandi-rates');
+    assert.ok(sitemapUrls.includes('https://freshrootsexport.com/export/corridors/united-arab-emirates-uae'), 'Missing UAE export corridor');
 
     // Verify lastModified is a valid Date without dynamic regeneration
     for (const item of prodSitemap) {
