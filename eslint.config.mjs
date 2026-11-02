@@ -29,6 +29,12 @@ const eslintConfig = [
       "@next/next/no-img-element": "off",
     },
   },
+  {
+    files: ["tests/**", "src/tests/**"],
+    rules: {
+      "react-hooks/rules-of-hooks": "off",
+    },
+  },
 ];
 
 export default eslintConfig;

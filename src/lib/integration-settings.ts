@@ -132,7 +132,7 @@ function tryPersistToEnvLocal(key: string, value: string) {
     }
 
     fs.writeFileSync(envPath, envContent.trim() + '\n', 'utf8');
-  } catch (fileErr) {
+  } catch {
     // Read-only filesystem in serverless environments (Vercel) is expected; DB persistence handles storage
   }
 }

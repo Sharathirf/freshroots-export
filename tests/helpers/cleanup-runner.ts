@@ -14,7 +14,8 @@ export async function executeAuthorizedDataCleanup(options: {
   clearAllHistoricalTestOrders?: boolean;
   clearAutomationTestRfqs?: boolean;
   clearAbandonedCarts?: boolean;
-} = { clearAllHistoricalTestOrders: true, clearAutomationTestRfqs: true, clearAbandonedCarts: true }): Promise<CleanupReport> {
+  retainGenuineData?: boolean;
+} = { clearAllHistoricalTestOrders: true, clearAutomationTestRfqs: true, clearAbandonedCarts: true, retainGenuineData: true }): Promise<CleanupReport> {
   const client = await pool.connect();
   const failures: string[] = [];
   const removed: Record<string, number> = {};

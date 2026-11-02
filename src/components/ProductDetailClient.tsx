@@ -18,7 +18,6 @@ import { track } from '@/lib/analytics';
 import {
   ShieldCheck,
   Truck,
-  CheckCircle2,
   ChevronRight,
   ShoppingBag,
   Zap,
@@ -40,7 +39,7 @@ export default function ProductDetailClient({
   allProducts: initialAllProducts = [],
   slug
 }: ProductDetailClientProps) {
-  const { addToCart, addItemDirectly, setIsCartOpen, openCheckout } = useCart();
+  const { addToCart, addItemDirectly, openCheckout } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { isLoggedIn, requireAuth } = useAuth();
 
@@ -425,7 +424,7 @@ export default function ProductDetailClient({
                   href={categoryHubLink}
                   className="text-[11px] font-extrabold uppercase tracking-widest text-[#3b6d11] bg-lime-100 hover:bg-lime-200 border border-lime-300 px-2.5 py-0.5 rounded-md transition"
                 >
-                  {categoryHubLabel}
+                  {getCommodityEmoji(product.category || '')} {categoryHubLabel}
                 </Link>
                 <span className="text-xs text-stone-500 font-mono">
                   HSN: {product.hsn_code}

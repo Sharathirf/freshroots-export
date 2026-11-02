@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Users, Eye, BarChart3, Globe, Smartphone, Laptop, RefreshCw, Activity, ArrowUpRight, Trash2, ShoppingCart, CreditCard, PackageCheck, FileText, ArrowRight } from 'lucide-react';
+import { Users, Eye, BarChart3, Globe, Smartphone, Laptop, RefreshCw, Activity, Trash2, ShoppingCart, CreditCard, PackageCheck, FileText } from 'lucide-react';
 import Link from 'next/link';
 
 interface TimeframeStats {

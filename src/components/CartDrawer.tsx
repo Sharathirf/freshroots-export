@@ -1092,7 +1092,7 @@ export default function CartDrawer() {
                               } else {
                                 setOtpError(data.error || 'Failed to send OTP');
                               }
-                            } catch (e: any) {
+                            } catch {
                               setOtpError('Failed to contact OTP service');
                             } finally {
                               setIsSendingOtp(false);
@@ -1141,7 +1141,7 @@ export default function CartDrawer() {
                                 } else {
                                   setOtpError(data.error || 'Invalid OTP code');
                                 }
-                              } catch (e) {
+                              } catch {
                                 setOtpError('Verification failed');
                               } finally {
                                 setIsVerifyingOtp(false);

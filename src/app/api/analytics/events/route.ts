@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { isExcludedVisitor, EXCLUDED_VISITOR_SQL } from '@/lib/analytics-exclusions';
+import { isExcludedVisitor } from '@/lib/analytics-exclusions';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

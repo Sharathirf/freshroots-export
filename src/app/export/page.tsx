@@ -18,8 +18,7 @@ import {
   MessageCircle,
   ChevronRight,
   Building2,
-  ArrowRight,
-  ExternalLink
+  ArrowRight
 } from 'lucide-react';
 
 export const metadata: Metadata = {

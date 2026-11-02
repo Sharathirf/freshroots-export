@@ -50,7 +50,7 @@ function TrackOrderContent() {
       setUpiSuccessMsg(null);
       setUpiErrorMsg(null);
     }
-  }, [selectedOrder?.id]);
+  }, [selectedOrder]);
 
   const handleConfirmUpiPayment = async (e: React.FormEvent) => {
     e.preventDefault();

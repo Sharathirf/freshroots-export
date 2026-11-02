@@ -54,7 +54,6 @@ const FALLBACK_ARECANUT_RATE: ArecanutMandiRate = {
 
 export default function Navbar({
   onOpenRFQ,
-  onOpenEnquiry: _onOpenEnquiry,
   searchQueryValue,
   onSearchChange
 }: {

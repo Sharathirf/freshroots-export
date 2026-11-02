@@ -197,7 +197,7 @@ export default async function ExportCorridorPage({ params }: Props) {
                   className="px-6 py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm shadow-lg transition text-center"
                 />
                 <a
-                  href={`https://wa.me/919008462568?text=Hello%20FreshRoots%20Export,%20I%20am%20inquirying%20about%20container%20shipments%20to%20${encodeURIComponent(country.name)}.`}
+                  href={`https://wa.me/919008462568?text=Hello%20FreshRoots%20Export,%20I%20am%20inquiring%20about%20container%20shipments%20to%20${encodeURIComponent(country.name)}.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs sm:text-sm border border-white/20 transition text-center"

@@ -80,7 +80,7 @@ export async function POST(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params: _params }: { params: Promise<{ id: string }> }
 ) {
   const auth = requireAdmin(request, true);
   if (auth) return auth;

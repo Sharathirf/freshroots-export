@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 import { 
   Truck, ShieldCheck, Phone, ArrowRight, 
-  Package, AlertTriangle, FileText, Scale 
+  Package, FileText, Scale 
 } from 'lucide-react';
 import ShippingRateCalculator from '@/components/ShippingRateCalculator';
 import GlobalExportCorridors from '@/components/GlobalExportCorridors';

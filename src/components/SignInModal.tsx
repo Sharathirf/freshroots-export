@@ -73,7 +73,7 @@ export default function SignInModal() {
         setOtpCode(data.demoCode);
       }
       setStep('otp');
-    } catch (err: any) {
+    } catch {
       // In offline or local fallback, still allow user into OTP step
       setStep('otp');
     } finally {
