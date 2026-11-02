@@ -183,7 +183,7 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-2 space-y-2.5">
               <a
                 href="https://wa.me/919008462568?text=Hello%20Sharath,%20I%20have%20an%20inquiry%20regarding%20agricultural%20commodities."
                 target="_blank"
@@ -193,6 +193,29 @@ export default function ContactPage() {
                 <MessageCircle className="w-4 h-4" />
                 <span>Chat on WhatsApp Directly</span>
               </a>
+
+              {/* Official Social Channels */}
+              <div className="flex items-center justify-center gap-2 text-xs pt-1">
+                <span className="text-stone-500 font-medium text-[11px]">Follow Farm Updates:</span>
+                <a
+                  href="https://www.instagram.com/freshroots_export/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-pink-50 hover:bg-pink-100 text-pink-700 font-bold border border-pink-200 text-[11px] transition"
+                  title="Follow FreshRoots Export on Instagram (@freshroots_export)"
+                >
+                  <span>Instagram</span>
+                </a>
+                <a
+                  href="https://www.facebook.com/people/Freshrootsexport/61596026285762/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold border border-blue-200 text-[11px] transition"
+                  title="Follow FreshRoots Export on Facebook"
+                >
+                  <span>Facebook</span>
+                </a>
+              </div>
             </div>
           </div>
 

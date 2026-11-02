@@ -246,6 +246,8 @@ export function generateOrganizationJsonLd(siteUrl: string) {
       { '@type': 'Country', name: 'United Kingdom' }
     ],
     sameAs: [
+      'https://www.instagram.com/freshroots_export/',
+      'https://www.facebook.com/people/Freshrootsexport/61596026285762/',
       'https://www.google.com/maps/search/?api=1&query=FreshRoots+Export+Kikkeri+Karnataka+571423',
       'https://wa.me/919008462568',
       'https://www.linkedin.com/company/freshroots-export',
