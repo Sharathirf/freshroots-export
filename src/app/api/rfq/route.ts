@@ -4,6 +4,7 @@ import { query } from '@/lib/db';
 import { verifyTurnstile } from '@/lib/turnstile';
 import { getAllCatalogProducts } from '@/lib/catalog';
 import { deliverTransactionalEmail, emailIsConfigured } from '@/lib/email';
+import { loadIntegrationSettings } from '@/lib/integration-settings';
 import { requireAdmin } from '@/lib/admin-auth';
 
 export async function POST(request: NextRequest) {
@@ -177,6 +178,7 @@ export async function POST(request: NextRequest) {
       [inserted[0].id, JSON.stringify({ quote_number: quoteNumber, name, phone, email, qty, unit: unitOfMeasure })]
     );
 
+    await loadIntegrationSettings();
     if (emailIsConfigured()) {
       const deliveryCity = destination_city?.trim() || 'To be confirmed';
       const emailTasks = [];

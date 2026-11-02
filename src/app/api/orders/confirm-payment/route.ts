@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { deliverTransactionalEmail, emailIsConfigured } from '@/lib/email';
+import { loadIntegrationSettings } from '@/lib/integration-settings';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -88,6 +90,28 @@ export async function POST(request: NextRequest) {
     );
 
     await client.query('COMMIT');
+
+    // Notify Admin of customer payment update
+    try {
+      await loadIntegrationSettings();
+      if (emailIsConfigured() && process.env.ADMIN_NOTIFICATION_EMAIL) {
+        deliverTransactionalEmail({
+          to: process.env.ADMIN_NOTIFICATION_EMAIL,
+          subject: `💳 Payment Reference Added: Order ${order.order_number}`,
+          text: [
+            `Order: ${order.order_number}`,
+            `Customer: ${order.customer_name}`,
+            `Phone: ${order.customer_phone}`,
+            `Amount: ₹${Number(order.total_amount_inr || 0).toLocaleString('en-IN')}`,
+            `Payment Reference / UTR: ${payment_reference.trim()}`,
+            `Comment: ${comment?.trim() || 'None'}`,
+            `Status: ${newStatus}`,
+            '',
+            `Verify in Operations Desk: https://freshrootsexport.com/admin?tab=orders`,
+          ].join('\n'),
+        }, 'order_payment_confirmed').catch(() => undefined);
+      }
+    } catch {}
 
     return NextResponse.json({
       success: true,

@@ -81,6 +81,31 @@ export async function confirmRazorpayPayment(input: {
       [payment.order_id, JSON.stringify({ order_number: payment.order_number, payment_id: input.paymentId })]
     );
     await client.query('COMMIT');
+
+    // Send transactional admin notification for verified Razorpay payment
+    try {
+      const { loadIntegrationSettings } = await import('@/lib/integration-settings');
+      const { deliverTransactionalEmail, emailIsConfigured } = await import('@/lib/email');
+      await loadIntegrationSettings();
+      if (emailIsConfigured() && process.env.ADMIN_NOTIFICATION_EMAIL) {
+        const o = orderResult.rows[0];
+        deliverTransactionalEmail({
+          to: process.env.ADMIN_NOTIFICATION_EMAIL,
+          subject: `⚡ Razorpay Payment Verified: Order ${payment.order_number}`,
+          text: [
+            `Order: ${payment.order_number}`,
+            `Customer: ${o?.customer_name || 'Verified Buyer'}`,
+            `Phone: ${o?.customer_phone || 'N/A'}`,
+            `Amount: ₹${(input.amountPaise / 100).toLocaleString('en-IN')}`,
+            `Razorpay Payment ID: ${input.paymentId}`,
+            `Status: Paid (Captured)`,
+            '',
+            `Fulfill order in Operations Desk: https://freshrootsexport.com/admin?tab=orders`,
+          ].join('\n')
+        }, 'razorpay_payment_confirmed').catch(() => undefined);
+      }
+    } catch {}
+
     return { success: true as const, alreadyConfirmed: false, order: orderResult.rows[0], orderNumber: payment.order_number };
   } catch (error) {
     await client.query('ROLLBACK').catch(() => undefined);

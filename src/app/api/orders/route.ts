@@ -7,6 +7,7 @@ import { validateCoupon } from '@/lib/coupons';
 import { CATALOG_PRODUCTS } from '@/lib/catalog';
 import { OrderItem } from '@/types';
 import { deliverTransactionalEmail, emailIsConfigured } from '@/lib/email';
+import { loadIntegrationSettings } from '@/lib/integration-settings';
 
 export async function POST(request: NextRequest) {
   try {
@@ -392,6 +393,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    await loadIntegrationSettings();
     if (emailIsConfigured()) {
       const orderLines = validatedItems.map((item) => `• ${item.quantity} ${item.unit_of_measure} ${item.title}`).join('\n');
       const emailTasks = [];
