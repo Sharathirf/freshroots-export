@@ -168,7 +168,7 @@ export default function GlobalExportCorridors({
                     setIsExpanded(true);
                   }
                 }}
-                className="w-full sm:w-auto appearance-none bg-stone-900 border border-white/20 hover:border-lime-400 text-white text-xs font-semibold rounded-xl pl-3 pr-8 py-2.5 shadow-inner focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-lime-400 focus-visible:outline-offset-2 cursor-pointer"
+                className="w-full sm:w-auto appearance-none bg-stone-900 border border-white/20 hover:border-lime-400 text-white text-xs font-semibold rounded-xl pl-3 pr-8 py-2.5 shadow-inner focus:ring-2 focus:ring-lime-400 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-lime-400 focus-visible:outline-offset-2 cursor-pointer"
               >
                 <option value="all">Dropdown: Select Country / Port (12 Options)...</option>
                 {EXPORT_COUNTRIES.map((c) => (

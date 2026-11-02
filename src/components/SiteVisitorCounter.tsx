@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Users, Eye, BarChart3, Globe, Smartphone, Laptop, RefreshCw, Activity, ArrowUpRight, Trash2 } from 'lucide-react';
+import { Users, Eye, BarChart3, Globe, Smartphone, Laptop, RefreshCw, Activity, ArrowUpRight, Trash2, ShoppingCart, CreditCard, PackageCheck, FileText, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 interface TimeframeStats {
@@ -22,6 +22,20 @@ interface RecentVisitor {
   location: string;
   path: string;
   createdAt: string;
+  latestAction?: string | null;
+  latestActionTime?: string | null;
+}
+
+interface FunnelStats {
+  productViews: number;
+  addToCart: number;
+  cartViews: number;
+  beginCheckout: number;
+  purchases: number;
+  rfqSubmitted: number;
+  cartRate: number;
+  checkoutRate: number;
+  purchaseRate: number;
 }
 
 interface AnalyticsData {
@@ -37,6 +51,7 @@ interface AnalyticsData {
   };
   topPages: PageStat[];
   recentVisitors?: RecentVisitor[];
+  funnel?: FunnelStats;
   activeNow: number;
 }
 
@@ -52,6 +67,17 @@ const DEFAULT_DATA: AnalyticsData = {
     desktop: 0
   },
   topPages: [],
+  funnel: {
+    productViews: 0,
+    addToCart: 0,
+    cartViews: 0,
+    beginCheckout: 0,
+    purchases: 0,
+    rfqSubmitted: 0,
+    cartRate: 0,
+    checkoutRate: 0,
+    purchaseRate: 0,
+  },
   activeNow: 0
 };
 
@@ -380,6 +406,90 @@ export default function SiteVisitorCounter() {
           </div>
         </div>
 
+        {/* E-Commerce & Wholesale RFQ Conversion Funnel Widget */}
+        <div className="bg-stone-850/90 border border-stone-800 rounded-3xl p-5 sm:p-6 space-y-4 shadow-lg">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Activity className="w-4 h-4 text-emerald-400" />
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                Live E-Commerce &amp; B2B RFQ Conversion Funnel
+              </h3>
+            </div>
+            <span className="text-[11px] font-mono text-emerald-400 font-bold bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-1 rounded-lg">
+              Real-Time Buyer Actions Tracked
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 pt-1">
+            {/* Stage 1: Product Views */}
+            <div className="p-3.5 rounded-2xl bg-stone-900/90 border border-stone-800 space-y-1.5">
+              <div className="flex items-center justify-between text-xs text-stone-400">
+                <span className="font-semibold flex items-center gap-1.5"><Eye className="w-3.5 h-3.5 text-stone-400" /> 1. Produce Views</span>
+              </div>
+              <div className="text-2xl font-black text-white font-mono">
+                {(data.funnel?.productViews || 0).toLocaleString('en-IN')}
+              </div>
+              <p className="text-[10px] text-stone-400">Catalog commodity views</p>
+            </div>
+
+            {/* Stage 2: Added to Cart */}
+            <div className="p-3.5 rounded-2xl bg-stone-900/90 border border-stone-800 space-y-1.5">
+              <div className="flex items-center justify-between text-xs text-emerald-400">
+                <span className="font-semibold flex items-center gap-1.5"><ShoppingCart className="w-3.5 h-3.5 text-emerald-400" /> 2. Add to Cart</span>
+                <span className="text-[10px] font-bold font-mono bg-emerald-950 text-emerald-300 px-1.5 py-0.5 rounded">
+                  {data.funnel?.cartRate || 0}%
+                </span>
+              </div>
+              <div className="text-2xl font-black text-emerald-300 font-mono">
+                {(data.funnel?.addToCart || 0).toLocaleString('en-IN')}
+              </div>
+              <p className="text-[10px] text-stone-400">Cart additions</p>
+            </div>
+
+            {/* Stage 3: Checkout Initiated */}
+            <div className="p-3.5 rounded-2xl bg-stone-900/90 border border-stone-800 space-y-1.5">
+              <div className="flex items-center justify-between text-xs text-amber-400">
+                <span className="font-semibold flex items-center gap-1.5"><CreditCard className="w-3.5 h-3.5 text-amber-400" /> 3. Checkout</span>
+                <span className="text-[10px] font-bold font-mono bg-amber-950 text-amber-300 px-1.5 py-0.5 rounded">
+                  {data.funnel?.checkoutRate || 0}%
+                </span>
+              </div>
+              <div className="text-2xl font-black text-amber-300 font-mono">
+                {(data.funnel?.beginCheckout || 0).toLocaleString('en-IN')}
+              </div>
+              <p className="text-[10px] text-stone-400">Proceeded to payment</p>
+            </div>
+
+            {/* Stage 4: Orders Paid */}
+            <div className="p-3.5 rounded-2xl bg-stone-900/90 border border-stone-800 space-y-1.5">
+              <div className="flex items-center justify-between text-xs text-lime-400">
+                <span className="font-semibold flex items-center gap-1.5"><PackageCheck className="w-3.5 h-3.5 text-lime-400" /> 4. Orders Paid</span>
+                <span className="text-[10px] font-bold font-mono bg-lime-950 text-lime-300 px-1.5 py-0.5 rounded">
+                  {data.funnel?.purchaseRate || 0}%
+                </span>
+              </div>
+              <div className="text-2xl font-black text-lime-300 font-mono">
+                {(data.funnel?.purchases || 0).toLocaleString('en-IN')}
+              </div>
+              <p className="text-[10px] text-stone-400">Confirmed transactions</p>
+            </div>
+
+            {/* Stage 5: B2B Wholesale RFQs */}
+            <div className="p-3.5 rounded-2xl bg-gradient-to-br from-orange-950/40 to-stone-900 border border-orange-800/40 space-y-1.5">
+              <div className="flex items-center justify-between text-xs text-orange-400">
+                <span className="font-semibold flex items-center gap-1.5"><FileText className="w-3.5 h-3.5 text-orange-400" /> B2B RFQs</span>
+                <span className="text-[10px] font-bold font-mono bg-orange-950 text-orange-300 px-1.5 py-0.5 rounded">
+                  Bulk
+                </span>
+              </div>
+              <div className="text-2xl font-black text-orange-300 font-mono">
+                {(data.funnel?.rfqSubmitted || 0).toLocaleString('en-IN')}
+              </div>
+              <p className="text-[10px] text-stone-400">High-value quotes submitted</p>
+            </div>
+          </div>
+        </div>
+
         {/* Live Visitor Sessions: Device Name & User Location Inspection */}
         {data.recentVisitors && data.recentVisitors.length > 0 && (
           <div className="bg-stone-800/40 border border-stone-800 rounded-3xl p-5 sm:p-6 space-y-4">
@@ -397,10 +507,11 @@ export default function SiteVisitorCounter() {
 
             <div className="divide-y divide-stone-800/80 border border-stone-800/80 rounded-2xl overflow-hidden bg-stone-900/90 text-xs">
               <div className="grid grid-cols-12 px-4 py-2.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider bg-stone-950/60">
-                <div className="col-span-3 sm:col-span-3">Visitor Device ID</div>
-                <div className="col-span-3 sm:col-span-3">Device &amp; OS</div>
-                <div className="col-span-3 sm:col-span-3">User Location</div>
-                <div className="col-span-3 sm:col-span-3 text-right">Viewed Route &amp; Time</div>
+                <div className="col-span-3 sm:col-span-2">Visitor Device ID</div>
+                <div className="col-span-3 sm:col-span-2">Device &amp; OS</div>
+                <div className="col-span-3 sm:col-span-2">User Location</div>
+                <div className="col-span-3 sm:col-span-4">Latest Action / Funnel</div>
+                <div className="col-span-12 sm:col-span-2 text-left sm:text-right">Viewed Route &amp; Time</div>
               </div>
 
               {data.recentVisitors.map((vis, vIdx) => (
@@ -409,13 +520,13 @@ export default function SiteVisitorCounter() {
                   className="grid grid-cols-12 px-4 py-3 items-center hover:bg-stone-800/40 transition gap-2"
                 >
                   {/* Visitor ID */}
-                  <div className="col-span-3 sm:col-span-3 font-mono text-[11px] text-emerald-300 truncate flex items-center gap-1.5">
+                  <div className="col-span-3 sm:col-span-2 font-mono text-[11px] text-emerald-300 truncate flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
                     <span title={vis.visitorId}>{vis.visitorId}</span>
                   </div>
 
                   {/* Device Name */}
-                  <div className="col-span-3 sm:col-span-3 text-stone-200">
+                  <div className="col-span-3 sm:col-span-2 text-stone-200">
                     <span className="font-semibold block truncate" title={vis.deviceName}>
                       {vis.deviceName}
                     </span>
@@ -425,12 +536,25 @@ export default function SiteVisitorCounter() {
                   </div>
 
                   {/* Location */}
-                  <div className="col-span-3 sm:col-span-3 text-stone-300 truncate text-[11px]" title={vis.location}>
+                  <div className="col-span-3 sm:col-span-2 text-stone-300 truncate text-[11px]" title={vis.location}>
                     <span className="font-medium">{vis.location}</span>
                   </div>
 
+                  {/* Latest Action Pill */}
+                  <div className="col-span-3 sm:col-span-4 truncate">
+                    {vis.latestAction ? (
+                      <span className="inline-block max-w-full px-2 py-0.5 rounded-md bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 font-medium text-[11px] truncate" title={vis.latestAction}>
+                        {vis.latestAction}
+                      </span>
+                    ) : (
+                      <span className="text-[11px] text-stone-500 font-mono italic">
+                        Browsing page
+                      </span>
+                    )}
+                  </div>
+
                   {/* Path & Timestamp */}
-                  <div className="col-span-3 sm:col-span-3 text-right">
+                  <div className="col-span-12 sm:col-span-2 text-left sm:text-right">
                     <span className="font-mono text-stone-200 text-[11px] truncate block" title={vis.path}>
                       {vis.path}
                     </span>

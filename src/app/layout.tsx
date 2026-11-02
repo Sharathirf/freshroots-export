@@ -4,15 +4,8 @@ import './globals.css';
 import { CartProvider } from '@/context/CartContext';
 import { WishlistProvider } from '@/context/WishlistContext';
 import { AuthProvider } from '@/context/AuthContext';
-import WatchlistDrawer from '@/components/WatchlistDrawer';
-import SignInModal from '@/components/SignInModal';
-import AccountModal from '@/components/AccountModal';
-import EditProfileModal from '@/components/EditProfileModal';
-import ManageAddressesModal from '@/components/ManageAddressesModal';
-import OrderHistoryModal from '@/components/OrderHistoryModal';
-import HelpModal from '@/components/HelpModal';
 import MobileBottomNav from '@/components/MobileBottomNav';
-import PwaInstallPrompt from '@/components/PwaInstallPrompt';
+import ClientModals from '@/components/ClientModals';
 import PostHogPageView from '@/components/PostHogPageView';
 import VisitorTracker from '@/components/VisitorTracker';
 import { Analytics } from '@vercel/analytics/react';
@@ -31,10 +24,10 @@ const siteUrl = getSiteUrl();
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'FreshRoots Export | Farm-Gate Agricultural Produce India',
+    default: 'Buy Coconuts & Tiptur Ball Copra Online | FreshRoots Export',
     template: '%s | FreshRoots Export',
   },
-  description: 'Direct farm-gate agricultural commerce: mature coconuts, GI Tiptur ball copra, spices, and cold-pressed oils. Standardized weight grading & free delivery.',
+  description: 'Direct farm-gate supply of mature coconuts, GI Tiptur ball copra, and cold-pressed oils from Karnataka. Buy retail or wholesale with free express delivery.',
   manifest: '/manifest.webmanifest',
   icons: {
     apple: '/apple-touch-icon.png'
@@ -121,20 +114,13 @@ export default function RootLayout({
           <WishlistProvider>
             <CartProvider>
               {children}
-              <WatchlistDrawer />
-              <SignInModal />
-              <AccountModal />
-              <EditProfileModal />
-              <ManageAddressesModal />
-              <OrderHistoryModal />
-              <HelpModal />
+              <ClientModals />
               <MobileBottomNav />
             </CartProvider>
           </WishlistProvider>
         </AuthProvider>
         <PostHogPageView />
         <VisitorTracker />
-        <PwaInstallPrompt />
         <Analytics />
       </body>
     </html>

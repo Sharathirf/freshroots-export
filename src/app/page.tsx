@@ -203,10 +203,10 @@ export default function HomePage() {
                     <span>Karnataka Agricultural Direct Supply &amp; Global Agro-Export</span>
                   </div>
                   <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-stone-900 tracking-tight leading-snug">
-                    Direct-From-Farm Karnataka Produce &amp; Industrial Commodities
+                    Direct-From-Farm Karnataka Coconuts, Copra &amp; Agricultural Commodities
                   </h1>
                   <p className="text-stone-600 text-xs sm:text-sm leading-relaxed">
-                    Direct-from-farm procurement of authentic Karnataka agricultural produce and industrial commodities sourced straight from certified grower belts in <span className="font-semibold text-stone-900">Tiptur, Mandya, Shimoga &amp; Coastal Karnataka</span>. Zero commission middlemen, lab-tested grading, and transparent mandi benchmark pricing for domestic households and commercial bulk buyers.
+                    Direct-from-farm procurement of authentic Karnataka mature coconuts, GI Tiptur ball copra, and agricultural commodities sourced straight from certified grower belts in <span className="font-semibold text-stone-900">Tiptur, Mandya, Shimoga &amp; Coastal Karnataka</span>. Zero commission middlemen, lab-tested grading, and transparent mandi benchmark pricing for domestic households and commercial bulk buyers.
                   </p>
 
                   {/* 3 Quick Value Pillars */}
