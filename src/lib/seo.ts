@@ -64,7 +64,108 @@ export function generateOrganizationJsonLd(siteUrl: string) {
     url: siteUrl,
     logo: `${siteUrl}/icon.svg`,
     image: `${siteUrl}/products/mature-coconuts-4k.jpg`,
-    description: 'Farm-direct agricultural commerce platform supplying hand-graded mature coconuts, GI Tiptur ball copra, spices, cold-pressed oils, and nursery saplings from Karnataka, India.',
+    description: 'FreshRoots Export is a direct-from-farm agricultural supply and global agro-export platform headquartered in Kikkeri, Mandya District, Karnataka. We connect verified grower belts across Tiptur, Mandya, Shivamogga, and Coastal Karnataka directly with retail households, commercial food processors, oil expellers, and international FCL importers. Our lab-graded catalog includes GI-Tagged Tiptur Ball Copra (Unde Kobbari), Fresh Semi-Husked Mature & Tender Coconuts, Shivamogga Arecanut (Adike), Wood-Pressed Groundnut & Coconut Oils, Bilona Desi Cow Ghee, Mandya Ragi, and Industrial Coconut Shell Charcoal. FSSAI, APEDA & DGFT IEC certified.',
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'FreshRoots Agricultural Wholesale & Export Catalog',
+      itemListElement: [
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Product',
+            name: 'Mature Coconuts (25-Piece Bag)',
+            url: `${siteUrl}/products/fresh-semi-husked-mature-coconuts-25-piece`,
+            category: 'Fresh Coconuts',
+          },
+          price: '1479',
+          priceCurrency: 'INR'
+        },
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Product',
+            name: 'GI Tiptur Ball Copra (15 kg Master Box)',
+            url: `${siteUrl}/products/tiptur-ball-copra-boxes-15kg`,
+            category: 'Ball Copra',
+          },
+          price: '5508',
+          priceCurrency: 'INR'
+        },
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Product',
+            name: 'Wood-Pressed Groundnut Oil (500 ml)',
+            url: `${siteUrl}/products/pure-wood-pressed-groundnut-oil-1l`,
+            category: 'Oils & Ghee',
+          },
+          price: '250',
+          priceCurrency: 'INR'
+        },
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Product',
+            name: 'Pure Desi Cow Bilona Ghee (500 ml)',
+            url: `${siteUrl}/products/farm-fresh-pure-desi-cow-ghee-1l`,
+            category: 'Oils & Ghee',
+          },
+          price: '530',
+          priceCurrency: 'INR'
+        },
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Product',
+            name: 'Mandya Stone-Ground Ragi Flour (5 kg)',
+            url: `${siteUrl}/products/mandya-stone-ground-ragi-flour-5kg`,
+            category: 'Millets & Flours',
+          },
+          price: '385',
+          priceCurrency: 'INR'
+        },
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            name: 'Agricultural Product Wholesale',
+            description: 'Direct farm-gate wholesale procurement across Karnataka Mandi corridors.'
+          }
+        },
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            name: 'Agricultural Export Services',
+            description: 'APEDA & DGFT certified agricultural container exports.'
+          }
+        },
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            name: '20ft & 40ft FCL Ocean Container Logistics',
+            description: 'Full container load maritime freight dispatch via JNPT / NMPT ports.'
+          }
+        },
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            name: 'Pan-India Express Farm Dispatch',
+            description: 'Doorstep freight and logistics for commercial consignments across India.'
+          }
+        },
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            name: 'Weighbridge Certified Bulk Freight',
+            description: 'Certified electronic weighbridge slips and lab moisture testing on all commercial dispatches.'
+          }
+        }
+      ]
+    },
     telephone: '+919008462568',
     email: 'sales@freshrootsexport.com',
     priceRange: '₹77 - ₹1,10,000',
