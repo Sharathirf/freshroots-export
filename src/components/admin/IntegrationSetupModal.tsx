@@ -17,6 +17,7 @@ import {
   Bell,
   ShieldCheck,
   Sparkles,
+  FileSpreadsheet,
 } from 'lucide-react';
 
 interface IntegrationSetupModalProps {
@@ -297,6 +298,37 @@ const SERVICE_CATALOG: Record<string, ServiceMeta> = {
         placeholder: '{"type":"service_account","project_id":"...","private_key":"..."}',
         type: 'textarea',
         help: 'Server-side credentials for dispatching web push via Firebase Admin.',
+      },
+    ],
+  },
+  'google-sheets': {
+    id: 'google-sheets',
+    name: 'Google Sheets Master Database',
+    tagline: 'Direct cloud synchronization with the master operations spreadsheet for Products, Orders, RFQs, CRM Customers, and Mandi rates.',
+    portalUrl: 'https://docs.google.com/spreadsheets/d/1vNnrqgjQXaYyLAdx6C35wUZAV5oDfFnf4CJiIAe2FaU/edit?gid=0#gid=0',
+    portalName: 'Google Sheets Master Document',
+    icon: FileSpreadsheet,
+    steps: [
+      {
+        title: 'Central Master Sheet Configured',
+        detail: 'Connected to spreadsheet ID 1vNnrqgjQXaYyLAdx6C35wUZAV5oDfFnf4CJiIAe2FaU.',
+      },
+      {
+        title: 'Automated Real-Time Formulas',
+        detail: 'In each sheet tab (Products, Orders, RFQs, Customers, Mandi Rates), enter =IMPORTDATA("...") in cell A1 to pull live data continuously.',
+      },
+      {
+        title: 'One-Click CSV Export Feeds',
+        detail: 'Download full CSV backups anytime directly from /api/admin/master-sheet.',
+      },
+    ],
+    fields: [
+      {
+        key: 'GOOGLE_MASTER_SHEET_URL',
+        label: 'Master Google Sheet URL',
+        placeholder: 'https://docs.google.com/spreadsheets/d/...',
+        type: 'text',
+        help: 'Full edit or view URL for the central FreshRoots Export operations spreadsheet.',
       },
     ],
   },

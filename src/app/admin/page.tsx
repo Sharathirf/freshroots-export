@@ -30,7 +30,8 @@ import {
   TrendingUp,
   Mail,
   ShieldAlert,
-  Bell
+  Bell,
+  FileSpreadsheet
 } from 'lucide-react';
 import AdminTotpSetupModal from '@/components/admin/AdminTotpSetupModal';
 import IntegrationSetupModal from '@/components/admin/IntegrationSetupModal';
@@ -70,6 +71,8 @@ function getIntegrationIcon(id: string) {
       return ShieldAlert;
     case 'firebase':
       return Bell;
+    case 'google-sheets':
+      return FileSpreadsheet;
     default:
       return Settings;
   }
@@ -888,6 +891,16 @@ export default function AdminPage() {
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+            <a
+              href="https://docs.google.com/spreadsheets/d/1vNnrqgjQXaYyLAdx6C35wUZAV5oDfFnf4CJiIAe2FaU/edit?gid=0#gid=0"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/80 text-emerald-200 px-2.5 sm:px-3 py-1.5 rounded-lg transition"
+              title="Open Google Master Sheet"
+            >
+              <FileSpreadsheet className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span className="hidden sm:inline">Master Sheet</span>
+            </a>
             <button
               onClick={() => openTotpSetup()}
               disabled={loadingTotpSetup}

@@ -157,6 +157,18 @@ export async function GET(request: NextRequest) {
         'push_subscriptions migration': pushTableReady ? 'Active' : '',
       },
     },
+    {
+      id: 'google-sheets',
+      name: 'Google Sheets Master Database',
+      description: 'Central operations spreadsheet for Products, Retail Orders, B2B RFQs, CRM Customers, and Mandi Rates.',
+      portalUrl: getVal('GOOGLE_MASTER_SHEET_URL') || 'https://docs.google.com/spreadsheets/d/1vNnrqgjQXaYyLAdx6C35wUZAV5oDfFnf4CJiIAe2FaU/edit?gid=0#gid=0',
+      required: ['GOOGLE_MASTER_SHEET_URL'],
+      configured: Boolean(getVal('GOOGLE_MASTER_SHEET_URL')),
+      connectionCheck: 'Connected to master spreadsheet. Live CSV export feeds available for Products, Orders, RFQs, CRM Customers, and Mandi rates.',
+      keys: {
+        GOOGLE_MASTER_SHEET_URL: getVal('GOOGLE_MASTER_SHEET_URL') || 'https://docs.google.com/spreadsheets/d/1vNnrqgjQXaYyLAdx6C35wUZAV5oDfFnf4CJiIAe2FaU/edit?gid=0#gid=0',
+      },
+    },
   ].map((item) => ({ ...item, status: item.configured ? 'configured' : 'needs_setup' }));
 
   return NextResponse.json(
