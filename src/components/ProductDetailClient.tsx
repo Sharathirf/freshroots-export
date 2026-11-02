@@ -25,7 +25,10 @@ import {
   Award,
   AlertCircle,
   Heart,
-  Star
+  Star,
+  MessageCircle,
+  Share2,
+  Clock
 } from 'lucide-react';
 
 interface ProductDetailClientProps {
@@ -321,6 +324,32 @@ export default function ProductDetailClient({
     !product.sku?.includes('COI-COP') &&
     product.category !== 'arecanut'
   );
+
+  const whatsappBuyUrl = (() => {
+    if (!product) return 'https://wa.me/919481318919';
+    const variantText = selectedVariant ? ` (${selectedVariant.packSize})` : '';
+    const totalFormatted = (price * retailQty).toLocaleString('en-IN');
+    const message = `Hello FreshRoots Export, I would like to order *${product.title}*${variantText} - Quantity: ${retailQty} for ₹${totalFormatted}. Please confirm delivery to my location and UPI payment options.`;
+    return `https://wa.me/919481318919?text=${encodeURIComponent(message)}`;
+  })();
+
+  const handleShareProduct = async () => {
+    if (!product) return;
+    const shareUrl = typeof window !== 'undefined' ? window.location.href : `https://freshrootsexport.com/products/${product.slug}`;
+    const shareTitle = `${product.title} - FreshRoots Export`;
+    const shareText = `Direct-from-farm ${product.title} graded at Mandya/Tiptur farm hub: ₹${price.toLocaleString('en-IN')} with free delivery pan-India.`;
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+        track('product_shared', { product_id: product.id, title: product.title, method: 'native' });
+        return;
+      } catch {}
+    }
+    const waShare = `https://wa.me/?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`;
+    window.open(waShare, '_blank');
+    track('product_shared', { product_id: product.id, title: product.title, method: 'whatsapp' });
+  };
 
   const handleBuyNow = () => {
     if (!product) return;
@@ -693,8 +722,14 @@ export default function ProductDetailClient({
                   </div>
                 </div>
 
+                {/* Farm Dispatch SLA Badge */}
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-medium">
+                  <Clock className="w-4 h-4 text-emerald-700 shrink-0" />
+                  <span><strong>Farm Dispatch SLA:</strong> Orders confirmed by 4:00 PM are lab-graded and dispatched within 24 hours from Kikkeri Hub.</span>
+                </div>
+
                 {/* Action Buttons: 1-Tap Add to Cart & Buy Now */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                   <button
                     type="button"
                     onClick={() => addToCart(product, retailQty, selectedVariant || undefined)}
@@ -713,6 +748,30 @@ export default function ProductDetailClient({
                   >
                     <Zap className="w-4 h-4 text-lime-300" />
                     <span>Instant Checkout &bull; ₹{(price * retailQty).toLocaleString('en-IN')}</span>
+                  </button>
+                </div>
+
+                {/* Instant WhatsApp Order & Group Share */}
+                <div className="flex items-center gap-2.5 pt-1">
+                  <a
+                    href={whatsappBuyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => track('whatsapp_order_clicked', { product_id: product.id, title: product.title, price, quantity: retailQty })}
+                    className="flex-1 py-3 px-4 rounded-2xl bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2"
+                  >
+                    <MessageCircle className="w-4 h-4 text-emerald-200" />
+                    <span>1-Tap Order via WhatsApp</span>
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={handleShareProduct}
+                    className="py-3 px-4 rounded-2xl bg-stone-100 hover:bg-stone-200 active:scale-[0.98] text-stone-700 font-bold text-xs transition flex items-center justify-center gap-1.5"
+                    title="Share this product with buyers or family"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    <span className="hidden sm:inline">Share</span>
                   </button>
                 </div>
               </div>
@@ -1086,7 +1145,18 @@ export default function ProductDetailClient({
                 </span>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-1.5 shrink-0">
+                <a
+                  href={whatsappBuyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => track('whatsapp_order_clicked', { product_id: product.id, title: product.title, price, quantity: retailQty })}
+                  className="bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white p-2.5 rounded-xl transition shadow-xs flex items-center justify-center"
+                  title="Order on WhatsApp"
+                >
+                  <MessageCircle className="w-4 h-4 text-emerald-100" />
+                </a>
+
                 <button
                   type="button"
                   onClick={() => addToCart(product, retailQty, selectedVariant || undefined)}

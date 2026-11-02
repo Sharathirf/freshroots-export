@@ -1821,6 +1821,21 @@ export default function CartDrawer() {
                 <span>Proceed to Delivery & Payment</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
               </button>
+
+              <a
+                href={`https://wa.me/919481318919?text=${encodeURIComponent(
+                  `Hello FreshRoots Export, I would like to order my cart items:\n` +
+                  items.map((i) => `• ${i.title} (${i.quantity}x) - ₹${i.total_price_inr}`).join('\n') +
+                  `\nTotal: ₹${subtotal.toLocaleString('en-IN')}\nPlease confirm delivery & UPI payment.`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => track('cart_whatsapp_checkout_clicked', { value: subtotal, item_count: items.length })}
+                className="w-full py-2.5 px-3 bg-white border border-emerald-600 text-emerald-800 hover:bg-emerald-50 active:scale-[0.99] rounded-xl text-xs font-bold transition flex items-center justify-center gap-2"
+              >
+                <MessageCircle className="w-3.5 h-3.5 text-emerald-700" />
+                <span>Prefer WhatsApp? Order Cart via WhatsApp</span>
+              </a>
             </div>
           )}
         </div>

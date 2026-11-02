@@ -3,7 +3,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, OrderItem } from '@/types';
 import { track } from '@/lib/analytics';
-import { useAuth } from '@/context/AuthContext';
 
 export interface PackVariantOption {
   title?: string;
@@ -41,7 +40,6 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const { isLoggedIn, requireAuth } = useAuth();
   const [items, setItems] = useState<OrderItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'checkout' | 'success'>('cart');
@@ -287,34 +285,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const addToCart = (product: Product, quantity = 1, variant?: PackVariantOption) => {
-    // Check both React auth state and persistent session storage to prevent stale closure lock
-    let authed = isLoggedIn;
-    if (!authed && typeof window !== 'undefined') {
-      try {
-        const saved = localStorage.getItem('tiptur_customer_session');
-        if (saved && JSON.parse(saved)?.phone) {
-          authed = true;
-        }
-      } catch {}
-    }
-
-    // Auth gate: If fresh/unauthenticated user clicks Add to Cart, prompt to sign in and auto-resume
-    if (!authed) {
-      try {
-        sessionStorage.setItem('freshroots_post_login_intent', JSON.stringify({
-          type: 'cart',
-          product,
-          quantity,
-          variant
-        }));
-      } catch {}
-      requireAuth('Sign in with your mobile number to add items to your cart & check 1st-order discount eligibility', () => {
-        addItemToCartInternal(product, quantity, variant);
-        setIsCartOpen(true);
-      });
-      return;
-    }
-
+    // Seamless guest cart experience: Allow visitors to add items freely without interrupting them with OTP prompts.
+    // Secure auth is enforced when they click 'Proceed to Delivery & Payment' in the cart drawer.
     addItemToCartInternal(product, quantity, variant);
     setIsCartOpen(true);
   };

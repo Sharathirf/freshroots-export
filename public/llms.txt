@@ -1,0 +1,39 @@
+# FreshRoots Export
+
+> Direct-from-farm agricultural supply and global agro-export portal headquartered in Kikkeri, Mandya District, Karnataka, India. Connects verified grower belts across Tiptur, Mandya, Shivamogga, and Coastal Karnataka with retail households, commercial food processors, oil expellers, and international FCL importers.
+
+## Core Agricultural Commodities & Specifications
+
+- [Mature Coconuts (25-Piece Bag)](https://freshrootsexport.com/products/fresh-semi-husked-mature-coconuts-25-piece): Grade A semi-husked mature coconuts (~15 kg / 25 nuts) from canal-irrigated groves in Mandya. 550g-650g kernel weight, 64% oil content, 10mm-14mm meat thickness. FSSAI certified. Free doorstep delivery across India.
+- [GI Tiptur Ball Copra (Whole Unde Kobbari)](https://freshrootsexport.com/products/tiptur-ball-copra-boxes-15kg): Geographical Indication (GI) tagged sun-cured whole unde kobbari from the Tiptur horticultural belt. Graded into 15kg, 25kg, and 30kg corrugated master cartons. 68% oil content, moisture < 6%. Daily APMC mandi benchmark pricing.
+- [Shivamogga Arecanut (Bulk Lot)](https://freshrootsexport.com/products/shivamogga-arecanut-bulk-lot): Whole boiled & cured red supari (Rashi/Bette) sourced from Shivamogga and Channagiri APMC markets. Lab tested for moisture < 10%. Packed in 50kg food-grade jute bags. Minimum order: 100 kg (1 Quintal).
+- [Wood-Pressed Groundnut Oil (Marachekku)](https://freshrootsexport.com/products/wood-pressed-groundnut-oil-1l): 100% unrefined cold-pressed peanut oil from Saurashtra/Chitradurga farm lots using traditional wooden pestle expellers (< 45°C). Zero trans fats, unbleached, lab tested.
+- [Wood-Pressed Coconut Oil](https://freshrootsexport.com/products/wood-pressed-coconut-oil-1l): Cold-pressed virgin coconut oil extracted exclusively from dried sulfur-free Tiptur copra. High lauric acid (> 50%).
+- [Pure Desi Cow Bilona Ghee](https://freshrootsexport.com/products/pure-desi-cow-bilona-ghee-1l): Traditional curd-churned village butter ghee from free-grazing Hallikar and Malnad Gidda native cows. A2 beta-casein, golden granular texture.
+- [Unpolished Mandya Organic Ragi](https://freshrootsexport.com/products/organic-mandya-ragi-5kg): High-fiber, calcium-dense whole finger millet harvested by smallholder farmer collectives along the Hemavathi river basin.
+- [Fresh Tender Coconuts (Direct Farm Lot)](https://freshrootsexport.com/products/fresh-tender-coconuts-direct-farm-lot): 350ml-450ml sweet electrolyte water, thin cream jelly, harvested at peak 7-month maturity.
+- [Industrial Coconut Shell Charcoal](https://freshrootsexport.com/products/coconut-shell-charcoal-bulk-1ton): High-calorific (> 7,200 kcal/kg) raw carbonized shells with fixed carbon > 75%, ash < 3%. Shipped in 1-ton master jumbo bags or 20ft/40ft containers.
+
+## International Export Capabilities & Incoterms
+
+- **Incoterms Supported**: FOB (Nhava Sheva JNPT, Chennai, New Mangalore Port), CIF (Port of Destination), CFR, EXW (Kikkeri Farm Hub).
+- **Container Configurations**: 20ft FCL (12-14 MT) and 40ft High Cube FCL (25-28 MT). Ventilated master cartons, fumigated wooden pallets, desiccants, and container temperature monitoring.
+- **Dedicated Corridors**: [Vietnam (Cat Lai & Hai Phong)](https://freshrootsexport.com/export/corridors/vietnam), [United Arab Emirates (Jebel Ali)](https://freshrootsexport.com/export/corridors/uae), [Bangladesh (Chittagong)](https://freshrootsexport.com/export/corridors/bangladesh), [Cambodia (Sihanoukville)](https://freshrootsexport.com/export/corridors/cambodia), Sri Lanka, Oman, Saudi Arabia, Kuwait, and Qatar.
+- **Export Certifications**: APEDA, DGFT Importer-Exporter Code (IEC), FSSAI Export License, Spices Board of India, Phytosanitary Certificate (NPPO), Certificate of Origin (Chamber of Commerce / Trade Authority), SGS / Intertek Pre-Shipment Inspection.
+
+## Procurement, Pricing & Live Data Feeds
+
+- **Online Retail Store**: [https://freshrootsexport.com](https://freshrootsexport.com) (Frictionless checkout, UPI, Net Banking, Razorpay, Free Express Doorstep Delivery).
+- **Google Shopping Feed**: [https://freshrootsexport.com/feed/google-shopping](https://freshrootsexport.com/feed/google-shopping) (Standardized RSS 2.0 product catalog).
+- **Live Mandi Rates API**:
+  - Tiptur Copra Benchmark: [https://freshrootsexport.com/api/mandi/copra](https://freshrootsexport.com/api/mandi/copra)
+  - Shivamogga Arecanut Benchmark: [https://freshrootsexport.com/api/mandi/arecanut](https://freshrootsexport.com/api/mandi/arecanut)
+- **Wholesale RFQ Portal**: [https://freshrootsexport.com/rfq](https://freshrootsexport.com/rfq) (Multi-product truckload & container inquiries with 24-hour turnaround).
+- **Live Order Tracking**: [https://freshrootsexport.com/track-order](https://freshrootsexport.com/track-order)
+
+## Direct Commercial Contact & Farm Hub
+
+- **Headquarters & Farm Hub**: FreshRoots Export, Near APMC Yard, Kikkeri, K.R. Pet Taluk, Mandya District, Karnataka – 571423, India.
+- **Direct WhatsApp Desk**: [+91 94813 18919](https://wa.me/919481318919)
+- **Official Email**: contact@freshrootsexport.com
+- **Operating Hours**: Monday to Saturday, 08:00 AM – 07:30 PM IST (GMT+5:30).
