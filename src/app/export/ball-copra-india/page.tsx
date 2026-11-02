@@ -187,7 +187,7 @@ export default function BallCopraExportPillarPage() {
       <main className="flex-1 space-y-12 sm:space-y-16 pb-16">
         {/* Breadcrumb Nav */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-          <nav aria-label="Breadcrumb" className="text-xs text-stone-500 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-stone-700 font-medium flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-emerald-700 transition">Home</Link>
             <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
             <Link href="/export" className="hover:text-emerald-700 transition">Global Export Desk</Link>
@@ -216,20 +216,20 @@ export default function BallCopraExportPillarPage() {
 
                 {/* Key Spec Badges */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
-                  <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
-                    <span className="text-[10px] text-stone-400 uppercase font-bold block">Moisture</span>
-                    <strong className="text-emerald-400 text-base font-mono">≤ 5.5% Max</strong>
+                  <div className="p-3 rounded-xl bg-stone-950/80 border border-white/20 text-center shadow-xs">
+                    <span className="text-[10px] text-stone-300 uppercase font-bold block">Moisture</span>
+                    <strong className="text-white text-base font-mono">≤ 5.5% Max</strong>
                   </div>
-                  <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
-                    <span className="text-[10px] text-stone-400 uppercase font-bold block">Oil Content</span>
-                    <strong className="text-lime-400 text-base font-mono">65% – 68%</strong>
+                  <div className="p-3 rounded-xl bg-stone-950/80 border border-white/20 text-center shadow-xs">
+                    <span className="text-[10px] text-stone-300 uppercase font-bold block">Oil Content</span>
+                    <strong className="text-white text-base font-mono">65% – 68%</strong>
                   </div>
-                  <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
-                    <span className="text-[10px] text-stone-400 uppercase font-bold block">20ft FCL</span>
-                    <strong className="text-amber-400 text-base font-mono">11.0 MT</strong>
+                  <div className="p-3 rounded-xl bg-stone-950/80 border border-white/20 text-center shadow-xs">
+                    <span className="text-[10px] text-stone-300 uppercase font-bold block">20ft FCL</span>
+                    <strong className="text-white text-base font-mono">11.0 MT</strong>
                   </div>
-                  <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
-                    <span className="text-[10px] text-stone-400 uppercase font-bold block">Dispatch Port</span>
+                  <div className="p-3 rounded-xl bg-stone-950/80 border border-white/20 text-center shadow-xs">
+                    <span className="text-[10px] text-stone-300 uppercase font-bold block">Dispatch Port</span>
                     <strong className="text-white text-base font-mono">JNPT / NMPT</strong>
                   </div>
                 </div>

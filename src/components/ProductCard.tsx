@@ -272,7 +272,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
           <button
             type="button"
             onClick={() => toggleWishlist(product)}
-            className="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-stone-600 hover:text-red-500 flex items-center justify-center shadow-xs transition group/heart focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3b6d11] select-none"
+            className="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-stone-600 hover:text-red-500 flex items-center justify-center shadow-xs transition group/heart focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#3b6d11] focus-visible:outline-offset-2 select-none"
             title={isWishlisted ? 'Remove from Watchlist' : 'Add to Watchlist'}
             aria-label={isWishlisted ? `Remove ${product.title} from wishlist` : `Add ${product.title} to wishlist`}
           >

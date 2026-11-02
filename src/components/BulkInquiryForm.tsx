@@ -365,6 +365,8 @@ export default function BulkInquiryForm({ product, onSuccess }: BulkInquiryFormP
           </label>
           <input
             type="text"
+            name="destination"
+            id="destination"
             value={destinationCity}
             onChange={(e) => setDestinationCity(e.target.value)}
             placeholder="e.g. Dubai, Chittagong, New York, Jebel Ali, or domestic city"

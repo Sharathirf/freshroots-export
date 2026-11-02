@@ -77,7 +77,7 @@ export default function Footer() {
               </div>
             </Link>
 
-            <p className="text-stone-400 leading-relaxed max-w-sm">
+            <p className="text-stone-300 leading-relaxed max-w-sm">
               India&apos;s premier digital agricultural platform connecting coconut producers and spice farmers in Karnataka directly with household consumers, oil expellers, and global export buyers.
             </p>
 
@@ -88,8 +88,15 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-lime-400 shrink-0" />
-                <a href="https://wa.me/919008462568" target="_blank" rel="noopener noreferrer" className="hover:text-lime-300 transition">
-                  Desk & WhatsApp: +91 90084 62568
+                <a
+                  href="https://wa.me/919008462568"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-lime-300 transition"
+                  title="Contact FreshRoots Desk & WhatsApp (opens in a new tab)"
+                  aria-label="Contact FreshRoots Desk & WhatsApp (opens in a new tab)"
+                >
+                  Desk &amp; WhatsApp: +91 90084 62568
                 </a>
               </div>
               <div className="flex items-center gap-2">
@@ -106,7 +113,7 @@ export default function Footer() {
             <h4 className="font-bold text-white text-xs uppercase tracking-wider">
               Commodity Hubs
             </h4>
-            <ul className="space-y-2 text-stone-400">
+            <ul className="space-y-2 text-stone-300">
               <li><Link href="/category/mature-coconut" className="hover:text-white transition">Fresh Coconuts (Mandya)</Link></li>
               <li><Link href="/category/copra" className="hover:text-white transition">GI Tiptur Ball Copra</Link></li>
               <li><Link href="/category/oil-and-extracts" className="hover:text-white transition">Wood-Pressed Oils &amp; Ghee</Link></li>
@@ -122,7 +129,7 @@ export default function Footer() {
             <h4 className="font-bold text-white text-xs uppercase tracking-wider">
               B2B &amp; Sourcing
             </h4>
-            <ul className="space-y-2 text-stone-400">
+            <ul className="space-y-2 text-stone-300">
               <li><Link href="/export" className="text-lime-300 font-semibold hover:text-white transition">Global Agri-Export Desk</Link></li>
               <li><Link href="/export/ball-copra-india" className="text-lime-300 font-semibold hover:text-white transition">Tiptur Ball Copra Export (FCL)</Link></li>
               <li><Link href="/wholesale/mandi-rates" className="text-lime-300 font-semibold hover:text-white transition">Live Mandi Rates Hub</Link></li>
@@ -140,35 +147,35 @@ export default function Footer() {
             <h4 className="font-bold text-white text-xs uppercase tracking-wider">
               Legal &amp; Policies
             </h4>
-            <ul className="space-y-2 text-stone-400">
+            <ul className="space-y-2 text-stone-300">
               <li><Link href="/refund-policy" className="hover:text-lime-300 transition text-stone-300">100% Spoilage Policy</Link></li>
               <li><Link href="/shipping-policy" className="hover:text-lime-300 transition text-stone-300">Shipping &amp; Delivery Terms</Link></li>
               <li><Link href="/transportation" className="hover:text-lime-300 transition text-stone-300 font-semibold">Transportation &amp; Freight Policy</Link></li>
               <li><Link href="/privacy" className="hover:text-lime-300 transition text-stone-300">Privacy Policy</Link></li>
               <li><Link href="/terms" className="hover:text-lime-300 transition text-stone-300">Terms &amp; Conditions</Link></li>
               <li><Link href="/contact" className="hover:text-lime-300 transition text-stone-300">Contact &amp; Operations</Link></li>
-              <li><span className="text-stone-400">✓ Certified Weighbridges</span></li>
+              <li><span className="text-stone-300">✓ Certified Weighbridges</span></li>
             </ul>
           </div>
         </div>
 
         {/* Global Export Destinations Band */}
-        <div className="py-4 border-t border-stone-800/80 text-[11px] text-stone-400">
+        <div className="py-4 border-t border-stone-800/80 text-[11px] text-stone-300">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
             <span className="font-bold uppercase tracking-wider text-lime-400 text-[10px]">
               🌐 Active Global Export Markets (20ft &amp; 40ft FCL):
             </span>
-            <span className="text-stone-400 text-[10px]">
+            <span className="text-stone-300 text-[10px]">
               Full Phytosanitary &amp; Certificate of Origin via JNPT, Chennai &amp; Mangalore Ports
             </span>
           </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-stone-300 font-medium">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-stone-200 font-medium">
             {EXPORT_COUNTRIES.map((country, idx) => (
               <React.Fragment key={country.code}>
                 {idx > 0 && <span className="text-stone-600 hidden sm:inline" aria-hidden="true">•</span>}
                 <Link
                   href={`/export/corridors/${getCountrySlug(country.name)}`}
-                  className="hover:text-lime-300 hover:underline transition-colors inline-flex items-center gap-1.5 py-1.5 px-1 min-h-[28px] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-lime-400 rounded-sm"
+                  className="hover:text-lime-300 hover:underline transition-colors inline-flex items-center gap-1.5 py-1.5 px-1 min-h-[28px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-lime-400 focus-visible:outline-offset-2 rounded-sm"
                   title={`Request 20ft/40ft export quotation for ${country.name} (${country.majorPort})`}
                 >
                   <span role="img" aria-label={country.name}>{country.flag}</span>
@@ -180,26 +187,26 @@ export default function Footer() {
         </div>
 
         {/* Statutory Compliance: FSSAI, APEDA, IEC & Legal Metrology */}
-        <div className="py-4 border-t border-stone-800/80 text-[11px] text-stone-400 flex flex-wrap items-center justify-between gap-3">
+        <div className="py-4 border-t border-stone-800/80 text-[11px] text-stone-300 flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2.5">
             <span className="px-2.5 py-1 rounded-lg bg-lime-950 text-lime-300 font-mono font-bold border border-lime-800 text-[11px] flex items-center gap-1.5">
               <span className="text-white font-extrabold tracking-wide">fssai</span>
               <span>Lic. No. 21224195000438</span>
             </span>
-            <span className="px-2.5 py-1 rounded-lg bg-stone-900 text-stone-300 font-mono font-bold border border-stone-700 text-[10px] flex items-center gap-1">
+            <span className="px-2.5 py-1 rounded-lg bg-stone-900 text-stone-200 font-mono font-bold border border-stone-700 text-[10px] flex items-center gap-1">
               <span>DGFT IEC:</span>
               <span className="text-lime-300">0724018925</span>
             </span>
-            <span className="px-2.5 py-1 rounded-lg bg-stone-900 text-stone-300 font-mono font-bold border border-stone-700 text-[10px] flex items-center gap-1">
+            <span className="px-2.5 py-1 rounded-lg bg-stone-900 text-stone-200 font-mono font-bold border border-stone-700 text-[10px] flex items-center gap-1">
               <span>APEDA:</span>
               <span className="text-emerald-300">RCMC-AGR-2026</span>
             </span>
-            <span className="text-stone-300 text-[11px]">
+            <span className="text-stone-200 text-[11px]">
               Govt Certified • Full Legal Compliance for <strong>Pure Cow Ghee, Cold-Pressed Oils, Ball Copra &amp; Ragi Millets</strong>
             </span>
           </div>
-          <div className="flex items-center gap-3 text-stone-400 text-[11px]">
-            <span>GSTIN: <strong className="text-stone-300 font-mono">29AAKPI7841N1ZX</strong></span>
+          <div className="flex items-center gap-3 text-stone-300 text-[11px]">
+            <span>GSTIN: <strong className="text-white font-mono">29AAKPI7841N1ZX</strong></span>
             <span>•</span>
             <span>Karnataka Farm-Gate Producer Hub</span>
             <span>•</span>
@@ -208,23 +215,23 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar: Payment Methods, Legal & Statutory Compliance */}
-        <div className="pt-6 border-t border-stone-800 flex flex-col md:flex-row items-center justify-between gap-4 text-stone-500 text-[11px]">
+        <div className="pt-6 border-t border-stone-800 flex flex-col md:flex-row items-center justify-between gap-4 text-stone-300 text-[11px]">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span>© {new Date().getFullYear()} FreshRoots Export. All rights reserved.</span>
-            <Link href="/privacy" className="hover:underline text-stone-400">Privacy</Link>
+            <Link href="/privacy" className="hover:underline text-stone-300 hover:text-white">Privacy</Link>
             <span>&bull;</span>
-            <Link href="/terms" className="hover:underline text-stone-400">Terms</Link>
+            <Link href="/terms" className="hover:underline text-stone-300 hover:text-white">Terms</Link>
             <span>&bull;</span>
-            <Link href="/refund-policy" className="hover:underline text-stone-400">Refunds</Link>
+            <Link href="/refund-policy" className="hover:underline text-stone-300 hover:text-white">Refunds</Link>
             <span>&bull;</span>
-            <Link href="/shipping-policy" className="hover:underline text-stone-400">Shipping</Link>
+            <Link href="/shipping-policy" className="hover:underline text-stone-300 hover:text-white">Shipping</Link>
             <span>&bull;</span>
-            <Link href="/contact" className="hover:underline text-stone-400">Contact</Link>
+            <Link href="/contact" className="hover:underline text-stone-300 hover:text-white">Contact</Link>
           </div>
 
           {/* Payment Badges (100% Prepaid Secure) */}
-          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-stone-400 text-xs">
-            <span className="font-bold text-stone-300">100% Secure Prepaid:</span>
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-stone-300 text-xs">
+            <span className="font-bold text-white">100% Secure Prepaid:</span>
             <span className="px-2 py-0.5 rounded bg-white/10 text-white font-mono font-bold text-[10px]">UPI</span>
             <span className="px-2 py-0.5 rounded bg-white/10 text-white font-mono font-bold text-[10px]">GPay</span>
             <span className="px-2 py-0.5 rounded bg-white/10 text-white font-mono font-bold text-[10px]">PhonePe</span>

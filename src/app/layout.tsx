@@ -31,10 +31,10 @@ const siteUrl = getSiteUrl();
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'FreshRoots Export | Farm-Gate Agricultural Commodities from Karnataka',
+    default: 'FreshRoots Export | Farm-Gate Agricultural Produce India',
     template: '%s | FreshRoots Export',
   },
-  description: 'Direct-from-origin agricultural commerce platform selling hand-graded mature coconuts, GI Tiptur ball copra, spices, and pure cold-pressed oils to households and bulk commercial buyers.',
+  description: 'Direct farm-gate agricultural commerce: mature coconuts, GI Tiptur ball copra, spices, and cold-pressed oils. Standardized weight grading & free delivery.',
   manifest: '/manifest.webmanifest',
   icons: {
     apple: '/apple-touch-icon.png'
@@ -45,11 +45,7 @@ export const metadata: Metadata = {
     title: 'FreshRoots Export'
   },
   alternates: {
-    canonical: '/',
-    languages: {
-      'en-IN': '/',
-      'kn-IN': '/?lang=kn',
-    },
+    canonical: siteUrl,
   },
   robots: getRobotsDirectives(true),
   keywords: [

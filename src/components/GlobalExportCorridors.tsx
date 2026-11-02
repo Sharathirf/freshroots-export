@@ -125,7 +125,7 @@ export default function GlobalExportCorridors({
         {/* Quick Corridor Flags & Country Dropdown Selector Bar */}
         <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            <span className="text-[11px] sm:text-xs font-bold text-lime-300 uppercase tracking-wider shrink-0">
+            <span className="text-[11px] sm:text-xs font-bold text-white uppercase tracking-wider shrink-0">
               12 Active Corridors:
             </span>
             <div className="flex items-center gap-1.5 flex-wrap">
@@ -139,7 +139,7 @@ export default function GlobalExportCorridors({
                     setIsExpanded(true);
                   }}
                   title={`View ${c.name} (${c.majorPort})`}
-                  className={`text-xl sm:text-2xl p-1 rounded-lg transition-all hover:scale-125 hover:bg-white/10 cursor-pointer ${
+                  className={`text-xl sm:text-2xl p-1 rounded-lg transition-all hover:scale-125 hover:bg-white/10 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-lime-400 focus-visible:outline-offset-2 ${
                     selectedCountryCode === c.code && isExpanded
                       ? 'bg-lime-400/20 ring-2 ring-lime-400 scale-110'
                       : ''
@@ -153,7 +153,7 @@ export default function GlobalExportCorridors({
 
           {/* Direct Dropdown Filter */}
           <div className="flex items-center gap-2 shrink-0">
-            <label htmlFor="corridor-country-dropdown" className="text-xs text-stone-300 font-medium hidden sm:inline">
+            <label htmlFor="corridor-country-dropdown" className="text-xs text-white font-semibold hidden sm:inline">
               Country:
             </label>
             <div className="relative w-full sm:w-auto">
@@ -168,7 +168,7 @@ export default function GlobalExportCorridors({
                     setIsExpanded(true);
                   }
                 }}
-                className="w-full sm:w-auto appearance-none bg-stone-900/90 border border-white/20 hover:border-lime-400 text-stone-200 text-xs font-semibold rounded-xl pl-3 pr-8 py-2.5 shadow-inner focus:outline-hidden focus:ring-2 focus:ring-lime-400 cursor-pointer"
+                className="w-full sm:w-auto appearance-none bg-stone-900 border border-white/20 hover:border-lime-400 text-white text-xs font-semibold rounded-xl pl-3 pr-8 py-2.5 shadow-inner focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-lime-400 focus-visible:outline-offset-2 cursor-pointer"
               >
                 <option value="all">Dropdown: Select Country / Port (12 Options)...</option>
                 {EXPORT_COUNTRIES.map((c) => (

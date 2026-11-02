@@ -184,7 +184,7 @@ export default function MandiRatesPage() {
       <main className="flex-1 space-y-10 sm:space-y-14 pb-16">
         {/* Breadcrumb Nav */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-          <nav aria-label="Breadcrumb" className="text-xs text-stone-500 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-stone-700 font-medium flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-emerald-700 transition">Home</Link>
             <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
             <span className="text-stone-900 font-medium">Karnataka APMC Mandi Benchmark Rates</span>
@@ -219,6 +219,8 @@ export default function MandiRatesPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-6 py-3.5 rounded-2xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs sm:text-sm shadow-sm transition text-center flex items-center justify-center gap-2"
+                  title="Inquire with FreshRoots Mandi Desk on WhatsApp (opens in a new tab)"
+                  aria-label="Inquire with FreshRoots Mandi Desk on WhatsApp (opens in a new tab)"
                 >
                   <PhoneCall className="w-4 h-4 text-emerald-400" />
                   <span>Call / WhatsApp Mandi Desk</span>
@@ -229,24 +231,24 @@ export default function MandiRatesPage() {
             {/* Live Status Indicators */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4 border-t border-stone-100 text-xs">
               <div className="p-3 rounded-xl bg-stone-50 border border-stone-200/70">
-                <span className="text-[10px] text-stone-400 uppercase font-bold block">Tiptur Ball Copra</span>
+                <span className="text-xs text-stone-700 uppercase font-bold block">Tiptur Ball Copra</span>
                 <strong className="text-stone-900 font-mono text-sm block">₹14,500 – ₹15,800/Qtl</strong>
-                <span className="text-[10px] text-emerald-700 font-bold">Stable seasonal supply</span>
+                <span className="text-xs text-emerald-900 font-extrabold">Stable seasonal supply</span>
               </div>
               <div className="p-3 rounded-xl bg-stone-50 border border-stone-200/70">
-                <span className="text-[10px] text-stone-400 uppercase font-bold block">Shivamogga Arecanut</span>
+                <span className="text-xs text-stone-700 uppercase font-bold block">Shivamogga Arecanut</span>
                 <strong className="text-stone-900 font-mono text-sm block">₹70,809/Qtl</strong>
-                <span className="text-[10px] text-blue-700 font-bold">Rashi/Chali lot certified</span>
+                <span className="text-xs text-blue-900 font-extrabold">Rashi/Chali lot certified</span>
               </div>
               <div className="p-3 rounded-xl bg-stone-50 border border-stone-200/70">
-                <span className="text-[10px] text-stone-400 uppercase font-bold block">Mandya Coconuts (Bag)</span>
+                <span className="text-xs text-stone-700 uppercase font-bold block">Mandya Coconuts (Bag)</span>
                 <strong className="text-stone-900 font-mono text-sm block">₹1,479 / 25-Nut Bag</strong>
-                <span className="text-[10px] text-emerald-700 font-bold">~15kg, Free Delivery</span>
+                <span className="text-xs text-emerald-900 font-extrabold">~15kg, Free Delivery</span>
               </div>
               <div className="p-3 rounded-xl bg-stone-50 border border-stone-200/70">
-                <span className="text-[10px] text-stone-400 uppercase font-bold block">Mandya Ragi Grains</span>
+                <span className="text-xs text-stone-700 uppercase font-bold block">Mandya Ragi Grains</span>
                 <strong className="text-stone-900 font-mono text-sm block">₹3,850 – ₹4,200/Qtl</strong>
-                <span className="text-[10px] text-amber-700 font-bold">Unpolished native grains</span>
+                <span className="text-xs text-amber-900 font-extrabold">Unpolished native grains</span>
               </div>
             </div>
           </div>

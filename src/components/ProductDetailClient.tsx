@@ -361,7 +361,7 @@ export default function ProductDetailClient({
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-12">
         {/* Breadcrumb Navigation */}
-        <nav aria-label="Breadcrumb" className="text-xs text-stone-500 flex items-center gap-1.5 flex-wrap">
+        <nav aria-label="Breadcrumb" className="text-xs text-stone-700 font-medium flex items-center gap-1.5 flex-wrap">
           <Link href="/" className="hover:text-emerald-700 transition">Home</Link>
           <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
           <Link href={categoryHubLink} className="hover:text-emerald-700 transition capitalize">
@@ -385,7 +385,7 @@ export default function ProductDetailClient({
               <button
                 type="button"
                 onClick={() => toggleWishlist(product)}
-                className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-stone-600 hover:text-red-500 flex items-center justify-center shadow-md transition group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3b6d11]"
+                className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-stone-600 hover:text-red-500 flex items-center justify-center shadow-md transition group focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#3b6d11] focus-visible:outline-offset-2"
                 title={isWishlisted ? 'Remove from Watchlist' : 'Add to Watchlist'}
               >
                 <Heart

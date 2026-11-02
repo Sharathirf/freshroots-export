@@ -141,7 +141,7 @@ export default async function ExportCorridorPage({ params }: Props) {
       <main className="flex-1 space-y-12 sm:space-y-16 pb-16">
         {/* Breadcrumb Nav */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-          <nav aria-label="Breadcrumb" className="text-xs text-stone-500 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-stone-700 font-medium flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-emerald-700 transition">Home</Link>
             <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
             <Link href="/export" className="hover:text-emerald-700 transition">Global Export Desk</Link>

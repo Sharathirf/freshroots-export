@@ -17,17 +17,48 @@ export default function robots(): MetadataRoute.Robots {
     };
   }
 
-  // Production: Allow public catalog, block private dashboards, internal APIs, and order queries
+  // Production: Allow public catalog and optimize for search engines & AI crawlers
+  const publicDisallowed = [
+    '/admin',
+    '/api/',
+    '/track-order',
+    '/*?*query=*',
+  ];
+
   return {
     rules: [
       {
         userAgent: '*',
         allow: '/',
+        disallow: publicDisallowed,
+      },
+      // AI Search Engine Crawlers (ChatGPT, Perplexity, Claude, Google Gemini)
+      {
+        userAgent: [
+          'GPTBot',
+          'ChatGPT-User',
+          'PerplexityBot',
+          'ClaudeBot',
+          'Claude-Web',
+          'Google-Extended',
+          'Applebot-Extended',
+          'Amazonbot',
+        ],
+        allow: [
+          '/',
+          '/products',
+          '/products/*',
+          '/category/*',
+          '/export',
+          '/export/*',
+          '/wholesale/*',
+          '/guides',
+          '/guides/*',
+        ],
         disallow: [
           '/admin',
           '/api/',
           '/track-order',
-          '/*?*query=*',
         ],
       },
     ],

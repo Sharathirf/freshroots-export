@@ -206,7 +206,7 @@ export default function HomePage() {
                     Direct-From-Farm Karnataka Produce &amp; Industrial Commodities
                   </h1>
                   <p className="text-stone-600 text-xs sm:text-sm leading-relaxed">
-                    Sourced straight from certified grower belts in <span className="font-semibold text-stone-900">Tiptur, Mandya, Shimoga &amp; Coastal Karnataka</span>. Zero commission middlemen, lab-tested grading, and transparent mandi benchmark pricing.
+                    Direct-from-farm procurement of authentic Karnataka agricultural produce and industrial commodities sourced straight from certified grower belts in <span className="font-semibold text-stone-900">Tiptur, Mandya, Shimoga &amp; Coastal Karnataka</span>. Zero commission middlemen, lab-tested grading, and transparent mandi benchmark pricing for domestic households and commercial bulk buyers.
                   </p>
 
                   {/* 3 Quick Value Pillars */}
@@ -467,14 +467,17 @@ export default function HomePage() {
               </div>
 
               <div className="flex flex-wrap gap-2.5 shrink-0 justify-center">
-                <div className="px-3.5 py-2 rounded-xl bg-white/10 border border-white/20 text-xs font-mono font-bold text-emerald-300">
-                  FSSAI: 21224195000438
+                <div className="px-3.5 py-2 rounded-xl bg-stone-950/90 border border-emerald-400/30 text-xs font-mono font-bold text-white shadow-sm flex items-center gap-1.5">
+                  <span className="text-emerald-400">✓</span>
+                  <span>FSSAI: 21224195000438</span>
                 </div>
-                <div className="px-3.5 py-2 rounded-xl bg-white/10 border border-white/20 text-xs font-mono font-bold text-lime-300">
-                  DGFT IEC: 0724018925
+                <div className="px-3.5 py-2 rounded-xl bg-stone-950/90 border border-lime-400/30 text-xs font-mono font-bold text-white shadow-sm flex items-center gap-1.5">
+                  <span className="text-lime-400">✓</span>
+                  <span>DGFT IEC: 0724018925</span>
                 </div>
-                <div className="px-3.5 py-2 rounded-xl bg-white/10 border border-white/20 text-xs font-mono font-bold text-amber-300">
-                  CDB &amp; APEDA Aligned
+                <div className="px-3.5 py-2 rounded-xl bg-stone-950/90 border border-amber-400/30 text-xs font-mono font-bold text-white shadow-sm flex items-center gap-1.5">
+                  <span className="text-amber-400">✓</span>
+                  <span>CDB &amp; APEDA Aligned</span>
                 </div>
               </div>
             </div>

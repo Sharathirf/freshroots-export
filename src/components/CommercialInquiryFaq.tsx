@@ -48,6 +48,7 @@ export default function CommercialInquiryFaq() {
   const [customerType, setCustomerType] = useState('Commercial Buyer / Wholesaler');
   const [productTitle, setProductTitle] = useState(BULK_ORDER_ITEMS[0].simpleName);
   const [quantity, setQuantity] = useState('500');
+  const [destination, setDestination] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -60,7 +61,7 @@ export default function CommercialInquiryFaq() {
       const params = new URLSearchParams(window.location.search);
       const queryDest = params.get('destination') || params.get('country') || '';
       if (queryDest) {
-        setMessage((prev) => (prev ? prev : `Delivery / Destination Port: ${queryDest}`));
+        setDestination(queryDest);
         setCustomerType('Exporter / Trade House');
       }
     }
@@ -88,6 +89,12 @@ export default function CommercialInquiryFaq() {
     setErrorMsg(null);
 
     try {
+      const notesList = [
+        `Customer Type: ${customerType}`,
+        destination.trim() ? `Destination Port / City: ${destination.trim()}` : '',
+        message.trim()
+      ].filter(Boolean);
+
       const res = await fetch('/api/rfq', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -99,7 +106,8 @@ export default function CommercialInquiryFaq() {
           product_title: productTitle,
           requested_quantity: qty,
           unit: 'Units / kg',
-          additional_requirements: message ? `[Customer Type: ${customerType}] ${message}` : `Customer Type: ${customerType}`,
+          destination_city: destination.trim() || undefined,
+          additional_requirements: notesList.join(' | '),
           turnstileToken: effectiveToken
         })
       });
@@ -245,7 +253,22 @@ export default function CommercialInquiryFaq() {
 
                 <div>
                   <label className="block text-xs font-bold text-stone-700 mb-1">
-                    Message / Delivery City <span className="text-stone-400 font-normal text-[10px]">(Optional)</span>
+                    Destination City / Export Port <span className="text-stone-400 font-normal text-[10px]">(Optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="destination"
+                    id="destination"
+                    value={destination}
+                    onChange={(e) => setDestination(e.target.value)}
+                    placeholder="e.g. Dubai, Chittagong, New York, Jebel Ali, or domestic city"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-xs sm:text-sm font-semibold focus:ring-2 focus:ring-[#3b6d11] focus:outline-none bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-stone-700 mb-1">
+                    Message / Additional Notes <span className="text-stone-400 font-normal text-[10px]">(Optional)</span>
                   </label>
                   <textarea
                     rows={2}

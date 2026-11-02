@@ -101,12 +101,12 @@ export default function ExportPage() {
         {/* Breadcrumb Bar */}
         <div className="bg-stone-100 border-b border-stone-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-            <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-stone-500">
-              <Link href="/" className="hover:text-stone-900 transition">
+            <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-stone-700 font-medium">
+              <Link href="/" className="hover:text-stone-900 transition underline-offset-2 hover:underline">
                 Home
               </Link>
-              <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
-              <span className="font-semibold text-stone-900">International Agri-Export</span>
+              <ChevronRight className="w-3.5 h-3.5 text-stone-500" />
+              <span className="font-bold text-stone-900">International Agri-Export</span>
             </nav>
           </div>
         </div>
@@ -115,8 +115,8 @@ export default function ExportPage() {
         <section className="bg-stone-900 text-white py-16 sm:py-24 relative overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-700/50 text-emerald-400 text-xs font-bold mb-6">
-                <Globe2 className="w-4 h-4" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950 border border-emerald-500/60 text-white text-xs font-bold mb-6 shadow-sm">
+                <Globe2 className="w-4 h-4 text-emerald-400" />
                 <span>Global Agricultural Trade Desk · Origin: Mandya & Tiptur</span>
               </div>
 
@@ -132,19 +132,19 @@ export default function ExportPage() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-8 border-t border-stone-800">
                 <div>
                   <div className="text-2xl font-black text-emerald-400 font-mono">100%</div>
-                  <div className="text-xs text-stone-400 mt-0.5">Farm Traceability</div>
+                  <div className="text-xs text-stone-300 mt-0.5">Farm Traceability</div>
                 </div>
                 <div>
                   <div className="text-2xl font-black text-emerald-400 font-mono">FOB / CIF</div>
-                  <div className="text-xs text-stone-400 mt-0.5">Standard Incoterms</div>
+                  <div className="text-xs text-stone-300 mt-0.5">Standard Incoterms</div>
                 </div>
                 <div>
                   <div className="text-2xl font-black text-emerald-400 font-mono">NMPT / JNPT</div>
-                  <div className="text-xs text-stone-400 mt-0.5">Gateway Ports</div>
+                  <div className="text-xs text-stone-300 mt-0.5">Gateway Ports</div>
                 </div>
                 <div>
                   <div className="text-2xl font-black text-emerald-400 font-mono">40ft FCL</div>
-                  <div className="text-xs text-stone-400 mt-0.5">Bulk Container Loads</div>
+                  <div className="text-xs text-stone-300 mt-0.5">Bulk Container Loads</div>
                 </div>
               </div>
             </div>
@@ -177,7 +177,7 @@ export default function ExportPage() {
               <p className="text-xs text-stone-600 mt-3 leading-relaxed">
                 Grade A mature dehusked coconuts with protective fibrous eye collars. Weight range: 550g - 650g. High water volume and thick endosperm suitable for overseas retail and processing.
               </p>
-              <ul className="text-xs text-stone-500 mt-4 space-y-1.5 border-t border-stone-100 pt-3">
+              <ul className="text-xs text-stone-700 font-medium mt-4 space-y-1.5 border-t border-stone-100 pt-3">
                 <li>• Packaging: 25-nut / 50-nut PP ventilated mesh bags</li>
                 <li>• Container: 40HC Reefer (45,000 - 52,000 nuts)</li>
                 <li>• Temperature: Maintained at 10°C - 12°C in transit</li>
@@ -198,7 +198,7 @@ export default function ExportPage() {
               <p className="text-xs text-stone-600 mt-3 leading-relaxed">
                 Geographical Indication (GI) certified edible whole copra. Attic sun-cured over 11 months with zero sulfur chemicals. Crispy texture, sweet aroma, and 65%+ oil content.
               </p>
-              <ul className="text-xs text-stone-500 mt-4 space-y-1.5 border-t border-stone-100 pt-3">
+              <ul className="text-xs text-stone-700 font-medium mt-4 space-y-1.5 border-t border-stone-100 pt-3">
                 <li>• Moisture: Equilibrium content &lt; 5.5%</li>
                 <li>• Packaging: 15kg / 25kg moisture-barrier corrugated cartons</li>
                 <li>• Container: 20ft / 40ft dry container with desiccants</li>
@@ -219,7 +219,7 @@ export default function ExportPage() {
               <p className="text-xs text-stone-600 mt-3 leading-relaxed">
                 High-grade sun-dried raw milling copra cups from Tiptur and Mandya drying yards. High oil content (minimum 64%) and low free fatty acid levels, ideal for large-scale industrial vegetable oil expellers and bio-refineries.
               </p>
-              <ul className="text-xs text-stone-500 mt-4 space-y-1.5 border-t border-stone-100 pt-3">
+              <ul className="text-xs text-stone-700 font-medium mt-4 space-y-1.5 border-t border-stone-100 pt-3">
                 <li>• Oil Yield: 64% - 68% high recovery rate</li>
                 <li>• Moisture: Strict industrial threshold &lt; 6.0%</li>
                 <li>• Packaging: 50 kg breathable PP gunny bags / 20T bulk FCL</li>
@@ -240,7 +240,7 @@ export default function ExportPage() {
               <p className="text-xs text-stone-600 mt-3 leading-relaxed">
                 Whole and split Arecanut (Areca catechu) lots sourced directly from Shivamogga, Sagar, and Malnad APMC corridors. Optical sortation available across Rashi, Bette, Gorabal, and Chali grades.
               </p>
-              <ul className="text-xs text-stone-500 mt-4 space-y-1.5 border-t border-stone-100 pt-3">
+              <ul className="text-xs text-stone-700 font-medium mt-4 space-y-1.5 border-t border-stone-100 pt-3">
                 <li>• Moisture: Strictly verified &lt; 10.0%</li>
                 <li>• Packaging: 50 kg / 70 kg double-stitched jute sacks</li>
                 <li>• Container: 20ft (18-20 MT) dry maritime containers</li>
@@ -261,7 +261,7 @@ export default function ExportPage() {
               <p className="text-xs text-stone-600 mt-3 leading-relaxed">
                 Artisan wood-pressed virgin coconut and groundnut oils extracted below 45°C. Unrefined, unbleached, and naturally settled without chemical filtering agents. High lauric acid and natural tocopherols.
               </p>
-              <ul className="text-xs text-stone-500 mt-4 space-y-1.5 border-t border-stone-100 pt-3">
+              <ul className="text-xs text-stone-700 font-medium mt-4 space-y-1.5 border-t border-stone-100 pt-3">
                 <li>• Free Fatty Acids (FFA): &lt; 0.5% (cold pressed)</li>
                 <li>• Packaging: 1L bottles / 200L steel drums / IBC totes</li>
                 <li>• Testing: FSSAI export-compliant fatty acid profile</li>
@@ -282,7 +282,7 @@ export default function ExportPage() {
               <p className="text-xs text-stone-600 mt-3 leading-relaxed">
                 Refined, Bleached & Deodorized (RBD) industrial and culinary copra oil. Conforms to CODEX STAN 210-1999 international standards. Clear, odor-free with high thermal stability for commercial food manufacturing and cosmetics.
               </p>
-              <ul className="text-xs text-stone-500 mt-4 space-y-1.5 border-t border-stone-100 pt-3">
+              <ul className="text-xs text-stone-700 font-medium mt-4 space-y-1.5 border-t border-stone-100 pt-3">
                 <li>• Free Fatty Acids (FFA): &lt; 0.10% (as lauric acid)</li>
                 <li>• Packaging: 200L epoxy-lined steel drums / 21T Flexitanks</li>
                 <li>• Quality: Non-hydrogenated, zero trans-fat guarantee</li>
