@@ -84,7 +84,15 @@ export default function Footer() {
             <div className="space-y-1.5 text-stone-300">
               <div className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-lime-400 shrink-0 mt-0.5" />
-                <span>Karnataka, India • 100% Free Doorstep Delivery</span>
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=FreshRoots+Export+Kikkeri+Karnataka+571423"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-lime-300 transition underline-offset-2 hover:underline"
+                  title="View FreshRoots Export on Google Maps (opens in a new tab)"
+                >
+                  Kikkeri, Karnataka 571423 • Verified on Google Maps (5.0 ★)
+                </a>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-lime-400 shrink-0" />

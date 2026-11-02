@@ -4,7 +4,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 import CommercialInquiryFaq from '@/components/CommercialInquiryFaq';
-import { MapPin, Phone, Mail, Clock, ShieldCheck, Truck, MessageCircle } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, ShieldCheck, Truck, MessageCircle, Star, Navigation, ExternalLink } from 'lucide-react';
 import { getSiteUrl, getRobotsDirectives } from '@/lib/seo';
 
 export const metadata: Metadata = {
@@ -131,6 +131,54 @@ export default function ContactPage() {
                   <strong className="block text-stone-900">Desk Working Hours:</strong>
                   <span>Monday &ndash; Saturday: 8:00 AM &ndash; 7:30 PM IST</span>
                   <p className="text-xs text-stone-500 mt-0.5">Sunday: Reserved for Mandi harvest allocations</p>
+                </div>
+              </div>
+
+              {/* Google Verified Business Profile Badge */}
+              <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-2.5">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-extrabold text-stone-900 text-xs">Google Business Profile</span>
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-900 border border-blue-200">
+                      ✓ Verified
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1 text-amber-500">
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+                    <span className="text-xs font-black text-stone-900 ml-1">5.0</span>
+                    <span className="text-[11px] text-stone-500">(1 review)</span>
+                  </div>
+                </div>
+
+                <p className="text-xs text-stone-600 leading-relaxed">
+                  Agricultural product wholesaler in Kikkeri, Karnataka. Verified location on Google Search &amp; Google Maps.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=FreshRoots+Export+Kikkeri+Karnataka+571423"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 bg-white hover:bg-stone-100 text-stone-900 border border-stone-300 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-xs"
+                    title="Get directions to FreshRoots Export in Kikkeri on Google Maps (opens in a new tab)"
+                  >
+                    <Navigation className="w-3.5 h-3.5 text-blue-600" />
+                    <span>Get Directions on Google Maps</span>
+                  </a>
+                  <a
+                    href="https://www.google.com/search?q=FreshRoots+Export+Kikkeri#lrd=0x0:0x0,3"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white hover:bg-stone-100 text-stone-900 border border-stone-300 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-xs"
+                    title="Read reviews on Google (opens in a new tab)"
+                  >
+                    <span>Read Google Reviews</span>
+                    <ExternalLink className="w-3 h-3 text-stone-400" />
+                  </a>
                 </div>
               </div>
             </div>

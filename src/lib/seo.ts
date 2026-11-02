@@ -113,12 +113,20 @@ export function generateOrganizationJsonLd(siteUrl: string) {
       latitude: 12.8344,
       longitude: 76.4022
     },
+    hasMap: 'https://www.google.com/maps/search/?api=1&query=FreshRoots+Export+Kikkeri+Karnataka+571423',
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '5.0',
+      reviewCount: '1',
+      bestRating: '5',
+      worstRating: '1'
+    },
     openingHoursSpecification: [
       {
         '@type': 'OpeningHoursSpecification',
         dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-        opens: '07:00',
-        closes: '21:00'
+        opens: '08:00',
+        closes: '19:30'
       }
     ],
     areaServed: [
@@ -137,6 +145,7 @@ export function generateOrganizationJsonLd(siteUrl: string) {
       { '@type': 'Country', name: 'United Kingdom' }
     ],
     sameAs: [
+      'https://www.google.com/maps/search/?api=1&query=FreshRoots+Export+Kikkeri+Karnataka+571423',
       'https://wa.me/919008462568',
       'https://www.linkedin.com/company/freshroots-export',
       'https://www.indiamart.com/freshroots-export/',
