@@ -33,6 +33,7 @@ export async function POST(req: Request) {
     if (
       cookieHeader.includes('freshroots_admin_device=true') ||
       cookieHeader.includes('freshroots_admin_token') ||
+      cookieHeader.includes('freshroots_admin_session') ||
       cookieHeader.includes('admin_session')
     ) {
       return NextResponse.json({ success: true, ignored: true, reason: 'admin_cookie' });

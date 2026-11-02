@@ -15,6 +15,12 @@ export async function GET() {
             OR path LIKE '/api%' 
             OR visitor_id IN (${EXCLUDED_VISITOR_SQL})`
       );
+      await pool.query(
+        `DELETE FROM site_events 
+         WHERE path LIKE '/admin%' 
+            OR path LIKE '/api%' 
+            OR visitor_id IN (${EXCLUDED_VISITOR_SQL})`
+      );
     } catch (cleanupErr) {
       console.warn('Analytics cleanup non-critical note:', cleanupErr);
     }

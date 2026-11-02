@@ -25,6 +25,7 @@ export default function VisitorTracker() {
         localStorage.getItem('freshroots_admin_device') === 'true' ||
         document.cookie.includes('freshroots_admin_device=true') ||
         document.cookie.includes('freshroots_admin_token') ||
+        document.cookie.includes('freshroots_admin_session') ||
         document.cookie.includes('admin_session');
 
       if (isAdminDevice) {

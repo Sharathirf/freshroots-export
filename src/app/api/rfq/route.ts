@@ -215,7 +215,7 @@ export async function POST(request: NextRequest) {
           ].join('\n'),
         }, 'rfq_admin_notification'));
       }
-      await Promise.all(emailTasks);
+      await Promise.allSettled(emailTasks);
     }
 
     // Public response: Never leak wholesale internal pricing or benchmarks!

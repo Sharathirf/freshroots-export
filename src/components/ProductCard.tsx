@@ -245,6 +245,7 @@ export default function ProductCard({ product, onSelectForRFQ }: ProductCardProp
   return (
     <article
       ref={cardRef}
+      data-testid="product-card"
       className="h-full bg-white rounded-xl border border-stone-200 hover:border-emerald-700/50 overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col group select-text"
     >
       <div className="flex flex-col flex-1">

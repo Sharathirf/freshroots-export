@@ -188,3 +188,27 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    await query(
+      `INSERT INTO audit_logs (action, entity_type, entity_id, details)
+       VALUES ('UNAUTHORIZED_ORDER_DELETE_ATTEMPT_BLOCKED', 'orders', 'BLOCKED', $1)`,
+      [JSON.stringify({
+        url: request.url,
+        ip: request.headers.get('x-forwarded-for') || 'local',
+        reason: 'Order deletion by administrators is strictly prohibited by business and compliance security policies.',
+        timestamp: new Date().toISOString(),
+      })]
+    );
+  } catch {}
+
+  return NextResponse.json(
+    {
+      success: false,
+      error: 'Forbidden: Administrators do not have permission to delete orders. Order deletion is strictly prohibited by business, auditing, and tax compliance policies.',
+      code: 'ORDER_DELETION_PROHIBITED',
+    },
+    { status: 403 }
+  );
+}

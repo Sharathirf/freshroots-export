@@ -433,7 +433,7 @@ export async function POST(request: NextRequest) {
           ].join('\n'),
         }, 'order_admin_notification'));
       }
-      await Promise.all(emailTasks);
+      await Promise.allSettled(emailTasks);
     }
 
     // Generate Direct WhatsApp Alert Link for Farm Desk (+91 90084 62568)
@@ -498,4 +498,28 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    await pool.query(
+      `INSERT INTO audit_logs (action, entity_type, entity_id, details)
+       VALUES ('UNAUTHORIZED_ORDER_DELETE_ATTEMPT_BLOCKED', 'orders', 'BLOCKED', $1)`,
+      [JSON.stringify({
+        url: request.url,
+        ip: request.headers.get('x-forwarded-for') || 'local',
+        reason: 'Order deletion is strictly prohibited by business and compliance security policies.',
+        timestamp: new Date().toISOString(),
+      })]
+    );
+  } catch {}
+
+  return NextResponse.json(
+    {
+      success: false,
+      error: 'Forbidden: Order deletion is strictly prohibited. Orders must be retained for statutory and accounting compliance.',
+      code: 'ORDER_DELETION_PROHIBITED',
+    },
+    { status: 403 }
+  );
 }

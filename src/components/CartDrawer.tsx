@@ -800,6 +800,8 @@ export default function CartDrawer() {
 
                             <button
                               onClick={() => removeFromCart(itemKey)}
+                              title="Remove item"
+                              aria-label="Remove item from cart"
                               className="text-stone-400 hover:text-red-600 p-1.5 transition"
                             >
                               <Trash2 className="w-4 h-4" />
