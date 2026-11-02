@@ -315,11 +315,11 @@ export default function ExportPage() {
                       <span>{country.name}</span>
                     </span>
                   </div>
-                  <div className="text-[11px] text-stone-500">
-                    <span className="font-semibold text-stone-700">Port:</span> {country.majorPort}
+                  <div className="text-[11px] text-stone-700 font-medium">
+                    <span className="font-semibold text-stone-900">Port:</span> {country.majorPort}
                   </div>
-                  <div className="text-[11px] text-stone-500 mt-1 line-clamp-1">
-                    <span className="font-semibold text-stone-700">Demand:</span> {country.popularCommodities}
+                  <div className="text-[11px] text-stone-700 font-medium mt-1 line-clamp-1">
+                    <span className="font-semibold text-stone-900">Demand:</span> {country.popularCommodities}
                   </div>
                   <Link
                     href={`/contact?destination=${encodeURIComponent(country.name)}`}
@@ -350,7 +350,7 @@ export default function ExportPage() {
                 <FileCheck2 className="w-5 h-5" />
               </div>
               <h4 className="font-bold text-stone-900 text-sm">Phytosanitary Certificate</h4>
-              <p className="text-stone-500 text-xs mt-1.5 leading-relaxed">
+              <p className="text-stone-700 font-medium text-xs mt-1.5 leading-relaxed">
                 Issued by Plant Quarantine of India verifying freedom from agricultural pests and fungi before container sealing.
               </p>
             </div>
@@ -360,7 +360,7 @@ export default function ExportPage() {
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <h4 className="font-bold text-stone-900 text-sm">Fumigation Certificate</h4>
-              <p className="text-stone-500 text-xs mt-1.5 leading-relaxed">
+              <p className="text-stone-700 font-medium text-xs mt-1.5 leading-relaxed">
                 Standard Methyl Bromide or Phosphine container fumigation conforming to destination country biosafety protocols.
               </p>
             </div>
@@ -370,7 +370,7 @@ export default function ExportPage() {
                 <Anchor className="w-5 h-5" />
               </div>
               <h4 className="font-bold text-stone-900 text-sm">Port Logistics Management</h4>
-              <p className="text-stone-500 text-xs mt-1.5 leading-relaxed">
+              <p className="text-stone-700 font-medium text-xs mt-1.5 leading-relaxed">
                 Direct refrigerated and dry container haulage to New Mangalore Port (NMPT) and JNPT Mumbai.
               </p>
             </div>
@@ -380,7 +380,7 @@ export default function ExportPage() {
                 <Building2 className="w-5 h-5" />
               </div>
               <h4 className="font-bold text-stone-900 text-sm">Certificate of Origin</h4>
-              <p className="text-stone-500 text-xs mt-1.5 leading-relaxed">
+              <p className="text-stone-700 font-medium text-xs mt-1.5 leading-relaxed">
                 Legalized COO issued by authorized Indian Chambers of Commerce enabling preferential import tariff clearance.
               </p>
             </div>

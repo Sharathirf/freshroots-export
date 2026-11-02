@@ -136,7 +136,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         {/* Breadcrumb Bar */}
         <div className="bg-stone-100 border-b border-stone-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-            <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-stone-500 flex-wrap">
+            <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-stone-700 font-medium flex-wrap">
               <Link href="/" className="hover:text-stone-900 transition flex items-center gap-1">
                 Home
               </Link>
@@ -186,14 +186,14 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
               {/* Quick Origin Card */}
               <div className="bg-stone-50 border border-stone-200 rounded-2xl p-5 md:w-80 shrink-0">
-                <h3 className="text-xs font-black uppercase tracking-wider text-stone-500 mb-3 flex items-center gap-1.5">
+                <h3 className="text-xs font-black uppercase tracking-wider text-stone-700 mb-3 flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-[#3b6d11]" />
                   Geographic Sourcing
                 </h3>
                 <p className="text-xs font-bold text-stone-900">
                   {category.originRegion}
                 </p>
-                <p className="text-[11px] text-stone-500 mt-1 leading-normal">
+                <p className="text-[11px] text-stone-700 font-medium mt-1 leading-normal">
                   {category.originDetails}
                 </p>
                 <div className="mt-4 pt-3 border-t border-stone-200 text-[11px] space-y-1 text-stone-600">
@@ -224,7 +224,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               <h2 className="text-2xl font-black text-stone-900 tracking-tight">
                 Available Lots & Grades ({products.length})
               </h2>
-              <p className="text-xs sm:text-sm text-stone-500 mt-0.5">
+              <p className="text-xs sm:text-sm text-stone-700 font-medium mt-0.5">
                 Authentic lab-graded lots with direct farm dispatch in 24 hours.
               </p>
             </div>
@@ -296,7 +296,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 <h3 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
                   Frequently Asked Questions on {category.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-stone-500">
+                <p className="text-xs sm:text-sm text-stone-700 font-medium">
                   Key answers regarding farm harvest, quality grading, door delivery, and tax compliance.
                 </p>
               </div>
@@ -324,7 +324,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         {/* Category Navigation Strip */}
         <section className="bg-stone-100 border-t border-stone-200 py-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h3 className="text-sm font-black uppercase tracking-wider text-stone-500 mb-4">
+            <h3 className="text-sm font-black uppercase tracking-wider text-stone-700 mb-4">
               Explore Other Farm Categories
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
@@ -357,7 +357,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-stone-900">Direct APMC Origin</div>
-                  <div className="text-[11px] text-stone-500">Zero intermediate brokers</div>
+                  <div className="text-[11px] text-stone-700 font-medium">Zero intermediate brokers</div>
                 </div>
               </div>
 
@@ -369,7 +369,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                   <div className="text-xs font-bold text-stone-900">
                     {isBulkCategory ? 'Actual Mandi Lorry Freight' : '100% Free Delivery'}
                   </div>
-                  <div className="text-[11px] text-stone-500">
+                  <div className="text-[11px] text-stone-700 font-medium">
                     {isBulkCategory ? 'FTL / Weighbridge dispatch across India' : 'Doorstep delivery across India'}
                   </div>
                 </div>
@@ -381,7 +381,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-stone-900">Spoilage Replacement</div>
-                  <div className="text-[11px] text-stone-500">100% transit damage guarantee</div>
+                  <div className="text-[11px] text-stone-700 font-medium">100% transit damage guarantee</div>
                 </div>
               </div>
 
@@ -391,7 +391,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-stone-900">24-Hr Farm Dispatch</div>
-                  <div className="text-[11px] text-stone-500">Packed fresh upon order</div>
+                  <div className="text-[11px] text-stone-700 font-medium">Packed fresh upon order</div>
                 </div>
               </div>
             </div>

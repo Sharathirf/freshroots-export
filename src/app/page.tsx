@@ -260,7 +260,7 @@ export default function HomePage() {
               <h2 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
                 {lang === 'kn' ? 'ನಿಮ್ಮ ಫಾರ್ಮ್ ಉತ್ಪನ್ನಗಳನ್ನು ಆರಿಸಿ' : 'Select Your Produce'}
               </h2>
-              <p className="text-stone-500 text-xs sm:text-sm mt-0.5">
+              <p className="text-stone-700 font-medium text-xs sm:text-sm mt-0.5">
                 {lang === 'kn'
                   ? 'ಕರ್ನಾಟಕದ ತೋಟಗಳಿಂದ ನೇರ ರವಾನೆ • 100% ಉಚಿತ ಮನೆ ಬಾಗಿಲು ಡೆಲಿವರಿ.'
                   : 'Authentic, lab-graded lots with direct farm dispatch in 24 hours.'}
@@ -341,7 +341,7 @@ export default function HomePage() {
               <h3 className="text-base font-bold text-stone-900">
                 No agricultural produce found for &ldquo;{searchQuery}&rdquo;
               </h3>
-              <p className="text-xs text-stone-500 mt-1 max-w-sm mx-auto">
+              <p className="text-xs text-stone-700 font-medium mt-1 max-w-sm mx-auto">
                 Try searching for coconuts, copra, coconut oil, groundnut oil, ragi, or ghee.
               </p>
               <button
@@ -494,7 +494,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-stone-900">Direct Farm Origin</div>
-                  <div className="text-[11px] text-stone-500">Zero broker commissions</div>
+                  <div className="text-[11px] text-stone-700 font-medium">Zero broker commissions</div>
                 </div>
               </div>
 
@@ -504,7 +504,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-stone-900">Free Doorstep Courier</div>
-                  <div className="text-[11px] text-stone-500">Retail parcels Pan-India • B2B freight at actuals</div>
+                  <div className="text-[11px] text-stone-700 font-medium">Retail parcels Pan-India • B2B freight at actuals</div>
                 </div>
               </div>
 
@@ -514,7 +514,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-stone-900">100% Spoilage Guarantee</div>
-                  <div className="text-[11px] text-stone-500">Free transit replacement</div>
+                  <div className="text-[11px] text-stone-700 font-medium">Free transit replacement</div>
                 </div>
               </div>
 
@@ -524,7 +524,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-stone-900">Direct WhatsApp Desk</div>
-                  <div className="text-[11px] text-stone-500">+91 90084 62568 (7am–9pm)</div>
+                  <div className="text-[11px] text-stone-700 font-medium">+91 90084 62568 (7am–9pm)</div>
                 </div>
               </div>
             </div>

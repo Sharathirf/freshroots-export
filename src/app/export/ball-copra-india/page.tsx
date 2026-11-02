@@ -239,13 +239,13 @@ export default function BallCopraExportPillarPage() {
                   <ExportRfqButton
                     label="Request FOB / CIF Container Quote"
                     defaultProduct="Ball Copra"
-                    className="px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm shadow-md transition flex items-center gap-2"
+                    className="px-6 py-3.5 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-md transition flex items-center gap-2"
                   />
                   <a
                     href="https://wa.me/919008462568?text=Hello%20FreshRoots%20Export,%20I%20am%20interested%20in%20importing%20Tiptur%20Ball%20Copra%20container%20lots."
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-sm border border-white/20 transition flex items-center gap-2"
+                    className="px-6 py-3.5 rounded-xl bg-stone-900/95 hover:bg-stone-800 text-white font-bold text-sm border border-white/30 transition flex items-center gap-2"
                   >
                     <span>WhatsApp Commercial Desk</span>
                     <span className="text-emerald-400">→</span>
@@ -262,7 +262,7 @@ export default function BallCopraExportPillarPage() {
                     className="w-full h-full object-cover"
                     loading="eager"
                   />
-                  <div className="absolute bottom-3 left-3 right-3 bg-stone-900/85 backdrop-blur-md p-3 rounded-xl border border-white/10 text-xs text-stone-300 flex items-center justify-between">
+                  <div className="absolute bottom-3 left-3 right-3 bg-stone-950 p-3 rounded-xl border border-white/20 text-xs text-stone-200 flex items-center justify-between">
                     <div>
                       <strong className="text-white block font-mono text-xs">Standard Export Pack</strong>
                       <span>15 kg Master Corrugated Carton</span>
