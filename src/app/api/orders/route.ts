@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/nextjs';
 import pool, { query } from '@/lib/db';
 import { findMatchingVariant } from '@/lib/variants';
 import { validateCoupon } from '@/lib/coupons';
+import { CATALOG_PRODUCTS } from '@/lib/catalog';
 import { OrderItem } from '@/types';
 import { deliverTransactionalEmail, emailIsConfigured } from '@/lib/email';
 
@@ -170,7 +171,8 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      let itemUnitPrice = Number(prod.retail_price_inr);
+      const canonical = CATALOG_PRODUCTS.find((cp) => cp.sku === prod.sku);
+      let itemUnitPrice = canonical ? Number(canonical.retail_price_inr) : Number(prod.retail_price_inr);
       let itemUnitOfMeasure = prod.unit_of_measure;
       let itemTitle = prod.title;
       let itemUnitWeight = Number(prod.estimated_weight_kg || 0);

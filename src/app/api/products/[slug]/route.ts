@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { getProductImageUrl } from '@/lib/product-images';
-import { getCatalogProductBySlug } from '@/lib/catalog';
+import { CATALOG_PRODUCTS, getCatalogProductBySlug } from '@/lib/catalog';
 
 export async function GET(
   request: NextRequest,
@@ -60,8 +60,18 @@ export async function GET(
       return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
     }
 
+    const canonical = CATALOG_PRODUCTS.find((cp) => cp.sku === rows[0].sku);
+    if (canonical && Number(rows[0].retail_price_inr) !== Number(canonical.retail_price_inr)) {
+      await query(
+        `UPDATE products SET retail_price_inr = $1, wholesale_benchmark_price_inr = $2 WHERE sku = $3`,
+        [canonical.retail_price_inr, canonical.wholesale_benchmark_price_inr, canonical.sku]
+      ).catch(() => {});
+      rows[0].retail_price_inr = canonical.retail_price_inr.toFixed(2);
+    }
+
     const product = {
       ...rows[0],
+      retail_price_inr: canonical ? canonical.retail_price_inr.toFixed(2) : rows[0].retail_price_inr,
       image_url: getProductImageUrl(rows[0].sku, rows[0].image_url)
     };
     return NextResponse.json({ success: true, product });

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { getProductImageUrl } from '@/lib/product-images';
-import { getCatalogProductsByCategory } from '@/lib/catalog';
+import { CATALOG_PRODUCTS, getCatalogProductsByCategory } from '@/lib/catalog';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -58,10 +58,27 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: true, count: fallback.length, products: fallback });
     }
 
-    const products = rows.map((product) => ({
-      ...product,
-      image_url: getProductImageUrl(product.sku, product.image_url)
-    }));
+    // Auto-sync canonical prices between catalog and database
+    const catalogMap = new Map(CATALOG_PRODUCTS.map((cp) => [cp.sku, cp]));
+    for (const r of rows) {
+      const canonical = catalogMap.get(r.sku);
+      if (canonical && Number(r.retail_price_inr) !== Number(canonical.retail_price_inr)) {
+        await query(
+          `UPDATE products SET retail_price_inr = $1, wholesale_benchmark_price_inr = $2 WHERE sku = $3`,
+          [canonical.retail_price_inr, canonical.wholesale_benchmark_price_inr, canonical.sku]
+        ).catch(() => {});
+        r.retail_price_inr = canonical.retail_price_inr.toFixed(2);
+      }
+    }
+
+    const products = rows.map((product) => {
+      const canonical = catalogMap.get(product.sku);
+      return {
+        ...product,
+        retail_price_inr: canonical ? canonical.retail_price_inr.toFixed(2) : product.retail_price_inr,
+        image_url: getProductImageUrl(product.sku, product.image_url)
+      };
+    });
     return NextResponse.json({ success: true, count: products.length, products });
   } catch {
     const fallback = getCatalogProductsByCategory(category || 'all');
