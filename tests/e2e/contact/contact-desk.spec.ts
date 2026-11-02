@@ -12,10 +12,10 @@ test.describe('F. Contact Us & Farm-Gate Coordinates', () => {
     await expect(page.locator('text=571423').first()).toBeVisible();
 
     // Verify Phone Helpline & WhatsApp
-    await expect(page.locator('a[href*="9008462568"]').first()).toBeVisible();
+    await expect(page.locator('a[href*="9008462568"]:visible').first()).toBeVisible();
 
     // Verify Official Electronic Mail
-    await expect(page.locator('a[href*="sales@freshrootsexport.com"]').first()).toBeVisible();
+    await expect(page.locator('a[href*="sales@freshrootsexport.com"]:visible').first()).toBeVisible();
 
     // Verify Google Business Profile badge
     await expect(page.locator('text=/Google Business Profile|Verified/i').first()).toBeVisible();

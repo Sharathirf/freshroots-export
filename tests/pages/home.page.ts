@@ -14,7 +14,7 @@ export class HomePage extends BasePage {
     super(page);
     this.headline = page.locator('h1');
     this.catalogSection = page.locator('#catalog');
-    this.searchInput = page.locator('input[placeholder*="Search"]');
+    this.searchInput = page.locator('input[placeholder*="Search"]:visible');
     this.cartButton = page.locator('button[aria-label="Shopping Cart"], button:has-text("Cart")');
     this.watchlistButton = page.locator('button[aria-label="View Watchlist"], button[title="My Watchlist"]');
     this.productCards = page.locator('div[data-testid="product-card"], div.group.relative.bg-white.rounded-3xl');

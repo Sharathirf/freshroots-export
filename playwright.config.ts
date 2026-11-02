@@ -7,7 +7,9 @@ const PORT = process.env.PORT || 3000;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: './tests',
+  testMatch: '**/*.spec.ts',
+  globalTeardown: require.resolve('./tests/helpers/global-teardown.ts'),
   timeout: 60 * 1000,
   expect: {
     timeout: 10 * 1000,
