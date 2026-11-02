@@ -5,6 +5,7 @@
 export const EXCLUDED_VISITOR_IDS = [
   'vis_1793293039223_176pi8t',
   'vis_1793330526977_lyo4z6x',
+  'vis_1793624736821_y0ggjhq',
 ] as const;
 
 export const EXCLUDED_VISITOR_SET = new Set<string>(EXCLUDED_VISITOR_IDS);

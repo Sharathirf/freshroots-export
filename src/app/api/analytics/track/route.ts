@@ -57,9 +57,28 @@ export async function POST(req: Request) {
 
     const visitorId = clientVisitorId || `vis_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
-    // Silently ignore visits from excluded internal team/owner devices
+    // 1. Never track admin or API routes under any circumstances
+    if (path.startsWith('/admin') || path.startsWith('/api')) {
+      // Auto-purge this admin visitor device if it was previously logged while browsing public pages
+      try {
+        await pool.query("DELETE FROM site_visits WHERE visitor_id = $1 OR path LIKE '/admin%'", [visitorId]);
+      } catch {}
+      return NextResponse.json({ success: true, ignored: true, reason: 'admin_route_blocked' });
+    }
+
+    // 2. Silently ignore visits from excluded internal team/owner devices
     if (isExcludedVisitor(visitorId)) {
       return NextResponse.json({ success: true, ignored: true, visitor_id: visitorId });
+    }
+
+    // 3. Ignore if admin cookies or headers are present
+    const cookieHeader = req.headers.get('cookie') || '';
+    if (
+      cookieHeader.includes('freshroots_admin_device=true') ||
+      cookieHeader.includes('freshroots_admin_token') ||
+      cookieHeader.includes('admin_session')
+    ) {
+      return NextResponse.json({ success: true, ignored: true, reason: 'admin_device_cookie' });
     }
 
     await pool.query(

@@ -7,6 +7,18 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
+    // Proactively clean up any legacy admin routes or excluded device visits from the database
+    try {
+      await pool.query(
+        `DELETE FROM site_visits 
+         WHERE path LIKE '/admin%' 
+            OR path LIKE '/api%' 
+            OR visitor_id IN (${EXCLUDED_VISITOR_SQL})`
+      );
+    } catch (cleanupErr) {
+      console.warn('Analytics cleanup non-critical note:', cleanupErr);
+    }
+
     const [totalsRes, pagesRes, recentRes] = await Promise.all([
       pool.query(`
         SELECT
@@ -23,6 +35,11 @@ export async function GET() {
           COUNT(*) FILTER (WHERE device_type = 'desktop') as desktop_visits
         FROM site_visits
         WHERE visitor_id NOT IN (${EXCLUDED_VISITOR_SQL})
+          AND path NOT LIKE '/admin%'
+          AND path NOT LIKE '/api%'
+          AND visitor_id NOT IN (
+            SELECT DISTINCT visitor_id FROM site_visits WHERE path LIKE '/admin%'
+          )
       `),
       pool.query(`
         SELECT
@@ -31,6 +48,11 @@ export async function GET() {
           COUNT(DISTINCT visitor_id) as unique_users
         FROM site_visits
         WHERE visitor_id NOT IN (${EXCLUDED_VISITOR_SQL})
+          AND path NOT LIKE '/admin%'
+          AND path NOT LIKE '/api%'
+          AND visitor_id NOT IN (
+            SELECT DISTINCT visitor_id FROM site_visits WHERE path LIKE '/admin%'
+          )
         GROUP BY path
         ORDER BY total_views DESC
         LIMIT 8
@@ -47,6 +69,11 @@ export async function GET() {
           created_at
         FROM site_visits
         WHERE visitor_id NOT IN (${EXCLUDED_VISITOR_SQL})
+          AND path NOT LIKE '/admin%'
+          AND path NOT LIKE '/api%'
+          AND visitor_id NOT IN (
+            SELECT DISTINCT visitor_id FROM site_visits WHERE path LIKE '/admin%'
+          )
         ORDER BY created_at DESC
         LIMIT 25
       `)
