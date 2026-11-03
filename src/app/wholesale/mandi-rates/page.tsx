@@ -57,8 +57,8 @@ const MANDI_COMMODITIES = [
     mandi: 'APMC Tiptur (Tumakuru)',
     grade: 'Agmark Grade 1 (Whole spherical, Moisture ≤5.5%)',
     unit: 'Per Quintal (100 kg)',
-    modalPrice: '₹14,500 – ₹15,800',
-    trend: '+1.8% this week',
+    modalPrice: '₹30,000 – ₹32,100',
+    trend: 'Modal: ₹30,739/Qtl (APMC Verified)',
     minWholesaleLot: '15 Quintals (1.5 MT) / Tempo Load',
     sku: 'COP-BAL-BOX-15K',
   },
@@ -234,8 +234,8 @@ export default function MandiRatesPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4 border-t border-stone-100 text-xs">
               <div className="p-3 rounded-xl bg-stone-50 border border-stone-200/70">
                 <span className="text-xs text-stone-700 uppercase font-bold block">Tiptur Ball Copra</span>
-                <strong className="text-stone-900 font-mono text-sm block">₹14,500 – ₹15,800/Qtl</strong>
-                <span className="text-xs text-emerald-900 font-extrabold">Stable seasonal supply</span>
+                <strong className="text-stone-900 font-mono text-sm block">₹30,000 – ₹32,100/Qtl</strong>
+                <span className="text-xs text-emerald-900 font-extrabold">Modal: ₹30,739/Qtl (APMC Verified)</span>
               </div>
               <div className="p-3 rounded-xl bg-stone-50 border border-stone-200/70">
                 <span className="text-xs text-stone-700 uppercase font-bold block">Shivamogga Arecanut</span>
