@@ -25,6 +25,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       images: [`${baseUrl}/products/mature-coconuts-4k.jpg`, `${baseUrl}/products/ball-copra-4k.jpg`],
     },
     {
+      url: `${baseUrl}/about`,
+      lastModified: CATALOG_LAST_MODIFIED,
+      changeFrequency: 'monthly',
+      priority: 0.85,
+    },
+    {
       url: `${baseUrl}/export`,
       lastModified: CATALOG_LAST_MODIFIED,
       changeFrequency: 'weekly',

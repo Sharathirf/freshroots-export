@@ -76,7 +76,7 @@ export default function ContactPage() {
       <Navbar />
       <CartDrawer />
 
-      <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full space-y-10">
+      <main id="main-content" className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full space-y-10">
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#3b6d11] bg-lime-100 border border-lime-300 px-3 py-1 rounded-full">
             Direct Farm-Gate Desk
@@ -240,6 +240,22 @@ export default function ContactPage() {
                 <div className="p-3 bg-white rounded-xl border border-stone-200">
                   <span className="font-bold text-stone-900 block">Food Safety &amp; Standards:</span>
                   <span>Traditional wooden bilona churning, wood-pressed cold extraction, zero sulphur bleaching on ball copra.</span>
+                </div>
+
+                <div className="p-3 bg-white rounded-xl border border-emerald-200/80 bg-emerald-50/40 space-y-1">
+                  <span className="font-bold text-stone-900 block">Statutory Grievance Redressal Officer:</span>
+                  <p className="text-[11px] text-stone-600">
+                    Consumer Protection (E-Commerce) Rules, 2020 &amp; DPDP Act 2023:
+                  </p>
+                  <p className="text-[11px] font-semibold text-stone-800">
+                    Mr. Sharath Inorahalli &bull; Operations &amp; Grievance Lead
+                  </p>
+                  <p className="text-[11px] text-stone-600">
+                    Email: <a href="mailto:grievance@freshrootsexport.com" className="text-emerald-700 underline font-mono">grievance@freshrootsexport.com</a> &bull; Tel: <a href="tel:+919008462568" className="text-stone-900 font-mono font-bold">+91 90084 62568</a>
+                  </p>
+                  <p className="text-[10px] text-stone-500">
+                    Acknowledgement within 48h &bull; Redressal within 30 days
+                  </p>
                 </div>
               </div>
             </div>

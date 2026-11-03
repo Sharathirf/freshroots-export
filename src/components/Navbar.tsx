@@ -235,6 +235,14 @@ export default function Navbar({
 
   return (
     <header className="sticky top-0 z-40 bg-white shadow-sm border-b border-stone-200 w-full max-w-full overflow-hidden">
+      {/* 0. Accessibility Skip to Main Content Link */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#1c3809] focus:text-white focus:font-bold focus:text-xs focus:rounded-xl focus:shadow-2xl focus:ring-2 focus:ring-lime-400 focus:outline-none"
+      >
+        Skip to main content
+      </a>
+
       {/* 1. Mandi Live Rate & Shipping Ticker (Katyayani Header Top Bar) */}
       <div className="bg-[#1c3809] text-white text-[10px] sm:text-[11px] py-1.5 sm:py-2 px-3 sm:px-4 border-b border-[#24470b] overflow-hidden">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
@@ -460,7 +468,14 @@ export default function Navbar({
             <span className={lang === 'en' ? 'text-emerald-800 font-extrabold' : 'text-stone-600 font-medium'}>EN</span>
           </button>
 
-          {/* Export & Guides Direct Links - Desktop */}
+          {/* About, Export & Guides Direct Links - Desktop */}
+          <Link
+            href="/about"
+            className="hidden lg:flex items-center h-10 text-xs font-bold text-stone-700 hover:text-[#3b6d11] px-2.5 rounded-xl hover:bg-stone-100 whitespace-nowrap transition shrink-0"
+          >
+            <span>About</span>
+          </Link>
+
           <Link
             href="/export"
             className="hidden xl:flex items-center h-10 text-xs font-bold text-stone-700 hover:text-[#3b6d11] px-2.5 rounded-xl hover:bg-stone-100 whitespace-nowrap transition shrink-0"
@@ -623,7 +638,10 @@ export default function Navbar({
               <div className="text-xs font-bold font-mono leading-tight">₹{subtotal.toLocaleString('en-IN')}</div>
             </div>
             {itemCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-stone-950 text-xs font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow">
+              <span
+                aria-live="polite"
+                className="absolute -top-1.5 -right-1.5 bg-amber-500 text-stone-950 text-xs font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow"
+              >
                 {itemCount}
               </span>
             )}

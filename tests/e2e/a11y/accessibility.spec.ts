@@ -66,4 +66,11 @@ test.describe('Accessibility (a11y), Semantic HTML & Keyboard Navigation Suite',
       expect(isAccessible).toBe(true);
     }
   });
+
+  test('Skip to main content anchor is present for screen readers', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    const skipLink = page.locator('a[href="#main-content"]');
+    await expect(skipLink).toBeAttached();
+    expect(await skipLink.innerText()).toContain('Skip to main content');
+  });
 });

@@ -99,6 +99,7 @@ export default function WholesaleRFQModal({
   // Optional Fields
   const [contactEmail, setContactEmail] = useState<string>('');
   const [gstin, setGstin] = useState<string>('');
+  const [incoterm, setIncoterm] = useState<string>('FOB (Free On Board - Nhava Sheva / JNPT)');
   const [unloadingNotes, setUnloadingNotes] = useState<string>('');
   const [isExportEnquiry, setIsExportEnquiry] = useState<boolean>(() => {
     return Boolean(initialCountry && initialCountry !== 'India');
@@ -223,6 +224,7 @@ export default function WholesaleRFQModal({
 
     try {
       const notesArray = [
+        isExportEnquiry && incoterm ? `Trade Term: ${incoterm}` : '',
         unloadingNotes ? `Unloading/Siding: ${unloadingNotes.trim()}` : '',
         isExportEnquiry && destinationCountry !== 'India' ? `[EXPORT ENQUIRY: ${destinationCountry}]` : ''
       ].filter(Boolean);
@@ -566,28 +568,46 @@ export default function WholesaleRFQModal({
                       </label>
 
                       {isExportEnquiry && (
-                        <div className="mt-2.5">
-                          <label className="block text-[11px] font-bold text-stone-600 mb-1">
-                            Destination Export Country / Discharge Port
-                          </label>
-                          <select
-                            value={destinationCountry}
-                            onChange={(e) => {
-                              const country = e.target.value;
-                              setDestinationCountry(country);
-                              if (COUNTRY_DIALING_CODES[country]) {
-                                setPhoneCountryCode(COUNTRY_DIALING_CODES[country]);
-                              }
-                            }}
-                            className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-semibold focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white text-stone-900"
-                          >
-                            {EXPORT_COUNTRIES.map((c) => (
-                              <option key={c.code} value={c.name}>
-                                {c.flag} {c.name} — {c.majorPort}
-                              </option>
-                            ))}
-                            <option value="Other International">🌐 Other International Destination Port</option>
-                          </select>
+                        <div className="space-y-2.5 mt-2.5">
+                          <div>
+                            <label className="block text-[11px] font-bold text-stone-600 mb-1">
+                              Destination Export Country / Discharge Port
+                            </label>
+                            <select
+                              value={destinationCountry}
+                              onChange={(e) => {
+                                const country = e.target.value;
+                                setDestinationCountry(country);
+                                if (COUNTRY_DIALING_CODES[country]) {
+                                  setPhoneCountryCode(COUNTRY_DIALING_CODES[country]);
+                                }
+                              }}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-semibold focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white text-stone-900"
+                            >
+                              {EXPORT_COUNTRIES.map((c) => (
+                                <option key={c.code} value={c.name}>
+                                  {c.flag} {c.name} — {c.majorPort}
+                                </option>
+                              ))}
+                              <option value="Other International">🌐 Other International Destination Port</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-stone-600 mb-1">
+                              Preferred Incoterm / Pricing Basis
+                            </label>
+                            <select
+                              value={incoterm}
+                              onChange={(e) => setIncoterm(e.target.value)}
+                              className="w-full px-3 py-2 rounded-xl border border-stone-300 text-xs font-semibold focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white text-stone-900"
+                            >
+                              <option value="FOB (Free On Board - Nhava Sheva / JNPT)">FOB — Free On Board (Nhava Sheva / JNPT Mumbai or Chennai)</option>
+                              <option value="CIF (Cost, Insurance & Freight - Discharge Port)">CIF — Cost, Insurance &amp; Freight (Discharge Seaport)</option>
+                              <option value="CFR (Cost & Freight)">CFR — Cost &amp; Freight</option>
+                              <option value="EXW (Ex-Works / Farm Gate Kikkeri)">EXW — Ex-Works (Direct Farm-Gate Kikkeri / Tiptur)</option>
+                            </select>
+                          </div>
                         </div>
                       )}
                     </div>

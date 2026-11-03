@@ -387,7 +387,7 @@ export default function ProductDetailClient({
       <Navbar />
       <CartDrawer />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-12">
+      <main id="main-content" className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-12">
         {/* Breadcrumb Navigation */}
         <nav aria-label="Breadcrumb" className="text-xs text-stone-700 font-medium flex items-center gap-1.5 flex-wrap">
           <Link href="/" className="hover:text-emerald-700 transition">Home</Link>

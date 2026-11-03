@@ -10,6 +10,8 @@ import EnquiryModal from '@/components/EnquiryModal';
 import Footer from '@/components/Footer';
 import ActiveOrderBanner from '@/components/ActiveOrderBanner';
 import GlobalExportCorridors from '@/components/GlobalExportCorridors';
+import FarmerTestimonials from '@/components/FarmerTestimonials';
+import CertificateViewerModal from '@/components/CertificateViewerModal';
 import { useAuth } from '@/context/AuthContext';
 import { Product } from '@/types';
 import { getAllCatalogProducts } from '@/lib/catalog';
@@ -72,6 +74,8 @@ export default function HomePage() {
   const [selectedProductForRFQ, setSelectedProductForRFQ] = useState<Product | null>(null);
   const [rfqCountry, setRfqCountry] = useState<string>('India');
   const [isEnquiryOpen, setIsEnquiryOpen] = useState(false);
+  const [isCertModalOpen, setIsCertModalOpen] = useState(false);
+  const [certTab, setCertTab] = useState<'fssai' | 'dgft' | 'apeda' | 'gst'>('fssai');
 
   const { lang } = useAuth();
 
@@ -188,7 +192,7 @@ export default function HomePage() {
       />
       <CartDrawer />
 
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         {/* 1. BigHaat-Style Active Order Toast Strip & Recently Ordered Shelf */}
         <ActiveOrderBanner />
 
@@ -467,22 +471,49 @@ export default function HomePage() {
               </div>
 
               <div className="flex flex-wrap gap-2.5 shrink-0 justify-center">
-                <div className="px-3.5 py-2 rounded-xl bg-stone-950/90 border border-emerald-400/30 text-xs font-mono font-bold text-white shadow-sm flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCertTab('fssai');
+                    setIsCertModalOpen(true);
+                  }}
+                  className="px-3.5 py-2 rounded-xl bg-stone-950/90 hover:bg-stone-900 border border-emerald-400/40 text-xs font-mono font-bold text-white shadow-sm flex items-center gap-1.5 transition cursor-pointer"
+                  title="Click to view verified FSSAI License Docket"
+                >
                   <span className="text-emerald-400">✓</span>
                   <span>FSSAI: 21224195000438</span>
-                </div>
-                <div className="px-3.5 py-2 rounded-xl bg-stone-950/90 border border-lime-400/30 text-xs font-mono font-bold text-white shadow-sm flex items-center gap-1.5">
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCertTab('dgft');
+                    setIsCertModalOpen(true);
+                  }}
+                  className="px-3.5 py-2 rounded-xl bg-stone-950/90 hover:bg-stone-900 border border-lime-400/40 text-xs font-mono font-bold text-white shadow-sm flex items-center gap-1.5 transition cursor-pointer"
+                  title="Click to view verified DGFT Export IEC Docket"
+                >
                   <span className="text-lime-400">✓</span>
                   <span>DGFT IEC: 0724018925</span>
-                </div>
-                <div className="px-3.5 py-2 rounded-xl bg-stone-950/90 border border-amber-400/30 text-xs font-mono font-bold text-white shadow-sm flex items-center gap-1.5">
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCertTab('apeda');
+                    setIsCertModalOpen(true);
+                  }}
+                  className="px-3.5 py-2 rounded-xl bg-stone-950/90 hover:bg-stone-900 border border-amber-400/40 text-xs font-mono font-bold text-white shadow-sm flex items-center gap-1.5 transition cursor-pointer"
+                  title="Click to view APEDA and CDB Standards"
+                >
                   <span className="text-amber-400">✓</span>
                   <span>CDB &amp; APEDA Aligned</span>
-                </div>
+                </button>
               </div>
             </div>
           </div>
         </section>
+
+        {/* 4.8 Product-Specific Customer & Grower Reviews */}
+        <FarmerTestimonials />
 
         {/* 5. Minimal, Reassuring Trust Strip */}
         <section className="bg-stone-100/80 border-y border-stone-200 py-6 sm:py-8">
@@ -548,6 +579,13 @@ export default function HomePage() {
       <EnquiryModal
         isOpen={isEnquiryOpen}
         onClose={() => setIsEnquiryOpen(false)}
+      />
+
+      {/* 8. Statutory Trade Certificate Viewer Modal */}
+      <CertificateViewerModal
+        isOpen={isCertModalOpen}
+        onClose={() => setIsCertModalOpen(false)}
+        defaultTab={certTab}
       />
     </div>
   );

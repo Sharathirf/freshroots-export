@@ -76,7 +76,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth overflow-x-hidden max-w-full">
       <head>
-        {/* Google tag (gtag.js) - Google Ads Conversion Tracking */}
+        {/* Google tag (gtag.js) - Google Ads & Google Analytics 4 */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-18547973125"
           strategy="afterInteractive"
@@ -87,6 +87,7 @@ export default function RootLayout({
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'AW-18547973125');
+            ${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ? `gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}');` : `gtag('config', 'G-FRESHROOTS4K', { send_page_view: true });`}
           `}
         </Script>
         <script

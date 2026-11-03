@@ -175,6 +175,7 @@ export default function Footer() {
               <li><Link href="/rfq" className="text-amber-300 font-semibold hover:text-white transition">Request Wholesale RFQ</Link></li>
               <li><Link href="/guides" className="hover:text-white transition">Guides &amp; Quality Standards</Link></li>
               <li><Link href="/transportation" className="hover:text-white transition">Pan-India Freight Logistics</Link></li>
+              <li><Link href="/about" className="hover:text-white transition">About Farm Hub &amp; Origin</Link></li>
               <li><Link href="/contact" className="hover:text-white transition">Contact Farm-Gate Desk</Link></li>
               <li><Link href="/#catalog" className="hover:text-white transition">Direct Farm Catalog</Link></li>
               <li><Link href="/track-order" className="hover:text-white transition">Track Consignment</Link></li>

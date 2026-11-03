@@ -10,6 +10,7 @@ const ManageAddressesModal = dynamic(() => import('@/components/ManageAddressesM
 const OrderHistoryModal = dynamic(() => import('@/components/OrderHistoryModal'), { ssr: false });
 const HelpModal = dynamic(() => import('@/components/HelpModal'), { ssr: false });
 const PwaInstallPrompt = dynamic(() => import('@/components/PwaInstallPrompt'), { ssr: false });
+const CookieConsentBanner = dynamic(() => import('@/components/CookieConsentBanner'), { ssr: false });
 
 export default function ClientModals() {
   return (
@@ -22,6 +23,7 @@ export default function ClientModals() {
       <OrderHistoryModal />
       <HelpModal />
       <PwaInstallPrompt />
+      <CookieConsentBanner />
     </>
   );
 }

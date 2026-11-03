@@ -68,7 +68,7 @@ export default function RfqPage() {
       <Navbar />
       <CartDrawer />
 
-      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 w-full">
+      <main id="main-content" className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 w-full">
         <Suspense
           fallback={
             <div className="p-12 text-center text-stone-500 font-medium">
