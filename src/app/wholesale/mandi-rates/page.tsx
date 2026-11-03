@@ -27,6 +27,8 @@ export const metadata: Metadata = {
     'tiptur copra mandi price today',
     'shivamogga arecanut mandi rate today',
     'ball copra wholesale price karnataka',
+    'mature coconut 1000 nuts price karnataka',
+    'mature coconut wholesale mandi rate mandya',
     'mature coconut 25 piece bag wholesale',
     'tiptur unde kobbari price per quintal',
     'arecanut mandi price karnataka',
@@ -74,10 +76,10 @@ const MANDI_COMMODITIES = [
     name: 'Mandya Semi-Husked Mature Coconuts',
     mandi: 'Mandya / K.R. Pet Farm Gate',
     grade: 'Grade A Medium/Large (550g - 650g/nut)',
-    unit: 'Per 25-Nut Bag (~15 kg)',
-    modalPrice: '₹1,380 – ₹1,479',
-    trend: 'Direct Farm Siding',
-    minWholesaleLot: '100 Bags (Canter Load)',
+    unit: 'Per 1,000 Nuts (~600 kg) / 25-Nut Bag',
+    modalPrice: '₹22,000 – ₹26,500 / 1k Nuts (₹580 – ₹680/Bag)',
+    trend: 'Direct Farm Siding (~₹22–₹26.50/Nut)',
+    minWholesaleLot: '100 Bags (2,500 Nuts / Canter Load)',
     sku: 'COC-SEMI-25P-15K',
   },
   {
@@ -181,7 +183,7 @@ export default function MandiRatesPage() {
         />
       )}
 
-      <main className="flex-1 space-y-10 sm:space-y-14 pb-16">
+      <main id="main-content" className="flex-1 space-y-10 sm:space-y-14 pb-16">
         {/* Breadcrumb Nav */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
           <nav aria-label="Breadcrumb" className="text-xs text-stone-700 font-medium flex items-center gap-1.5 flex-wrap">
@@ -241,9 +243,9 @@ export default function MandiRatesPage() {
                 <span className="text-xs text-blue-900 font-extrabold">Rashi/Chali lot certified</span>
               </div>
               <div className="p-3 rounded-xl bg-stone-50 border border-stone-200/70">
-                <span className="text-xs text-stone-700 uppercase font-bold block">Mandya Coconuts (Bag)</span>
-                <strong className="text-stone-900 font-mono text-sm block">₹1,479 / 25-Nut Bag</strong>
-                <span className="text-xs text-emerald-900 font-extrabold">~15kg, Free Delivery</span>
+                <span className="text-xs text-stone-700 uppercase font-bold block">Mandya Mature Coconuts</span>
+                <strong className="text-stone-900 font-mono text-sm block">₹22,000 – ₹26,500 / 1k Nuts</strong>
+                <span className="text-xs text-emerald-900 font-extrabold">Farm Siding (~₹22–₹26.50/Nut)</span>
               </div>
               <div className="p-3 rounded-xl bg-stone-50 border border-stone-200/70">
                 <span className="text-xs text-stone-700 uppercase font-bold block">Mandya Ragi Grains</span>

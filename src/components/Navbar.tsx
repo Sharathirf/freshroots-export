@@ -252,7 +252,7 @@ export default function Navbar({
               Mandi:
             </span>
             <span className="truncate text-lime-100">
-              Coconuts: ₹90/kg •{' '}
+              Coconuts: ₹22–₹26/nut •{' '}
               <Link
                 href="/wholesale/mandi-rates"
                 className="hover:text-white font-semibold text-lime-100"
