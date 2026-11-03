@@ -315,25 +315,12 @@ export default function CartDrawer() {
       return;
     }
 
-    if (appliedCoupon && subtotal < appliedCoupon.minOrderAmount) {
+    if (appliedCoupon && appliedCoupon.minOrderAmount > 0 && subtotal < appliedCoupon.minOrderAmount) {
       setAppliedCoupon(null);
       setCouponSuccess(null);
       setCouponError(`Cart value dropped below ₹${appliedCoupon.minOrderAmount}. ${appliedCoupon.code} removed.`);
     } else if (couponError && couponError.includes('more to unlock')) {
-      // User increased cart quantity to reach the required minimum amount (e.g. ₹400 for FIRST100)
-      if (subtotal >= 400) {
-        setCouponError(null);
-        // Automatically unlock and apply the coupon
-        const res = validateCoupon('FIRST100', subtotal, isFirstOrder);
-        if (res.valid && res.coupon) {
-          setAppliedCoupon(res.coupon);
-          setCouponSuccess(res.message);
-        }
-      } else {
-        // Dynamically update the remaining difference
-        const remaining = 400 - subtotal;
-        setCouponError(`Add items worth ₹${remaining} more to unlock FIRST100!`);
-      }
+      setCouponError(null);
     }
   }, [subtotal, items.length, appliedCoupon, couponError, isFirstOrder]);
 
@@ -345,7 +332,7 @@ export default function CartDrawer() {
       return;
     }
 
-    if (subtotal < coupon.minOrderAmount) {
+    if (coupon.minOrderAmount > 0 && subtotal < coupon.minOrderAmount) {
       setCouponError(`Add items worth ₹${coupon.minOrderAmount - subtotal} more to unlock ${coupon.code}!`);
       return;
     }
@@ -832,8 +819,8 @@ export default function CartDrawer() {
                         <div className="space-y-2">
                           {AVAILABLE_COUPONS.map((coupon) => {
                             const isApplied = appliedCoupon?.code === coupon.code;
-                            const isEligible = subtotal >= coupon.minOrderAmount;
-                            const deficit = coupon.minOrderAmount - subtotal;
+                            const isEligible = !coupon.minOrderAmount || subtotal >= coupon.minOrderAmount;
+                            const deficit = Math.max(0, (coupon.minOrderAmount || 0) - subtotal);
 
                             return (
                               <div

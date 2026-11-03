@@ -2,7 +2,7 @@ import { test, expect } from '../fixtures/base-test';
 
 test.describe('API Automation Suite — Mandi Rates, Logistics & Product Catalog', () => {
   test('GET /api/mandi/copra returns live APMC mandi benchmarks with price history', async ({ request }) => {
-    const res = await request.get('/api/mandi/copra');
+    const res = await request.get('/api/mandi/copra', { timeout: 30000 });
     expect(res.status()).toBe(200);
 
     const json = await res.json();
@@ -13,7 +13,7 @@ test.describe('API Automation Suite — Mandi Rates, Logistics & Product Catalog
   });
 
   test('GET /api/mandi/arecanut returns Shivamogga & Channagiri APMC rates', async ({ request }) => {
-    const res = await request.get('/api/mandi/arecanut');
+    const res = await request.get('/api/mandi/arecanut', { timeout: 30000 });
     expect(res.status()).toBe(200);
 
     const json = await res.json();

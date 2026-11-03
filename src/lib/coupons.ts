@@ -16,7 +16,7 @@ export const AVAILABLE_COUPONS: FarmCoupon[] = [
     description: 'Get ₹100 instant discount on your first farm order',
     type: 'flat',
     value: 100,
-    minOrderAmount: 400,
+    minOrderAmount: 0,
     badge: '1st Order Only',
     firstOrderOnly: true
   }
@@ -57,7 +57,7 @@ export function validateCoupon(
     };
   }
 
-  if (subtotal < coupon.minOrderAmount) {
+  if (coupon.minOrderAmount > 0 && subtotal < coupon.minOrderAmount) {
     const deficit = coupon.minOrderAmount - subtotal;
     return {
       valid: false,

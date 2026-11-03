@@ -415,11 +415,10 @@ it('FIRST100 successfully applies ₹100 discount for a first order with subtota
   assert.strictEqual(result.discountAmount, 100);
 });
 
-it('FIRST100 is rejected if subtotal is below minimum order amount (₹400)', () => {
-  const result = validateCoupon('FIRST100', 350, true);
-  assert.strictEqual(result.valid, false);
-  assert.strictEqual(result.discountAmount, 0);
-  assert.ok(result.message.includes('Minimum order for FIRST100 is ₹400'));
+it('FIRST100 successfully applies ₹100 discount without minimum order restriction', () => {
+  const result = validateCoupon('FIRST100', 250, true);
+  assert.strictEqual(result.valid, true);
+  assert.strictEqual(result.discountAmount, 100);
 });
 
 it('FIRST100 is strictly rejected if user is NOT a first-time buyer', () => {
